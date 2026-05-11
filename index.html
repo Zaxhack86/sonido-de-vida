@@ -1,121 +1,1206 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sonido de Vida - Biblia en Audio</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital@0;1&family=Inter:wght@400;600&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-        .serif { font-family: 'Playfair Display', serif; }
-        .bg-biblia { background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Sonido de Vida — Biblia gratuita en audio. Lee, escucha y descarga cualquier versículo.">
+  <meta name="theme-color" content="#0b0b14">
+  <title>Sonido de Vida — Biblia en Audio</title>
+
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%230b0b14'/><text x='50%25' y='56%25' dominant-baseline='middle' text-anchor='middle' font-size='20' fill='%23c8a96e'>✝</text></svg>">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=Raleway:wght@300;400;500;600;700&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --ink:     #0b0b14;
+      --ink2:    #13131f;
+      --ink3:    #1c1c2e;
+      --gold:    #c8a96e;
+      --gold2:   #e8cc94;
+      --gold3:   #8c6d38;
+      --parch:   #f2ead8;
+      --parch2:  #e8dfc8;
+      --cream:   #faf7f0;
+      --mist:    rgba(200,169,110,.12);
+      --mist2:   rgba(200,169,110,.22);
+      --white60: rgba(255,255,255,.6);
+      --white30: rgba(255,255,255,.3);
+      --r: 16px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Raleway', sans-serif;
+      background: var(--ink);
+      color: var(--parch);
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    /* ─── NOISE OVERLAY ─── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      opacity: .5;
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 900;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.4rem 2.5rem;
+      transition: background .4s, padding .4s, backdrop-filter .4s;
+    }
+    nav.scrolled {
+      background: rgba(11,11,20,.92);
+      backdrop-filter: blur(18px);
+      padding: .9rem 2.5rem;
+      border-bottom: 1px solid rgba(200,169,110,.1);
+    }
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem; font-weight: 600;
+      color: var(--gold2); text-decoration: none;
+      display: flex; align-items: center; gap: .5rem;
+      letter-spacing: .02em;
+    }
+    .nav-logo span { font-size: 1.3rem; }
+    .nav-links { display: flex; gap: 2rem; list-style: none; align-items: center; }
+    .nav-links a {
+      color: var(--white60); text-decoration: none;
+      font-size: .82rem; font-weight: 500;
+      letter-spacing: .08em; text-transform: uppercase;
+      transition: color .3s;
+    }
+    .nav-links a:hover { color: var(--gold2); }
+    .nav-cta {
+      background: var(--mist2) !important;
+      color: var(--gold) !important;
+      border: 1px solid rgba(200,169,110,.35) !important;
+      padding: .45rem 1.2rem !important;
+      border-radius: 4px !important;
+    }
+    .nav-cta:hover { background: var(--mist) !important; }
+
+    .burger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 4px; z-index: 1001; }
+    .burger span { display: block; width: 22px; height: 1.5px; background: var(--gold2); transition: all .3s; }
+    .burger.open span:nth-child(1) { transform: rotate(45deg) translate(4.5px, 4.5px); }
+    .burger.open span:nth-child(2) { opacity: 0; }
+    .burger.open span:nth-child(3) { transform: rotate(-45deg) translate(4.5px, -4.5px); }
+
+    /* ─── HERO ─── */
+    .hero {
+      position: relative; min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden; padding: 2rem;
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 80% 80% at 50% 0%, #1e183a 0%, #0b0b14 70%);
+    }
+    .hero-bg::after {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(circle 400px at 20% 60%, rgba(200,169,110,.06) 0%, transparent 70%),
+        radial-gradient(circle 500px at 80% 20%, rgba(60,30,90,.18) 0%, transparent 70%);
+    }
+
+    /* Floating cross ornaments */
+    .hero-ornament {
+      position: absolute; font-size: 6rem;
+      color: rgba(200,169,110,.04);
+      font-family: 'Cormorant Garamond', serif;
+      user-select: none; pointer-events: none;
+      animation: drift 18s ease-in-out infinite;
+    }
+    .hero-ornament:nth-child(1) { top: 15%; left: 8%; font-size: 4rem; animation-delay: 0s; }
+    .hero-ornament:nth-child(2) { top: 65%; left: 3%; font-size: 8rem; animation-delay: -6s; }
+    .hero-ornament:nth-child(3) { top: 20%; right: 6%; font-size: 5rem; animation-delay: -3s; }
+    .hero-ornament:nth-child(4) { bottom: 10%; right: 10%; font-size: 7rem; animation-delay: -9s; }
+    @keyframes drift {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      33% { transform: translateY(-18px) rotate(3deg); }
+      66% { transform: translateY(10px) rotate(-2deg); }
+    }
+
+    /* Divider line */
+    .hero-line {
+      position: absolute; top: 0; left: 50%; width: 1px; height: 100%;
+      background: linear-gradient(to bottom, transparent 0%, rgba(200,169,110,.2) 30%, rgba(200,169,110,.2) 70%, transparent 100%);
+      transform: translateX(-50%);
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative; z-index: 10;
+      text-align: center; max-width: 820px;
+    }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: .7rem;
+      border: 1px solid rgba(200,169,110,.25);
+      padding: .45rem 1.4rem; border-radius: 2px;
+      font-size: .72rem; font-weight: 600;
+      letter-spacing: .2em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 2.5rem;
+      animation: fadeUp .8s ease both;
+    }
+    .hero-eyebrow::before, .hero-eyebrow::after {
+      content: ''; display: block;
+      width: 20px; height: 1px; background: var(--gold); opacity: .5;
+    }
+
+    .hero h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3rem, 8vw, 6.5rem);
+      font-weight: 300; line-height: 1.05;
+      color: var(--parch); margin-bottom: 1.2rem;
+      animation: fadeUp .9s ease .1s both;
+    }
+    .hero h1 em {
+      font-style: italic; color: var(--gold2);
+      font-weight: 400;
+    }
+
+    .hero-sub {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1rem, 2.5vw, 1.3rem);
+      font-style: italic; color: var(--white60);
+      margin-bottom: 3rem; line-height: 1.7;
+      animation: fadeUp .9s ease .2s both;
+    }
+
+    .hero-buttons {
+      display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
+      animation: fadeUp .9s ease .3s both;
+    }
+    .btn-gold {
+      display: inline-flex; align-items: center; gap: .6rem;
+      background: var(--gold); color: var(--ink);
+      padding: .9rem 2.4rem; border-radius: 3px;
+      font-size: .85rem; font-weight: 700;
+      letter-spacing: .1em; text-transform: uppercase;
+      text-decoration: none; border: none; cursor: pointer;
+      transition: all .3s; font-family: 'Raleway', sans-serif;
+    }
+    .btn-gold:hover { background: var(--gold2); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(200,169,110,.3); }
+    .btn-outline {
+      display: inline-flex; align-items: center; gap: .6rem;
+      background: transparent; color: var(--gold);
+      padding: .9rem 2.4rem; border-radius: 3px;
+      font-size: .85rem; font-weight: 600;
+      letter-spacing: .1em; text-transform: uppercase;
+      text-decoration: none; border: 1px solid rgba(200,169,110,.4); cursor: pointer;
+      transition: all .3s; font-family: 'Raleway', sans-serif;
+    }
+    .btn-outline:hover { border-color: var(--gold); background: var(--mist); transform: translateY(-2px); }
+
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+
+    .scroll-hint {
+      position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+      z-index: 10; display: flex; flex-direction: column; align-items: center; gap: .6rem;
+      color: rgba(200,169,110,.4); font-size: .65rem; letter-spacing: .2em; text-transform: uppercase;
+      animation: scrollBounce 2.5s ease-in-out infinite;
+    }
+    .scroll-hint svg { width: 16px; height: 16px; stroke: currentColor; }
+    @keyframes scrollBounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(8px); }
+    }
+
+    /* ─── SECTION COMMONS ─── */
+    section { position: relative; z-index: 1; }
+
+    .divider {
+      display: flex; align-items: center; gap: 1.5rem;
+      margin-bottom: 1.2rem; justify-content: center;
+    }
+    .divider::before, .divider::after {
+      content: ''; flex: 1; max-width: 80px; height: 1px;
+      background: rgba(200,169,110,.3);
+    }
+    .divider-cross {
+      color: var(--gold); font-size: 1rem; opacity: .6;
+    }
+
+    .sec-label {
+      font-size: .7rem; letter-spacing: .25em; text-transform: uppercase;
+      color: var(--gold); font-weight: 600; text-align: center;
+    }
+    .sec-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 4.5vw, 3.2rem);
+      font-weight: 400; text-align: center;
+      color: var(--parch); line-height: 1.15;
+      margin-bottom: .8rem;
+    }
+    .sec-sub {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic; font-size: 1.1rem;
+      color: var(--white60); text-align: center;
+      max-width: 520px; margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity .8s ease, transform .8s ease; }
+    .reveal.in { opacity: 1; transform: translateY(0); }
+
+    /* ─── STATS ─── */
+    .stats {
+      background: var(--ink2);
+      border-top: 1px solid rgba(200,169,110,.08);
+      border-bottom: 1px solid rgba(200,169,110,.08);
+      padding: 3rem 2rem;
+    }
+    .stats-grid { display: grid; grid-template-columns: repeat(4,1fr); max-width: 900px; margin: 0 auto; }
+    .stat-item {
+      text-align: center; padding: 1rem;
+      border-right: 1px solid rgba(200,169,110,.12);
+    }
+    .stat-item:last-child { border-right: none; }
+    .stat-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.5rem; font-weight: 600;
+      color: var(--gold2); line-height: 1;
+      margin-bottom: .4rem;
+    }
+    .stat-label { font-size: .75rem; letter-spacing: .12em; color: var(--white60); text-transform: uppercase; }
+
+    /* ─── FEATURES ─── */
+    .features { padding: 7rem 2rem; background: var(--ink); }
+    .features-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 1.5px; max-width: 1100px; margin: 3.5rem auto 0;
+      border: 1px solid rgba(200,169,110,.1);
+    }
+    .feat {
+      padding: 2.8rem 2.2rem;
+      border-right: 1px solid rgba(200,169,110,.1);
+      border-bottom: 1px solid rgba(200,169,110,.1);
+      transition: background .3s;
+      position: relative; overflow: hidden;
+    }
+    .feat:nth-child(3n) { border-right: none; }
+    .feat:nth-child(n+4) { border-bottom: none; }
+    .feat::before {
+      content: ''; position: absolute;
+      inset: 0; background: var(--mist);
+      opacity: 0; transition: opacity .4s;
+    }
+    .feat:hover::before { opacity: 1; }
+    .feat-icon {
+      font-size: 1.6rem; margin-bottom: 1.2rem;
+      display: block; filter: grayscale(.3);
+    }
+    .feat h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.25rem; font-weight: 600;
+      color: var(--gold2); margin-bottom: .6rem;
+    }
+    .feat p { font-size: .9rem; color: var(--white60); line-height: 1.7; }
+
+    /* ─── SEARCH SECTION ─── */
+    .search-sec {
+      padding: 7rem 2rem;
+      background: linear-gradient(180deg, var(--ink2) 0%, var(--ink3) 100%);
+      border-top: 1px solid rgba(200,169,110,.08);
+    }
+    .search-wrap { max-width: 780px; margin: 3.5rem auto 0; }
+
+    .search-card {
+      background: rgba(200,169,110,.04);
+      border: 1px solid rgba(200,169,110,.18);
+      border-radius: var(--r);
+      padding: 2.5rem 2rem;
+      backdrop-filter: blur(10px);
+    }
+
+    .selectors { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 1rem; margin-bottom: 1.2rem; }
+
+    .fgroup label {
+      display: block;
+      font-size: .68rem; letter-spacing: .18em; text-transform: uppercase;
+      color: var(--gold); font-weight: 600; margin-bottom: .5rem;
+    }
+    .fgroup select {
+      width: 100%; padding: .8rem 1rem;
+      background: rgba(11,11,20,.6);
+      border: 1px solid rgba(200,169,110,.2);
+      border-radius: 6px;
+      color: var(--parch); font-size: .9rem;
+      font-family: 'Raleway', sans-serif;
+      appearance: none; cursor: pointer; transition: border .3s;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%23c8a96e' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right .9rem center; padding-right: 2.2rem;
+    }
+    .fgroup select:focus { outline: none; border-color: var(--gold); }
+    .fgroup select option { background: #13131f; }
+
+    .search-trigger {
+      width: 100%; padding: 1rem;
+      background: var(--gold); color: var(--ink);
+      border: none; border-radius: 6px;
+      font-size: .85rem; font-weight: 700;
+      letter-spacing: .12em; text-transform: uppercase;
+      cursor: pointer; transition: all .3s;
+      font-family: 'Raleway', sans-serif;
+      display: flex; align-items: center; justify-content: center; gap: .6rem;
+    }
+    .search-trigger:hover { background: var(--gold2); transform: translateY(-1px); }
+    .search-trigger:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+
+    /* Result card */
+    .verse-result { display: none; margin-top: 1.8rem; }
+    .verse-result.show { display: block; animation: fadeUp .5s ease; }
+    .verse-card {
+      background: rgba(11,11,20,.5);
+      border: 1px solid rgba(200,169,110,.2);
+      border-radius: var(--r); padding: 2rem 1.8rem;
+    }
+    .v-ref {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem; font-weight: 600;
+      color: var(--gold2); margin-bottom: 1.1rem;
+      display: flex; align-items: center; gap: .5rem;
+    }
+    .v-ref::before { content: '✝'; font-size: .8rem; opacity: .6; }
+    .v-text {
+      font-family: 'IM Fell English', serif;
+      font-size: 1.15rem; line-height: 1.85;
+      color: var(--parch); margin-bottom: 1.5rem;
+      font-style: italic;
+    }
+    .v-text::before {
+      content: '\201C';
+      font-size: 3.5rem; color: var(--gold3);
+      line-height: 0; vertical-align: -.85rem;
+      margin-right: .1rem; font-style: normal;
+    }
+    .v-actions { display: flex; gap: .7rem; flex-wrap: wrap; }
+    .vbtn {
+      display: inline-flex; align-items: center; gap: .45rem;
+      padding: .55rem 1.1rem; border-radius: 5px;
+      font-size: .78rem; font-weight: 600;
+      letter-spacing: .05em; cursor: pointer; transition: all .25s;
+      border: 1px solid; font-family: 'Raleway', sans-serif;
+    }
+    .vbtn-play  { background: var(--mist);  color: var(--gold);  border-color: rgba(200,169,110,.3); }
+    .vbtn-play.playing { background: rgba(200,169,110,.25); }
+    .vbtn-play:hover { background: rgba(200,169,110,.2); }
+    .vbtn-dl    { background: rgba(80,180,100,.08); color: #7ec89a; border-color: rgba(80,180,100,.25); }
+    .vbtn-dl:hover { background: rgba(80,180,100,.14); }
+    .vbtn-copy  { background: rgba(120,160,220,.08); color: #90b8e8; border-color: rgba(120,160,220,.25); }
+    .vbtn-copy:hover { background: rgba(120,160,220,.15); }
+    .vbtn-share { background: rgba(180,120,220,.08); color: #c4a0e0; border-color: rgba(180,120,220,.25); }
+    .vbtn-share:hover { background: rgba(180,120,220,.15); }
+
+    /* ─── RANDOM ─── */
+    .random-sec {
+      padding: 7rem 2rem; background: var(--ink);
+      border-top: 1px solid rgba(200,169,110,.08);
+      text-align: center;
+    }
+    .random-wrap { max-width: 700px; margin: 3.5rem auto 0; }
+    .random-trigger {
+      display: inline-flex; align-items: center; gap: .8rem;
+      background: transparent; color: var(--gold2);
+      border: 1px solid rgba(200,169,110,.35);
+      padding: 1.1rem 3rem; border-radius: 50px;
+      font-size: .9rem; font-weight: 600;
+      letter-spacing: .1em; text-transform: uppercase;
+      cursor: pointer; transition: all .35s;
+      font-family: 'Raleway', sans-serif;
+    }
+    .random-trigger:hover {
+      background: var(--mist2); border-color: var(--gold);
+      box-shadow: 0 0 40px rgba(200,169,110,.15);
+      transform: translateY(-2px);
+    }
+    .random-trigger:disabled { opacity: .5; cursor: not-allowed; transform: none; box-shadow: none; }
+    .random-trigger svg { width: 20px; height: 20px; transition: transform .5s; }
+    .random-trigger:hover svg { transform: rotate(180deg); }
+
+    .random-result { display: none; margin-top: 2rem; }
+    .random-result.show { display: block; animation: fadeUp .5s ease; }
+    .random-card {
+      background: var(--ink2); border: 1px solid rgba(200,169,110,.15);
+      border-radius: var(--r); padding: 2.2rem 2rem; text-align: left;
+    }
+    .random-card .v-ref { color: var(--gold2); }
+    .random-card .v-text { color: var(--parch); }
+    .random-actions { display: flex; gap: .7rem; flex-wrap: wrap; }
+    .rbtn {
+      display: inline-flex; align-items: center; gap: .45rem;
+      padding: .55rem 1.1rem; border-radius: 5px;
+      font-size: .78rem; font-weight: 600; cursor: pointer;
+      transition: all .25s; border: 1px solid;
+      font-family: 'Raleway', sans-serif;
+    }
+    .rbtn-play  { background: var(--mist); color: var(--gold); border-color: rgba(200,169,110,.3); }
+    .rbtn-play.playing { background: rgba(200,169,110,.25); }
+    .rbtn-play:hover { background: rgba(200,169,110,.2); }
+    .rbtn-dl    { background: rgba(80,180,100,.08); color: #7ec89a; border-color: rgba(80,180,100,.25); }
+    .rbtn-dl:hover { background: rgba(80,180,100,.14); }
+    .rbtn-copy  { background: rgba(120,160,220,.08); color: #90b8e8; border-color: rgba(120,160,220,.25); }
+    .rbtn-copy:hover { background: rgba(120,160,220,.15); }
+    .rbtn-share { background: rgba(180,120,220,.08); color: #c4a0e0; border-color: rgba(180,120,220,.25); }
+    .rbtn-share:hover { background: rgba(180,120,220,.15); }
+
+    /* ─── QUOTE BANNER ─── */
+    .quote-banner {
+      padding: 6rem 2rem;
+      background: linear-gradient(135deg, #15102a 0%, #1c1230 50%, #0f0f1e 100%);
+      border-top: 1px solid rgba(200,169,110,.1);
+      border-bottom: 1px solid rgba(200,169,110,.1);
+      text-align: center;
+    }
+    .banner-quote {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.4rem, 3.5vw, 2.2rem);
+      font-style: italic; font-weight: 300;
+      color: var(--parch2); line-height: 1.55;
+      max-width: 700px; margin: 0 auto 1.2rem;
+    }
+    .banner-ref {
+      font-size: .78rem; letter-spacing: .18em; text-transform: uppercase;
+      color: var(--gold); opacity: .75;
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background: var(--ink); padding: 4rem 2rem 2.5rem;
+      border-top: 1px solid rgba(200,169,110,.08);
+    }
+    .foot-inner { max-width: 1000px; margin: 0 auto; }
+    .foot-top {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      gap: 2rem; flex-wrap: wrap; margin-bottom: 3rem;
+    }
+    .foot-brand {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem; color: var(--gold2); margin-bottom: .5rem;
+    }
+    .foot-brand-sub { font-size: .8rem; color: var(--white60); max-width: 240px; line-height: 1.6; }
+    .foot-nav { display: flex; gap: 2.5rem; flex-wrap: wrap; }
+    .foot-nav a {
+      color: var(--white60); text-decoration: none;
+      font-size: .82rem; letter-spacing: .06em;
+      transition: color .3s;
+    }
+    .foot-nav a:hover { color: var(--gold2); }
+    .foot-divider { height: 1px; background: rgba(200,169,110,.08); margin-bottom: 1.5rem; }
+    .foot-bottom {
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;
+      font-size: .75rem; color: rgba(200,169,110,.35);
+    }
+    .foot-badge {
+      display: inline-flex; align-items: center; gap: .4rem;
+      font-size: .7rem; letter-spacing: .1em;
+      color: rgba(200,169,110,.3);
+    }
+
+    /* ─── AUDIO PLAYER BAR ─── */
+    .player-bar {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      z-index: 1000; display: none;
+      background: rgba(11,11,20,.97);
+      border-top: 1px solid rgba(200,169,110,.2);
+      backdrop-filter: blur(20px);
+      animation: slideUp .4s ease;
+    }
+    .player-bar.show { display: block; }
+    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    .player-inner {
+      max-width: 1100px; margin: 0 auto;
+      display: flex; align-items: center; gap: 1.2rem;
+      padding: .85rem 2rem;
+    }
+    .pw { display: flex; align-items: center; gap: 3px; flex-shrink: 0; }
+    .pw span {
+      display: block; width: 3px; border-radius: 3px;
+      background: var(--gold); animation: wv .7s ease-in-out infinite alternate;
+    }
+    .pw span:nth-child(1) { height: 10px; }
+    .pw span:nth-child(2) { height: 18px; animation-delay: .1s; }
+    .pw span:nth-child(3) { height: 8px; animation-delay: .2s; }
+    .pw span:nth-child(4) { height: 15px; animation-delay: .05s; }
+    .pw span:nth-child(5) { height: 11px; animation-delay: .15s; }
+    .pw.paused span { animation-play-state: paused; }
+    @keyframes wv { from { transform: scaleY(.4); } to { transform: scaleY(1); } }
+    .pinfo { flex: 1; min-width: 0; }
+    .pinfo-ref {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: .95rem; color: var(--gold2);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .pinfo-txt { font-size: .75rem; color: var(--white60); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .pplay {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: var(--gold); border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: background .3s, transform .2s;
+    }
+    .pplay:hover { background: var(--gold2); transform: scale(1.08); }
+    .pplay svg { width: 18px; height: 18px; fill: var(--ink); }
+    .pclose {
+      background: none; border: none; cursor: pointer;
+      color: var(--white60); flex-shrink: 0; padding: .3rem; transition: color .3s;
+    }
+    .pclose:hover { color: var(--parch); }
+    .pclose svg { width: 18px; height: 18px; stroke: currentColor; }
+
+    /* ─── TOAST ─── */
+    .toast {
+      position: fixed; bottom: 5rem; left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--ink3); color: var(--parch);
+      border: 1px solid rgba(200,169,110,.2);
+      padding: .85rem 1.8rem; border-radius: 8px;
+      font-size: .85rem; z-index: 2000;
+      opacity: 0; pointer-events: none;
+      transition: all .35s ease;
+      white-space: nowrap;
+      box-shadow: 0 8px 30px rgba(0,0,0,.4);
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* ─── SPINNER ─── */
+    .spin {
+      display: inline-block; width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,.3);
+      border-top-color: currentColor;
+      border-radius: 50%;
+      animation: spinning .6s linear infinite;
+    }
+    @keyframes spinning { to { transform: rotate(360deg); } }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 768px) {
+      .nav-links { display: none; position: fixed; inset: 0; background: rgba(11,11,20,.98); flex-direction: column; justify-content: center; align-items: center; gap: 2.5rem; z-index: 999; }
+      .nav-links.open { display: flex; }
+      .nav-links a { font-size: 1.1rem; }
+      .burger { display: flex; }
+      .stats-grid { grid-template-columns: repeat(2,1fr); }
+      .stat-item:nth-child(2) { border-right: none; }
+      .stat-item:nth-child(3) { border-right: 1px solid rgba(200,169,110,.12); border-top: 1px solid rgba(200,169,110,.12); }
+      .stat-item:last-child { border-top: 1px solid rgba(200,169,110,.12); }
+      .features-grid { grid-template-columns: 1fr; }
+      .feat { border-right: none !important; }
+      .selectors { grid-template-columns: 1fr; }
+      .v-actions, .random-actions { flex-direction: column; }
+      .vbtn, .rbtn { justify-content: center; }
+      .foot-top { flex-direction: column; }
+      .foot-bottom { flex-direction: column; align-items: flex-start; }
+      .player-inner { padding: .7rem 1rem; gap: .8rem; }
+      .pinfo-txt { display: none; }
+    }
+    @media (max-width: 480px) {
+      .hero-buttons { flex-direction: column; }
+      .btn-gold, .btn-outline { width: 100%; justify-content: center; }
+    }
+  </style>
 </head>
-<body class="bg-biblia min-height-screen flex flex-col items-center p-6">
+<body>
 
-    <audio id="bgMusic" loop>
-        <source src="https://www.bensound.com/bensound-music/bensound-slowmotion.mp3" type="audio/mpeg">
-    </audio>
+<!-- NAV -->
+<nav id="nav">
+  <a href="#" class="nav-logo"><span>✝</span> Sonido de Vida</a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#features" onclick="closeNav()">Características</a></li>
+    <li><a href="#buscar" onclick="closeNav()">Buscar</a></li>
+    <li><a href="#aleatorio" onclick="closeNav()">Aleatorio</a></li>
+    <li><a href="#buscar" class="nav-cta" onclick="closeNav()">Comenzar</a></li>
+  </ul>
+  <button class="burger" id="burger" onclick="toggleNav()" aria-label="Menú">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
 
-    <header class="text-center mb-10">
-        <h1 class="serif text-4xl font-bold text-slate-800">Sonido de Vida</h1>
-        <p class="text-slate-600 mt-2">Encuentra paz en su palabra</p>
-    </header>
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-line"></div>
+  <span class="hero-ornament">✝</span>
+  <span class="hero-ornament">✝</span>
+  <span class="hero-ornament">✝</span>
+  <span class="hero-ornament">✝</span>
 
-    <main class="w-full max-w-2xl bg-white rounded-3xl shadow-xl p-8">
-        <div class="flex gap-2 mb-8">
-            <input type="text" id="searchInput" placeholder="Ej: Juan 3:16" 
-                   class="flex-1 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-400">
-            <button onclick="searchVerse()" class="bg-slate-800 text-white px-6 py-3 rounded-xl hover:bg-slate-700 transition">Buscar</button>
+  <div class="hero-content">
+    <div class="hero-eyebrow">
+      <span></span> Biblia Gratuita en Audio <span></span>
+    </div>
+    <h1>Sonido de <em>Vida</em></h1>
+    <p class="hero-sub">Lee, escucha y descarga cualquier versículo de la Biblia.<br>Gratis, sin registro, siempre disponible.</p>
+    <div class="hero-buttons">
+      <a href="#buscar" class="btn-gold">Buscar Versículo</a>
+      <a href="#aleatorio" class="btn-outline">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+        Versículo Aleatorio
+      </a>
+    </div>
+  </div>
+
+  <div class="scroll-hint">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+    Explorar
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stats-grid reveal">
+    <div class="stat-item">
+      <div class="stat-num">66</div>
+      <div class="stat-label">Libros</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">1,189</div>
+      <div class="stat-label">Capítulos</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">31K+</div>
+      <div class="stat-label">Versículos</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">100%</div>
+      <div class="stat-label">Gratuito</div>
+    </div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="reveal">
+    <div class="divider"><span class="divider-cross">✦</span></div>
+    <p class="sec-label">Lo que ofrecemos</p>
+    <h2 class="sec-title">Todo lo que necesitas</h2>
+    <p class="sec-sub">Herramientas sencillas para conectar con la Palabra de Dios cada día</p>
+  </div>
+  <div class="features-grid">
+    <div class="feat reveal">
+      <span class="feat-icon">🔍</span>
+      <h3>Búsqueda Rápida</h3>
+      <p>Encuentra cualquier versículo al instante seleccionando libro, capítulo y versículo de la Biblia completa.</p>
+    </div>
+    <div class="feat reveal">
+      <span class="feat-icon">🔊</span>
+      <h3>Audio Integrado</h3>
+      <p>Escucha cada versículo leído en voz alta en español. Ideal para meditar, orar o conducir.</p>
+    </div>
+    <div class="feat reveal">
+      <span class="feat-icon">💾</span>
+      <h3>Descarga Offline</h3>
+      <p>Guarda cualquier versículo como archivo HTML autocontenido con audio para escucharlo sin conexión.</p>
+    </div>
+    <div class="feat reveal">
+      <span class="feat-icon">🎲</span>
+      <h3>Versículo Aleatorio</h3>
+      <p>Deja que Dios hable a tu corazón con un versículo inspirador elegido al azar de toda la Biblia.</p>
+    </div>
+    <div class="feat reveal">
+      <span class="feat-icon">🔐</span>
+      <h3>Sin Registro</h3>
+      <p>Sin cuentas ni suscripciones. Acceso completo e inmediato a toda la Escritura, para siempre.</p>
+    </div>
+    <div class="feat reveal">
+      <span class="feat-icon">📤</span>
+      <h3>Comparte Fácil</h3>
+      <p>Copia o comparte cualquier versículo con un clic para compartir la Palabra con quienes amas.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SEARCH -->
+<section class="search-sec" id="buscar">
+  <div class="reveal">
+    <div class="divider"><span class="divider-cross">✦</span></div>
+    <p class="sec-label">La Escritura</p>
+    <h2 class="sec-title">Buscar un Versículo</h2>
+    <p class="sec-sub">Selecciona el libro, capítulo y versículo</p>
+  </div>
+
+  <div class="search-wrap reveal">
+    <div class="search-card">
+      <div class="selectors">
+        <div class="fgroup">
+          <label>Libro</label>
+          <select id="bookSel"><option value="">— Selecciona un libro —</option></select>
         </div>
-
-        <div id="displayArea" class="text-center min-h-[200px] flex flex-col justify-center border-y border-slate-100 py-6">
-            <h2 id="refDisplay" class="text-blue-600 font-semibold mb-2">Presiona "Random" o busca un versículo</h2>
-            <p id="verseDisplay" class="serif text-2xl italic text-slate-700 leading-relaxed italic">"..."</p>
+        <div class="fgroup">
+          <label>Capítulo</label>
+          <select id="chapSel"><option value="">Cap.</option></select>
         </div>
-
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8">
-            <button onclick="playRandom()" class="flex flex-col items-center p-4 bg-blue-50 rounded-2xl hover:bg-blue-100 transition">
-                <span class="text-2xl mb-1">🎲</span>
-                <span class="text-xs font-bold text-blue-800">RANDOM</span>
-            </button>
-            <button onclick="speakVerse()" class="flex flex-col items-center p-4 bg-green-50 rounded-2xl hover:bg-green-100 transition">
-                <span class="text-2xl mb-1">🔊</span>
-                <span class="text-xs font-bold text-green-800">ESCUCHAR</span>
-            </button>
-            <button onclick="downloadAudio()" class="flex flex-col items-center p-4 bg-purple-50 rounded-2xl hover:bg-purple-100 transition">
-                <span class="text-2xl mb-1">💾</span>
-                <span class="text-xs font-bold text-purple-800">MP3</span>
-            </button>
-            <button id="musicToggle" onclick="toggleMusic()" class="flex flex-col items-center p-4 bg-orange-50 rounded-2xl hover:bg-orange-100 transition">
-                <span id="musicIcon" class="text-2xl mb-1">🔇</span>
-                <span class="text-xs font-bold text-orange-800 text-center uppercase">Música</span>
-            </button>
+        <div class="fgroup">
+          <label>Versículo</label>
+          <select id="versSel"><option value="">Vers.</option></select>
         </div>
-    </main>
+      </div>
+      <button class="search-trigger" id="searchBtn" onclick="doSearch()">
+        🔍 Buscar Versículo
+      </button>
+    </div>
 
-    <footer class="mt-10 text-slate-500 text-sm">
-        &copy; 2026 Sonido de Vida · Hecho con fe
-    </footer>
+    <div class="verse-result" id="verseResult">
+      <div class="verse-card">
+        <div class="v-ref" id="vRef"></div>
+        <div class="v-text" id="vText"></div>
+        <div class="v-actions">
+          <button class="vbtn vbtn-play" id="playBtn" onclick="togglePlay('search')">🔊 Escuchar</button>
+          <button class="vbtn vbtn-dl"   id="dlBtn"   onclick="downloadVerse('search')">💾 Descargar</button>
+          <button class="vbtn vbtn-copy"              onclick="copyVerse('search')">📋 Copiar</button>
+          <button class="vbtn vbtn-share"             onclick="shareVerse('search')">📤 Compartir</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-    <script>
-        let currentVerse = { ref: "", text: "" };
-        const bgMusic = document.getElementById('bgMusic');
-        bgMusic.volume = 0.2; // Música bajita
+<!-- RANDOM -->
+<section class="random-sec" id="aleatorio">
+  <div class="reveal">
+    <div class="divider"><span class="divider-cross">✦</span></div>
+    <p class="sec-label">Inspiración</p>
+    <h2 class="sec-title">Versículo del Momento</h2>
+    <p class="sec-sub">Deja que Dios elija qué mensaje necesitas hoy</p>
+  </div>
 
-        async function searchVerse() {
-            const ref = document.getElementById('searchInput').value;
-            if (!ref) return;
-            fetchVerse(`https://bible-api.com/${ref}?translation=rvr09`);
-        }
+  <div class="random-wrap reveal">
+    <button class="random-trigger" id="randomBtn" onclick="doRandom()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 4h-4l-4 8-3-6H3"/><path d="M20 20h-4l-4-8-3 6H3"/></svg>
+      Descubrir un Versículo
+    </button>
 
-        async function playRandom() {
-            // Nota: Esta API no tiene /random nativo que funcione bien siempre,
-            // usamos un versículo conocido al azar para el ejemplo
-            const randomRefs = ["Juan 3:16", "Salmos 23:1", "Filipenses 4:13", "Mateo 11:28", "Proverbios 3:5"];
-            const selection = randomRefs[Math.floor(Math.random() * randomRefs.length)];
-            fetchVerse(`https://bible-api.com/${selection}?translation=rvr09`);
-        }
+    <div class="random-result" id="randomResult">
+      <div class="random-card">
+        <div class="v-ref" id="rRef"></div>
+        <div class="v-text" id="rText"></div>
+        <div class="random-actions">
+          <button class="rbtn rbtn-play" id="rPlayBtn" onclick="togglePlay('random')">🔊 Escuchar</button>
+          <button class="rbtn rbtn-dl"   id="rDlBtn"   onclick="downloadVerse('random')">💾 Descargar</button>
+          <button class="rbtn rbtn-copy"               onclick="copyVerse('random')">📋 Copiar</button>
+          <button class="rbtn rbtn-share"              onclick="shareVerse('random')">📤 Compartir</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-        async function fetchVerse(url) {
-            try {
-                const res = await fetch(url);
-                const data = await res.json();
-                if (data.text) {
-                    currentVerse = { ref: data.reference, text: data.text };
-                    document.getElementById('verseDisplay').innerText = `"${data.text.trim()}"`;
-                    document.getElementById('refDisplay').innerText = data.reference;
-                }
-            } catch (e) { alert("No se encontró el versículo"); }
-        }
+<!-- QUOTE -->
+<div class="quote-banner reveal">
+  <p class="banner-quote">"Lámpara es a mis pies tu palabra, y lumbrera a mi camino."</p>
+  <p class="banner-ref">Salmos 119:105 · Reina Valera</p>
+</div>
 
-        function speakVerse() {
-            if (!currentVerse.text) return;
-            const synth = window.speechSynthesis;
-            const utter = new SpeechSynthesisUtterance(currentVerse.text);
-            utter.lang = 'es-ES';
-            utter.rate = 0.9;
-            synth.speak(utter);
-        }
+<!-- FOOTER -->
+<footer>
+  <div class="foot-inner">
+    <div class="foot-top">
+      <div>
+        <div class="foot-brand">✝ Sonido de Vida</div>
+        <p class="foot-brand-sub">La Palabra de Dios, libre y accesible para todos.</p>
+      </div>
+      <nav class="foot-nav">
+        <a href="#features">Características</a>
+        <a href="#buscar">Buscar</a>
+        <a href="#aleatorio">Aleatorio</a>
+        <a href="https://sonidodevida.com">sonidodevida.com</a>
+      </nav>
+    </div>
+    <div class="foot-divider"></div>
+    <div class="foot-bottom">
+      <span>© 2026 Sonido de Vida · La Palabra de Dios, libre para todos</span>
+      <span class="foot-badge">✝ Reina Valera 1960</span>
+    </div>
+  </div>
+</footer>
 
-        function downloadAudio() {
-            if (!currentVerse.text) return alert("Busca un versículo primero");
-            const text = encodeURIComponent(currentVerse.text);
-            // Proxy de Google TTS para generar el archivo
-            const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&tl=es-US&client=tw-ob&q=${text}`;
-            window.open(audioUrl, '_blank'); 
-        }
+<!-- AUDIO PLAYER BAR -->
+<div class="player-bar" id="playerBar">
+  <div class="player-inner">
+    <div class="pw paused" id="pw">
+      <span></span><span></span><span></span><span></span><span></span>
+    </div>
+    <div class="pinfo">
+      <div class="pinfo-ref" id="pRef"></div>
+      <div class="pinfo-txt" id="pTxt"></div>
+    </div>
+    <button class="pplay" id="pPlayBtn" onclick="toggleGlobal()">
+      <svg id="pPlayIcon" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      <svg id="pPauseIcon" viewBox="0 0 24 24" style="display:none"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+    </button>
+    <button class="pclose" onclick="closePlayer()">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+</div>
 
-        function toggleMusic() {
-            if (bgMusic.paused) {
-                bgMusic.play();
-                document.getElementById('musicIcon').innerText = "🎵";
-            } else {
-                bgMusic.pause();
-                document.getElementById('musicIcon').innerText = "🔇";
-            }
-        }
-    </script>
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── DATA ───────────────────────────────────────────────────────
+const BOOKS = [
+  {es:"Génesis",        en:"Genesis",       ch:50},
+  {es:"Éxodo",          en:"Exodus",        ch:40},
+  {es:"Levítico",       en:"Leviticus",     ch:27},
+  {es:"Números",        en:"Numbers",       ch:36},
+  {es:"Deuteronomio",   en:"Deuteronomy",   ch:34},
+  {es:"Josué",          en:"Joshua",        ch:24},
+  {es:"Jueces",         en:"Judges",        ch:21},
+  {es:"Rut",            en:"Ruth",          ch:4},
+  {es:"1 Samuel",       en:"1Samuel",       ch:31},
+  {es:"2 Samuel",       en:"2Samuel",       ch:24},
+  {es:"1 Reyes",        en:"1Kings",        ch:22},
+  {es:"2 Reyes",        en:"2Kings",        ch:25},
+  {es:"1 Crónicas",     en:"1Chronicles",   ch:29},
+  {es:"2 Crónicas",     en:"2Chronicles",   ch:36},
+  {es:"Esdras",         en:"Ezra",          ch:10},
+  {es:"Nehemías",       en:"Nehemiah",      ch:13},
+  {es:"Ester",          en:"Esther",        ch:10},
+  {es:"Job",            en:"Job",           ch:42},
+  {es:"Salmos",         en:"Psalms",        ch:150},
+  {es:"Proverbios",     en:"Proverbs",      ch:31},
+  {es:"Eclesiastés",    en:"Ecclesiastes",  ch:12},
+  {es:"Cantares",       en:"Song of Solomon",ch:8},
+  {es:"Isaías",         en:"Isaiah",        ch:66},
+  {es:"Jeremías",       en:"Jeremiah",      ch:52},
+  {es:"Lamentaciones",  en:"Lamentations",  ch:5},
+  {es:"Ezequiel",       en:"Ezekiel",       ch:48},
+  {es:"Daniel",         en:"Daniel",        ch:12},
+  {es:"Oseas",          en:"Hosea",         ch:14},
+  {es:"Joel",           en:"Joel",          ch:3},
+  {es:"Amós",           en:"Amos",          ch:9},
+  {es:"Abdías",         en:"Obadiah",       ch:1},
+  {es:"Jonás",          en:"Jonah",         ch:4},
+  {es:"Miqueas",        en:"Micah",         ch:7},
+  {es:"Nahúm",          en:"Nahum",         ch:3},
+  {es:"Habacuc",        en:"Habakkuk",      ch:3},
+  {es:"Sofonías",       en:"Zephaniah",     ch:3},
+  {es:"Hageo",          en:"Haggai",        ch:2},
+  {es:"Zacarías",       en:"Zechariah",     ch:14},
+  {es:"Malaquías",      en:"Malachi",       ch:4},
+  {es:"Mateo",          en:"Matthew",       ch:28},
+  {es:"Marcos",         en:"Mark",          ch:16},
+  {es:"Lucas",          en:"Luke",          ch:24},
+  {es:"Juan",           en:"John",          ch:21},
+  {es:"Hechos",         en:"Acts",          ch:28},
+  {es:"Romanos",        en:"Romans",        ch:16},
+  {es:"1 Corintios",    en:"1Corinthians",  ch:16},
+  {es:"2 Corintios",    en:"2Corinthians",  ch:13},
+  {es:"Gálatas",        en:"Galatians",     ch:6},
+  {es:"Efesios",        en:"Ephesians",     ch:6},
+  {es:"Filipenses",     en:"Philippians",   ch:4},
+  {es:"Colosenses",     en:"Colossians",    ch:4},
+  {es:"1 Tesalonicenses",en:"1Thessalonians",ch:5},
+  {es:"2 Tesalonicenses",en:"2Thessalonians",ch:3},
+  {es:"1 Timoteo",      en:"1Timothy",      ch:6},
+  {es:"2 Timoteo",      en:"2Timothy",      ch:4},
+  {es:"Tito",           en:"Titus",         ch:3},
+  {es:"Filemón",        en:"Philemon",      ch:1},
+  {es:"Hebreos",        en:"Hebrews",       ch:13},
+  {es:"Santiago",       en:"James",         ch:5},
+  {es:"1 Pedro",        en:"1Peter",        ch:5},
+  {es:"2 Pedro",        en:"2Peter",        ch:3},
+  {es:"1 Juan",         en:"1John",         ch:5},
+  {es:"2 Juan",         en:"2John",         ch:1},
+  {es:"3 Juan",         en:"3John",         ch:1},
+  {es:"Judas",          en:"Jude",          ch:1},
+  {es:"Apocalipsis",    en:"Revelation",    ch:22},
+];
+
+// ─── STATE ──────────────────────────────────────────────────────
+let srchVerse  = {ref:'', text:''};
+let randVerse  = {ref:'', text:''};
+let playing    = false;
+let paused     = false;
+let activeType = null; // 'search' | 'random'
+
+// ─── INIT ───────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  populateBooks();
+  initNav();
+  initReveal();
+  if ('speechSynthesis' in window) {
+    speechSynthesis.getVoices();
+    speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
+  }
+});
+
+function populateBooks() {
+  const sel = document.getElementById('bookSel');
+  BOOKS.forEach((b, i) => {
+    const o = document.createElement('option');
+    o.value = i;
+    o.textContent = b.es;
+    sel.appendChild(o);
+  });
+  sel.addEventListener('change', () => {
+    const idx = parseInt(sel.value);
+    if (isNaN(idx)) { resetChap(); resetVers(); return; }
+    populateChaps(BOOKS[idx].ch);
+    resetVers();
+  });
+  document.getElementById('chapSel').addEventListener('change', () => {
+    const chVal = document.getElementById('chapSel').value;
+    if (chVal) populateVers(176); // max verses in a psalm; we trim dynamically
+  });
+}
+function resetChap() { document.getElementById('chapSel').innerHTML = '<option value="">Cap.</option>'; }
+function resetVers() { document.getElementById('versSel').innerHTML = '<option value="">Vers. (opcional)</option>'; }
+function populateChaps(n) {
+  const s = document.getElementById('chapSel');
+  s.innerHTML = '<option value="">Cap.</option>';
+  for (let i = 1; i <= n; i++) { const o = document.createElement('option'); o.value = i; o.textContent = i; s.appendChild(o); }
+}
+function populateVers(n) {
+  const s = document.getElementById('versSel');
+  s.innerHTML = '<option value="">Vers. (opcional)</option>';
+  for (let i = 1; i <= n; i++) { const o = document.createElement('option'); o.value = i; o.textContent = i; s.appendChild(o); }
+}
+
+// ─── API ────────────────────────────────────────────────────────
+async function fetchVerse(bookEn, chapter, verse) {
+  // bible-api.com — translation rv1960 (Reina Valera 1960)
+  const ref = verse
+    ? `${encodeURIComponent(bookEn)}+${chapter}:${verse}`
+    : `${encodeURIComponent(bookEn)}+${chapter}`;
+  const url = `https://bible-api.com/${ref}?translation=rv1960`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const data = await res.json();
+  if (!data.text) throw new Error('Sin resultado');
+  // If a full chapter was returned, take first verse
+  const text = (data.verses && data.verses.length > 0 && !verse)
+    ? data.verses[0].text.trim()
+    : data.text.trim();
+  return text;
+}
+
+// ─── SEARCH ─────────────────────────────────────────────────────
+async function doSearch() {
+  const bookIdx = document.getElementById('bookSel').value;
+  const chap    = document.getElementById('chapSel').value;
+  const vers    = document.getElementById('versSel').value;
+
+  if (bookIdx === '' || chap === '') { toast('Selecciona libro y capítulo'); return; }
+
+  const book = BOOKS[parseInt(bookIdx)];
+  const btn  = document.getElementById('searchBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span> Buscando...';
+
+  try {
+    const text = await fetchVerse(book.en, chap, vers);
+    const ref  = `${book.es} ${chap}${vers ? ':' + vers : ''}`;
+    srchVerse  = { ref, text };
+    document.getElementById('vRef').textContent  = ref;
+    document.getElementById('vText').textContent = text;
+    const res = document.getElementById('verseResult');
+    res.classList.add('show');
+    resetPlayBtn('search');
+    res.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  } catch (e) {
+    toast('No se pudo obtener el versículo. Verifica tu conexión.');
+    console.error(e);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '🔍 Buscar Versículo';
+  }
+}
+
+// ─── RANDOM ─────────────────────────────────────────────────────
+async function doRandom() {
+  const btn = document.getElementById('randomBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin" style="border-top-color:var(--gold2)"></span> Descubriendo...';
+
+  try {
+    let text, ref, tries = 0;
+    while (!text && tries < 5) {
+      tries++;
+      const book   = BOOKS[Math.floor(Math.random() * BOOKS.length)];
+      const chap   = Math.floor(Math.random() * book.ch) + 1;
+      const vers   = Math.floor(Math.random() * 30) + 1;
+      try {
+        text = await fetchVerse(book.en, chap, vers);
+        ref  = `${book.es} ${chap}:${vers}`;
+      } catch (_) { /* try again */ }
+    }
+    if (!text) { toast('No se pudo obtener el versículo. Intenta de nuevo.'); return; }
+    randVerse = { ref, text };
+    document.getElementById('rRef').textContent  = ref;
+    document.getElementById('rText').textContent = text;
+    const res = document.getElementById('randomResult');
+    res.classList.add('show');
+    resetPlayBtn('random');
+    res.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 4h-4l-4 8-3-6H3"/><path d="M20 20h-4l-4-8-3 6H3"/></svg> Descubrir un Versículo`;
+  }
+}
+
+// ─── AUDIO ──────────────────────────────────────────────────────
+function speak(text, ref, type) {
+  if (!('speechSynthesis' in window)) { toast('Tu navegador no soporta audio'); return; }
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'es-ES'; u.rate = 0.82; u.pitch = 1;
+  const voices = speechSynthesis.getVoices();
+  const esVoice = voices.find(v => v.lang.startsWith('es'));
+  if (esVoice) u.voice = esVoice;
+  u.onend  = () => stopPlaying(type);
+  u.onerror = () => stopPlaying(type);
+  speechSynthesis.speak(u);
+  playing = true; paused = false; activeType = type;
+  showPlayerBar(ref, text);
+  updatePlayBtn(type, true);
+}
+
+function stopPlaying(type) {
+  window.speechSynthesis.cancel();
+  playing = false; paused = false; activeType = null;
+  updatePlayBtn(type, false);
+  hidePlayerBar();
+}
+
+function togglePlay(type) {
+  const verse = type === 'search' ? srchVerse : randVerse;
+  if (!verse.text) { toast('Primero busca o genera un versículo'); return; }
+  if (playing && activeType === type) {
+    if (paused) { speechSynthesis.resume(); paused = false; playing = true; }
+    else        { speechSynthesis.pause(); paused = true; playing = false; }
+    updatePlayBtn(type, !paused);
+    document.getElementById('pw').classList.toggle('paused', paused);
+    updateGlobalIcons();
+  } else if (playing && activeType !== type) {
+    stopPlaying(activeType);
+    speak(verse.text, verse.ref, type);
+  } else {
+    speak(verse.text, verse.ref, type);
+  }
+}
+
+function toggleGlobal() {
+  if (!activeType) return;
+  const verse = activeType === 'search' ? srchVerse : randVerse;
+  if (playing && !paused) { speechSynthesis.pause(); paused = true; playing = false; }
+  else if (paused) { speechSynthesis.resume(); paused = false; playing = true; }
+  else { speak(verse.text, verse.ref, activeType); return; }
+  updatePlayBtn(activeType, playing);
+  document.getElementById('pw').classList.toggle('paused', !playing);
+  updateGlobalIcons();
+}
+
+function updatePlayBtn(type, isPlaying) {
+  const btn = type === 'search' ? document.getElementById('playBtn') : document.getElementById('rPlayBtn');
+  if (!btn) return;
+  btn.classList.toggle('playing', isPlaying);
+  btn.textContent = isPlaying ? '⏸ Pausar' : '🔊 Escuchar';
+  updateGlobalIcons();
+}
+
+function resetPlayBtn(type) { updatePlayBtn(type, false); }
+
+function updateGlobalIcons() {
+  document.getElementById('pPlayIcon').style.display  = (playing && !paused) ? 'none'  : 'block';
+  document.getElementById('pPauseIcon').style.display = (playing && !paused) ? 'block' : 'none';
+}
+
+function showPlayerBar(ref, text) {
+  document.getElementById('pRef').textContent = ref;
+  document.getElementById('pTxt').textContent = text.substring(0, 90) + (text.length > 90 ? '…' : '');
+  document.getElementById('pw').classList.remove('paused');
+  updateGlobalIcons();
+  document.getElementById('playerBar').classList.add('show');
+}
+function hidePlayerBar() { document.getElementById('playerBar').classList.remove('show'); }
+function closePlayer() { if (activeType) stopPlaying(activeType); hidePlayerBar(); }
+
+// ─── DOWNLOAD ───────────────────────────────────────────────────
+function downloadVerse(type) {
+  const verse = type === 'search' ? srchVerse : randVerse;
+  const btnId = type === 'search' ? 'dlBtn' : 'rDlBtn';
+  if (!verse.text) { toast('Primero busca o genera un versículo'); return; }
+  const btn = document.getElementById(btnId);
+  const orig = btn.innerHTML;
+  btn.innerHTML = '<span class="spin"></span> Generando...';
+  const safeText = verse.text.replace(/"/g,'\\"').replace(/\n/g,' ');
+  const safeRef  = verse.ref.replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ ]/g,'_');
+  const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>${verse.ref} · Sonido de Vida</title><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:Georgia,serif;background:linear-gradient(135deg,#0b0b14,#1c1c2e);color:#f2ead8;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:2rem}.card{max-width:560px;width:100%;text-align:center;background:rgba(200,169,110,.06);border:1px solid rgba(200,169,110,.2);border-radius:16px;padding:3rem 2.5rem}.cross{font-size:2.5rem;color:#c8a96e;margin-bottom:1.5rem}h1{font-size:1.5rem;color:#e8cc94;margin-bottom:1.5rem;font-family:Georgia,serif}.verse{font-size:1.2rem;line-height:1.9;font-style:italic;margin-bottom:2rem;opacity:.92}.source{color:#c8a96e;font-size:.85rem;margin-bottom:2rem;opacity:.7}.btn{background:#c8a96e;color:#0b0b14;border:none;padding:.9rem 2.2rem;border-radius:4px;font-size:.9rem;cursor:pointer;font-weight:700;margin:.4rem;letter-spacing:.05em}.btn:hover{background:#e8cc94}.btn-o{background:transparent;color:#c8a96e;border:1px solid rgba(200,169,110,.4)}.footer{margin-top:2.5rem;font-size:.75rem;opacity:.35}</style></head><body><div class="card"><div class="cross">✝</div><h1>${verse.ref}</h1><p class="verse">\u201C${safeText}\u201D</p><p class="source">Reina Valera 1960</p><button class="btn" id="sb" onclick="go()">🔊 Escuchar</button><button class="btn btn-o" onclick="cp()">📋 Copiar</button><p class="footer">Sonido de Vida · sonidodevida.com · La Palabra de Dios, libre para todos</p></div><script>let on=false;function go(){const b=document.getElementById('sb');if(on){speechSynthesis.cancel();on=false;b.textContent='🔊 Escuchar';return;}const u=new SpeechSynthesisUtterance("${safeText}");u.lang='es-ES';u.rate=0.82;u.onend=()=>{on=false;b.textContent='🔊 Escuchar'};speechSynthesis.speak(u);on=true;b.textContent='⏸ Pausar'}function cp(){navigator.clipboard.writeText("${verse.ref}\\n\\n\\"${safeText}\\"").then(()=>alert('¡Copiado!'))}<\/script></body></html>`;
+  const blob = new Blob([html], {type:'text/html'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = `sonidodevida_${safeRef}.html`; a.click();
+  URL.revokeObjectURL(url);
+  btn.innerHTML = orig;
+  toast('¡Archivo descargado! Ábrelo en tu navegador.');
+}
+
+// ─── COPY / SHARE ────────────────────────────────────────────────
+async function copyVerse(type) {
+  const verse = type === 'search' ? srchVerse : randVerse;
+  if (!verse.text) { toast('No hay versículo para copiar'); return; }
+  const t = `${verse.ref}\n\n"${verse.text}"`;
+  try { await navigator.clipboard.writeText(t); } catch { fallbackCopy(t); }
+  toast('¡Versículo copiado!');
+}
+function fallbackCopy(t) {
+  const ta = document.createElement('textarea');
+  ta.value = t; document.body.appendChild(ta); ta.select();
+  document.execCommand('copy'); document.body.removeChild(ta);
+}
+async function shareVerse(type) {
+  const verse = type === 'search' ? srchVerse : randVerse;
+  if (!verse.text) { toast('No hay versículo para compartir'); return; }
+  const txt = `${verse.ref}\n\n"${verse.text}"\n\n— Sonido de Vida · sonidodevida.com`;
+  if (navigator.share) { try { await navigator.share({title: verse.ref, text: txt, url:'https://sonidodevida.com'}); } catch(_){} }
+  else { try { await navigator.clipboard.writeText(txt); toast('¡Copiado al portapapeles!'); } catch(_){ toast('No se pudo compartir.'); } }
+}
+
+// ─── NAV ────────────────────────────────────────────────────────
+function initNav() {
+  window.addEventListener('scroll', () => {
+    document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 40);
+  });
+}
+function toggleNav() {
+  document.getElementById('burger').classList.toggle('open');
+  document.getElementById('navLinks').classList.toggle('open');
+}
+function closeNav() {
+  document.getElementById('burger').classList.remove('open');
+  document.getElementById('navLinks').classList.remove('open');
+}
+
+// ─── SCROLL REVEAL ──────────────────────────────────────────────
+function initReveal() {
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+}
+
+// ─── TOAST ──────────────────────────────────────────────────────
+let toastTimer;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
+}
+</script>
 </body>
 </html>
