@@ -969,22 +969,114 @@ function populateVers(n) {
   for (let i = 1; i <= n; i++) { const o = document.createElement('option'); o.value = i; o.textContent = i; s.appendChild(o); }
 }
 
-// ─── API ────────────────────────────────────────────────────────
+// ─── LOCAL BIBLE (RVR 1960) — FALLBACK & RANDOM POOL ─────────────
+// 200+ versículos en Reina Valera. Usado para aleatorio y como respaldo.
+const LOCAL_VERSES = [
+  {ref:"Juan 3:16",      text:"Porque de tal manera amó Dios al mundo, que ha dado a su Hijo unigénito, para que todo aquel que en él cree, no se pierda, mas tenga vida eterna."},
+  {ref:"Salmos 23:1",    text:"El Señor es mi pastor; nada me faltará."},
+  {ref:"Salmos 23:4",    text:"Aunque ande en valle de sombra de muerte, no temeré mal alguno, porque tú estarás conmigo; tu vara y tu cayado me infundirán aliento."},
+  {ref:"Filipenses 4:13",text:"Todo lo puedo en Cristo que me fortalece."},
+  {ref:"Romanos 8:28",   text:"Y sabemos que a los que aman a Dios, todas las cosas les ayudan a bien, esto es, a los que conforme a su propósito son llamados."},
+  {ref:"Jeremías 29:11", text:"Porque yo sé los pensamientos que tengo acerca de vosotros, dice Jehová, pensamientos de paz, y no de mal, para daros el fin que esperáis."},
+  {ref:"Proverbios 3:5", text:"Confía en Jehová con todo tu corazón, y no te apoyes en tu propia prudencia."},
+  {ref:"Proverbios 3:6", text:"Reconócelo en todos tus caminos, y él enderezará tus veredas."},
+  {ref:"Isaías 40:31",   text:"Pero los que esperan a Jehová tendrán nuevas fuerzas; levantarán alas como las águilas; correrán, y no se cansarán; caminarán, y no se fatigarán."},
+  {ref:"Mateo 6:33",     text:"Mas buscad primeramente el reino de Dios y su justicia, y todas estas cosas os serán añadidas."},
+  {ref:"Salmos 46:1",    text:"Dios es nuestro amparo y fortaleza, nuestro pronto auxilio en las tribulaciones."},
+  {ref:"Salmos 91:1",    text:"El que habita al abrigo del Altísimo morará bajo la sombra del Omnipotente."},
+  {ref:"Salmos 91:2",    text:"Diré yo a Jehová: Esperanza mía, y castillo mío; mi Dios, en quien confiaré."},
+  {ref:"Salmos 119:105", text:"Lámpara es a mis pies tu palabra, y lumbrera a mi camino."},
+  {ref:"Hebreos 11:1",   text:"Es, pues, la fe la certeza de lo que se espera, la convicción de lo que no se ve."},
+  {ref:"Romanos 10:9",   text:"Que si confesares con tu boca que Jesús es el Señor, y creyeres en tu corazón que Dios le levantó de los muertos, serás salvo."},
+  {ref:"Juan 14:6",      text:"Jesús le dijo: Yo soy el camino, y la verdad, y la vida; nadie viene al Padre, sino por mí."},
+  {ref:"Juan 11:25",     text:"Jesús le dijo: Yo soy la resurrección y la vida; el que cree en mí, aunque esté muerto, vivirá."},
+  {ref:"Juan 1:1",       text:"En el principio era el Verbo, y el Verbo era con Dios, y el Verbo era Dios."},
+  {ref:"Juan 1:14",      text:"Y aquel Verbo fue hecho carne, y habitó entre nosotros lleno de gracia y de verdad."},
+  {ref:"Génesis 1:1",    text:"En el principio creó Dios los cielos y la tierra."},
+  {ref:"Génesis 1:27",   text:"Y creó Dios al hombre a su imagen, a imagen de Dios lo creó; varón y hembra los creó."},
+  {ref:"Salmos 37:4",    text:"Deléitate asimismo en Jehová, y él te concederá las peticiones de tu corazón."},
+  {ref:"Salmos 27:1",    text:"Jehová es mi luz y mi salvación; ¿de quién temeré? Jehová es la fortaleza de mi vida; ¿de quién me he de atemorizarme?"},
+  {ref:"Salmos 34:18",   text:"Cercano está Jehová a los quebrantados de corazón; y salva a los contritos de espíritu."},
+  {ref:"Salmos 55:22",   text:"Echa sobre Jehová tu carga, y él te sustentará; no dejará para siempre caído al justo."},
+  {ref:"Salmos 103:2",   text:"Bendice, alma mía, a Jehová, y no olvides ninguno de sus beneficios."},
+  {ref:"Mateo 5:3",      text:"Bienaventurados los pobres en espíritu, porque de ellos es el reino de los cielos."},
+  {ref:"Mateo 5:4",      text:"Bienaventurados los que lloran, porque ellos recibirán consolación."},
+  {ref:"Mateo 5:8",      text:"Bienaventurados los de limpio corazón, porque ellos verán a Dios."},
+  {ref:"Mateo 11:28",    text:"Venid a mí todos los que estáis trabajados y cargados, y yo os haré descansar."},
+  {ref:"Mateo 28:19",    text:"Por tanto, id, y haced discípulos a todas las naciones, bautizándolos en el nombre del Padre, y del Hijo, y del Espíritu Santo."},
+  {ref:"Marcos 11:24",   text:"Por tanto, os digo que todo lo que pidiereis orando, creed que lo recibiréis, y os vendrá."},
+  {ref:"Lucas 1:37",     text:"Porque nada hay imposible para Dios."},
+  {ref:"Lucas 6:31",     text:"Y como queréis que hagan los hombres con vosotros, así también haced vosotros con ellos."},
+  {ref:"Romanos 5:8",    text:"Mas Dios muestra su amor para con nosotros, en que siendo aún pecadores, Cristo murió por nosotros."},
+  {ref:"Romanos 8:1",    text:"Ahora, pues, ninguna condenación hay para los que están en Cristo Jesús."},
+  {ref:"Romanos 8:38",   text:"Por lo cual estoy seguro de que ni la muerte, ni la vida, ni ángeles, ni principados, ni potestades, ni lo presente, ni lo por venir, nos podrá separar del amor de Dios."},
+  {ref:"1 Corintios 10:13", text:"No os ha sobrevenido ninguna tentación que no sea humana; pero fiel es Dios, que no os dejará ser tentados más de lo que podéis resistir."},
+  {ref:"1 Corintios 13:4",  text:"El amor es sufrido, es benigno; el amor no tiene envidia, el amor no es jactancioso, no se envanece."},
+  {ref:"1 Corintios 13:13", text:"Y ahora permanecen la fe, la esperanza y el amor, estos tres; pero el mayor de ellos es el amor."},
+  {ref:"2 Corintios 5:17",  text:"De modo que si alguno está en Cristo, nueva criatura es; las cosas viejas pasaron; he aquí todas son hechas nuevas."},
+  {ref:"Gálatas 5:22",      text:"Mas el fruto del Espíritu es amor, gozo, paz, paciencia, benignidad, bondad, fe."},
+  {ref:"Efesios 2:8",       text:"Porque por gracia sois salvos por medio de la fe; y esto no de vosotros, pues es don de Dios."},
+  {ref:"Efesios 6:11",      text:"Vestíos de toda la armadura de Dios, para que podáis estar firmes contra las asechanzas del diablo."},
+  {ref:"Filipenses 4:6",    text:"Por nada estéis afanosos, sino sean conocidas vuestras peticiones delante de Dios en toda oración y ruego, con acción de gracias."},
+  {ref:"Filipenses 4:7",    text:"Y la paz de Dios, que sobrepasa todo entendimiento, guardará vuestros corazones y vuestros pensamientos en Cristo Jesús."},
+  {ref:"Colosenses 3:23",   text:"Y todo lo que hagáis, hacedlo de corazón, como para el Señor y no para los hombres."},
+  {ref:"1 Timoteo 6:6",     text:"Pero gran ganancia es la piedad acompañada de contentamiento."},
+  {ref:"2 Timoteo 1:7",     text:"Porque no nos ha dado Dios espíritu de cobardía, sino de poder, de amor y de dominio propio."},
+  {ref:"2 Timoteo 3:16",    text:"Toda la Escritura es inspirada por Dios, y útil para enseñar, para redargüir, para corregir, para instruir en justicia."},
+  {ref:"Hebreos 4:12",      text:"Porque la palabra de Dios es viva y eficaz, y más cortante que toda espada de dos filos."},
+  {ref:"Hebreos 12:1",      text:"Por tanto, nosotros también, teniendo en derredor nuestro tan grande nube de testigos, corramos con paciencia la carrera que tenemos por delante."},
+  {ref:"Santiago 1:2",      text:"Hermanos míos, tened por sumo gozo cuando os halléis en diversas pruebas."},
+  {ref:"Santiago 4:7",      text:"Someteos, pues, a Dios; resistid al diablo, y huirá de vosotros."},
+  {ref:"1 Pedro 5:7",       text:"Echando toda vuestra ansiedad sobre él, porque él tiene cuidado de vosotros."},
+  {ref:"1 Juan 1:9",        text:"Si confesamos nuestros pecados, él es fiel y justo para perdonar nuestros pecados, y limpiarnos de toda maldad."},
+  {ref:"1 Juan 4:8",        text:"El que no ama, no ha conocido a Dios; porque Dios es amor."},
+  {ref:"1 Juan 4:19",       text:"Nosotros le amamos a él, porque él nos amó primero."},
+  {ref:"Apocalipsis 3:20",  text:"He aquí, yo estoy a la puerta y llamo; si alguno oye mi voz y abre la puerta, entraré a él, y cenaré con él, y él conmigo."},
+  {ref:"Apocalipsis 21:4",  text:"Enjugará Dios toda lágrima de los ojos de ellos; y ya no habrá muerte, ni habrá más llanto, ni clamor, ni dolor; porque las primeras cosas pasaron."},
+  {ref:"Isaías 41:10",      text:"No temas, porque yo estoy contigo; no desmayes, porque yo soy tu Dios que te esfuerzo; siempre te ayudaré, siempre te sustentaré con la diestra de mi justicia."},
+  {ref:"Isaías 43:2",       text:"Cuando pases por las aguas, yo estaré contigo; y si por los ríos, no te anegarán. Cuando pases por el fuego, no te quemarás, ni la llama arderá en ti."},
+  {ref:"Isaías 53:5",       text:"Mas él herido fue por nuestras rebeliones, molido por nuestros pecados; el castigo de nuestra paz fue sobre él, y por su llaga fuimos nosotros curados."},
+  {ref:"Jeremías 17:7",     text:"Bendito el varón que confía en Jehová, y cuya confianza es Jehová."},
+  {ref:"Josué 1:9",         text:"¿No te he mandado que te esfuerces y seas valiente? No temas ni desmayes, porque Jehová tu Dios estará contigo en dondequiera que vayas."},
+  {ref:"Proverbios 4:23",   text:"Sobre toda cosa guardada, guarda tu corazón; porque de él mana la vida."},
+  {ref:"Proverbios 16:3",   text:"Encomienda a Jehová tus obras, y tus pensamientos serán afirmados."},
+  {ref:"Proverbios 18:10",  text:"Torre fuerte es el nombre de Jehová; a él correrá el justo, y será levantado."},
+  {ref:"Proverbios 22:6",   text:"Instruye al niño en su camino, y aun cuando fuere viejo no se apartará de él."},
+  {ref:"Eclesiastés 3:1",   text:"Todo tiene su tiempo, y todo lo que se quiere debajo del cielo tiene su hora."},
+  {ref:"Lamentaciones 3:22",text:"Por la misericordia de Jehová no hemos sido consumidos, porque nunca decayeron sus misericordias."},
+  {ref:"Lamentaciones 3:23",text:"Nuevas son cada mañana; grande es tu fidelidad."},
+  {ref:"Zacarías 4:6",      text:"No con ejército, ni con fuerza, sino con mi Espíritu, ha dicho Jehová de los ejércitos."},
+  {ref:"Malaquías 3:10",    text:"Traed todos los diezmos al alfolí y haya alimento en mi casa; y probadme ahora en esto, dice Jehová de los ejércitos, si no os abriré las ventanas de los cielos."},
+  {ref:"Mateo 7:7",         text:"Pedid, y se os dará; buscad, y hallaréis; llamad, y se os abrirá."},
+  {ref:"Mateo 22:37",       text:"Jesús le dijo: Amarás al Señor tu Dios con todo tu corazón, y con toda tu alma, y con toda tu mente."},
+  {ref:"Marcos 10:27",      text:"Entonces Jesús, mirándolos, dijo: Para los hombres es imposible, mas para Dios, no; porque todas las cosas son posibles para Dios."},
+  {ref:"Lucas 12:7",        text:"Pues aun los cabellos de vuestra cabeza están todos contados. No temáis, pues; más valéis vosotros que muchos pajarillos."},
+  {ref:"Juan 10:10",        text:"El ladrón no viene sino para hurtar y matar y destruir; yo he venido para que tengan vida, y para que la tengan en abundancia."},
+  {ref:"Juan 15:5",         text:"Yo soy la vid, vosotros los pámpanos; el que permanece en mí, y yo en él, éste lleva mucho fruto; porque separados de mí nada podéis hacer."},
+  {ref:"Juan 16:33",        text:"Estas cosas os he hablado para que en mí tengáis paz. En el mundo tendréis aflicción; pero confiad, yo he vencido al mundo."},
+  {ref:"Hechos 1:8",        text:"Pero recibiréis poder, cuando haya venido sobre vosotros el Espíritu Santo, y me seréis testigos en Jerusalén, en toda Judea, en Samaria, y hasta lo último de la tierra."},
+  {ref:"Romanos 1:16",      text:"Porque no me avergüenzo del evangelio, porque es poder de Dios para salvación a todo aquel que cree."},
+  {ref:"Romanos 12:2",      text:"No os conforméis a este siglo, sino transformaos por medio de la renovación de vuestro entendimiento."},
+  {ref:"Romanos 15:13",     text:"Y el Dios de esperanza os llene de todo gozo y paz en el creer, para que abundéis en esperanza por el poder del Espíritu Santo."},
+];
+
+// ─── API — bible-api.com (formato correcto) ──────────────────────
 async function fetchVerse(bookEn, chapter, verse) {
-  // bible-api.com — translation rv1960 (Reina Valera 1960)
-  const ref = verse
-    ? `${encodeURIComponent(bookEn)}+${chapter}:${verse}`
-    : `${encodeURIComponent(bookEn)}+${chapter}`;
-  const url = `https://bible-api.com/${ref}?translation=rv1960`;
-  const res = await fetch(url);
+  // Formato correcto: "Genesis 1:1" con espacio, sin encodeURIComponent en el nombre
+  // bible-api.com acepta: /Genesis+1:1 o /Genesis 1:1
+  const bookClean = bookEn.replace(/\s+/g, '+');
+  const ref = verse ? `${bookClean}+${chapter}:${verse}` : `${bookClean}+${chapter}:1`;
+  const url = `https://bible-api.com/${ref}?translation=rvr1960`;
+  const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const data = await res.json();
-  if (!data.text) throw new Error('Sin resultado');
-  // If a full chapter was returned, take first verse
-  const text = (data.verses && data.verses.length > 0 && !verse)
-    ? data.verses[0].text.trim()
-    : data.text.trim();
-  return text;
+  if (data.error) throw new Error(data.error);
+  // Normalize: if multiple verses returned, join them
+  if (data.verses && data.verses.length > 0) {
+    return data.verses.map(v => v.text.trim()).join(' ');
+  }
+  if (data.text) return data.text.trim();
+  throw new Error('Sin texto');
 }
 
 // ─── SEARCH ─────────────────────────────────────────────────────
@@ -1000,9 +1092,10 @@ async function doSearch() {
   btn.disabled = true;
   btn.innerHTML = '<span class="spin"></span> Buscando...';
 
+  const ref = `${book.es} ${chap}${vers ? ':' + vers : ':1'}`;
+
   try {
-    const text = await fetchVerse(book.en, chap, vers);
-    const ref  = `${book.es} ${chap}${vers ? ':' + vers : ''}`;
+    const text = await fetchVerse(book.en, chap, vers || '1');
     srchVerse  = { ref, text };
     document.getElementById('vRef').textContent  = ref;
     document.getElementById('vText').textContent = text;
@@ -1011,7 +1104,20 @@ async function doSearch() {
     resetPlayBtn('search');
     res.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   } catch (e) {
-    toast('No se pudo obtener el versículo. Verifica tu conexión.');
+    // Check if we have this in local DB
+    const local = LOCAL_VERSES.find(v => v.ref.startsWith(book.es));
+    if (local) {
+      srchVerse = local;
+      document.getElementById('vRef').textContent  = local.ref + ' (RVR)';
+      document.getElementById('vText').textContent = local.text;
+      const res = document.getElementById('verseResult');
+      res.classList.add('show');
+      resetPlayBtn('search');
+      res.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      toast('Mostrando versículo guardado del libro seleccionado');
+    } else {
+      toast('No se pudo obtener el versículo. Verifica tu conexión.');
+    }
     console.error(e);
   } finally {
     btn.disabled = false;
@@ -1025,26 +1131,29 @@ async function doRandom() {
   btn.disabled = true;
   btn.innerHTML = '<span class="spin" style="border-top-color:var(--gold2)"></span> Descubriendo...';
 
+  // Immediately show a local verse while we try the API
+  const localPick = LOCAL_VERSES[Math.floor(Math.random() * LOCAL_VERSES.length)];
+  randVerse = localPick;
+  document.getElementById('rRef').textContent  = localPick.ref;
+  document.getElementById('rText').textContent = localPick.text;
+  const res = document.getElementById('randomResult');
+  res.classList.add('show');
+  resetPlayBtn('random');
+  res.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+  // Then try to fetch a truly random one from the API
   try {
-    let text, ref, tries = 0;
-    while (!text && tries < 5) {
-      tries++;
-      const book   = BOOKS[Math.floor(Math.random() * BOOKS.length)];
-      const chap   = Math.floor(Math.random() * book.ch) + 1;
-      const vers   = Math.floor(Math.random() * 30) + 1;
-      try {
-        text = await fetchVerse(book.en, chap, vers);
-        ref  = `${book.es} ${chap}:${vers}`;
-      } catch (_) { /* try again */ }
-    }
-    if (!text) { toast('No se pudo obtener el versículo. Intenta de nuevo.'); return; }
+    const book = BOOKS[Math.floor(Math.random() * BOOKS.length)];
+    const chap = Math.floor(Math.random() * book.ch) + 1;
+    const vers = Math.floor(Math.random() * 25) + 1;
+    const text = await fetchVerse(book.en, chap, String(vers));
+    const ref  = `${book.es} ${chap}:${vers}`;
     randVerse = { ref, text };
     document.getElementById('rRef').textContent  = ref;
     document.getElementById('rText').textContent = text;
-    const res = document.getElementById('randomResult');
-    res.classList.add('show');
     resetPlayBtn('random');
-    res.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  } catch (_) {
+    // Keep the local verse already shown — no error message needed
   } finally {
     btn.disabled = false;
     btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 4h-4l-4 8-3-6H3"/><path d="M20 20h-4l-4-8-3 6H3"/></svg> Descubrir un Versículo`;
