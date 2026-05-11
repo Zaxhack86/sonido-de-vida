@@ -1,1315 +1,283 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Sonido de Vida — Biblia gratuita en audio. Lee, escucha y descarga cualquier versículo.">
-  <meta name="theme-color" content="#0b0b14">
-  <title>Sonido de Vida — Biblia en Audio</title>
-
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%230b0b14'/><text x='50%25' y='56%25' dominant-baseline='middle' text-anchor='middle' font-size='20' fill='%23c8a96e'>✝</text></svg>">
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=Raleway:wght@300;400;500;600;700&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
-
-  <style>
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-    :root {
-      --ink:     #0b0b14;
-      --ink2:    #13131f;
-      --ink3:    #1c1c2e;
-      --gold:    #c8a96e;
-      --gold2:   #e8cc94;
-      --gold3:   #8c6d38;
-      --parch:   #f2ead8;
-      --parch2:  #e8dfc8;
-      --cream:   #faf7f0;
-      --mist:    rgba(200,169,110,.12);
-      --mist2:   rgba(200,169,110,.22);
-      --white60: rgba(255,255,255,.6);
-      --white30: rgba(255,255,255,.3);
-      --r: 16px;
-    }
-
-    html { scroll-behavior: smooth; }
-
-    body {
-      font-family: 'Raleway', sans-serif;
-      background: var(--ink);
-      color: var(--parch);
-      overflow-x: hidden;
-      min-height: 100vh;
-    }
-
-    /* ─── NOISE OVERLAY ─── */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-      opacity: .5;
-    }
-
-    /* ─── NAV ─── */
-    nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 900;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 1.4rem 2.5rem;
-      transition: background .4s, padding .4s, backdrop-filter .4s;
-    }
-    nav.scrolled {
-      background: rgba(11,11,20,.92);
-      backdrop-filter: blur(18px);
-      padding: .9rem 2.5rem;
-      border-bottom: 1px solid rgba(200,169,110,.1);
-    }
-    .nav-logo {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.6rem; font-weight: 600;
-      color: var(--gold2); text-decoration: none;
-      display: flex; align-items: center; gap: .5rem;
-      letter-spacing: .02em;
-    }
-    .nav-logo span { font-size: 1.3rem; }
-    .nav-links { display: flex; gap: 2rem; list-style: none; align-items: center; }
-    .nav-links a {
-      color: var(--white60); text-decoration: none;
-      font-size: .82rem; font-weight: 500;
-      letter-spacing: .08em; text-transform: uppercase;
-      transition: color .3s;
-    }
-    .nav-links a:hover { color: var(--gold2); }
-    .nav-cta {
-      background: var(--mist2) !important;
-      color: var(--gold) !important;
-      border: 1px solid rgba(200,169,110,.35) !important;
-      padding: .45rem 1.2rem !important;
-      border-radius: 4px !important;
-    }
-    .nav-cta:hover { background: var(--mist) !important; }
-
-    .burger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 4px; z-index: 1001; }
-    .burger span { display: block; width: 22px; height: 1.5px; background: var(--gold2); transition: all .3s; }
-    .burger.open span:nth-child(1) { transform: rotate(45deg) translate(4.5px, 4.5px); }
-    .burger.open span:nth-child(2) { opacity: 0; }
-    .burger.open span:nth-child(3) { transform: rotate(-45deg) translate(4.5px, -4.5px); }
-
-    /* ─── HERO ─── */
-    .hero {
-      position: relative; min-height: 100vh;
-      display: flex; align-items: center; justify-content: center;
-      overflow: hidden; padding: 2rem;
-    }
-    .hero-bg {
-      position: absolute; inset: 0;
-      background: radial-gradient(ellipse 80% 80% at 50% 0%, #1e183a 0%, #0b0b14 70%);
-    }
-    .hero-bg::after {
-      content: '';
-      position: absolute; inset: 0;
-      background:
-        radial-gradient(circle 400px at 20% 60%, rgba(200,169,110,.06) 0%, transparent 70%),
-        radial-gradient(circle 500px at 80% 20%, rgba(60,30,90,.18) 0%, transparent 70%);
-    }
-
-    /* Floating cross ornaments */
-    .hero-ornament {
-      position: absolute; font-size: 6rem;
-      color: rgba(200,169,110,.04);
-      font-family: 'Cormorant Garamond', serif;
-      user-select: none; pointer-events: none;
-      animation: drift 18s ease-in-out infinite;
-    }
-    .hero-ornament:nth-child(1) { top: 15%; left: 8%; font-size: 4rem; animation-delay: 0s; }
-    .hero-ornament:nth-child(2) { top: 65%; left: 3%; font-size: 8rem; animation-delay: -6s; }
-    .hero-ornament:nth-child(3) { top: 20%; right: 6%; font-size: 5rem; animation-delay: -3s; }
-    .hero-ornament:nth-child(4) { bottom: 10%; right: 10%; font-size: 7rem; animation-delay: -9s; }
-    @keyframes drift {
-      0%, 100% { transform: translateY(0) rotate(0deg); }
-      33% { transform: translateY(-18px) rotate(3deg); }
-      66% { transform: translateY(10px) rotate(-2deg); }
-    }
-
-    /* Divider line */
-    .hero-line {
-      position: absolute; top: 0; left: 50%; width: 1px; height: 100%;
-      background: linear-gradient(to bottom, transparent 0%, rgba(200,169,110,.2) 30%, rgba(200,169,110,.2) 70%, transparent 100%);
-      transform: translateX(-50%);
-      pointer-events: none;
-    }
-
-    .hero-content {
-      position: relative; z-index: 10;
-      text-align: center; max-width: 820px;
-    }
-    .hero-eyebrow {
-      display: inline-flex; align-items: center; gap: .7rem;
-      border: 1px solid rgba(200,169,110,.25);
-      padding: .45rem 1.4rem; border-radius: 2px;
-      font-size: .72rem; font-weight: 600;
-      letter-spacing: .2em; text-transform: uppercase;
-      color: var(--gold); margin-bottom: 2.5rem;
-      animation: fadeUp .8s ease both;
-    }
-    .hero-eyebrow::before, .hero-eyebrow::after {
-      content: ''; display: block;
-      width: 20px; height: 1px; background: var(--gold); opacity: .5;
-    }
-
-    .hero h1 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(3rem, 8vw, 6.5rem);
-      font-weight: 300; line-height: 1.05;
-      color: var(--parch); margin-bottom: 1.2rem;
-      animation: fadeUp .9s ease .1s both;
-    }
-    .hero h1 em {
-      font-style: italic; color: var(--gold2);
-      font-weight: 400;
-    }
-
-    .hero-sub {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(1rem, 2.5vw, 1.3rem);
-      font-style: italic; color: var(--white60);
-      margin-bottom: 3rem; line-height: 1.7;
-      animation: fadeUp .9s ease .2s both;
-    }
-
-    .hero-buttons {
-      display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
-      animation: fadeUp .9s ease .3s both;
-    }
-    .btn-gold {
-      display: inline-flex; align-items: center; gap: .6rem;
-      background: var(--gold); color: var(--ink);
-      padding: .9rem 2.4rem; border-radius: 3px;
-      font-size: .85rem; font-weight: 700;
-      letter-spacing: .1em; text-transform: uppercase;
-      text-decoration: none; border: none; cursor: pointer;
-      transition: all .3s; font-family: 'Raleway', sans-serif;
-    }
-    .btn-gold:hover { background: var(--gold2); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(200,169,110,.3); }
-    .btn-outline {
-      display: inline-flex; align-items: center; gap: .6rem;
-      background: transparent; color: var(--gold);
-      padding: .9rem 2.4rem; border-radius: 3px;
-      font-size: .85rem; font-weight: 600;
-      letter-spacing: .1em; text-transform: uppercase;
-      text-decoration: none; border: 1px solid rgba(200,169,110,.4); cursor: pointer;
-      transition: all .3s; font-family: 'Raleway', sans-serif;
-    }
-    .btn-outline:hover { border-color: var(--gold); background: var(--mist); transform: translateY(-2px); }
-
-    @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
-
-    .scroll-hint {
-      position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
-      z-index: 10; display: flex; flex-direction: column; align-items: center; gap: .6rem;
-      color: rgba(200,169,110,.4); font-size: .65rem; letter-spacing: .2em; text-transform: uppercase;
-      animation: scrollBounce 2.5s ease-in-out infinite;
-    }
-    .scroll-hint svg { width: 16px; height: 16px; stroke: currentColor; }
-    @keyframes scrollBounce {
-      0%, 100% { transform: translateX(-50%) translateY(0); }
-      50% { transform: translateX(-50%) translateY(8px); }
-    }
-
-    /* ─── SECTION COMMONS ─── */
-    section { position: relative; z-index: 1; }
-
-    .divider {
-      display: flex; align-items: center; gap: 1.5rem;
-      margin-bottom: 1.2rem; justify-content: center;
-    }
-    .divider::before, .divider::after {
-      content: ''; flex: 1; max-width: 80px; height: 1px;
-      background: rgba(200,169,110,.3);
-    }
-    .divider-cross {
-      color: var(--gold); font-size: 1rem; opacity: .6;
-    }
-
-    .sec-label {
-      font-size: .7rem; letter-spacing: .25em; text-transform: uppercase;
-      color: var(--gold); font-weight: 600; text-align: center;
-    }
-    .sec-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(2rem, 4.5vw, 3.2rem);
-      font-weight: 400; text-align: center;
-      color: var(--parch); line-height: 1.15;
-      margin-bottom: .8rem;
-    }
-    .sec-sub {
-      font-family: 'Cormorant Garamond', serif;
-      font-style: italic; font-size: 1.1rem;
-      color: var(--white60); text-align: center;
-      max-width: 520px; margin: 0 auto;
-      line-height: 1.7;
-    }
-
-    .reveal { opacity: 0; transform: translateY(28px); transition: opacity .8s ease, transform .8s ease; }
-    .reveal.in { opacity: 1; transform: translateY(0); }
-
-    /* ─── STATS ─── */
-    .stats {
-      background: var(--ink2);
-      border-top: 1px solid rgba(200,169,110,.08);
-      border-bottom: 1px solid rgba(200,169,110,.08);
-      padding: 3rem 2rem;
-    }
-    .stats-grid { display: grid; grid-template-columns: repeat(4,1fr); max-width: 900px; margin: 0 auto; }
-    .stat-item {
-      text-align: center; padding: 1rem;
-      border-right: 1px solid rgba(200,169,110,.12);
-    }
-    .stat-item:last-child { border-right: none; }
-    .stat-num {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 2.5rem; font-weight: 600;
-      color: var(--gold2); line-height: 1;
-      margin-bottom: .4rem;
-    }
-    .stat-label { font-size: .75rem; letter-spacing: .12em; color: var(--white60); text-transform: uppercase; }
-
-    /* ─── FEATURES ─── */
-    .features { padding: 7rem 2rem; background: var(--ink); }
-    .features-grid {
-      display: grid; grid-template-columns: repeat(3, 1fr);
-      gap: 1.5px; max-width: 1100px; margin: 3.5rem auto 0;
-      border: 1px solid rgba(200,169,110,.1);
-    }
-    .feat {
-      padding: 2.8rem 2.2rem;
-      border-right: 1px solid rgba(200,169,110,.1);
-      border-bottom: 1px solid rgba(200,169,110,.1);
-      transition: background .3s;
-      position: relative; overflow: hidden;
-    }
-    .feat:nth-child(3n) { border-right: none; }
-    .feat:nth-child(n+4) { border-bottom: none; }
-    .feat::before {
-      content: ''; position: absolute;
-      inset: 0; background: var(--mist);
-      opacity: 0; transition: opacity .4s;
-    }
-    .feat:hover::before { opacity: 1; }
-    .feat-icon {
-      font-size: 1.6rem; margin-bottom: 1.2rem;
-      display: block; filter: grayscale(.3);
-    }
-    .feat h3 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.25rem; font-weight: 600;
-      color: var(--gold2); margin-bottom: .6rem;
-    }
-    .feat p { font-size: .9rem; color: var(--white60); line-height: 1.7; }
-
-    /* ─── SEARCH SECTION ─── */
-    .search-sec {
-      padding: 7rem 2rem;
-      background: linear-gradient(180deg, var(--ink2) 0%, var(--ink3) 100%);
-      border-top: 1px solid rgba(200,169,110,.08);
-    }
-    .search-wrap { max-width: 780px; margin: 3.5rem auto 0; }
-
-    .search-card {
-      background: rgba(200,169,110,.04);
-      border: 1px solid rgba(200,169,110,.18);
-      border-radius: var(--r);
-      padding: 2.5rem 2rem;
-      backdrop-filter: blur(10px);
-    }
-
-    .selectors { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 1rem; margin-bottom: 1.2rem; }
-
-    .fgroup label {
-      display: block;
-      font-size: .68rem; letter-spacing: .18em; text-transform: uppercase;
-      color: var(--gold); font-weight: 600; margin-bottom: .5rem;
-    }
-    .fgroup select {
-      width: 100%; padding: .8rem 1rem;
-      background: rgba(11,11,20,.6);
-      border: 1px solid rgba(200,169,110,.2);
-      border-radius: 6px;
-      color: var(--parch); font-size: .9rem;
-      font-family: 'Raleway', sans-serif;
-      appearance: none; cursor: pointer; transition: border .3s;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%23c8a96e' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
-      background-repeat: no-repeat; background-position: right .9rem center; padding-right: 2.2rem;
-    }
-    .fgroup select:focus { outline: none; border-color: var(--gold); }
-    .fgroup select option { background: #13131f; }
-
-    .search-trigger {
-      width: 100%; padding: 1rem;
-      background: var(--gold); color: var(--ink);
-      border: none; border-radius: 6px;
-      font-size: .85rem; font-weight: 700;
-      letter-spacing: .12em; text-transform: uppercase;
-      cursor: pointer; transition: all .3s;
-      font-family: 'Raleway', sans-serif;
-      display: flex; align-items: center; justify-content: center; gap: .6rem;
-    }
-    .search-trigger:hover { background: var(--gold2); transform: translateY(-1px); }
-    .search-trigger:disabled { opacity: .55; cursor: not-allowed; transform: none; }
-
-    /* Result card */
-    .verse-result { display: none; margin-top: 1.8rem; }
-    .verse-result.show { display: block; animation: fadeUp .5s ease; }
-    .verse-card {
-      background: rgba(11,11,20,.5);
-      border: 1px solid rgba(200,169,110,.2);
-      border-radius: var(--r); padding: 2rem 1.8rem;
-    }
-    .v-ref {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.1rem; font-weight: 600;
-      color: var(--gold2); margin-bottom: 1.1rem;
-      display: flex; align-items: center; gap: .5rem;
-    }
-    .v-ref::before { content: '✝'; font-size: .8rem; opacity: .6; }
-    .v-text {
-      font-family: 'IM Fell English', serif;
-      font-size: 1.15rem; line-height: 1.85;
-      color: var(--parch); margin-bottom: 1.5rem;
-      font-style: italic;
-    }
-    .v-text::before {
-      content: '\201C';
-      font-size: 3.5rem; color: var(--gold3);
-      line-height: 0; vertical-align: -.85rem;
-      margin-right: .1rem; font-style: normal;
-    }
-    .v-actions { display: flex; gap: .7rem; flex-wrap: wrap; }
-    .vbtn {
-      display: inline-flex; align-items: center; gap: .45rem;
-      padding: .55rem 1.1rem; border-radius: 5px;
-      font-size: .78rem; font-weight: 600;
-      letter-spacing: .05em; cursor: pointer; transition: all .25s;
-      border: 1px solid; font-family: 'Raleway', sans-serif;
-    }
-    .vbtn-play  { background: var(--mist);  color: var(--gold);  border-color: rgba(200,169,110,.3); }
-    .vbtn-play.playing { background: rgba(200,169,110,.25); }
-    .vbtn-play:hover { background: rgba(200,169,110,.2); }
-    .vbtn-dl    { background: rgba(80,180,100,.08); color: #7ec89a; border-color: rgba(80,180,100,.25); }
-    .vbtn-dl:hover { background: rgba(80,180,100,.14); }
-    .vbtn-copy  { background: rgba(120,160,220,.08); color: #90b8e8; border-color: rgba(120,160,220,.25); }
-    .vbtn-copy:hover { background: rgba(120,160,220,.15); }
-    .vbtn-share { background: rgba(180,120,220,.08); color: #c4a0e0; border-color: rgba(180,120,220,.25); }
-    .vbtn-share:hover { background: rgba(180,120,220,.15); }
-
-    /* ─── RANDOM ─── */
-    .random-sec {
-      padding: 7rem 2rem; background: var(--ink);
-      border-top: 1px solid rgba(200,169,110,.08);
-      text-align: center;
-    }
-    .random-wrap { max-width: 700px; margin: 3.5rem auto 0; }
-    .random-trigger {
-      display: inline-flex; align-items: center; gap: .8rem;
-      background: transparent; color: var(--gold2);
-      border: 1px solid rgba(200,169,110,.35);
-      padding: 1.1rem 3rem; border-radius: 50px;
-      font-size: .9rem; font-weight: 600;
-      letter-spacing: .1em; text-transform: uppercase;
-      cursor: pointer; transition: all .35s;
-      font-family: 'Raleway', sans-serif;
-    }
-    .random-trigger:hover {
-      background: var(--mist2); border-color: var(--gold);
-      box-shadow: 0 0 40px rgba(200,169,110,.15);
-      transform: translateY(-2px);
-    }
-    .random-trigger:disabled { opacity: .5; cursor: not-allowed; transform: none; box-shadow: none; }
-    .random-trigger svg { width: 20px; height: 20px; transition: transform .5s; }
-    .random-trigger:hover svg { transform: rotate(180deg); }
-
-    .random-result { display: none; margin-top: 2rem; }
-    .random-result.show { display: block; animation: fadeUp .5s ease; }
-    .random-card {
-      background: var(--ink2); border: 1px solid rgba(200,169,110,.15);
-      border-radius: var(--r); padding: 2.2rem 2rem; text-align: left;
-    }
-    .random-card .v-ref { color: var(--gold2); }
-    .random-card .v-text { color: var(--parch); }
-    .random-actions { display: flex; gap: .7rem; flex-wrap: wrap; }
-    .rbtn {
-      display: inline-flex; align-items: center; gap: .45rem;
-      padding: .55rem 1.1rem; border-radius: 5px;
-      font-size: .78rem; font-weight: 600; cursor: pointer;
-      transition: all .25s; border: 1px solid;
-      font-family: 'Raleway', sans-serif;
-    }
-    .rbtn-play  { background: var(--mist); color: var(--gold); border-color: rgba(200,169,110,.3); }
-    .rbtn-play.playing { background: rgba(200,169,110,.25); }
-    .rbtn-play:hover { background: rgba(200,169,110,.2); }
-    .rbtn-dl    { background: rgba(80,180,100,.08); color: #7ec89a; border-color: rgba(80,180,100,.25); }
-    .rbtn-dl:hover { background: rgba(80,180,100,.14); }
-    .rbtn-copy  { background: rgba(120,160,220,.08); color: #90b8e8; border-color: rgba(120,160,220,.25); }
-    .rbtn-copy:hover { background: rgba(120,160,220,.15); }
-    .rbtn-share { background: rgba(180,120,220,.08); color: #c4a0e0; border-color: rgba(180,120,220,.25); }
-    .rbtn-share:hover { background: rgba(180,120,220,.15); }
-
-    /* ─── QUOTE BANNER ─── */
-    .quote-banner {
-      padding: 6rem 2rem;
-      background: linear-gradient(135deg, #15102a 0%, #1c1230 50%, #0f0f1e 100%);
-      border-top: 1px solid rgba(200,169,110,.1);
-      border-bottom: 1px solid rgba(200,169,110,.1);
-      text-align: center;
-    }
-    .banner-quote {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(1.4rem, 3.5vw, 2.2rem);
-      font-style: italic; font-weight: 300;
-      color: var(--parch2); line-height: 1.55;
-      max-width: 700px; margin: 0 auto 1.2rem;
-    }
-    .banner-ref {
-      font-size: .78rem; letter-spacing: .18em; text-transform: uppercase;
-      color: var(--gold); opacity: .75;
-    }
-
-    /* ─── FOOTER ─── */
-    footer {
-      background: var(--ink); padding: 4rem 2rem 2.5rem;
-      border-top: 1px solid rgba(200,169,110,.08);
-    }
-    .foot-inner { max-width: 1000px; margin: 0 auto; }
-    .foot-top {
-      display: flex; justify-content: space-between; align-items: flex-start;
-      gap: 2rem; flex-wrap: wrap; margin-bottom: 3rem;
-    }
-    .foot-brand {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.5rem; color: var(--gold2); margin-bottom: .5rem;
-    }
-    .foot-brand-sub { font-size: .8rem; color: var(--white60); max-width: 240px; line-height: 1.6; }
-    .foot-nav { display: flex; gap: 2.5rem; flex-wrap: wrap; }
-    .foot-nav a {
-      color: var(--white60); text-decoration: none;
-      font-size: .82rem; letter-spacing: .06em;
-      transition: color .3s;
-    }
-    .foot-nav a:hover { color: var(--gold2); }
-    .foot-divider { height: 1px; background: rgba(200,169,110,.08); margin-bottom: 1.5rem; }
-    .foot-bottom {
-      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;
-      font-size: .75rem; color: rgba(200,169,110,.35);
-    }
-    .foot-badge {
-      display: inline-flex; align-items: center; gap: .4rem;
-      font-size: .7rem; letter-spacing: .1em;
-      color: rgba(200,169,110,.3);
-    }
-
-    /* ─── AUDIO PLAYER BAR ─── */
-    .player-bar {
-      position: fixed; bottom: 0; left: 0; right: 0;
-      z-index: 1000; display: none;
-      background: rgba(11,11,20,.97);
-      border-top: 1px solid rgba(200,169,110,.2);
-      backdrop-filter: blur(20px);
-      animation: slideUp .4s ease;
-    }
-    .player-bar.show { display: block; }
-    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-    .player-inner {
-      max-width: 1100px; margin: 0 auto;
-      display: flex; align-items: center; gap: 1.2rem;
-      padding: .85rem 2rem;
-    }
-    .pw { display: flex; align-items: center; gap: 3px; flex-shrink: 0; }
-    .pw span {
-      display: block; width: 3px; border-radius: 3px;
-      background: var(--gold); animation: wv .7s ease-in-out infinite alternate;
-    }
-    .pw span:nth-child(1) { height: 10px; }
-    .pw span:nth-child(2) { height: 18px; animation-delay: .1s; }
-    .pw span:nth-child(3) { height: 8px; animation-delay: .2s; }
-    .pw span:nth-child(4) { height: 15px; animation-delay: .05s; }
-    .pw span:nth-child(5) { height: 11px; animation-delay: .15s; }
-    .pw.paused span { animation-play-state: paused; }
-    @keyframes wv { from { transform: scaleY(.4); } to { transform: scaleY(1); } }
-    .pinfo { flex: 1; min-width: 0; }
-    .pinfo-ref {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: .95rem; color: var(--gold2);
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
-    .pinfo-txt { font-size: .75rem; color: var(--white60); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .pplay {
-      width: 44px; height: 44px; border-radius: 50%;
-      background: var(--gold); border: none; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0; transition: background .3s, transform .2s;
-    }
-    .pplay:hover { background: var(--gold2); transform: scale(1.08); }
-    .pplay svg { width: 18px; height: 18px; fill: var(--ink); }
-    .pclose {
-      background: none; border: none; cursor: pointer;
-      color: var(--white60); flex-shrink: 0; padding: .3rem; transition: color .3s;
-    }
-    .pclose:hover { color: var(--parch); }
-    .pclose svg { width: 18px; height: 18px; stroke: currentColor; }
-
-    /* ─── TOAST ─── */
-    .toast {
-      position: fixed; bottom: 5rem; left: 50%;
-      transform: translateX(-50%) translateY(20px);
-      background: var(--ink3); color: var(--parch);
-      border: 1px solid rgba(200,169,110,.2);
-      padding: .85rem 1.8rem; border-radius: 8px;
-      font-size: .85rem; z-index: 2000;
-      opacity: 0; pointer-events: none;
-      transition: all .35s ease;
-      white-space: nowrap;
-      box-shadow: 0 8px 30px rgba(0,0,0,.4);
-    }
-    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-    /* ─── SPINNER ─── */
-    .spin {
-      display: inline-block; width: 16px; height: 16px;
-      border: 2px solid rgba(255,255,255,.3);
-      border-top-color: currentColor;
-      border-radius: 50%;
-      animation: spinning .6s linear infinite;
-    }
-    @keyframes spinning { to { transform: rotate(360deg); } }
-
-    /* ─── RESPONSIVE ─── */
-    @media (max-width: 768px) {
-      .nav-links { display: none; position: fixed; inset: 0; background: rgba(11,11,20,.98); flex-direction: column; justify-content: center; align-items: center; gap: 2.5rem; z-index: 999; }
-      .nav-links.open { display: flex; }
-      .nav-links a { font-size: 1.1rem; }
-      .burger { display: flex; }
-      .stats-grid { grid-template-columns: repeat(2,1fr); }
-      .stat-item:nth-child(2) { border-right: none; }
-      .stat-item:nth-child(3) { border-right: 1px solid rgba(200,169,110,.12); border-top: 1px solid rgba(200,169,110,.12); }
-      .stat-item:last-child { border-top: 1px solid rgba(200,169,110,.12); }
-      .features-grid { grid-template-columns: 1fr; }
-      .feat { border-right: none !important; }
-      .selectors { grid-template-columns: 1fr; }
-      .v-actions, .random-actions { flex-direction: column; }
-      .vbtn, .rbtn { justify-content: center; }
-      .foot-top { flex-direction: column; }
-      .foot-bottom { flex-direction: column; align-items: flex-start; }
-      .player-inner { padding: .7rem 1rem; gap: .8rem; }
-      .pinfo-txt { display: none; }
-    }
-    @media (max-width: 480px) {
-      .hero-buttons { flex-direction: column; }
-      .btn-gold, .btn-outline { width: 100%; justify-content: center; }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sonido de Vida - Biblia en Audio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lora:ital,wght@0,400;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{--gold:#c9a84c;--gold-light:#e8d48b;--dark:#0b0f19;--card:#111827;--border:#1f2937;--text:#e2e8f0;--muted:#94a3b8}
+        html{scroll-behavior:smooth}
+        body{font-family:'Inter',sans-serif;background:var(--dark);color:var(--text);overflow-x:hidden}
+        
+        /* HERO 3D + PARTICLES */
+        .hero{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 30% 20%,#1e3a8a 0%,#0b0f19 70%);overflow:hidden}
+        .particles{position:absolute;inset:0;pointer-events:none}
+        .p{position:absolute;width:3px;height:3px;background:var(--gold-light);border-radius:50%;opacity:0;animation:float 8s infinite linear}
+        @keyframes float{0%{opacity:0;transform:translateY(100vh) scale(0)}15%{opacity:.8}85%{opacity:.8}100%{opacity:0;transform:translateY(-10vh) scale(1)}}
+        .hero-content{position:relative;z-index:2;text-align:center;padding:2rem;max-width:800px}
+        h1{font-family:'Cinzel',serif;font-size:clamp(2.5rem,6vw,4rem);color:#fff;line-height:1.1;margin-bottom:1rem}
+        h1 span{color:var(--gold-light);text-shadow:0 0 20px rgba(201,168,76,.4)}
+        .hero p{font-family:'Lora',serif;font-size:1.2rem;color:var(--muted);margin-bottom:2rem}
+        .btn{display:inline-flex;align-items:center;gap:.5rem;padding:1rem 2rem;border-radius:50px;font-weight:600;text-decoration:none;transition:all .3s;cursor:pointer;border:none;font-family:'Inter',sans-serif}
+        .btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:var(--dark);box-shadow:0 4px 20px rgba(201,168,76,.3)}
+        .btn-gold:hover{transform:translateY(-3px);box-shadow:0 8px 30px rgba(201,168,76,.4)}
+        .btn-outline{background:transparent;border:1px solid rgba(255,255,255,.2);color:#fff}
+        .btn-outline:hover{background:rgba(255,255,255,.1)}
+        
+        /* STATS */
+        .stats{background:#fff;padding:2rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1.5rem;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,.05)}
+        .stats h3{font-family:'Cinzel',serif;font-size:1.8rem;color:var(--gold-dark)}
+        .stats p{color:var(--muted);font-size:.9rem}
+        
+        /* SEARCH CARD */
+        .section{padding:5rem 2rem;text-align:center}
+        .card{max-width:700px;margin:0 auto;background:var(--card);padding:2rem;border-radius:20px;border:1px solid var(--border);text-align:left}
+        .card h2{font-family:'Cinzel',serif;color:var(--gold-light);margin-bottom:1.5rem;text-align:center}
+        label{display:block;color:var(--gold);font-size:.85rem;margin-bottom:.4rem;font-weight:600;text-transform:uppercase}
+        select{width:100%;padding:.9rem;margin-bottom:1rem;border-radius:10px;border:1px solid #374151;background:#0f172a;color:var(--text);font-size:1rem}
+        select option{background:#0f172a;color:var(--text)}
+        .search-btn{width:100%;padding:1rem;background:var(--gold);color:var(--dark);border:none;border-radius:10px;font-weight:700;cursor:pointer;margin-top:.5rem}
+        .search-btn:disabled{opacity:.6;cursor:not-allowed}
+        
+        /* RESULT */
+        .res{margin-top:1.5rem;background:rgba(201,168,76,.08);border-left:4px solid var(--gold);padding:1.5rem;border-radius:0 12px 12px 0;display:none}
+        .res.show{display:block;animation:in .4s}
+        @keyframes in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+        .ref{color:var(--gold-light);font-family:'Cinzel',serif;font-size:1.2rem;margin-bottom:.5rem}
+        .verse{font-family:'Lora',serif;font-size:1.15rem;line-height:1.8;color:#cbd5e1;font-style:italic;margin-bottom:1rem}
+        .actions{display:flex;gap:.8rem;flex-wrap:wrap}
+        .act{background:#1e293b;color:var(--gold-light);border:1px solid #334155;padding:.7rem 1rem;border-radius:8px;cursor:pointer;font-size:.9rem;flex:1;min-width:100px}
+        .act:hover{background:#334155}
+        
+        /* OFFICIAL BIBLE BUTTON */
+        .official{margin-top:3rem;padding:2rem;background:linear-gradient(135deg,#1e3a8a,#0f172a);border-radius:20px;border:1px solid #334155;text-align:center}
+        .official h3{font-family:'Cinzel',serif;color:var(--gold-light);margin-bottom:1rem}
+        .official p{color:var(--muted);margin-bottom:1.5rem}
+        
+        .loader{display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        .msg{padding:.8rem;border-radius:8px;margin:1rem 0;display:none;font-size:.95rem}
+        .msg.show{display:block}
+        .msg.err{background:rgba(239,68,68,.15);color:#fca5a5;border:1px solid #7f1d1d}
+        .msg.ok{background:rgba(34,197,94,.15);color:#86efac;border:1px solid #14532d}
+        
+        footer{text-align:center;padding:2rem;color:var(--muted);font-size:.85rem;border-top:1px solid var(--border);margin-top:2rem}
+        @media(max-width:600px){.actions{flex-direction:column}.hero h1{font-size:2.5rem}}
+    </style>
 </head>
 <body>
 
-<!-- NAV -->
-<nav id="nav">
-  <a href="#" class="nav-logo"><span>✝</span> Sonido de Vida</a>
-  <ul class="nav-links" id="navLinks">
-    <li><a href="#features" onclick="closeNav()">Características</a></li>
-    <li><a href="#buscar" onclick="closeNav()">Buscar</a></li>
-    <li><a href="#aleatorio" onclick="closeNav()">Aleatorio</a></li>
-    <li><a href="#buscar" class="nav-cta" onclick="closeNav()">Comenzar</a></li>
-  </ul>
-  <button class="burger" id="burger" onclick="toggleNav()" aria-label="Menú">
-    <span></span><span></span><span></span>
-  </button>
-</nav>
-
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-bg"></div>
-  <div class="hero-line"></div>
-  <span class="hero-ornament">✝</span>
-  <span class="hero-ornament">✝</span>
-  <span class="hero-ornament">✝</span>
-  <span class="hero-ornament">✝</span>
-
-  <div class="hero-content">
-    <div class="hero-eyebrow">
-      <span></span> Biblia Gratuita en Audio <span></span>
-    </div>
-    <h1>Sonido de <em>Vida</em></h1>
-    <p class="hero-sub">Lee, escucha y descarga cualquier versículo de la Biblia.<br>Gratis, sin registro, siempre disponible.</p>
-    <div class="hero-buttons">
-      <a href="#buscar" class="btn-gold">Buscar Versículo</a>
-      <a href="#aleatorio" class="btn-outline">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
-        Versículo Aleatorio
-      </a>
-    </div>
-  </div>
-
-  <div class="scroll-hint">
-    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
-    Explorar
-  </div>
-</section>
-
-<!-- STATS -->
-<div class="stats">
-  <div class="stats-grid reveal">
-    <div class="stat-item">
-      <div class="stat-num">66</div>
-      <div class="stat-label">Libros</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-num">1,189</div>
-      <div class="stat-label">Capítulos</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-num">31K+</div>
-      <div class="stat-label">Versículos</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-num">100%</div>
-      <div class="stat-label">Gratuito</div>
-    </div>
-  </div>
-</div>
-
-<!-- FEATURES -->
-<section class="features" id="features">
-  <div class="reveal">
-    <div class="divider"><span class="divider-cross">✦</span></div>
-    <p class="sec-label">Lo que ofrecemos</p>
-    <h2 class="sec-title">Todo lo que necesitas</h2>
-    <p class="sec-sub">Herramientas sencillas para conectar con la Palabra de Dios cada día</p>
-  </div>
-  <div class="features-grid">
-    <div class="feat reveal">
-      <span class="feat-icon">🔍</span>
-      <h3>Búsqueda Rápida</h3>
-      <p>Encuentra cualquier versículo al instante seleccionando libro, capítulo y versículo de la Biblia completa.</p>
-    </div>
-    <div class="feat reveal">
-      <span class="feat-icon">🔊</span>
-      <h3>Audio Integrado</h3>
-      <p>Escucha cada versículo leído en voz alta en español. Ideal para meditar, orar o conducir.</p>
-    </div>
-    <div class="feat reveal">
-      <span class="feat-icon">💾</span>
-      <h3>Descarga Offline</h3>
-      <p>Guarda cualquier versículo como archivo HTML autocontenido con audio para escucharlo sin conexión.</p>
-    </div>
-    <div class="feat reveal">
-      <span class="feat-icon">🎲</span>
-      <h3>Versículo Aleatorio</h3>
-      <p>Deja que Dios hable a tu corazón con un versículo inspirador elegido al azar de toda la Biblia.</p>
-    </div>
-    <div class="feat reveal">
-      <span class="feat-icon">🔐</span>
-      <h3>Sin Registro</h3>
-      <p>Sin cuentas ni suscripciones. Acceso completo e inmediato a toda la Escritura, para siempre.</p>
-    </div>
-    <div class="feat reveal">
-      <span class="feat-icon">📤</span>
-      <h3>Comparte Fácil</h3>
-      <p>Copia o comparte cualquier versículo con un clic para compartir la Palabra con quienes amas.</p>
-    </div>
-  </div>
-</section>
-
-<!-- SEARCH -->
-<section class="search-sec" id="buscar">
-  <div class="reveal">
-    <div class="divider"><span class="divider-cross">✦</span></div>
-    <p class="sec-label">La Escritura</p>
-    <h2 class="sec-title">Buscar un Versículo</h2>
-    <p class="sec-sub">Selecciona el libro, capítulo y versículo</p>
-  </div>
-
-  <div class="search-wrap reveal">
-    <div class="search-card">
-      <div class="selectors">
-        <div class="fgroup">
-          <label>Libro</label>
-          <select id="bookSel"><option value="">— Selecciona un libro —</option></select>
+    <!-- HERO -->
+    <section class="hero">
+        <div class="particles" id="part"></div>
+        <div class="hero-content">
+            <h1>ESCUCHA LA <span>PALABRA</span> DE DIOS</h1>
+            <p>Lee, escucha y descarga versículos en español. 100% gratuito, sin registro, sin límites.</p>
+            <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+                <a href="#buscar" class="btn btn-gold">🔍 Buscar Versículo</a>
+                <a href="#oficial" class="btn btn-outline">📖 Biblia Completa</a>
+            </div>
         </div>
-        <div class="fgroup">
-          <label>Capítulo</label>
-          <select id="chapSel"><option value="">Cap.</option></select>
+    </section>
+
+    <!-- STATS -->
+    <section class="stats">
+        <div><h3>66</h3><p>Libros</p></div>
+        <div><h3>31,102</h3><p>Versículos</p></div>
+        <div><h3>100%</h3><p>Gratis</p></div>
+        <div><h3>0</h3><p>Registro</p></div>
+    </section>
+
+    <!-- BUSCADOR -->
+    <section class="section" id="buscar">
+        <div class="card">
+            <h2>BUSCAR UN VERSÍCULO</h2>
+            <label>📚 Libro</label>
+            <select id="book" onchange="loadCh()"><option value="">Selecciona...</option></select>
+            
+            <label>📖 Capítulo</label>
+            <select id="ch" onchange="loadV()" disabled><option value="">Primero el libro</option></select>
+            
+            <label>✨ Versículo</label>
+            <select id="v" disabled><option value="">Primero el capítulo</option></select>
+            
+            <button class="search-btn" id="btn" onclick="go()">🔍 BUSCAR</button>
+            <div class="msg err" id="err"></div>
+            
+            <div class="res" id="res">
+                <div class="ref" id="ref"></div>
+                <div class="verse" id="txt"></div>
+                <div class="actions">
+                    <button class="act" onclick="play()">🔊 Escuchar</button>
+                    <button class="act" onclick="dl()">💾 Descargar MP3</button>
+                    <button class="act" onclick="cp()">📋 Copiar</button>
+                </div>
+            </div>
         </div>
-        <div class="fgroup">
-          <label>Versículo</label>
-          <select id="versSel"><option value="">Vers.</option></select>
+    </section>
+
+    <!-- BIBLIA OFICIAL -->
+    <section class="section" id="oficial">
+        <div class="official">
+            <h3>📖 BIBLIA COMPLETA CON AUDIO</h3>
+            <p>Para leer toda la Biblia, escuchar capítulos completos y descargar audios profesionales, usa la app oficial.</p>
+            <a href="https://www.bible.com/es/bible/149/GEN.1.RVR1960" target="_blank" class="btn btn-gold" style="display:inline-flex">Abrir YouVersion (Gratis)</a>
         </div>
-      </div>
-      <button class="search-trigger" id="searchBtn" onclick="doSearch()">
-        🔍 Buscar Versículo
-      </button>
-    </div>
+    </section>
 
-    <div class="verse-result" id="verseResult">
-      <div class="verse-card">
-        <div class="v-ref" id="vRef"></div>
-        <div class="v-text" id="vText"></div>
-        <div class="v-actions">
-          <button class="vbtn vbtn-play" id="playBtn" onclick="togglePlay('search')">🔊 Escuchar</button>
-          <button class="vbtn vbtn-dl"   id="dlBtn"   onclick="downloadVerse('search')">💾 Descargar</button>
-          <button class="vbtn vbtn-copy"              onclick="copyVerse('search')">📋 Copiar</button>
-          <button class="vbtn vbtn-share"             onclick="shareVerse('search')">📤 Compartir</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+    <footer>© 2026 Sonido de Vida · sonidodevida.com · Reina Valera 1960 (Dominio Público)</footer>
 
-<!-- RANDOM -->
-<section class="random-sec" id="aleatorio">
-  <div class="reveal">
-    <div class="divider"><span class="divider-cross">✦</span></div>
-    <p class="sec-label">Inspiración</p>
-    <h2 class="sec-title">Versículo del Momento</h2>
-    <p class="sec-sub">Deja que Dios elija qué mensaje necesitas hoy</p>
-  </div>
+    <script>
+        // === CONFIGURACIÓN ===
+        const BOOKS = [
+            {n:"Génesis",a:"Genesis",c:50},{n:"Éxodo",a:"Exodus",c:40},{n:"Levítico",a:"Leviticus",c:27},{n:"Números",a:"Numbers",c:36},
+            {n:"Deuteronomio",a:"Deuteronomy",c:34},{n:"Josué",a:"Joshua",c:24},{n:"Jueces",a:"Judges",c:21},{n:"Rut",a:"Ruth",c:4},
+            {n:"1 Samuel",a:"1Samuel",c:31},{n:"2 Samuel",a:"2Samuel",c:24},{n:"Salmos",a:"Psalms",c:150},{n:"Proverbios",a:"Proverbs",c:31},
+            {n:"Isaías",a:"Isaiah",c:66},{n:"Jeremías",a:"Jeremiah",c:52},{n:"Mateo",a:"Matthew",c:28},{n:"Marcos",a:"Mark",c:16},
+            {n:"Lucas",a:"Luke",c:24},{n:"Juan",a:"John",c:21},{n:"Hechos",a:"Acts",c:28},{n:"Romanos",a:"Romans",c:16},
+            {n:"1 Corintios",a:"1Corinthians",c:16},{n:"2 Corintios",a:"2Corinthians",c:13},{n:"Gálatas",a:"Galatians",c:6},
+            {n:"Efesios",a:"Ephesians",c:6},{n:"Filipenses",a:"Philippians",c:4},{n:"Colosenses",a:"Colossians",c:4},
+            {n:"1 Tesalonicenses",a:"1Thessalonians",c:5},{n:"2 Tesalonicenses",a:"2Thessalonians",c:3},{n:"1 Timoteo",a:"1Timothy",c:6},
+            {n:"2 Timoteo",a:"2Timothy",c:4},{n:"Tito",a:"Titus",c:3},{n:"Filemón",a:"Philemon",c:1},{n:"Hebreos",a:"Hebrews",c:13},
+            {n:"Santiago",a:"James",c:5},{n:"1 Pedro",a:"1Peter",c:5},{n:"2 Pedro",a:"2Peter",c:3},{n:"1 Juan",a:"1John",c:5},
+            {n:"2 Juan",a:"2John",c:1},{n:"3 Juan",a:"3John",c:1},{n:"Judas",a:"Jude",c:1},{n:"Apocalipsis",a:"Revelation",c:22}
+        ];
 
-  <div class="random-wrap reveal">
-    <button class="random-trigger" id="randomBtn" onclick="doRandom()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 4h-4l-4 8-3-6H3"/><path d="M20 20h-4l-4-8-3 6H3"/></svg>
-      Descubrir un Versículo
-    </button>
+        // FALBACK LOCAL (30 versículos clave en español)
+        const LOCAL = {
+            "Genesis:1:1":"En el principio creó Dios los cielos y la tierra.",
+            "Psalms:23:1":"Jehová es mi pastor; nada me faltará.",
+            "Psalms:91:1":"El que habita al abrigo del Altísimo morará bajo la sombra del Omnipotente.",
+            "Proverbs:3:5":"Fíate de Jehová de todo tu corazón, y no te apoyes en tu propia prudencia.",
+            "Isaiah:41:10":"No temas, porque yo estoy contigo; no desmayes, porque yo soy tu Dios.",
+            "Jeremiah:29:11":"Porque yo sé los pensamientos que tengo acerca de vosotros, pensamientos de paz, y no de mal.",
+            "Matthew:6:33":"Mas buscad primeramente el reino de Dios y su justicia, y todas estas cosas os serán añadidas.",
+            "Matthew:11:28":"Venid a mí todos los que estáis trabajados y cargados, y yo os haré descansar.",
+            "Matthew:28:19":"Por tanto, id, y haced discípulos a todas las naciones.",
+            "Mark:10:27":"Para Dios todas las cosas son posibles.",
+            "Luke:1:37":"Porque nada hay imposible para Dios.",
+            "John:3:16":"Porque de tal manera amó Dios al mundo, que ha dado a su Hijo unigénito, para que todo aquel que en él cree, no se pierda, mas tenga vida eterna.",
+            "John:8:32":"Y conoceréis la verdad, y la verdad os hará libres.",
+            "John:14:6":"Yo soy el camino, y la verdad, y la vida; nadie viene al Padre, sino por mí.",
+            "Acts:1:8":"Pero recibiréis poder, cuando haya venido sobre vosotros el Espíritu Santo.",
+            "Romans:8:28":"Y sabemos que a los que aman a Dios, todas las cosas les ayudan a bien.",
+            "Romans:12:2":"No os conforméis a este siglo, sino transformaos por medio de la renovación de vuestro entendimiento.",
+            "1Corinthians:13:4":"El amor es sufrido, es benigno; el amor no tiene envidia.",
+            "2Corinthians:5:17":"De modo que si alguno está en Cristo, nueva criatura es.",
+            "Galatians:5:22":"Mas el fruto del Espíritu es amor, gozo, paz, paciencia, benignidad, bondad, fe.",
+            "Ephesians:2:8":"Porque por gracia sois salvos por medio de la fe; y esto no de vosotros, pues es don de Dios.",
+            "Philippians:4:13":"Todo lo puedo en Cristo que me fortalece.",
+            "Colossians:3:23":"Y todo lo que hagáis, hacedlo de corazón, como para el Señor y no para los hombres.",
+            "1Thessalonians:5:17":"Orad sin cesar.",
+            "2Timothy:1:7":"Porque no nos ha dado Dios espíritu de cobardía, sino de poder, de amor y de dominio propio.",
+            "Hebrews:11:1":"Es, pues, la fe la certeza de lo que se espera, la convicción de lo que no se ve.",
+            "James:1:5":"Y si alguno de vosotros tiene falta de sabiduría, pídala a Dios.",
+            "1Peter:5:7":"Echando toda vuestra ansiedad sobre él, porque él tiene cuidado de vosotros.",
+            "1John:4:8":"El que no ama, no ha conocido a Dios; porque Dios es amor.",
+            "Revelation:21:4":"Enjugará Dios toda lágrima de los ojos de ellos; y ya no habrá muerte."
+        };
 
-    <div class="random-result" id="randomResult">
-      <div class="random-card">
-        <div class="v-ref" id="rRef"></div>
-        <div class="v-text" id="rText"></div>
-        <div class="random-actions">
-          <button class="rbtn rbtn-play" id="rPlayBtn" onclick="togglePlay('random')">🔊 Escuchar</button>
-          <button class="rbtn rbtn-dl"   id="rDlBtn"   onclick="downloadVerse('random')">💾 Descargar</button>
-          <button class="rbtn rbtn-copy"               onclick="copyVerse('random')">📋 Copiar</button>
-          <button class="rbtn rbtn-share"              onclick="shareVerse('random')">📤 Compartir</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+        let cur = {ref:'',text:''};
 
-<!-- QUOTE -->
-<div class="quote-banner reveal">
-  <p class="banner-quote">"Lámpara es a mis pies tu palabra, y lumbrera a mi camino."</p>
-  <p class="banner-ref">Salmos 119:105 · Reina Valera</p>
-</div>
+        window.onload = () => {
+            const s = document.getElementById('book');
+            BOOKS.forEach(b => {
+                const o = document.createElement('option');
+                o.value = b.a; o.textContent = `${b.n} (${b.c})`; o.dataset.c = b.c;
+                s.appendChild(o);
+            });
+            // Partículas
+            const p = document.getElementById('part');
+            for(let i=0;i<40;i++){
+                const d=document.createElement('div');d.className='p';
+                d.style.left=Math.random()*100+'%';d.style.animationDuration=(Math.random()*6+4)+'s';
+                d.style.animationDelay=Math.random()*5+'s';
+                p.appendChild(d);
+            }
+        };
 
-<!-- FOOTER -->
-<footer>
-  <div class="foot-inner">
-    <div class="foot-top">
-      <div>
-        <div class="foot-brand">✝ Sonido de Vida</div>
-        <p class="foot-brand-sub">La Palabra de Dios, libre y accesible para todos.</p>
-      </div>
-      <nav class="foot-nav">
-        <a href="#features">Características</a>
-        <a href="#buscar">Buscar</a>
-        <a href="#aleatorio">Aleatorio</a>
-        <a href="https://sonidodevida.com">sonidodevida.com</a>
-      </nav>
-    </div>
-    <div class="foot-divider"></div>
-    <div class="foot-bottom">
-      <span>© 2026 Sonido de Vida · La Palabra de Dios, libre para todos</span>
-      <span class="foot-badge">✝ Reina Valera 1960</span>
-    </div>
-  </div>
-</footer>
+        function loadCh(){
+            const b=document.getElementById('book'),c=document.getElementById('ch'),v=document.getElementById('v');
+            if(!b.value){c.disabled=true;v.disabled=true;return}
+            const mx=parseInt(b.options[b.selectedIndex].dataset.c);
+            c.innerHTML='<option value="">Selecciona capítulo...</option>';
+            for(let i=1;i<=mx;i++){const o=document.createElement('option');o.value=i;o.textContent=`Cap. ${i}`;c.appendChild(o)}
+            c.disabled=false;v.disabled=true;v.innerHTML='<option>Primero el capítulo</option>';
+        }
 
-<!-- AUDIO PLAYER BAR -->
-<div class="player-bar" id="playerBar">
-  <div class="player-inner">
-    <div class="pw paused" id="pw">
-      <span></span><span></span><span></span><span></span><span></span>
-    </div>
-    <div class="pinfo">
-      <div class="pinfo-ref" id="pRef"></div>
-      <div class="pinfo-txt" id="pTxt"></div>
-    </div>
-    <button class="pplay" id="pPlayBtn" onclick="toggleGlobal()">
-      <svg id="pPlayIcon" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-      <svg id="pPauseIcon" viewBox="0 0 24 24" style="display:none"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
-    </button>
-    <button class="pclose" onclick="closePlayer()">
-      <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-    </button>
-  </div>
-</div>
+        function loadV(){
+            const c=document.getElementById('ch'),v=document.getElementById('v');
+            if(!c.value){v.disabled=true;return}
+            v.innerHTML='<option value="">Selecciona versículo...</option>';
+            for(let i=1;i<=50;i++){const o=document.createElement('option');o.value=i;o.textContent=`Ver. ${i}`;v.appendChild(o)}
+            v.disabled=false;
+        }
 
-<!-- TOAST -->
-<div class="toast" id="toast"></div>
+        async function go(){
+            const b=document.getElementById('book').value, c=document.getElementById('ch').value, v=document.getElementById('v').value;
+            if(!b||!c||!v) return msg('Selecciona libro, capítulo y versículo','err');
+            
+            const btn=document.getElementById('btn'),ld=document.createElement('span');
+            ld.className='loader';btn.disabled=true;btn.innerHTML='';btn.appendChild(ld);
+            hideMsg(); document.getElementById('res').classList.remove('show');
+            
+            try{
+                const ref=`${b}+${c}:${v}`;
+                const r=await fetch(`https://bible-api.com/${ref}?translation=rvr1960`);
+                if(!r.ok) throw new Error('API no responde');
+                const d=await r.json();
+                if(d.text && d.text.trim()){
+                    cur={ref:d.reference||`${getN(b)} ${c}:${v}`,text:d.text.trim()};
+                    showRes(); return;
+                }
+                throw new Error('Texto vacío');
+            }catch(e){
+                // Fallback local
+                const key=`${b}:${c}:${v}`;
+                if(LOCAL[key]){cur={ref:key.replace(/:/g,' '),text:LOCAL[key]};showRes();msg('📖 Versículo cargado (modo offline)','ok');}
+                else msg('⚠️ No se encontró. Prueba Juan 3:16 o Salmo 23:1','err');
+            }finally{btn.disabled=false;btn.innerHTML='🔍 BUSCAR'}
+        }
 
-<script>
-// ─── DATA ───────────────────────────────────────────────────────
-const BOOKS = [
-  {es:"Génesis",        en:"Genesis",       ch:50},
-  {es:"Éxodo",          en:"Exodus",        ch:40},
-  {es:"Levítico",       en:"Leviticus",     ch:27},
-  {es:"Números",        en:"Numbers",       ch:36},
-  {es:"Deuteronomio",   en:"Deuteronomy",   ch:34},
-  {es:"Josué",          en:"Joshua",        ch:24},
-  {es:"Jueces",         en:"Judges",        ch:21},
-  {es:"Rut",            en:"Ruth",          ch:4},
-  {es:"1 Samuel",       en:"1Samuel",       ch:31},
-  {es:"2 Samuel",       en:"2Samuel",       ch:24},
-  {es:"1 Reyes",        en:"1Kings",        ch:22},
-  {es:"2 Reyes",        en:"2Kings",        ch:25},
-  {es:"1 Crónicas",     en:"1Chronicles",   ch:29},
-  {es:"2 Crónicas",     en:"2Chronicles",   ch:36},
-  {es:"Esdras",         en:"Ezra",          ch:10},
-  {es:"Nehemías",       en:"Nehemiah",      ch:13},
-  {es:"Ester",          en:"Esther",        ch:10},
-  {es:"Job",            en:"Job",           ch:42},
-  {es:"Salmos",         en:"Psalms",        ch:150},
-  {es:"Proverbios",     en:"Proverbs",      ch:31},
-  {es:"Eclesiastés",    en:"Ecclesiastes",  ch:12},
-  {es:"Cantares",       en:"Song of Solomon",ch:8},
-  {es:"Isaías",         en:"Isaiah",        ch:66},
-  {es:"Jeremías",       en:"Jeremiah",      ch:52},
-  {es:"Lamentaciones",  en:"Lamentations",  ch:5},
-  {es:"Ezequiel",       en:"Ezekiel",       ch:48},
-  {es:"Daniel",         en:"Daniel",        ch:12},
-  {es:"Oseas",          en:"Hosea",         ch:14},
-  {es:"Joel",           en:"Joel",          ch:3},
-  {es:"Amós",           en:"Amos",          ch:9},
-  {es:"Abdías",         en:"Obadiah",       ch:1},
-  {es:"Jonás",          en:"Jonah",         ch:4},
-  {es:"Miqueas",        en:"Micah",         ch:7},
-  {es:"Nahúm",          en:"Nahum",         ch:3},
-  {es:"Habacuc",        en:"Habakkuk",      ch:3},
-  {es:"Sofonías",       en:"Zephaniah",     ch:3},
-  {es:"Hageo",          en:"Haggai",        ch:2},
-  {es:"Zacarías",       en:"Zechariah",     ch:14},
-  {es:"Malaquías",      en:"Malachi",       ch:4},
-  {es:"Mateo",          en:"Matthew",       ch:28},
-  {es:"Marcos",         en:"Mark",          ch:16},
-  {es:"Lucas",          en:"Luke",          ch:24},
-  {es:"Juan",           en:"John",          ch:21},
-  {es:"Hechos",         en:"Acts",          ch:28},
-  {es:"Romanos",        en:"Romans",        ch:16},
-  {es:"1 Corintios",    en:"1Corinthians",  ch:16},
-  {es:"2 Corintios",    en:"2Corinthians",  ch:13},
-  {es:"Gálatas",        en:"Galatians",     ch:6},
-  {es:"Efesios",        en:"Ephesians",     ch:6},
-  {es:"Filipenses",     en:"Philippians",   ch:4},
-  {es:"Colosenses",     en:"Colossians",    ch:4},
-  {es:"1 Tesalonicenses",en:"1Thessalonians",ch:5},
-  {es:"2 Tesalonicenses",en:"2Thessalonians",ch:3},
-  {es:"1 Timoteo",      en:"1Timothy",      ch:6},
-  {es:"2 Timoteo",      en:"2Timothy",      ch:4},
-  {es:"Tito",           en:"Titus",         ch:3},
-  {es:"Filemón",        en:"Philemon",      ch:1},
-  {es:"Hebreos",        en:"Hebrews",       ch:13},
-  {es:"Santiago",       en:"James",         ch:5},
-  {es:"1 Pedro",        en:"1Peter",        ch:5},
-  {es:"2 Pedro",        en:"2Peter",        ch:3},
-  {es:"1 Juan",         en:"1John",         ch:5},
-  {es:"2 Juan",         en:"2John",         ch:1},
-  {es:"3 Juan",         en:"3John",         ch:1},
-  {es:"Judas",          en:"Jude",          ch:1},
-  {es:"Apocalipsis",    en:"Revelation",    ch:22},
-];
+        function showRes(){
+            document.getElementById('ref').textContent=cur.ref;
+            document.getElementById('txt').textContent=`"${cur.text}"`;
+            document.getElementById('res').classList.add('show');
+        }
 
-// ─── STATE ──────────────────────────────────────────────────────
-let srchVerse  = {ref:'', text:''};
-let randVerse  = {ref:'', text:''};
-let playing    = false;
-let paused     = false;
-let activeType = null; // 'search' | 'random'
+        function play(){
+            if(!cur.text)return;
+            window.speechSynthesis.cancel();
+            const u=new SpeechSynthesisUtterance(cur.text);u.lang='es-ES';u.rate=0.75;
+            const v=speechSynthesis.getVoices().find(x=>x.lang.startsWith('es'));
+            if(v)u.voice=v;
+            speechSynthesis.speak(u);msg('🔊 Reproduciendo...','ok');
+        }
 
-// ─── INIT ───────────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
-  populateBooks();
-  initNav();
-  initReveal();
-  if ('speechSynthesis' in window) {
-    speechSynthesis.getVoices();
-    speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
-  }
-});
+        function dl(){
+            if(!cur.text)return;
+            const u=`https://translate.google.com/translate_tts?ie=UTF-8&tl=es&client=tw-ob&q=${encodeURIComponent(cur.text)}`;
+            const a=document.createElement('a');a.href=u;a.download=`${cur.ref.replace(/[: ]/g,'_')}.mp3`;
+            document.body.appendChild(a);a.click();a.remove();
+            msg('💾 Descargando MP3...','ok');
+        }
 
-function populateBooks() {
-  const sel = document.getElementById('bookSel');
-  BOOKS.forEach((b, i) => {
-    const o = document.createElement('option');
-    o.value = i;
-    o.textContent = b.es;
-    sel.appendChild(o);
-  });
-  sel.addEventListener('change', () => {
-    const idx = parseInt(sel.value);
-    if (isNaN(idx)) { resetChap(); resetVers(); return; }
-    populateChaps(BOOKS[idx].ch);
-    resetVers();
-  });
-  document.getElementById('chapSel').addEventListener('change', () => {
-    const chVal = document.getElementById('chapSel').value;
-    if (chVal) populateVers(176); // max verses in a psalm; we trim dynamically
-  });
-}
-function resetChap() { document.getElementById('chapSel').innerHTML = '<option value="">Cap.</option>'; }
-function resetVers() { document.getElementById('versSel').innerHTML = '<option value="">Vers. (opcional)</option>'; }
-function populateChaps(n) {
-  const s = document.getElementById('chapSel');
-  s.innerHTML = '<option value="">Cap.</option>';
-  for (let i = 1; i <= n; i++) { const o = document.createElement('option'); o.value = i; o.textContent = i; s.appendChild(o); }
-}
-function populateVers(n) {
-  const s = document.getElementById('versSel');
-  s.innerHTML = '<option value="">Vers. (opcional)</option>';
-  for (let i = 1; i <= n; i++) { const o = document.createElement('option'); o.value = i; o.textContent = i; s.appendChild(o); }
-}
+        async function cp(){
+            if(!cur.text)return;
+            await navigator.clipboard.writeText(`${cur.ref}\n\n"${cur.text}"`);
+            msg('📋 ¡Copiado!','ok');
+        }
 
-// ─── LOCAL BIBLE (RVR 1960) — FALLBACK & RANDOM POOL ─────────────
-// 200+ versículos en Reina Valera. Usado para aleatorio y como respaldo.
-const LOCAL_VERSES = [
-  {ref:"Juan 3:16",      text:"Porque de tal manera amó Dios al mundo, que ha dado a su Hijo unigénito, para que todo aquel que en él cree, no se pierda, mas tenga vida eterna."},
-  {ref:"Salmos 23:1",    text:"El Señor es mi pastor; nada me faltará."},
-  {ref:"Salmos 23:4",    text:"Aunque ande en valle de sombra de muerte, no temeré mal alguno, porque tú estarás conmigo; tu vara y tu cayado me infundirán aliento."},
-  {ref:"Filipenses 4:13",text:"Todo lo puedo en Cristo que me fortalece."},
-  {ref:"Romanos 8:28",   text:"Y sabemos que a los que aman a Dios, todas las cosas les ayudan a bien, esto es, a los que conforme a su propósito son llamados."},
-  {ref:"Jeremías 29:11", text:"Porque yo sé los pensamientos que tengo acerca de vosotros, dice Jehová, pensamientos de paz, y no de mal, para daros el fin que esperáis."},
-  {ref:"Proverbios 3:5", text:"Confía en Jehová con todo tu corazón, y no te apoyes en tu propia prudencia."},
-  {ref:"Proverbios 3:6", text:"Reconócelo en todos tus caminos, y él enderezará tus veredas."},
-  {ref:"Isaías 40:31",   text:"Pero los que esperan a Jehová tendrán nuevas fuerzas; levantarán alas como las águilas; correrán, y no se cansarán; caminarán, y no se fatigarán."},
-  {ref:"Mateo 6:33",     text:"Mas buscad primeramente el reino de Dios y su justicia, y todas estas cosas os serán añadidas."},
-  {ref:"Salmos 46:1",    text:"Dios es nuestro amparo y fortaleza, nuestro pronto auxilio en las tribulaciones."},
-  {ref:"Salmos 91:1",    text:"El que habita al abrigo del Altísimo morará bajo la sombra del Omnipotente."},
-  {ref:"Salmos 91:2",    text:"Diré yo a Jehová: Esperanza mía, y castillo mío; mi Dios, en quien confiaré."},
-  {ref:"Salmos 119:105", text:"Lámpara es a mis pies tu palabra, y lumbrera a mi camino."},
-  {ref:"Hebreos 11:1",   text:"Es, pues, la fe la certeza de lo que se espera, la convicción de lo que no se ve."},
-  {ref:"Romanos 10:9",   text:"Que si confesares con tu boca que Jesús es el Señor, y creyeres en tu corazón que Dios le levantó de los muertos, serás salvo."},
-  {ref:"Juan 14:6",      text:"Jesús le dijo: Yo soy el camino, y la verdad, y la vida; nadie viene al Padre, sino por mí."},
-  {ref:"Juan 11:25",     text:"Jesús le dijo: Yo soy la resurrección y la vida; el que cree en mí, aunque esté muerto, vivirá."},
-  {ref:"Juan 1:1",       text:"En el principio era el Verbo, y el Verbo era con Dios, y el Verbo era Dios."},
-  {ref:"Juan 1:14",      text:"Y aquel Verbo fue hecho carne, y habitó entre nosotros lleno de gracia y de verdad."},
-  {ref:"Génesis 1:1",    text:"En el principio creó Dios los cielos y la tierra."},
-  {ref:"Génesis 1:27",   text:"Y creó Dios al hombre a su imagen, a imagen de Dios lo creó; varón y hembra los creó."},
-  {ref:"Salmos 37:4",    text:"Deléitate asimismo en Jehová, y él te concederá las peticiones de tu corazón."},
-  {ref:"Salmos 27:1",    text:"Jehová es mi luz y mi salvación; ¿de quién temeré? Jehová es la fortaleza de mi vida; ¿de quién me he de atemorizarme?"},
-  {ref:"Salmos 34:18",   text:"Cercano está Jehová a los quebrantados de corazón; y salva a los contritos de espíritu."},
-  {ref:"Salmos 55:22",   text:"Echa sobre Jehová tu carga, y él te sustentará; no dejará para siempre caído al justo."},
-  {ref:"Salmos 103:2",   text:"Bendice, alma mía, a Jehová, y no olvides ninguno de sus beneficios."},
-  {ref:"Mateo 5:3",      text:"Bienaventurados los pobres en espíritu, porque de ellos es el reino de los cielos."},
-  {ref:"Mateo 5:4",      text:"Bienaventurados los que lloran, porque ellos recibirán consolación."},
-  {ref:"Mateo 5:8",      text:"Bienaventurados los de limpio corazón, porque ellos verán a Dios."},
-  {ref:"Mateo 11:28",    text:"Venid a mí todos los que estáis trabajados y cargados, y yo os haré descansar."},
-  {ref:"Mateo 28:19",    text:"Por tanto, id, y haced discípulos a todas las naciones, bautizándolos en el nombre del Padre, y del Hijo, y del Espíritu Santo."},
-  {ref:"Marcos 11:24",   text:"Por tanto, os digo que todo lo que pidiereis orando, creed que lo recibiréis, y os vendrá."},
-  {ref:"Lucas 1:37",     text:"Porque nada hay imposible para Dios."},
-  {ref:"Lucas 6:31",     text:"Y como queréis que hagan los hombres con vosotros, así también haced vosotros con ellos."},
-  {ref:"Romanos 5:8",    text:"Mas Dios muestra su amor para con nosotros, en que siendo aún pecadores, Cristo murió por nosotros."},
-  {ref:"Romanos 8:1",    text:"Ahora, pues, ninguna condenación hay para los que están en Cristo Jesús."},
-  {ref:"Romanos 8:38",   text:"Por lo cual estoy seguro de que ni la muerte, ni la vida, ni ángeles, ni principados, ni potestades, ni lo presente, ni lo por venir, nos podrá separar del amor de Dios."},
-  {ref:"1 Corintios 10:13", text:"No os ha sobrevenido ninguna tentación que no sea humana; pero fiel es Dios, que no os dejará ser tentados más de lo que podéis resistir."},
-  {ref:"1 Corintios 13:4",  text:"El amor es sufrido, es benigno; el amor no tiene envidia, el amor no es jactancioso, no se envanece."},
-  {ref:"1 Corintios 13:13", text:"Y ahora permanecen la fe, la esperanza y el amor, estos tres; pero el mayor de ellos es el amor."},
-  {ref:"2 Corintios 5:17",  text:"De modo que si alguno está en Cristo, nueva criatura es; las cosas viejas pasaron; he aquí todas son hechas nuevas."},
-  {ref:"Gálatas 5:22",      text:"Mas el fruto del Espíritu es amor, gozo, paz, paciencia, benignidad, bondad, fe."},
-  {ref:"Efesios 2:8",       text:"Porque por gracia sois salvos por medio de la fe; y esto no de vosotros, pues es don de Dios."},
-  {ref:"Efesios 6:11",      text:"Vestíos de toda la armadura de Dios, para que podáis estar firmes contra las asechanzas del diablo."},
-  {ref:"Filipenses 4:6",    text:"Por nada estéis afanosos, sino sean conocidas vuestras peticiones delante de Dios en toda oración y ruego, con acción de gracias."},
-  {ref:"Filipenses 4:7",    text:"Y la paz de Dios, que sobrepasa todo entendimiento, guardará vuestros corazones y vuestros pensamientos en Cristo Jesús."},
-  {ref:"Colosenses 3:23",   text:"Y todo lo que hagáis, hacedlo de corazón, como para el Señor y no para los hombres."},
-  {ref:"1 Timoteo 6:6",     text:"Pero gran ganancia es la piedad acompañada de contentamiento."},
-  {ref:"2 Timoteo 1:7",     text:"Porque no nos ha dado Dios espíritu de cobardía, sino de poder, de amor y de dominio propio."},
-  {ref:"2 Timoteo 3:16",    text:"Toda la Escritura es inspirada por Dios, y útil para enseñar, para redargüir, para corregir, para instruir en justicia."},
-  {ref:"Hebreos 4:12",      text:"Porque la palabra de Dios es viva y eficaz, y más cortante que toda espada de dos filos."},
-  {ref:"Hebreos 12:1",      text:"Por tanto, nosotros también, teniendo en derredor nuestro tan grande nube de testigos, corramos con paciencia la carrera que tenemos por delante."},
-  {ref:"Santiago 1:2",      text:"Hermanos míos, tened por sumo gozo cuando os halléis en diversas pruebas."},
-  {ref:"Santiago 4:7",      text:"Someteos, pues, a Dios; resistid al diablo, y huirá de vosotros."},
-  {ref:"1 Pedro 5:7",       text:"Echando toda vuestra ansiedad sobre él, porque él tiene cuidado de vosotros."},
-  {ref:"1 Juan 1:9",        text:"Si confesamos nuestros pecados, él es fiel y justo para perdonar nuestros pecados, y limpiarnos de toda maldad."},
-  {ref:"1 Juan 4:8",        text:"El que no ama, no ha conocido a Dios; porque Dios es amor."},
-  {ref:"1 Juan 4:19",       text:"Nosotros le amamos a él, porque él nos amó primero."},
-  {ref:"Apocalipsis 3:20",  text:"He aquí, yo estoy a la puerta y llamo; si alguno oye mi voz y abre la puerta, entraré a él, y cenaré con él, y él conmigo."},
-  {ref:"Apocalipsis 21:4",  text:"Enjugará Dios toda lágrima de los ojos de ellos; y ya no habrá muerte, ni habrá más llanto, ni clamor, ni dolor; porque las primeras cosas pasaron."},
-  {ref:"Isaías 41:10",      text:"No temas, porque yo estoy contigo; no desmayes, porque yo soy tu Dios que te esfuerzo; siempre te ayudaré, siempre te sustentaré con la diestra de mi justicia."},
-  {ref:"Isaías 43:2",       text:"Cuando pases por las aguas, yo estaré contigo; y si por los ríos, no te anegarán. Cuando pases por el fuego, no te quemarás, ni la llama arderá en ti."},
-  {ref:"Isaías 53:5",       text:"Mas él herido fue por nuestras rebeliones, molido por nuestros pecados; el castigo de nuestra paz fue sobre él, y por su llaga fuimos nosotros curados."},
-  {ref:"Jeremías 17:7",     text:"Bendito el varón que confía en Jehová, y cuya confianza es Jehová."},
-  {ref:"Josué 1:9",         text:"¿No te he mandado que te esfuerces y seas valiente? No temas ni desmayes, porque Jehová tu Dios estará contigo en dondequiera que vayas."},
-  {ref:"Proverbios 4:23",   text:"Sobre toda cosa guardada, guarda tu corazón; porque de él mana la vida."},
-  {ref:"Proverbios 16:3",   text:"Encomienda a Jehová tus obras, y tus pensamientos serán afirmados."},
-  {ref:"Proverbios 18:10",  text:"Torre fuerte es el nombre de Jehová; a él correrá el justo, y será levantado."},
-  {ref:"Proverbios 22:6",   text:"Instruye al niño en su camino, y aun cuando fuere viejo no se apartará de él."},
-  {ref:"Eclesiastés 3:1",   text:"Todo tiene su tiempo, y todo lo que se quiere debajo del cielo tiene su hora."},
-  {ref:"Lamentaciones 3:22",text:"Por la misericordia de Jehová no hemos sido consumidos, porque nunca decayeron sus misericordias."},
-  {ref:"Lamentaciones 3:23",text:"Nuevas son cada mañana; grande es tu fidelidad."},
-  {ref:"Zacarías 4:6",      text:"No con ejército, ni con fuerza, sino con mi Espíritu, ha dicho Jehová de los ejércitos."},
-  {ref:"Malaquías 3:10",    text:"Traed todos los diezmos al alfolí y haya alimento en mi casa; y probadme ahora en esto, dice Jehová de los ejércitos, si no os abriré las ventanas de los cielos."},
-  {ref:"Mateo 7:7",         text:"Pedid, y se os dará; buscad, y hallaréis; llamad, y se os abrirá."},
-  {ref:"Mateo 22:37",       text:"Jesús le dijo: Amarás al Señor tu Dios con todo tu corazón, y con toda tu alma, y con toda tu mente."},
-  {ref:"Marcos 10:27",      text:"Entonces Jesús, mirándolos, dijo: Para los hombres es imposible, mas para Dios, no; porque todas las cosas son posibles para Dios."},
-  {ref:"Lucas 12:7",        text:"Pues aun los cabellos de vuestra cabeza están todos contados. No temáis, pues; más valéis vosotros que muchos pajarillos."},
-  {ref:"Juan 10:10",        text:"El ladrón no viene sino para hurtar y matar y destruir; yo he venido para que tengan vida, y para que la tengan en abundancia."},
-  {ref:"Juan 15:5",         text:"Yo soy la vid, vosotros los pámpanos; el que permanece en mí, y yo en él, éste lleva mucho fruto; porque separados de mí nada podéis hacer."},
-  {ref:"Juan 16:33",        text:"Estas cosas os he hablado para que en mí tengáis paz. En el mundo tendréis aflicción; pero confiad, yo he vencido al mundo."},
-  {ref:"Hechos 1:8",        text:"Pero recibiréis poder, cuando haya venido sobre vosotros el Espíritu Santo, y me seréis testigos en Jerusalén, en toda Judea, en Samaria, y hasta lo último de la tierra."},
-  {ref:"Romanos 1:16",      text:"Porque no me avergüenzo del evangelio, porque es poder de Dios para salvación a todo aquel que cree."},
-  {ref:"Romanos 12:2",      text:"No os conforméis a este siglo, sino transformaos por medio de la renovación de vuestro entendimiento."},
-  {ref:"Romanos 15:13",     text:"Y el Dios de esperanza os llene de todo gozo y paz en el creer, para que abundéis en esperanza por el poder del Espíritu Santo."},
-];
-
-// ─── API — bible-api.com (formato correcto) ──────────────────────
-async function fetchVerse(bookEn, chapter, verse) {
-  // Formato correcto: "Genesis 1:1" con espacio, sin encodeURIComponent en el nombre
-  // bible-api.com acepta: /Genesis+1:1 o /Genesis 1:1
-  const bookClean = bookEn.replace(/\s+/g, '+');
-  const ref = verse ? `${bookClean}+${chapter}:${verse}` : `${bookClean}+${chapter}:1`;
-  const url = `https://bible-api.com/${ref}?translation=rvr1960`;
-  const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  const data = await res.json();
-  if (data.error) throw new Error(data.error);
-  // Normalize: if multiple verses returned, join them
-  if (data.verses && data.verses.length > 0) {
-    return data.verses.map(v => v.text.trim()).join(' ');
-  }
-  if (data.text) return data.text.trim();
-  throw new Error('Sin texto');
-}
-
-// ─── SEARCH ─────────────────────────────────────────────────────
-async function doSearch() {
-  const bookIdx = document.getElementById('bookSel').value;
-  const chap    = document.getElementById('chapSel').value;
-  const vers    = document.getElementById('versSel').value;
-
-  if (bookIdx === '' || chap === '') { toast('Selecciona libro y capítulo'); return; }
-
-  const book = BOOKS[parseInt(bookIdx)];
-  const btn  = document.getElementById('searchBtn');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spin"></span> Buscando...';
-
-  const ref = `${book.es} ${chap}${vers ? ':' + vers : ':1'}`;
-
-  try {
-    const text = await fetchVerse(book.en, chap, vers || '1');
-    srchVerse  = { ref, text };
-    document.getElementById('vRef').textContent  = ref;
-    document.getElementById('vText').textContent = text;
-    const res = document.getElementById('verseResult');
-    res.classList.add('show');
-    resetPlayBtn('search');
-    res.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  } catch (e) {
-    // Check if we have this in local DB
-    const local = LOCAL_VERSES.find(v => v.ref.startsWith(book.es));
-    if (local) {
-      srchVerse = local;
-      document.getElementById('vRef').textContent  = local.ref + ' (RVR)';
-      document.getElementById('vText').textContent = local.text;
-      const res = document.getElementById('verseResult');
-      res.classList.add('show');
-      resetPlayBtn('search');
-      res.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      toast('Mostrando versículo guardado del libro seleccionado');
-    } else {
-      toast('No se pudo obtener el versículo. Verifica tu conexión.');
-    }
-    console.error(e);
-  } finally {
-    btn.disabled = false;
-    btn.innerHTML = '🔍 Buscar Versículo';
-  }
-}
-
-// ─── RANDOM ─────────────────────────────────────────────────────
-async function doRandom() {
-  const btn = document.getElementById('randomBtn');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spin" style="border-top-color:var(--gold2)"></span> Descubriendo...';
-
-  // Immediately show a local verse while we try the API
-  const localPick = LOCAL_VERSES[Math.floor(Math.random() * LOCAL_VERSES.length)];
-  randVerse = localPick;
-  document.getElementById('rRef').textContent  = localPick.ref;
-  document.getElementById('rText').textContent = localPick.text;
-  const res = document.getElementById('randomResult');
-  res.classList.add('show');
-  resetPlayBtn('random');
-  res.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-
-  // Then try to fetch a truly random one from the API
-  try {
-    const book = BOOKS[Math.floor(Math.random() * BOOKS.length)];
-    const chap = Math.floor(Math.random() * book.ch) + 1;
-    const vers = Math.floor(Math.random() * 25) + 1;
-    const text = await fetchVerse(book.en, chap, String(vers));
-    const ref  = `${book.es} ${chap}:${vers}`;
-    randVerse = { ref, text };
-    document.getElementById('rRef').textContent  = ref;
-    document.getElementById('rText').textContent = text;
-    resetPlayBtn('random');
-  } catch (_) {
-    // Keep the local verse already shown — no error message needed
-  } finally {
-    btn.disabled = false;
-    btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 4h-4l-4 8-3-6H3"/><path d="M20 20h-4l-4-8-3 6H3"/></svg> Descubrir un Versículo`;
-  }
-}
-
-// ─── AUDIO ──────────────────────────────────────────────────────
-function speak(text, ref, type) {
-  if (!('speechSynthesis' in window)) { toast('Tu navegador no soporta audio'); return; }
-  window.speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(text);
-  u.lang = 'es-ES'; u.rate = 0.82; u.pitch = 1;
-  const voices = speechSynthesis.getVoices();
-  const esVoice = voices.find(v => v.lang.startsWith('es'));
-  if (esVoice) u.voice = esVoice;
-  u.onend  = () => stopPlaying(type);
-  u.onerror = () => stopPlaying(type);
-  speechSynthesis.speak(u);
-  playing = true; paused = false; activeType = type;
-  showPlayerBar(ref, text);
-  updatePlayBtn(type, true);
-}
-
-function stopPlaying(type) {
-  window.speechSynthesis.cancel();
-  playing = false; paused = false; activeType = null;
-  updatePlayBtn(type, false);
-  hidePlayerBar();
-}
-
-function togglePlay(type) {
-  const verse = type === 'search' ? srchVerse : randVerse;
-  if (!verse.text) { toast('Primero busca o genera un versículo'); return; }
-  if (playing && activeType === type) {
-    if (paused) { speechSynthesis.resume(); paused = false; playing = true; }
-    else        { speechSynthesis.pause(); paused = true; playing = false; }
-    updatePlayBtn(type, !paused);
-    document.getElementById('pw').classList.toggle('paused', paused);
-    updateGlobalIcons();
-  } else if (playing && activeType !== type) {
-    stopPlaying(activeType);
-    speak(verse.text, verse.ref, type);
-  } else {
-    speak(verse.text, verse.ref, type);
-  }
-}
-
-function toggleGlobal() {
-  if (!activeType) return;
-  const verse = activeType === 'search' ? srchVerse : randVerse;
-  if (playing && !paused) { speechSynthesis.pause(); paused = true; playing = false; }
-  else if (paused) { speechSynthesis.resume(); paused = false; playing = true; }
-  else { speak(verse.text, verse.ref, activeType); return; }
-  updatePlayBtn(activeType, playing);
-  document.getElementById('pw').classList.toggle('paused', !playing);
-  updateGlobalIcons();
-}
-
-function updatePlayBtn(type, isPlaying) {
-  const btn = type === 'search' ? document.getElementById('playBtn') : document.getElementById('rPlayBtn');
-  if (!btn) return;
-  btn.classList.toggle('playing', isPlaying);
-  btn.textContent = isPlaying ? '⏸ Pausar' : '🔊 Escuchar';
-  updateGlobalIcons();
-}
-
-function resetPlayBtn(type) { updatePlayBtn(type, false); }
-
-function updateGlobalIcons() {
-  document.getElementById('pPlayIcon').style.display  = (playing && !paused) ? 'none'  : 'block';
-  document.getElementById('pPauseIcon').style.display = (playing && !paused) ? 'block' : 'none';
-}
-
-function showPlayerBar(ref, text) {
-  document.getElementById('pRef').textContent = ref;
-  document.getElementById('pTxt').textContent = text.substring(0, 90) + (text.length > 90 ? '…' : '');
-  document.getElementById('pw').classList.remove('paused');
-  updateGlobalIcons();
-  document.getElementById('playerBar').classList.add('show');
-}
-function hidePlayerBar() { document.getElementById('playerBar').classList.remove('show'); }
-function closePlayer() { if (activeType) stopPlaying(activeType); hidePlayerBar(); }
-
-// ─── DOWNLOAD ───────────────────────────────────────────────────
-function downloadVerse(type) {
-  const verse = type === 'search' ? srchVerse : randVerse;
-  const btnId = type === 'search' ? 'dlBtn' : 'rDlBtn';
-  if (!verse.text) { toast('Primero busca o genera un versículo'); return; }
-  const btn = document.getElementById(btnId);
-  const orig = btn.innerHTML;
-  btn.innerHTML = '<span class="spin"></span> Generando...';
-  const safeText = verse.text.replace(/"/g,'\\"').replace(/\n/g,' ');
-  const safeRef  = verse.ref.replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ ]/g,'_');
-  const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>${verse.ref} · Sonido de Vida</title><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:Georgia,serif;background:linear-gradient(135deg,#0b0b14,#1c1c2e);color:#f2ead8;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:2rem}.card{max-width:560px;width:100%;text-align:center;background:rgba(200,169,110,.06);border:1px solid rgba(200,169,110,.2);border-radius:16px;padding:3rem 2.5rem}.cross{font-size:2.5rem;color:#c8a96e;margin-bottom:1.5rem}h1{font-size:1.5rem;color:#e8cc94;margin-bottom:1.5rem;font-family:Georgia,serif}.verse{font-size:1.2rem;line-height:1.9;font-style:italic;margin-bottom:2rem;opacity:.92}.source{color:#c8a96e;font-size:.85rem;margin-bottom:2rem;opacity:.7}.btn{background:#c8a96e;color:#0b0b14;border:none;padding:.9rem 2.2rem;border-radius:4px;font-size:.9rem;cursor:pointer;font-weight:700;margin:.4rem;letter-spacing:.05em}.btn:hover{background:#e8cc94}.btn-o{background:transparent;color:#c8a96e;border:1px solid rgba(200,169,110,.4)}.footer{margin-top:2.5rem;font-size:.75rem;opacity:.35}</style></head><body><div class="card"><div class="cross">✝</div><h1>${verse.ref}</h1><p class="verse">\u201C${safeText}\u201D</p><p class="source">Reina Valera 1960</p><button class="btn" id="sb" onclick="go()">🔊 Escuchar</button><button class="btn btn-o" onclick="cp()">📋 Copiar</button><p class="footer">Sonido de Vida · sonidodevida.com · La Palabra de Dios, libre para todos</p></div><script>let on=false;function go(){const b=document.getElementById('sb');if(on){speechSynthesis.cancel();on=false;b.textContent='🔊 Escuchar';return;}const u=new SpeechSynthesisUtterance("${safeText}");u.lang='es-ES';u.rate=0.82;u.onend=()=>{on=false;b.textContent='🔊 Escuchar'};speechSynthesis.speak(u);on=true;b.textContent='⏸ Pausar'}function cp(){navigator.clipboard.writeText("${verse.ref}\\n\\n\\"${safeText}\\"").then(()=>alert('¡Copiado!'))}<\/script></body></html>`;
-  const blob = new Blob([html], {type:'text/html'});
-  const url  = URL.createObjectURL(blob);
-  const a    = document.createElement('a');
-  a.href = url; a.download = `sonidodevida_${safeRef}.html`; a.click();
-  URL.revokeObjectURL(url);
-  btn.innerHTML = orig;
-  toast('¡Archivo descargado! Ábrelo en tu navegador.');
-}
-
-// ─── COPY / SHARE ────────────────────────────────────────────────
-async function copyVerse(type) {
-  const verse = type === 'search' ? srchVerse : randVerse;
-  if (!verse.text) { toast('No hay versículo para copiar'); return; }
-  const t = `${verse.ref}\n\n"${verse.text}"`;
-  try { await navigator.clipboard.writeText(t); } catch { fallbackCopy(t); }
-  toast('¡Versículo copiado!');
-}
-function fallbackCopy(t) {
-  const ta = document.createElement('textarea');
-  ta.value = t; document.body.appendChild(ta); ta.select();
-  document.execCommand('copy'); document.body.removeChild(ta);
-}
-async function shareVerse(type) {
-  const verse = type === 'search' ? srchVerse : randVerse;
-  if (!verse.text) { toast('No hay versículo para compartir'); return; }
-  const txt = `${verse.ref}\n\n"${verse.text}"\n\n— Sonido de Vida · sonidodevida.com`;
-  if (navigator.share) { try { await navigator.share({title: verse.ref, text: txt, url:'https://sonidodevida.com'}); } catch(_){} }
-  else { try { await navigator.clipboard.writeText(txt); toast('¡Copiado al portapapeles!'); } catch(_){ toast('No se pudo compartir.'); } }
-}
-
-// ─── NAV ────────────────────────────────────────────────────────
-function initNav() {
-  window.addEventListener('scroll', () => {
-    document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 40);
-  });
-}
-function toggleNav() {
-  document.getElementById('burger').classList.toggle('open');
-  document.getElementById('navLinks').classList.toggle('open');
-}
-function closeNav() {
-  document.getElementById('burger').classList.remove('open');
-  document.getElementById('navLinks').classList.remove('open');
-}
-
-// ─── SCROLL REVEAL ──────────────────────────────────────────────
-function initReveal() {
-  const obs = new IntersectionObserver((entries) => {
-    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
-  }, { threshold: 0.12 });
-  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
-}
-
-// ─── TOAST ──────────────────────────────────────────────────────
-let toastTimer;
-function toast(msg) {
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
-}
-</script>
+        function msg(t,type){
+            const m=document.getElementById('err');m.textContent=t;m.className=`msg show ${type}`;
+            setTimeout(()=>m.classList.remove('show'),4000);
+        }
+        function hideMsg(){document.getElementById('err').classList.remove('show')}
+        function getN(a){return BOOKS.find(b=>b.a===a)?.n||a}
+        if(window.speechSynthesis)speechSynthesis.onvoiceschanged=()=>speechSynthesis.getVoices();
+    </script>
 </body>
 </html>
