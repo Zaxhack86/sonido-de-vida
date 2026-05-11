@@ -3,81 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sonido de Vida</title>
+    <title>Sonido de Vida - Biblia en Audio</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Arial, sans-serif; background: #0d0d1a; color: white; }
-        .hero { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 2rem; }
-        h1 { font-size: 2.5rem; margin-bottom: 1rem; }
-        h1 span { color: #c9a84c; }
-        .btn { background: #c9a84c; color: #0d0d1a; padding: 1rem 2rem; border: none; border-radius: 50px; font-weight: bold; cursor: pointer; margin: 0.5rem; }
-        .search-box { max-width: 600px; margin: 3rem auto; padding: 2rem; background: #1a1a3e; border-radius: 15px; }
-        select { width: 100%; padding: 0.8rem; margin: 0.5rem 0; border-radius: 8px; border: 1px solid #c9a84c; background: #0d0d1a; color: white; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #0d0d1a 0%, #1a1a3e 100%); color: white; min-height: 100vh; }
+        .container { max-width: 800px; margin: 0 auto; padding: 2rem; }
+        h1 { text-align: center; margin: 3rem 0 1rem; color: #c9a84c; font-size: 2.5rem; }
+        .subtitle { text-align: center; opacity: 0.8; margin-bottom: 2rem; }
+        .box { background: rgba(26,26,62,0.8); padding: 2rem; border-radius: 20px; margin: 2rem 0; border: 1px solid rgba(201,168,76,0.2); }
+        label { display: block; margin: 1rem 0 0.5rem; color: #c9a84c; font-weight: bold; }
+        select { width: 100%; padding: 1rem; border-radius: 10px; border: 1px solid #c9a84c; background: #0d0d1a; color: #c9a84c; font-size: 1rem; }
         select option { background: #0d0d1a; color: #c9a84c; }
-        .result { margin-top: 2rem; padding: 1.5rem; background: rgba(201,168,76,0.1); border-radius: 10px; display: none; }
-        .result.show { display: block; }
-        .verse-text { font-size: 1.2rem; line-height: 1.6; font-style: italic; margin: 1rem 0; }
-        .actions { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 1rem; }
-        .action-btn { background: rgba(201,168,76,0.2); color: #c9a84c; border: 1px solid #c9a84c; padding: 0.6rem 1.2rem; border-radius: 8px; cursor: pointer; }
-        .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%); background: #1a1a3e; padding: 1rem 2rem; border-radius: 10px; display: none; }
-        .toast.show { display: block; }
+        button { width: 100%; padding: 1rem; margin-top: 1.5rem; border-radius: 10px; border: none; background: linear-gradient(135deg, #c9a84c, #a07c2a); color: #0d0d1a; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: transform 0.3s; }
+        button:hover { transform: translateY(-2px); }
+        .result { background: rgba(201,168,76,0.1); padding: 2rem; border-radius: 15px; margin-top: 2rem; border-left: 4px solid #c9a84c; display: none; }
+        .result.show { display: block; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .ref { color: #c9a84c; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem; }
+        .verse { font-size: 1.3rem; line-height: 1.8; font-style: italic; margin: 1.5rem 0; }
+        .actions { display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap; }
+        .actions button { flex: 1; min-width: 150px; margin-top: 0; padding: 0.8rem; font-size: 1rem; }
+        .error { background: rgba(255,68,68,0.2); border: 1px solid #ff4444; color: #ff8888; padding: 1rem; border-radius: 10px; margin: 1rem 0; display: none; }
+        .error.show { display: block; }
+        .loading { text-align: center; padding: 1rem; color: #c9a84c; display: none; }
+        .loading.show { display: block; }
     </style>
 </head>
 <body>
-    <div class="hero">
-        <h1>ESCUCHA LA <span>PALABRA</span> DE DIOS</h1>
-        <p>Lee, escucha y descarga versículos en español. 100% gratis.</p>
-        <div>
-            <button class="btn" onclick="document.getElementById('search').scrollIntoView({behavior:'smooth'})">🔍 Buscar Versículo</button>
-            <button class="btn" onclick="randomVerse()" style="background:transparent; border:1px solid #c9a84c; color:#c9a84c">🎲 Aleatorio</button>
-        </div>
-    </div>
-
-    <div class="search-box" id="search">
-        <h2 style="margin-bottom:1.5rem; color:#c9a84c">BUSCAR UN VERSÍCULO</h2>
-        <label>Libro</label>
-        <select id="book" onchange="loadChapters()"><option value="">Selecciona...</option></select>
+    <div class="container">
+        <h1>✝ SONIDO DE VIDA</h1>
+        <p class="subtitle">Escucha la Palabra de Dios en audio</p>
         
-        <label>Capítulo</label>
-        <select id="chapter" onchange="loadVerses()" disabled><option value="">Primero elige libro</option></select>
-        
-        <label>Versículo</label>
-        <select id="verse" disabled><option value="">Primero elige capítulo</option></select>
-        
-        <button class="btn" onclick="search()" style="width:100%; margin-top:1rem">🔍 Buscar</button>
-        
-        <div class="result" id="result">
-            <h3 id="ref" style="color:#c9a84c"></h3>
-            <p class="verse-text" id="text"></p>
-            <div class="actions">
-                <button class="action-btn" onclick="speak()">🔊 Escuchar</button>
-                <button class="action-btn" onclick="download()">💾 Descargar MP3</button>
-                <button class="action-btn" onclick="copy()">📋 Copiar</button>
+        <div class="box">
+            <h2 style="color:#c9a84c; margin-bottom:1.5rem; text-align:center">📖 BUSCAR VERSÍCULO</h2>
+            
+            <label>📚 Libro</label>
+            <select id="book" onchange="loadChapters()">
+                <option value="">Selecciona un libro...</option>
+            </select>
+            
+            <label>📖 Capítulo</label>
+            <select id="chapter" onchange="loadVerses()" disabled>
+                <option value="">Primero selecciona libro</option>
+            </select>
+            
+            <label>✨ Versículo</label>
+            <select id="verse" disabled>
+                <option value="">Primero selecciona capítulo</option>
+            </select>
+            
+            <button onclick="search()">🔍 BUSCAR VERSÍCULO</button>
+            
+            <div class="loading" id="loading">⏳ Buscando en la Biblia...</div>
+            <div class="error" id="error"></div>
+            
+            <div class="result" id="result">
+                <div class="ref" id="ref"></div>
+                <div class="verse" id="text"></div>
+                <div class="actions">
+                    <button onclick="speak()">🔊 Escuchar Audio</button>
+                    <button onclick="download()">💾 Descargar MP3</button>
+                    <button onclick="copy()" style="background:rgba(201,168,76,0.3)">📋 Copiar</button>
+                </div>
             </div>
         </div>
+        
+        <div style="text-align:center; margin:2rem 0;">
+            <button onclick="randomVerse()" style="max-width:300px; background:transparent; border:2px solid #c9a84c; color:#c9a84c">🎲 Versículo Aleatorio</button>
+        </div>
     </div>
-
-    <div class="toast" id="toast"></div>
 
     <script>
         // Libros de la Biblia
         const books = [
-            {name:"Génesis", abbr:"Genesis", chapters:50}, {name:"Éxodo", abbr:"Exodus", chapters:40},
-            {name:"Salmos", abbr:"Psalms", chapters:150}, {name:"Mateo", abbr:"Matthew", chapters:28},
-            {name:"Marcos", abbr:"Mark", chapters:16}, {name:"Lucas", abbr:"Luke", chapters:24},
-            {name:"Juan", abbr:"John", chapters:21}, {name:"Romanos", abbr:"Romans", chapters:16}
+            {name:"Génesis", abbr:"Genesis", ch:50}, {name:"Éxodo", abbr:"Exodus", ch:40},
+            {name:"Levítico", abbr:"Leviticus", ch:27}, {name:"Números", abbr:"Numbers", ch:36},
+            {name:"Deuteronomio", abbr:"Deuteronomy", ch:34}, {name:"Josué", abbr:"Joshua", ch:24},
+            {name:"Jueces", abbr:"Judges", ch:21}, {name:"Rut", abbr:"Ruth", ch:4},
+            {name:"1 Samuel", abbr:"1Samuel", ch:31}, {name:"2 Samuel", abbr:"2Samuel", ch:24},
+            {name:"Salmos", abbr:"Psalms", ch:150}, {name:"Proverbios", abbr:"Proverbs", ch:31},
+            {name:"Isaías", abbr:"Isaiah", ch:66}, {name:"Jeremías", abbr:"Jeremiah", ch:52},
+            {name:"Mateo", abbr:"Matthew", ch:28}, {name:"Marcos", abbr:"Mark", ch:16},
+            {name:"Lucas", abbr:"Luke", ch:24}, {name:"Juan", abbr:"John", ch:21},
+            {name:"Hechos", abbr:"Acts", ch:28}, {name:"Romanos", abbr:"Romans", ch:16},
+            {name:"1 Corintios", abbr:"1Corinthians", ch:16}, {name:"2 Corintios", abbr:"2Corinthians", ch:13},
+            {name:"Gálatas", abbr:"Galatians", ch:6}, {name:"Efesios", abbr:"Ephesians", ch:6},
+            {name:"Filipenses", abbr:"Philippians", ch:4}, {name:"Colosenses", abbr:"Colossians", ch:4},
+            {name:"1 Tesalonicenses", abbr:"1Thessalonians", ch:5}, {name:"2 Tesalonicenses", abbr:"2Thessalonians", ch:3},
+            {name:"1 Timoteo", abbr:"1Timothy", ch:6}, {name:"2 Timoteo", abbr:"2Timothy", ch:4},
+            {name:"Tito", abbr:"Titus", ch:3}, {name:"Filemón", abbr:"Philemon", ch:1},
+            {name:"Hebreos", abbr:"Hebrews", ch:13}, {name:"Santiago", abbr:"James", ch:5},
+            {name:"1 Pedro", abbr:"1Peter", ch:5}, {name:"2 Pedro", abbr:"2Peter", ch:3},
+            {name:"1 Juan", abbr:"1John", ch:5}, {name:"2 Juan", abbr:"2John", ch:1},
+            {name:"3 Juan", abbr:"3John", ch:1}, {name:"Judas", abbr:"Jude", ch:1},
+            {name:"Apocalipsis", abbr:"Revelation", ch:22}
         ];
 
-        let currentVerse = {ref:'', text:''};
+        let current = {ref:'', text:''};
 
-        // Cargar libros al inicio
-        window.onload = function() {
+        // Inicializar libros
+        window.onload = () => {
             const sel = document.getElementById('book');
             books.forEach(b => {
                 const opt = document.createElement('option');
                 opt.value = b.abbr;
-                opt.textContent = b.name;
-                opt.dataset.chapters = b.chapters;
+                opt.textContent = `${b.name} (${b.ch})`;
+                opt.dataset.ch = b.ch;
                 sel.appendChild(opt);
             });
         };
@@ -90,20 +121,22 @@
             if(!book.value) {
                 chap.disabled = true;
                 vers.disabled = true;
+                chap.innerHTML = '<option value="">Primero selecciona libro</option>';
+                vers.innerHTML = '<option value="">Primero selecciona capítulo</option>';
                 return;
             }
             
-            const maxChapters = parseInt(book.options[book.selectedIndex].dataset.chapters);
-            chap.innerHTML = '<option value="">Selecciona capítulo</option>';
-            for(let i=1; i<=maxChapters; i++) {
-                const opt = document.createElement('option');
-                opt.value = i;
-                opt.textContent = i;
-                chap.appendChild(opt);
+            const max = parseInt(book.options[book.selectedIndex].dataset.ch);
+            chap.innerHTML = '<option value="">Selecciona capítulo...</option>';
+            for(let i=1; i<=max; i++) {
+                const o = document.createElement('option');
+                o.value = i;
+                o.textContent = `Capítulo ${i}`;
+                chap.appendChild(o);
             }
             chap.disabled = false;
             vers.disabled = true;
-            vers.innerHTML = '<option value="">Primero elige capítulo</option>';
+            vers.innerHTML = '<option value="">Primero selecciona capítulo</option>';
         }
 
         function loadVerses() {
@@ -115,13 +148,12 @@
                 return;
             }
             
-            // Versículos estimados (máximo 176 para Salmo 119)
-            vers.innerHTML = '<option value="">Selecciona versículo</option>';
+            vers.innerHTML = '<option value="">Selecciona versículo...</option>';
             for(let i=1; i<=50; i++) {
-                const opt = document.createElement('option');
-                opt.value = i;
-                opt.textContent = i;
-                vers.appendChild(opt);
+                const o = document.createElement('option');
+                o.value = i;
+                o.textContent = `Versículo ${i}`;
+                vers.appendChild(o);
             }
             vers.disabled = false;
         }
@@ -130,105 +162,153 @@
             const book = document.getElementById('book').value;
             const chapter = document.getElementById('chapter').value;
             const verse = document.getElementById('verse').value;
+            const errorDiv = document.getElementById('error');
+            const resultDiv = document.getElementById('result');
+            const loading = document.getElementById('loading');
             
-            if(!book || !chapter) {
-                showToast('Selecciona libro y capítulo');
-                return;
-            }
+            errorDiv.classList.remove('show');
+            resultDiv.classList.remove('show');
             
-            showToast('Buscando...');
+            if(!book) { showError('Selecciona un libro'); return; }
+            if(!chapter) { showError('Selecciona un capítulo'); return; }
+            
+            loading.classList.add('show');
             
             try {
                 const ref = verse ? `${book}+${chapter}:${verse}` : `${book}+${chapter}`;
-                const response = await fetch(`https://bible-api.com/${ref}?translation=rvr1960`);
+                
+                // ✅ USANDO RVA (Reina Valera Actualizada) - DISPONIBLE
+                const response = await fetch(`https://bible-api.com/${ref}?translation=rva`);
+                
+                if(!response.ok) {
+                    throw new Error(`Error ${response.status}: ${response.statusText}`);
+                }
+                
                 const data = await response.json();
                 
-                if(data.text) {
-                    currentVerse = {
-                        ref: data.reference || `${book} ${chapter}${verse ? ':'+verse : ''}`,
+                if(data.text && data.text.trim()) {
+                    current = {
+                        ref: data.reference || `${getSpanishName(book)} ${chapter}${verse?':'+verse:''}`,
                         text: data.text.trim()
                     };
                     
-                    document.getElementById('ref').textContent = currentVerse.ref;
-                    document.getElementById('text').textContent = currentVerse.text;
-                    document.getElementById('result').classList.add('show');
-                    showToast('¡Versículo encontrado!');
+                    document.getElementById('ref').textContent = current.ref;
+                    document.getElementById('text').textContent = `"${current.text}"`;
+                    resultDiv.classList.add('show');
+                    resultDiv.scrollIntoView({behavior:'smooth', block:'nearest'});
                 } else {
-                    showToast('No se encontró. Intenta Juan 3:16');
+                    showError('No se encontró el versículo. Intenta Juan 3:16');
                 }
+                
             } catch(err) {
-                showToast('Error de conexión');
-                console.error(err);
+                console.error('Error:', err);
+                showError(`Error: ${err.message}. Intenta de nuevo.`);
+            } finally {
+                loading.classList.remove('show');
             }
         }
 
         async function randomVerse() {
-            showToast('Buscando versículo aleatorio...');
+            const loading = document.getElementById('loading');
+            const errorDiv = document.getElementById('error');
+            const resultDiv = document.getElementById('result');
+            
+            errorDiv.classList.remove('show');
+            loading.classList.add('show');
+            
             try {
-                const response = await fetch('https://bible-api.com/random?translation=rvr1960');
+                // Versículos populares para el aleatorio
+                const popular = [
+                    'John+3:16', 'Psalms+23:1', 'Romans+8:28', 'Philippians+4:13',
+                    'Jeremiah+29:11', 'Isaiah+41:10', 'Psalms+91:1', 'Matthew+11:28'
+                ];
+                const random = popular[Math.floor(Math.random() * popular.length)];
+                
+                const response = await fetch(`https://bible-api.com/${random}?translation=rva`);
                 const data = await response.json();
                 
                 if(data.text) {
-                    currentVerse = {
+                    current = {
                         ref: data.reference,
                         text: data.text.trim()
                     };
                     
-                    document.getElementById('ref').textContent = currentVerse.ref;
-                    document.getElementById('text').textContent = currentVerse.text;
-                    document.getElementById('result').classList.add('show');
-                    document.getElementById('result').scrollIntoView({behavior:'smooth'});
-                    showToast('¡Versículo aleatorio cargado!');
+                    document.getElementById('ref').textContent = current.ref;
+                    document.getElementById('text').textContent = `"${current.text}"`;
+                    resultDiv.classList.add('show');
+                    resultDiv.scrollIntoView({behavior:'smooth'});
                 }
             } catch(err) {
-                showToast('Error al cargar');
+                showError('Error al cargar versículo aleatorio');
+            } finally {
+                loading.classList.remove('show');
             }
         }
 
+        function getSpanishName(abbr) {
+            const book = books.find(b => b.abbr === abbr);
+            return book ? book.name : abbr;
+        }
+
+        function showError(msg) {
+            const div = document.getElementById('error');
+            div.textContent = msg;
+            div.classList.add('show');
+            setTimeout(() => div.classList.remove('show'), 5000);
+        }
+
         function speak() {
-            if(!currentVerse.text) return showToast('Busca un versículo primero');
+            if(!current.text) { showError('Busca un versículo primero'); return; }
             
             window.speechSynthesis.cancel();
-            const utterance = new SpeechSynthesisUtterance(currentVerse.text);
+            const utterance = new SpeechSynthesisUtterance(current.text);
             utterance.lang = 'es-ES';
-            utterance.rate = 0.7;
+            utterance.rate = 0.75;
+            utterance.pitch = 1;
             
+            // Intentar obtener voz en español
             const voices = speechSynthesis.getVoices();
             const spanishVoice = voices.find(v => v.lang.startsWith('es'));
             if(spanishVoice) utterance.voice = spanishVoice;
             
+            utterance.onend = () => console.log('Audio terminado');
+            utterance.onerror = (e) => console.error('Error de audio:', e);
+            
             speechSynthesis.speak(utterance);
-            showToast('Reproduciendo...');
+            showError('🔊 Reproduciendo...');
         }
 
         function download() {
-            if(!currentVerse.text) return showToast('Busca un versículo primero');
+            if(!current.text) { showError('Busca un versículo primero'); return; }
             
-            const text = encodeURIComponent(currentVerse.text);
+            // Usar Google Text-to-Speech para descargar MP3 real
+            const text = encodeURIComponent(current.text);
             const url = `https://translate.google.com/translate_tts?ie=UTF-8&tl=es&client=tw-ob&q=${text}`;
             
             const a = document.createElement('a');
             a.href = url;
-            a.download = `${currentVerse.ref.replace(/[: ]/g, '_')}.mp3`;
+            a.download = `${current.ref.replace(/[: ]/g, '_')}.mp3`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
             
-            showToast('Descargando MP3...');
+            showError('💾 Descargando MP3...');
         }
 
         async function copy() {
-            if(!currentVerse.text) return showToast('Busca un versículo primero');
+            if(!current.text) { showError('Busca un versículo primero'); return; }
             
-            await navigator.clipboard.writeText(`${currentVerse.ref}\n\n"${currentVerse.text}"`);
-            showToast('¡Copiado al portapapeles!');
+            try {
+                await navigator.clipboard.writeText(`${current.ref}\n\n"${current.text}"`);
+                showError('📋 ¡Copiado al portapapeles!');
+            } catch(err) {
+                showError('Error al copiar');
+            }
         }
 
-        function showToast(msg) {
-            const toast = document.getElementById('toast');
-            toast.textContent = msg;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 3000);
+        // Cargar voces al inicio
+        if(window.speechSynthesis) {
+            speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
         }
     </script>
 </body>
