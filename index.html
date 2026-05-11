@@ -675,3 +675,171 @@
             window.speechSynthesis.cancel();
             isPlaying=false;
             isPaused=false;
+            currentPlayingType=null;
+            updatePlayButtons(type,false);
+            hidePlayerBar();
+        }
+
+        function togglePlay(btn,type){
+            const verse=type==='search'?currentVerse:randomVerse;
+            if(!verse.text){
+                showToast('Primero busca o genera un versículo');
+                return;
+            }
+            if(isPlaying&&currentPlayingType===type){
+                if(isPaused){
+                    speechSynthesis.resume();
+                    isPaused=false;
+                    isPlaying=true;
+                }else{
+                    speechSynthesis.pause();
+                    isPaused=true;
+                    isPlaying=false;
+                }
+                updatePlayButtons(type,!isPaused);
+                document.getElementById('playerWave').classList.toggle('paused',isPaused);
+                updatePlayerControls();
+            }else if(isPlaying&&currentPlayingType!==type){
+                stopPlaying(currentPlayingType);
+                speakText(verse.text,verse.ref,type);
+            }else{
+                speakText(verse.text,verse.ref,type);
+            }
+        }
+
+        function toggleGlobalPlay(){
+            if(!currentPlayingType)return;
+            const verse=currentPlayingType==='search'?currentVerse:randomVerse;
+            if(isPlaying&&!isPaused){
+                speechSynthesis.pause();
+                isPaused=true;
+                isPlaying=false;
+            }else{
+                if(isPaused){
+                    speechSynthesis.resume();
+                    isPaused=false;
+                    isPlaying=true;
+                }else{
+                    speakText(verse.text,verse.ref,currentPlayingType);
+                    return;
+                }
+            }
+            updatePlayButtons(currentPlayingType,isPlaying);
+            document.getElementById('playerWave').classList.toggle('paused',!isPlaying);
+            updatePlayerControls();
+        }
+
+        function updatePlayerControls(){
+            document.getElementById('playIcon').style.display=isPlaying?'none':'block';
+            document.getElementById('pauseIcon').style.display=isPlaying?'block':'none';
+        }
+
+        function updatePlayButtons(type,playing){
+            const btn=type==='search'?document.getElementById('playBtn'):document.getElementById('randomPlayBtn');
+            if(playing){
+                btn.classList.add('playing');
+                btn.innerHTML='⏸ Pausar';
+            }else{
+                btn.classList.remove('playing');
+                btn.innerHTML='🔊 Escuchar';
+            }
+            updatePlayerControls();
+        }
+
+        function resetPlayButton(type){updatePlayButtons(type,false);}
+
+        function showPlayerBar(ref,text){
+            const bar=document.getElementById('audioPlayerBar');
+            document.getElementById('playerRef').textContent=ref;
+            document.getElementById('playerText').textContent=text.substring(0,80)+(text.length>80?'...':'');
+            document.getElementById('playerWave').classList.remove('paused');
+            updatePlayerControls();
+            bar.classList.add('visible');
+        }
+
+        function hidePlayerBar(){document.getElementById('audioPlayerBar').classList.remove('visible');}
+        function closePlayer(){if(currentPlayingType)stopPlaying(currentPlayingType);hidePlayerBar();}
+
+        // === DESCARGA DE VERSÍCULO ===
+        async function downloadVerse(type){
+            const verse=type==='search'?currentVerse:randomVerse;
+            const btnId=type==='search'?'downloadBtn':'randomDownloadBtn';
+            const btn=document.getElementById(btnId);
+            
+            if(!verse.text){
+                showToast('Primero busca o genera un versículo');
+                return;
+            }
+            
+            btn.classList.add('recording');
+            const originalHTML=btn.innerHTML;
+            btn.innerHTML='<span class="loading-spinner"></span> Generando...';
+            
+            try{
+                const cleanText=verse.text.replace(/"/g,'\\"').replace(/\n/g,' ');
+                const safeRef=verse.ref.replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ ]/g,'_');
+                
+                const htmlContent=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>${verse.ref} - Sonido de Vida</title><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:Georgia,serif;background:linear-gradient(135deg,#0d0d1a,#1a1a3e);color:#f5f0e8;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:2rem}.container{max-width:600px;text-align:center}.cross{font-size:3rem;margin-bottom:1rem}h1{font-size:1.8rem;color:#c9a84c;margin-bottom:1.5rem}.verse{font-size:1.3rem;line-height:1.8;font-style:italic;margin-bottom:2rem;opacity:.9}.source{color:#c9a84c;font-size:.9rem;margin-bottom:2rem}.btn{background:linear-gradient(135deg,#c9a84c,#a07c2a);color:#0d0d1a;border:none;padding:1rem 2.5rem;border-radius:50px;font-size:1rem;cursor:pointer;font-weight:600;margin:.5rem;transition:transform .3s}.btn:hover{transform:scale(1.05)}.btn-secondary{background:transparent;color:#c9a84c;border:1px solid #c9a84c}.footer{margin-top:3rem;font-size:.8rem;opacity:.5}</style></head><body><div class="container"><div class="cross">✝</div><h1>${verse.ref}</h1><p class="verse">"${cleanText}"</p><p class="source">Sonido de Vida · sonidodevida.com</p><button class="btn" id="speakBtn" onclick="toggleAudio()">🔊 Escuchar Versículo</button><br><button class="btn btn-secondary" onclick="copyText()">📋 Copiar Texto</button><p class="footer">© 2026 Sonido de Vida</p></div><script>let isPlaying=false;function toggleAudio(){const btn=document.getElementById('speakBtn');if(isPlaying){speechSynthesis.cancel();isPlaying=false;btn.textContent='🔊 Escuchar Versículo';return}const u=new SpeechSynthesisUtterance("${cleanText}");u.lang='es-ES';u.rate=0.85;u.onend=()=>{isPlaying=false;btn.textContent='🔊 Escuchar Versículo'};speechSynthesis.speak(u);isPlaying=true;btn.textContent='⏸ Pausar'}function copyText(){navigator.clipboard.writeText("${verse.ref}\\n\\n\\"${cleanText}\\"").then(()=>alert('¡Copiado!'))}<\/script></body></html>`;
+                
+                const blob=new Blob([htmlContent],{type:'text/html'});
+                const url=URL.createObjectURL(blob);
+                const a=document.createElement('a');
+                a.href=url;
+                a.download=`sonidodevida_${safeRef}.html`;
+                a.click();
+                URL.revokeObjectURL(url);
+                
+                btn.classList.remove('recording');
+                btn.innerHTML=originalHTML;
+                showToast('¡Archivo descargado! Ábrelo en tu navegador para escuchar.');
+            }catch(error){
+                btn.classList.remove('recording');
+                btn.innerHTML=originalHTML;
+                showToast('Error al generar el archivo');
+                console.error(error);
+            }
+        }
+
+        // === COPIAR Y COMPARTIR ===
+        async function copyVerse(type){
+            const verse=type==='search'?currentVerse:randomVerse;
+            if(!verse.text){showToast('No hay versículo para copiar');return;}
+            const textToCopy=`${verse.ref}\n\n"${verse.text}"`;
+            try{
+                await navigator.clipboard.writeText(textToCopy);
+                showToast('¡Versículo copiado!');
+            }catch{
+                const ta=document.createElement('textarea');
+                ta.value=textToCopy;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                showToast('¡Versículo copiado!');
+            }
+        }
+
+        async function shareVerse(type){
+            const verse=type==='search'?currentVerse:randomVerse;
+            if(!verse.text){showToast('No hay versículo para compartir');return;}
+            const shareText=`${verse.ref}\n\n"${verse.text}"\n\n— Sonido de Vida · sonidodevida.com`;
+            if(navigator.share){
+                try{await navigator.share({title:verse.ref,text:shareText,url:'https://sonidodevida.com'})}catch(e){}
+            }else{
+                try{
+                    await navigator.clipboard.writeText(shareText);
+                    showToast('¡Copiado! Pégalo donde quieras compartirlo.');
+                }catch{showToast('No se pudo compartir. Copia manualmente.');}
+            }
+        }
+
+        // === NOTIFICACIÓN TOAST ===
+        function showToast(message){
+            const toast=document.getElementById('toast');
+            document.getElementById('toastText').textContent=message;
+            toast.classList.add('visible');
+            setTimeout(()=>toast.classList.remove('visible'),3000);
+        }
+    </script>
+</body>
+</html>
