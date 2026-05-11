@@ -4,235 +4,118 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sonido de Vida - Biblia en Audio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital@0;1&family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: system-ui, -apple-system, sans-serif; background: #0b0f19; color: #e2e8f0; min-height: 100vh; line-height: 1.6; }
-        .wrap { max-width: 750px; margin: 0 auto; padding: 2rem 1.5rem; }
-        h1 { text-align: center; color: #f59e0b; font-size: 2.2rem; margin: 2rem 0 0.5rem; }
-        .sub { text-align: center; color: #94a3b8; margin-bottom: 2rem; }
-        .card { background: #111827; padding: 1.5rem; border-radius: 16px; border: 1px solid #1f2937; margin-bottom: 2rem; }
-        label { display: block; color: #f59e0b; font-size: 0.85rem; margin: 1rem 0 0.4rem; font-weight: 600; }
-        select { width: 100%; padding: 0.9rem; border-radius: 10px; border: 1px solid #374151; background: #0f172a; color: #e2e8f0; font-size: 1rem; }
-        select option { background: #0f172a; color: #e2e8f0; }
-        button { width: 100%; padding: 1rem; margin-top: 1.2rem; border: none; border-radius: 10px; background: linear-gradient(135deg, #f59e0b, #d97706); color: #0f172a; font-weight: 700; font-size: 1.05rem; cursor: pointer; transition: 0.2s; }
-        button:hover { opacity: 0.9; transform: translateY(-1px); }
-        button:disabled { opacity: 0.5; cursor: not-allowed; }
-        .result { background: #0f172a; border-left: 4px solid #f59e0b; padding: 1.5rem; border-radius: 0 12px 12px 0; margin-top: 1.5rem; display: none; }
-        .result.show { display: block; animation: in 0.3s; }
-        @keyframes in { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
-        .ref { color: #f59e0b; font-weight: 700; font-size: 1.2rem; margin-bottom: 0.5rem; }
-        .verse { font-size: 1.15rem; font-style: italic; color: #cbd5e1; margin-bottom: 1rem; }
-        .actions { display: flex; gap: 0.8rem; flex-wrap: wrap; }
-        .actions button { flex: 1; min-width: 130px; margin-top: 0; background: #1e293b; color: #f59e0b; border: 1px solid #334155; font-size: 0.95rem; }
-        .actions button:hover { background: #334155; }
-        .msg { padding: 0.8rem; border-radius: 8px; margin: 1rem 0; display: none; font-size: 0.95rem; }
-        .msg.show { display: block; }
-        .msg.err { background: rgba(239,68,68,0.15); color: #fca5a5; border: 1px solid #7f1d1d; }
-        .msg.ok { background: rgba(34,197,94,0.15); color: #86efac; border: 1px solid #14532d; }
-        .loader { text-align: center; color: #f59e0b; padding: 0.5rem; display: none; }
-        .loader.show { display: block; }
+        body { font-family: 'Inter', sans-serif; }
+        .serif { font-family: 'Playfair Display', serif; }
+        .bg-biblia { background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); }
     </style>
 </head>
-<body>
-    <div class="wrap">
-        <h1>✝ SONIDO DE VIDA</h1>
-        <p class="sub">Escucha y descarga versículos en español. 100% gratis.</p>
-        
-        <div class="card">
-            <label>📚 Libro</label>
-            <select id="book" onchange="loadCh()"><option value="">Selecciona...</option></select>
-            
-            <label>📖 Capítulo</label>
-            <select id="ch" onchange="loadV()" disabled><option value="">Primero el libro</option></select>
-            
-            <label>✨ Versículo</label>
-            <select id="v" disabled><option value="">Primero el capítulo</option></select>
-            
-            <button id="btnSearch" onclick="buscar()">🔍 BUSCAR VERSÍCULO</button>
-            <div class="loader" id="loader">⏳ Conectando con la Biblia...</div>
-            <div class="msg err" id="msgErr"></div>
-            
-            <div class="result" id="res">
-                <div class="ref" id="ref"></div>
-                <div class="verse" id="txt"></div>
-                <div class="actions">
-                    <button onclick="play()">🔊 Escuchar</button>
-                    <button onclick="dl()">💾 Descargar MP3</button>
-                    <button onclick="cp()">📋 Copiar</button>
-                </div>
-            </div>
+<body class="bg-biblia min-height-screen flex flex-col items-center p-6">
+
+    <audio id="bgMusic" loop>
+        <source src="https://www.bensound.com/bensound-music/bensound-slowmotion.mp3" type="audio/mpeg">
+    </audio>
+
+    <header class="text-center mb-10">
+        <h1 class="serif text-4xl font-bold text-slate-800">Sonido de Vida</h1>
+        <p class="text-slate-600 mt-2">Encuentra paz en su palabra</p>
+    </header>
+
+    <main class="w-full max-w-2xl bg-white rounded-3xl shadow-xl p-8">
+        <div class="flex gap-2 mb-8">
+            <input type="text" id="searchInput" placeholder="Ej: Juan 3:16" 
+                   class="flex-1 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-400">
+            <button onclick="searchVerse()" class="bg-slate-800 text-white px-6 py-3 rounded-xl hover:bg-slate-700 transition">Buscar</button>
         </div>
 
-        <div style="text-align:center;">
-            <button onclick="rand()" style="max-width:280px; background:#1e293b; color:#f59e0b; border:1px solid #334155;">🎲 Versículo Aleatorio</button>
+        <div id="displayArea" class="text-center min-h-[200px] flex flex-col justify-center border-y border-slate-100 py-6">
+            <h2 id="refDisplay" class="text-blue-600 font-semibold mb-2">Presiona "Random" o busca un versículo</h2>
+            <p id="verseDisplay" class="serif text-2xl italic text-slate-700 leading-relaxed italic">"..."</p>
         </div>
-    </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8">
+            <button onclick="playRandom()" class="flex flex-col items-center p-4 bg-blue-50 rounded-2xl hover:bg-blue-100 transition">
+                <span class="text-2xl mb-1">🎲</span>
+                <span class="text-xs font-bold text-blue-800">RANDOM</span>
+            </button>
+            <button onclick="speakVerse()" class="flex flex-col items-center p-4 bg-green-50 rounded-2xl hover:bg-green-100 transition">
+                <span class="text-2xl mb-1">🔊</span>
+                <span class="text-xs font-bold text-green-800">ESCUCHAR</span>
+            </button>
+            <button onclick="downloadAudio()" class="flex flex-col items-center p-4 bg-purple-50 rounded-2xl hover:bg-purple-100 transition">
+                <span class="text-2xl mb-1">💾</span>
+                <span class="text-xs font-bold text-purple-800">MP3</span>
+            </button>
+            <button id="musicToggle" onclick="toggleMusic()" class="flex flex-col items-center p-4 bg-orange-50 rounded-2xl hover:bg-orange-100 transition">
+                <span id="musicIcon" class="text-2xl mb-1">🔇</span>
+                <span class="text-xs font-bold text-orange-800 text-center uppercase">Música</span>
+            </button>
+        </div>
+    </main>
+
+    <footer class="mt-10 text-slate-500 text-sm">
+        &copy; 2026 Sonido de Vida · Hecho con fe
+    </footer>
 
     <script>
-        // === BASE DE DATOS LOCAL EN ESPAÑOL (FALLBACK SI LA API FALLA) ===
-        const LOCAL = {
-            "Genesis:1:1":"En el principio creó Dios los cielos y la tierra.",
-            "Exodus:20:3":"No tendrás dioses ajenos delante de mí.",
-            "Psalms:23:1":"Jehová es mi pastor; nada me faltará.",
-            "Psalms:91:1":"El que habita al abrigo del Altísimo morará bajo la sombra del Omnipotente.",
-            "Proverbs:3:5":"Fíate de Jehová de todo tu corazón, y no te apoyes en tu propia prudencia.",
-            "Isaiah:41:10":"No temas, porque yo estoy contigo; no desmayes, porque yo soy tu Dios.",
-            "Jeremiah:29:11":"Porque yo sé los pensamientos que tengo acerca de vosotros, pensamientos de paz, y no de mal.",
-            "Matthew:6:33":"Mas buscad primeramente el reino de Dios y su justicia, y todas estas cosas os serán añadidas.",
-            "Matthew:11:28":"Venid a mí todos los que estáis trabajados y cargados, y yo os haré descansar.",
-            "Matthew:28:19":"Por tanto, id, y haced discípulos a todas las naciones.",
-            "Mark:10:27":"Para Dios todas las cosas son posibles.",
-            "Mark:11:24":"Por tanto, os digo que todo lo que pidiereis orando, creed que lo recibiréis, y os vendrá.",
-            "Luke:1:37":"Porque nada hay imposible para Dios.",
-            "Luke:6:38":"Dad, y se os dará; medida buena, apretada, remecida y rebosando darán en vuestro regazo.",
-            "John:3:16":"Porque de tal manera amó Dios al mundo, que ha dado a su Hijo unigénito, para que todo aquel que en él cree, no se pierda, mas tenga vida eterna.",
-            "John:8:32":"Y conoceréis la verdad, y la verdad os hará libres.",
-            "John:14:6":"Yo soy el camino, y la verdad, y la vida; nadie viene al Padre, sino por mí.",
-            "Acts:1:8":"Pero recibiréis poder, cuando haya venido sobre vosotros el Espíritu Santo.",
-            "Romans:8:28":"Y sabemos que a los que aman a Dios, todas las cosas les ayudan a bien.",
-            "Romans:12:2":"No os conforméis a este siglo, sino transformaos por medio de la renovación de vuestro entendimiento.",
-            "1Corinthians:13:4":"El amor es sufrido, es benigno; el amor no tiene envidia, el amor no es jactancioso, no se envanece.",
-            "1Corinthians:15:57":"Mas gracias sean dadas a Dios, que nos da la victoria por medio de nuestro Señor Jesucristo.",
-            "2Corinthians:5:17":"De modo que si alguno está en Cristo, nueva criatura es; las cosas viejas pasaron; he aquí todas son hechas nuevas.",
-            "Galatians:5:22":"Mas el fruto del Espíritu es amor, gozo, paz, paciencia, benignidad, bondad, fe.",
-            "Ephesians:2:8":"Porque por gracia sois salvos por medio de la fe; y esto no de vosotros, pues es don de Dios.",
-            "Philippians:4:13":"Todo lo puedo en Cristo que me fortalece.",
-            "Colossians:3:23":"Y todo lo que hagáis, hacedlo de corazón, como para el Señor y no para los hombres.",
-            "1Thessalonians:5:17":"Orad sin cesar.",
-            "2Timothy:1:7":"Porque no nos ha dado Dios espíritu de cobardía, sino de poder, de amor y de dominio propio.",
-            "Hebrews:11:1":"Es, pues, la fe la certeza de lo que se espera, la convicción de lo que no se ve.",
-            "James:1:5":"Y si alguno de vosotros tiene falta de sabiduría, pídala a Dios.",
-            "1Peter:5:7":"Echando toda vuestra ansiedad sobre él, porque él tiene cuidado de vosotros.",
-            "1John:4:8":"El que no ama, no ha conocido a Dios; porque Dios es amor.",
-            "Revelation:21:4":"Enjugará Dios toda lágrima de los ojos de ellos; y ya no habrá muerte."
-        };
+        let currentVerse = { ref: "", text: "" };
+        const bgMusic = document.getElementById('bgMusic');
+        bgMusic.volume = 0.2; // Música bajita
 
-        const BOOKS = [
-            {n:"Génesis",a:"Genesis",c:50},{n:"Éxodo",a:"Exodus",c:40},{n:"Levítico",a:"Leviticus",c:27},{n:"Números",a:"Numbers",c:36},
-            {n:"Deuteronomio",a:"Deuteronomy",c:34},{n:"Josué",a:"Joshua",c:24},{n:"Jueces",a:"Judges",c:21},{n:"Rut",a:"Ruth",c:4},
-            {n:"1 Samuel",a:"1Samuel",c:31},{n:"2 Samuel",a:"2Samuel",c:24},{n:"Salmos",a:"Psalms",c:150},{n:"Proverbios",a:"Proverbs",c:31},
-            {n:"Isaías",a:"Isaiah",c:66},{n:"Jeremías",a:"Jeremiah",c:52},{n:"Mateo",a:"Matthew",c:28},{n:"Marcos",a:"Mark",c:16},
-            {n:"Lucas",a:"Luke",c:24},{n:"Juan",a:"John",c:21},{n:"Hechos",a:"Acts",c:28},{n:"Romanos",a:"Romans",c:16},
-            {n:"1 Corintios",a:"1Corinthians",c:16},{n:"2 Corintios",a:"2Corinthians",c:13},{n:"Gálatas",a:"Galatians",c:6},
-            {n:"Efesios",a:"Ephesians",c:6},{n:"Filipenses",a:"Philippians",c:4},{n:"Colosenses",a:"Colossians",c:4},
-            {n:"1 Tesalonicenses",a:"1Thessalonians",c:5},{n:"2 Tesalonicenses",a:"2Thessalonians",c:3},{n:"1 Timoteo",a:"1Timothy",c:6},
-            {n:"2 Timoteo",a:"2Timothy",c:4},{n:"Tito",a:"Titus",c:3},{n:"Filemón",a:"Philemon",c:1},{n:"Hebreos",a:"Hebrews",c:13},
-            {n:"Santiago",a:"James",c:5},{n:"1 Pedro",a:"1Peter",c:5},{n:"2 Pedro",a:"2Peter",c:3},{n:"1 Juan",a:"1John",c:5},
-            {n:"2 Juan",a:"2John",c:1},{n:"3 Juan",a:"3John",c:1},{n:"Judas",a:"Jude",c:1},{n:"Apocalipsis",a:"Revelation",c:22}
-        ];
-
-        let cur = {ref:'',text:''};
-
-        window.onload = () => {
-            const s = document.getElementById('book');
-            BOOKS.forEach(b => {
-                const o = document.createElement('option');
-                o.value = b.a; o.textContent = `${b.n} (${b.c})`; o.dataset.c = b.c;
-                s.appendChild(o);
-            });
-        };
-
-        function loadCh() {
-            const b = document.getElementById('book'), c = document.getElementById('ch'), v = document.getElementById('v');
-            if(!b.value) { c.disabled=true; v.disabled=true; c.innerHTML='<option>Primero el libro</option>'; v.innerHTML='<option>Primero el capítulo</option>'; return; }
-            const mx = parseInt(b.options[b.selectedIndex].dataset.c);
-            c.innerHTML = '<option value="">Selecciona capítulo...</option>';
-            for(let i=1;i<=mx;i++) { const o=document.createElement('option'); o.value=i; o.textContent=`Cap. ${i}`; c.appendChild(o); }
-            c.disabled=false; v.disabled=true; v.innerHTML='<option>Primero el capítulo</option>';
+        async function searchVerse() {
+            const ref = document.getElementById('searchInput').value;
+            if (!ref) return;
+            fetchVerse(`https://bible-api.com/${ref}?translation=rvr09`);
         }
 
-        function loadV() {
-            const c = document.getElementById('ch'), v = document.getElementById('v');
-            if(!c.value) { v.disabled=true; return; }
-            v.innerHTML = '<option value="">Selecciona versículo...</option>';
-            const mx = c.value==119?176:50; // Salmo 119 tiene 176
-            for(let i=1;i<=mx;i++) { const o=document.createElement('option'); o.value=i; o.textContent=`Vers. ${i}`; v.appendChild(o); }
-            v.disabled=false;
+        async function playRandom() {
+            // Nota: Esta API no tiene /random nativo que funcione bien siempre,
+            // usamos un versículo conocido al azar para el ejemplo
+            const randomRefs = ["Juan 3:16", "Salmos 23:1", "Filipenses 4:13", "Mateo 11:28", "Proverbios 3:5"];
+            const selection = randomRefs[Math.floor(Math.random() * randomRefs.length)];
+            fetchVerse(`https://bible-api.com/${selection}?translation=rvr09`);
         }
 
-        async function fetchBible(ref) {
-            // Intento 1: RVA
+        async function fetchVerse(url) {
             try {
-                const r = await fetch(`https://bible-api.com/${ref}?translation=rva`, {mode:'cors'});
-                if(r.ok) { const d=await r.json(); if(d.text) return {ref:d.reference||ref, text:d.text.trim()}; }
-            } catch(e) {}
-            // Intento 2: RVR
-            try {
-                const r = await fetch(`https://bible-api.com/${ref}?translation=rvr`, {mode:'cors'});
-                if(r.ok) { const d=await r.json(); if(d.text) return {ref:d.reference||ref, text:d.text.trim()}; }
-            } catch(e) {}
-            // Fallback local
-            const key = ref.replace(/\+/g,':').replace(/^[^:]+:/, (m)=>m.replace(/^[A-Za-z]+/, (a)=>BOOKS.find(b=>b.a===a)?.n||a));
-            if(LOCAL[key]) return {ref:key.replace(/:/g,' '), text:LOCAL[key]};
-            throw new Error('No se pudo cargar el versículo');
+                const res = await fetch(url);
+                const data = await res.json();
+                if (data.text) {
+                    currentVerse = { ref: data.reference, text: data.text };
+                    document.getElementById('verseDisplay').innerText = `"${data.text.trim()}"`;
+                    document.getElementById('refDisplay').innerText = data.reference;
+                }
+            } catch (e) { alert("No se encontró el versículo"); }
         }
 
-        async function buscar() {
-            const b=document.getElementById('book').value, c=document.getElementById('ch').value, v=document.getElementById('v').value;
-            if(!b||!c) return msg('Selecciona libro y capítulo','err');
-            
-            const btn=document.getElementById('btnSearch'), ld=document.getElementById('loader');
-            btn.disabled=true; ld.classList.add('show'); hideMsg(); document.getElementById('res').classList.remove('show');
-            
-            try {
-                const ref = v ? `${b}+${c}:${v}` : `${b}+${c}`;
-                const data = await fetchBible(ref);
-                cur = data;
-                document.getElementById('ref').textContent = cur.ref;
-                document.getElementById('txt').textContent = `"${cur.text}"`;
-                document.getElementById('res').classList.add('show');
-                msg('✅ Versículo cargado correctamente','ok');
-            } catch(e) {
-                msg('⚠️ ' + e.message + '. Se usó la base local.','err');
-            } finally {
-                btn.disabled=false; ld.classList.remove('show');
+        function speakVerse() {
+            if (!currentVerse.text) return;
+            const synth = window.speechSynthesis;
+            const utter = new SpeechSynthesisUtterance(currentVerse.text);
+            utter.lang = 'es-ES';
+            utter.rate = 0.9;
+            synth.speak(utter);
+        }
+
+        function downloadAudio() {
+            if (!currentVerse.text) return alert("Busca un versículo primero");
+            const text = encodeURIComponent(currentVerse.text);
+            // Proxy de Google TTS para generar el archivo
+            const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&tl=es-US&client=tw-ob&q=${text}`;
+            window.open(audioUrl, '_blank'); 
+        }
+
+        function toggleMusic() {
+            if (bgMusic.paused) {
+                bgMusic.play();
+                document.getElementById('musicIcon').innerText = "🎵";
+            } else {
+                bgMusic.pause();
+                document.getElementById('musicIcon').innerText = "🔇";
             }
         }
-
-        async function rand() {
-            const keys = Object.keys(LOCAL);
-            const k = keys[Math.floor(Math.random()*keys.length)];
-            cur = {ref:k.replace(/:/g,' '), text:LOCAL[k]};
-            document.getElementById('ref').textContent = cur.ref;
-            document.getElementById('txt').textContent = `"${cur.text}"`;
-            document.getElementById('res').classList.add('show');
-            document.getElementById('res').scrollIntoView({behavior:'smooth'});
-            msg('🎲 Versículo aleatorio cargado','ok');
-        }
-
-        function play() {
-            if(!cur.text) return msg('Busca un versículo primero','err');
-            window.speechSynthesis.cancel();
-            const u = new SpeechSynthesisUtterance(cur.text);
-            u.lang='es-ES'; u.rate=0.75;
-            const v = speechSynthesis.getVoices().find(x=>x.lang.startsWith('es'));
-            if(v) u.voice=v;
-            speechSynthesis.speak(u);
-            msg('🔊 Reproduciendo...','ok');
-        }
-
-        function dl() {
-            if(!cur.text) return msg('Busca primero','err');
-            const url = `https://translate.google.com/translate_tts?ie=UTF-8&tl=es&client=tw-ob&q=${encodeURIComponent(cur.text)}`;
-            const a = document.createElement('a'); a.href=url; a.download=`${cur.ref.replace(/[: ]/g,'_')}.mp3`;
-            document.body.appendChild(a); a.click(); a.remove();
-            msg('💾 Descargando MP3...','ok');
-        }
-
-        async function cp() {
-            if(!cur.text) return msg('Busca primero','err');
-            await navigator.clipboard.writeText(`${cur.ref}\n\n"${cur.text}"`);
-            msg('📋 ¡Copiado!','ok');
-        }
-
-        function msg(t, type) {
-            const m = document.getElementById(type==='err'?'msgErr':'msgErr'); // Reutilizamos msgErr para simplicidad
-            m.textContent=t; m.className=`msg show ${type}`;
-            setTimeout(()=>m.classList.remove('show'),4000);
-        }
-        function hideMsg() { document.getElementById('msgErr').classList.remove('show'); }
-
-        if(window.speechSynthesis) speechSynthesis.onvoiceschanged=()=>speechSynthesis.getVoices();
     </script>
 </body>
 </html>
