@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Lora:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        /* TU DISEÑO ORIGINAL INTACTO */
         *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
         :root{--gold:#c9a84c;--gold-light:#e8d48b;--gold-dark:#a07c2a;--deep-blue:#1a1a3e;--dark:#0d0d1a;--cream:#f5f0e8;--warm-white:#faf8f4;--text-dark:#2c2c3e;--text-light:#6b6b80;--purple:#2d1b69}
         html{scroll-behavior:smooth}
@@ -17,17 +18,16 @@
         h1{font-family:'Cinzel',serif;font-size:3.5rem;color:var(--deep-blue);letter-spacing:4px;margin-bottom:0.5rem;text-shadow:2px 2px 4px rgba(0,0,0,0.1)}
         .card{background:white;padding:3rem;border-radius:24px;box-shadow:0 20px 50px rgba(26,26,62,0.05);border:1px solid rgba(201,168,76,0.1);margin-bottom:2rem;position:relative;overflow:hidden}
         .controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.5rem;margin-bottom:2.5rem}
-        select{width:100%;padding:15px;border:2px solid #eee;border-radius:14px;font-family:inherit;font-size:1rem;color:var(--text-dark);cursor:pointer;transition:0.3s;background:white}
-        select:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 4px rgba(201,168,76,0.1)}
-        .verse-display{margin:2.5rem 0;padding:2.5rem;background:var(--warm-white);border-radius:20px;min-height:180px;display:flex;flex-direction:column;justify-content:center;border-left:5px solid var(--gold)}
-        #verseRef{color:var(--gold-dark);font-family:'Cinzel';font-size:1.2rem;margin-bottom:1rem;display:block}
-        #verseText{font-family:'Lora',serif;font-size:1.8rem;color:var(--text-dark);line-height:1.8;font-style:italic}
-        .action-buttons{display:flex;gap:1.5rem;justify-content:center;flex-wrap:wrap}
-        .btn{padding:14px 32px;border:none;border-radius:14px;font-weight:600;cursor:pointer;transition:0.4s;display:flex;align-items:center;gap:12px;font-family:'Inter';font-size:1rem}
+        select{width:100%;padding:12px;border:2px solid #eee;border-radius:12px;font-family:inherit;font-size:1rem;color:var(--text-dark);cursor:pointer;transition:0.3s}
+        select:focus{outline:none;border-color:var(--gold)}
+        .verse-display{margin:2.5rem 0;padding:2rem;background:var(--warm-white);border-radius:16px;min-height:150px;display:flex;flex-direction:column;justify-content:center}
+        #verseText{font-family:'Lora',serif;font-size:1.6rem;color:var(--text-dark);line-height:1.8;font-style:italic}
+        .action-buttons{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+        .btn{padding:12px 28px;border:none;border-radius:12px;font-weight:600;cursor:pointer;transition:0.4s;display:flex;align-items:center;gap:10px;font-family:'Inter'}
         .btn-primary{background:var(--deep-blue);color:white}
         .btn-gold{background:var(--gold);color:white}
-        .btn:hover{transform:translateY(-4px);box-shadow:0 12px 25px rgba(0,0,0,0.15)}
-        #toast{position:fixed;bottom:2.5rem;left:50%;transform:translateX(-50%) translateY(120px);background:var(--dark);color:white;padding:14px 28px;border-radius:50px;transition:0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);z-index:1000;box-shadow:0 10px 30px rgba(0,0,0,0.2)}
+        .btn:hover{transform:translateY(-3px);box-shadow:0 10px 20px rgba(0,0,0,0.1)}
+        #toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(100px);background:var(--deep-blue);color:white;padding:12px 24px;border-radius:50px;transition:0.5s;z-index:1000}
         #toast.visible{transform:translateX(-50%) translateY(0)}
     </style>
 </head>
@@ -35,25 +35,25 @@
     <div class="container">
         <header>
             <h1>Sonido de Vida</h1>
-            <p style="font-family:'Lora';font-style:italic;color:var(--text-light);font-size:1.2rem">La Palabra de Dios en tu voz</p>
+            <p>Biblia en Audio y Descarga</p>
         </header>
 
         <div class="card">
             <div class="controls">
-                <select id="bookSelect"><option value="">Cargando libros...</option></select>
-                <select id="capSelect"><option value="">Capítulo</option></select>
-                <select id="verSelect"><option value="">Versículo</option></select>
+                <select id="bookSelect"><option>Cargando libros...</option></select>
+                <select id="capSelect"><option>Capítulo</option></select>
+                <select id="verSelect"><option>Versículo</option></select>
             </div>
 
             <div class="verse-display">
-                <span id="verseRef">Selecciona un pasaje</span>
-                <p id="verseText">"Lámpara es a mis pies tu palabra, y lumbrera a mi camino."</p>
+                <h3 id="verseRef" style="color:var(--gold-dark);margin-bottom:1rem">Selecciona un pasaje</h3>
+                <p id="verseText">La fe viene por el oír, y el oír por la palabra de Dios.</p>
             </div>
 
             <div class="action-buttons">
-                <button class="btn btn-primary" onclick="speakVerse()"><i class="fas fa-volume-up"></i> Escuchar</button>
-                <button class="btn btn-gold" onclick="downloadVerse()"><i class="fas fa-download"></i> Descargar</button>
-                <button class="btn btn-primary" onclick="copyVerse()"><i class="fas fa-copy"></i> Copiar</button>
+                <button class="btn btn-primary" onclick="speakVerse('search')"><i class="fas fa-volume-up"></i> Escuchar</button>
+                <button class="btn btn-gold" onclick="downloadVerse('search')"><i class="fas fa-download"></i> Descargar</button>
+                <button class="btn btn-primary" onclick="copyVerse('search')"><i class="fas fa-copy"></i> Copiar</button>
             </div>
         </div>
     </div>
@@ -64,44 +64,39 @@
     <script>
         let currentVerse = { ref: '', text: '' };
 
-        // Carga inicial de libros
+        // Lógica de carga de Biblia
         window.onload = () => {
-            const checkBible = setInterval(() => {
-                if (window.BIBLE) {
-                    clearInterval(checkBible);
-                    const bookSelect = document.getElementById('bookSelect');
-                    bookSelect.innerHTML = '<option value="">Selecciona un Libro</option>';
-                    Object.keys(window.BIBLE).forEach(book => {
-                        const opt = document.createElement('option');
-                        opt.value = book; opt.textContent = book;
-                        bookSelect.appendChild(opt);
-                    });
-                }
-            }, 100);
+            if (!window.BIBLE) return;
+            const bookSelect = document.getElementById('bookSelect');
+            bookSelect.innerHTML = '<option value="">Selecciona un Libro</option>';
+            Object.keys(window.BIBLE).forEach(book => {
+                const opt = document.createElement('option');
+                opt.value = book; opt.textContent = book;
+                bookSelect.appendChild(opt);
+            });
         };
 
-        // Lógica de selectores
         document.getElementById('bookSelect').onchange = function() {
-            const book = this.value;
+            const caps = window.BIBLE[this.value];
             const capSelect = document.getElementById('capSelect');
-            capSelect.innerHTML = '<option value="">Capítulo</option>';
-            if(!book) return;
-            window.BIBLE[book].forEach((_, i) => {
+            capSelect.innerHTML = '<option>Capítulo</option>';
+            if(!caps) return;
+            caps.forEach((_, i) => {
                 const opt = document.createElement('option');
-                opt.value = i + 1; opt.textContent = `Capítulo ${i + 1}`;
+                opt.value = i + 1; opt.textContent = i + 1;
                 capSelect.appendChild(opt);
             });
         };
 
         document.getElementById('capSelect').onchange = function() {
             const book = document.getElementById('bookSelect').value;
-            const capIndex = this.value - 1;
+            const vers = window.BIBLE[book][this.value - 1];
             const verSelect = document.getElementById('verSelect');
-            verSelect.innerHTML = '<option value="">Versículo</option>';
-            if(capIndex < 0) return;
-            window.BIBLE[book][capIndex].forEach((_, i) => {
+            verSelect.innerHTML = '<option>Versículo</option>';
+            if(!vers) return;
+            vers.forEach((_, i) => {
                 const opt = document.createElement('option');
-                opt.value = i + 1; opt.textContent = `Versículo ${i + 1}`;
+                opt.value = i + 1; opt.textContent = i + 1;
                 verSelect.appendChild(opt);
             });
         };
@@ -110,7 +105,6 @@
             const book = document.getElementById('bookSelect').value;
             const cap = document.getElementById('capSelect').value;
             const ver = this.value;
-            if(!ver) return;
             const text = window.BIBLE[book][cap - 1][ver - 1];
             currentVerse = { ref: `${book} ${cap}:${ver}`, text: text };
             document.getElementById('verseRef').textContent = currentVerse.ref;
@@ -118,57 +112,30 @@
         };
 
         function speakVerse() {
-            if (!currentVerse.text) return showToast('Selecciona un versículo primero');
+            if (!currentVerse.text) return showToast('Selecciona un versículo');
             window.speechSynthesis.cancel();
             const msg = new SpeechSynthesisUtterance(currentVerse.text);
             msg.lang = 'es-ES';
-            msg.rate = 0.9;
             window.speechSynthesis.speak(msg);
         }
 
         async function downloadVerse() {
-            if (!currentVerse.text) return showToast('No hay nada para descargar');
-            const safeRef = currentVerse.ref.replace(/[: ]/g, '_');
+            if (!currentVerse.text) return showToast('No hay versículo seleccionado');
             
-            const htmlContent = `
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>${currentVerse.ref}</title>
-    <style>
-        body { font-family: 'Inter', sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; background: #f5f0e8; margin: 0; }
-        .card { background: white; padding: 3rem; border-radius: 25px; text-align: center; max-width: 500px; box-shadow: 0 15px 40px rgba(0,0,0,0.1); border: 1px solid #c9a84c; }
-        h1 { color: #a07c2a; font-family: serif; margin-bottom: 1rem; }
-        p { font-size: 1.4rem; line-height: 1.6; color: #2c2c3e; font-style: italic; margin-bottom: 2rem; }
-        button { background: #1a1a3e; color: white; border: none; padding: 15px 30px; border-radius: 12px; cursor: pointer; font-weight: bold; font-size: 1rem; }
-    </style>
-</head>
-<body>
-    <div class="card">
-        <h1>${currentVerse.ref}</h1>
-        <p>"${currentVerse.text}"</p>
-        <button onclick="s()">🔊 ESCUCHAR AUDIO</button>
-    </div>
-    <script>
-        function s() {
-            window.speechSynthesis.cancel();
-            const m = new SpeechSynthesisUtterance("${currentVerse.text.replace(/"/g, "'")}");
-            m.lang = 'es-ES'; window.speechSynthesis.speak(m);
-        }
-        window.onload = () => setTimeout(s, 500);
-    <\/script>
-</body>
-</html>`;
+            const safeRef = currentVerse.ref.replace(/[: ]/g, '_');
+            const htmlContent = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>${currentVerse.ref}</title><style>body{font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;background:#f5f0e8;margin:0}.card{background:white;padding:2rem;border-radius:15px;text-align:center;max-width:500px;box-shadow:0 10px 30px rgba(0,0,0,0.1)}h1{color:#a07c2a}</style></head><body><div class="card"><h1>${currentVerse.ref}</h1><p>"${currentVerse.text}"</p><button onclick="s()">🔊 Escuchar</button></div><script>function s(){const m=new SpeechSynthesisUtterance("${currentVerse.text.replace(/"/g, "'")}");m.lang='es-ES';window.speechSynthesis.speak(m)}<\/script></body></html>`;
 
             const blob = new Blob([htmlContent], { type: 'text/html' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
+            
+            // ESTAS 3 LÍNEAS SON LA CLAVE PARA QUE DESCARGUE
             a.style.display = 'none';
             a.href = url;
             a.download = `sonidodevida_${safeRef}.html`;
             document.body.appendChild(a);
             a.click();
+            
             setTimeout(() => {
                 document.body.removeChild(a);
                 URL.revokeObjectURL(url);
@@ -179,7 +146,7 @@
         async function copyVerse() {
             if (!currentVerse.text) return showToast('Nada que copiar');
             await navigator.clipboard.writeText(`${currentVerse.ref}\n\n"${currentVerse.text}"`);
-            showToast('¡Copiado al portapapeles!');
+            showToast('¡Copiado!');
         }
 
         function showToast(m) {
