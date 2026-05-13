@@ -37,6 +37,7 @@ export default async function handler(req, res) {
                 voice: 'nova',
                 input: fullText,
                 response_format: 'mp3',
+                speed: 0.8,
                 instructions: 'Habla en español latinoamericano con un tono cálido, pausado y reverente, como si estuvieras leyendo la Biblia en voz alta.'
             })
         });
