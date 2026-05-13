@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sonido de Vida - Biblia Completa</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Lora:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+        :root{--gold:#c9a84c;--gold-light:#e8d48b;--gold-dark:#a07c2a;--deep-blue:#1a1a3e;--dark:#0d0d1a;--cream:#f5f0e8;--warm-white:#faf8f4;--text-dark:#2c2c3e;--text-light:#6b6b80;--purple:#2d1b69}
+        html{scroll-behavior:smooth}
+        body{font-family:'Inter',sans-serif;background:var(--warm-white);color:var(--text-dark);overflow-x:hidden}
+        nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:1rem 2rem;display:flex;justify-content:space-between;align-items:center;transition:all .4s ease;background:transparent}
+        nav.scrolled{background:rgba(13,13,26,.95);backdrop-filter:blur(20px);padding:.7rem 2rem;box-shadow:0 4px 30px rgba(0,0,0,.3)}
+        .nav-logo{font-family:'Cinzel',serif;font-size:1.5rem;font-weight:700;color:var(--gold-light);text-decoration:none;display:flex;align-items:center;gap:.5rem}
+        .nav-links{display:flex;gap:2rem;list-style:none;align-items:center}
+        .nav-links a{color:rgba(255,255,255,.85);text-decoration:none;font-size:.9rem;font-weight:500;transition:color .3s}
+        .nav-links a:hover{color:var(--gold-light)}
+        .nav-cta{background:linear-gradient(135deg,var(--gold),var(--gold-dark))!important;color:var(--dark)!important;padding:.5rem 1.5rem;border-radius:50px;font-weight:600!important}
+        .nav-cta:hover{transform:translateY(-2px);box-shadow:0 4px 15px rgba(201,168,76,.4)}
+        .mobile-menu-btn{display:none;background:none;border:none;cursor:pointer;padding:.5rem;z-index:1001}
+        .mobile-menu-btn span{display:block;width:25px;height:2px;background:var(--gold-light);margin:5px 0;transition:all .3s}
+        .mobile-menu-btn.active span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+        .mobile-menu-btn.active span:nth-child(2){opacity:0}
+        .mobile-menu-btn.active span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+        .hero{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden}
+        .hero-bg{position:absolute;inset:0;background:linear-gradient(135deg,#0d0d1a 0%,#1a1a3e 50%,#2d1b69 100%)}
+        .hero-bg::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 50%,rgba(201,168,76,.1) 0%,transparent 50%),radial-gradient(circle at 70% 30%,rgba(45,27,105,.3) 0%,transparent 40%)}
+        .hero-particles{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+        .particle{position:absolute;width:4px;height:4px;background:var(--gold-light);border-radius:50%;opacity:0;animation:floatUp linear infinite}
+        @keyframes floatUp{0%{opacity:0;transform:translateY(100vh) scale(0)}10%{opacity:.8}90%{opacity:.8}100%{opacity:0;transform:translateY(-10vh) scale(1)}}
+        .hero-content{position:relative;z-index:10;text-align:center;padding:2rem;max-width:900px}
+        .hero-badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(201,168,76,.15);border:1px solid rgba(201,168,76,.3);padding:.5rem 1.2rem;border-radius:50px;color:var(--gold-light);font-size:.85rem;font-weight:500;margin-bottom:2rem;backdrop-filter:blur(10px);animation:fadeInDown 1s ease}
+        .pulse-dot{width:8px;height:8px;background:var(--gold);border-radius:50%;animation:pulse 2s infinite}
+        @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.5)}}
+        .hero h1{font-family:'Cinzel',serif;font-size:clamp(2.5rem,6vw,4.5rem);color:white;line-height:1.15;margin-bottom:1.5rem;animation:fadeInUp 1s ease .2s both}
+        .hero h1 span{background:linear-gradient(135deg,var(--gold-light),var(--gold),var(--gold-dark));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .hero p{font-family:'Lora',serif;font-size:clamp(1.1rem,2.5vw,1.35rem);color:rgba(255,255,255,.8);line-height:1.7;margin-bottom:2.5rem;max-width:650px;margin-left:auto;margin-right:auto;animation:fadeInUp 1s ease .4s both}
+        .hero-buttons{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;animation:fadeInUp 1s ease .6s both}
+        .btn-primary{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:var(--dark);padding:1rem 2.5rem;border:none;border-radius:50px;font-size:1rem;font-weight:600;cursor:pointer;transition:all .3s;text-decoration:none;display:inline-flex;align-items:center;gap:.5rem;font-family:'Inter',sans-serif}
+        .btn-primary:hover{transform:translateY(-3px);box-shadow:0 8px 25px rgba(201,168,76,.4)}
+        .btn-secondary{background:rgba(255,255,255,.1);color:white;padding:1rem 2.5rem;border:1px solid rgba(255,255,255,.25);border-radius:50px;font-size:1rem;font-weight:500;cursor:pointer;transition:all .3s;text-decoration:none;display:inline-flex;align-items:center;gap:.5rem;backdrop-filter:blur(10px);font-family:'Inter',sans-serif}
+        .btn-secondary:hover{background:rgba(255,255,255,.2);border-color:var(--gold-light);transform:translateY(-3px)}
+        @keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes fadeInDown{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+        .hero-scroll{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);z-index:10;animation:bounce 2s infinite}
+        .hero-scroll svg{width:30px;height:30px;stroke:var(--gold-light);opacity:.6}
+        @keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(10px)}}
+        .stats-bar{background:white;padding:3rem 2rem;box-shadow:0 4px 20px rgba(0,0,0,.05)}
+        .stats-grid{max-width:1000px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:2rem;text-align:center}
+        .stat-item h3{font-family:'Cinzel',serif;font-size:2rem;color:var(--gold-dark);margin-bottom:.3rem}
+        .stat-item p{color:var(--text-light);font-size:.9rem}
+        .features{padding:6rem 2rem;background:var(--warm-white)}
+        .section-header{text-align:center;margin-bottom:4rem}
+        .section-header h2{font-family:'Cinzel',serif;font-size:clamp(2rem,4vw,3rem);color:var(--deep-blue);margin-bottom:1rem}
+        .section-header p{font-family:'Lora',serif;color:var(--text-light);font-size:1.1rem;max-width:600px;margin:0 auto}
+        .features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:2rem;max-width:1200px;margin:0 auto}
+        .feature-card{background:white;border-radius:20px;padding:2.5rem;text-align:center;transition:all .4s ease;border:1px solid rgba(0,0,0,.05);position:relative;overflow:hidden}
+        .feature-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--gold),var(--gold-dark));transform:scaleX(0);transition:transform .4s ease}
+        .feature-card:hover::before{transform:scaleX(1)}
+        .feature-card:hover{transform:translateY(-8px);box-shadow:0 20px 60px rgba(0,0,0,.08)}
+        .feature-icon{width:70px;height:70px;background:linear-gradient(135deg,rgba(201,168,76,.1),rgba(201,168,76,.05));border-radius:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;font-size:1.8rem}
+        .feature-card h3{font-family:'Cinzel',serif;font-size:1.3rem;color:var(--deep-blue);margin-bottom:.8rem}
+        .feature-card p{color:var(--text-light);line-height:1.7;font-size:.95rem}
+        .search-section{padding:6rem 2rem;background:linear-gradient(180deg,var(--deep-blue) 0%,var(--dark) 100%);position:relative}
+        .search-section .section-header h2{color:white}
+        .search-section .section-header p{color:rgba(255,255,255,.6)}
+        .search-container{max-width:800px;margin:0 auto}
+        .search-box{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:2.5rem;backdrop-filter:blur(20px)}
+        .search-selectors{display:grid;grid-template-columns:2fr 1fr 1fr;gap:1rem;margin-bottom:1.5rem}
+        .form-group label{display:block;color:var(--gold-light);font-size:.85rem;font-weight:600;margin-bottom:.5rem;letter-spacing:.5px;text-transform:uppercase}
+        .form-group select{width:100%;padding:.85rem 1rem;border:1px solid rgba(255,255,255,.15);border-radius:12px;background:rgba(255,255,255,.06);color:white;font-size:.95rem;font-family:'Inter',sans-serif;transition:all .3s;appearance:none}
+        .form-group select{background-image:url("image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23c9a84c' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 1rem center;padding-right:2.5rem}
+        .form-group select option{background:var(--deep-blue);color:white}
+        .form-group select:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,.15)}
+        .search-btn{width:100%;padding:1rem;background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:var(--dark);border:none;border-radius:12px;font-size:1.05rem;font-weight:600;cursor:pointer;transition:all .3s;font-family:'Inter',sans-serif;display:flex;align-items:center;justify-content:center;gap:.5rem}
+        .search-btn:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(201,168,76,.3)}
+        .search-btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+        .verse-result{margin-top:2rem;display:none}
+        .verse-result.visible{display:block;animation:fadeInUp .5s ease}
+        .verse-card{background:rgba(255,255,255,.06);border:1px solid rgba(201,168,76,.2);border-radius:16px;padding:2rem;position:relative}
+        .verse-card .verse-ref{font-family:'Cinzel',serif;color:var(--gold-light);font-size:1.1rem;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem}
+        .verse-card .verse-text{font-family:'Lora',serif;color:rgba(255,255,255,.9);font-size:1.15rem;line-height:1.8;margin-bottom:1.5rem;font-style:italic}
+        .verse-card .verse-text::before{content:'"';font-size:3rem;color:var(--gold);line-height:0;vertical-align:-.8rem;margin-right:.2rem}
+        .verse-actions{display:flex;gap:.8rem;flex-wrap:wrap}
+        .verse-action-btn{display:inline-flex;align-items:center;gap:.5rem;padding:.65rem 1.3rem;border-radius:10px;font-size:.85rem;font-weight:500;cursor:pointer;transition:all .3s;border:none;font-family:'Inter',sans-serif}
+        .btn-play{background:rgba(201,168,76,.15);color:var(--gold-light);border:1px solid rgba(201,168,76,.3)}
+        .btn-play:hover{background:rgba(201,168,76,.25)}
+        .btn-play.playing{background:rgba(201,168,76,.3);border-color:var(--gold)}
+        .btn-download{background:rgba(76,175,80,.15);color:#81c784;border:1px solid rgba(76,175,80,.3)}
+        .btn-download:hover{background:rgba(76,175,80,.25)}
+        .btn-download.recording{background:rgba(244,67,54,.2);color:#ef9a9a;border-color:#ef5350;animation:pulse 1.5s infinite}
+        .btn-copy{background:rgba(100,181,246,.15);color:#90caf9;border:1px solid rgba(100,181,246,.3)}
+        .btn-copy:hover{background:rgba(100,181,246,.25)}
+        .verse-action-btn svg{width:16px;height:16px}
+        .random-section{padding:6rem 2rem;background:var(--cream);text-align:center}
+        .random-container{max-width:700px;margin:0 auto}
+        .random-btn{background:linear-gradient(135deg,var(--purple),var(--purple-light));color:white;padding:1.2rem 3rem;border:none;border-radius:50px;font-size:1.15rem;font-weight:600;cursor:pointer;transition:all .3s;font-family:'Inter',sans-serif;display:inline-flex;align-items:center;gap:.7rem;box-shadow:0 8px 30px rgba(45,27,105,.3)}
+        .random-btn:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 12px 40px rgba(45,27,105,.4)}
+        .random-btn:active{transform:scale(.98)}
+        .random-btn svg{width:24px;height:24px;transition:transform .5s}
+        .random-btn:hover svg{transform:rotate(180deg)}
+        .random-result{margin-top:2.5rem;display:none}
+        .random-result.visible{display:block;animation:fadeInUp .6s ease}
+        .random-verse-card{background:white;border-radius:20px;padding:2.5rem;box-shadow:0 10px 40px rgba(0,0,0,.06);border:1px solid rgba(0,0,0,.05);text-align:left}
+        .random-verse-card .verse-ref{font-family:'Cinzel',serif;color:var(--purple);font-size:1.15rem;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem}
+        .random-verse-card .verse-text{font-family:'Lora',serif;color:var(--text-dark);font-size:1.2rem;line-height:1.8;margin-bottom:1.5rem;font-style:italic}
+        .random-verse-card .verse-text::before{content:'"';font-size:3rem;color:var(--purple);line-height:0;vertical-align:-.8rem;margin-right:.2rem;opacity:.4}
+        .random-actions{display:flex;gap:.8rem;flex-wrap:wrap}
+        .random-action-btn{display:inline-flex;align-items:center;gap:.5rem;padding:.65rem 1.3rem;border-radius:10px;font-size:.85rem;font-weight:500;cursor:pointer;transition:all .3s;border:1px solid;font-family:'Inter',sans-serif}
+        .ra-play{background:rgba(45,27,105,.08);color:var(--purple);border-color:rgba(45,27,105,.2)}
+        .ra-play:hover{background:rgba(45,27,105,.15)}
+        .ra-play.playing{background:rgba(45,27,105,.15);border-color:var(--purple)}
+        .ra-download{background:rgba(76,175,80,.08);color:#388e3c;border-color:rgba(76,175,80,.2)}
+        .ra-download:hover{background:rgba(76,175,80,.15)}
+        .ra-download.recording{background:rgba(244,67,54,.1);color:#d32f2f;border-color:#ef5350;animation:pulse 1.5s infinite}
+        .ra-copy{background:rgba(100,181,246,.08);color:#1565c0;border-color:rgba(100,181,246,.2)}
+        .ra-copy:hover{background:rgba(100,181,246,.15)}
+        .random-action-btn svg{width:16px;height:16px}
+        .cta-section{padding:6rem 2rem;background:linear-gradient(135deg,var(--deep-blue) 0%,var(--purple) 100%);text-align:center;position:relative;overflow:hidden}
+        .cta-section::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle,rgba(201,168,76,.1) 0%,transparent 50%);animation:rotateBg 20s linear infinite}
+        @keyframes rotateBg{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+        .cta-content{position:relative;z-index:2;max-width:700px;margin:0 auto}
+        .cta-content h2{font-family:'Cinzel',serif;font-size:clamp(2rem,4vw,3rem);color:white;margin-bottom:1.5rem}
+        .cta-content p{font-family:'Lora',serif;color:rgba(255,255,255,.8);font-size:1.15rem;line-height:1.7;margin-bottom:2.5rem}
+        .audio-player-bar{position:fixed;bottom:0;left:0;right:0;background:rgba(13,13,26,.97);backdrop-filter:blur(20px);padding:1rem 2rem;z-index:1000;display:none;border-top:1px solid rgba(201,168,76,.2);animation:slideUp .4s ease}
+        .audio-player-bar.visible{display:block}
+        @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+        .player-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:1.5rem}
+        .player-info{flex:1;min-width:0}
+        .player-info .player-ref{font-family:'Cinzel',serif;color:var(--gold-light);font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .player-info .player-text{color:rgba(255,255,255,.6);font-size:.8rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .player-controls{display:flex;align-items:center;gap:1rem}
+        .player-play-btn{width:45px;height:45px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-dark));border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .3s;flex-shrink:0}
+        .player-play-btn:hover{transform:scale(1.1)}
+        .player-play-btn svg{width:20px;height:20px;fill:var(--dark)}
+        .player-close{background:none;border:none;cursor:pointer;padding:.5rem;color:rgba(255,255,255,.5);transition:color .3s;flex-shrink:0}
+        .player-close:hover{color:white}
+        .player-close svg{width:20px;height:20px}
+        .player-wave{display:flex;align-items:center;gap:3px;flex-shrink:0}
+        .player-wave .wave-bar{width:3px;height:15px;background:var(--gold);border-radius:3px;animation:waveAnim .8s ease-in-out infinite alternate}
+        .player-wave .wave-bar:nth-child(2){animation-delay:.1s;height:20px}
+        .player-wave .wave-bar:nth-child(3){animation-delay:.2s;height:12px}
+        .player-wave .wave-bar:nth-child(4){animation-delay:.3s;height:18px}
+        .player-wave .wave-bar:nth-child(5){animation-delay:.15s;height:14px}
+        @keyframes waveAnim{from{transform:scaleY(.5)}to{transform:scaleY(1.2)}}
+        .player-wave.paused .wave-bar{animation-play-state:paused}
+        .toast{position:fixed;bottom:5rem;left:50%;transform:translateX(-50%) translateY(100px);background:var(--deep-blue);color:white;padding:1rem 2rem;border-radius:12px;font-size:.9rem;z-index:2000;opacity:0;transition:all .4s ease;display:flex;align-items:center;gap:.5rem;box-shadow:0 10px 40px rgba(0,0,0,.3);border:1px solid rgba(201,168,76,.2)}
+        .toast.visible{opacity:1;transform:translateX(-50%) translateY(0)}
+        .toast svg{width:18px;height:18px;stroke:var(--gold-light)}
+        footer{background:var(--dark);padding:4rem 2rem 2rem;color:rgba(255,255,255,.5)}
+        .footer-content{max-width:1200px;margin:0 auto;text-align:center}
+        .footer-logo{font-family:'Cinzel',serif;font-size:1.8rem;color:var(--gold-light);margin-bottom:1rem}
+        .footer-text{font-family:'Lora',serif;font-size:1rem;line-height:1.8;margin-bottom:2rem;max-width:500px;margin:0 auto}
+        .footer-links{display:flex;justify-content:center;gap:2rem;margin-bottom:2rem;flex-wrap:wrap}
+        .footer-links a{color:rgba(255,255,255,.6);text-decoration:none;font-size:.9rem;transition:color .3s}
+        .footer-links a:hover{color:var(--gold-light)}
+        .footer-divider{height:1px;background:rgba(255,255,255,.08);margin-bottom:1.5rem}
+        .footer-bottom{font-size:.8rem}
+        .loading-spinner{display:inline-block;width:20px;height:20px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .6s linear infinite}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        @media(max-width:768px){
+            .nav-links{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(13,13,26,.98);flex-direction:column;justify-content:center;align-items:center;gap:2rem;z-index:999}
+            .nav-links.open{display:flex}
+            .nav-links a{font-size:1.2rem}
+            .mobile-menu-btn{display:block}
+            .search-selectors{grid-template-columns:1fr}
+            .verse-actions,.random-actions{flex-direction:column}
+            .verse-action-btn,.random-action-btn{justify-content:center}
+            .player-inner{gap:.8rem}
+            .player-info .player-text{display:none}
+            .features-grid{grid-template-columns:1fr}
+            .stats-grid{grid-template-columns:repeat(2,1fr)}
+        }
+        @media(max-width:480px){
+            .stats-grid{grid-template-columns:1fr;gap:1.5rem}
+            .hero-buttons{flex-direction:column;align-items:center}
+            .btn-primary,.btn-secondary{width:100%;justify-content:center}
+        }
+        .reveal{opacity:0;transform:translateY(30px);transition:all .8s ease}
+        .reveal.visible{opacity:1;transform:translateY(0)}
+    </style>
+</head>
+<body>
+    <nav id="navbar">
+        <a href="#" class="nav-logo"><span style="font-size:1.8rem">✝</span> Sonido de Vida</a>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="#features" onclick="closeMenu()">Características</a></li>
+            <li><a href="#search" onclick="closeMenu()">Buscar</a></li>
+            <li><a href="#random" onclick="closeMenu()">Aleatorio</a></li>
+            <li><a href="#search" class="nav-cta" onclick="closeMenu()">Buscar Versículo</a></li>
+        </ul>
+        <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleMobileMenu()">
+            <span></span><span></span><span></span>
+        </button>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-particles" id="particles"></div>
+        <div class="hero-content">
+            <div class="hero-badge"><span class="pulse-dot"></span> 100% Gratuita · Sin registro · Toda la Biblia</div>
+            <h1>Escucha la <span>Palabra</span> de Dios en cualquier momento</h1>
+            <p>Lee, escucha y descarga cualquier versículo de la Biblia. La Palabra de Dios al alcance de tu corazón, siempre gratis y sin límites.</p>
+            <div class="hero-buttons">
+                <a href="#search" class="btn-primary">🔍 Buscar Versículo</a>
+                <a href="#random" class="btn-secondary">🎲 Versículo Aleatorio</a>
+            </div>
+        </div>
+        <div class="hero-scroll">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 13l5 5 5-5M7 6l5 5 5-5"/></svg>
+        </div>
+    </section>
+
+    <section class="stats-bar">
+        <div class="stats-grid">
+            <div class="stat-item"><h3>66</h3><p>Libros</p></div>
+            <div class="stat-item"><h3>31,102</h3><p>Versículos</p></div>
+            <div class="stat-item"><h3>100%</h3><p>Gratis</p></div>
+            <div class="stat-item"><h3>0</h3><p>Registro</p></div>
+        </div>
+    </section>
+
+    <section class="features" id="features">
+        <div class="section-header reveal"><h2>¿Por qué Sonido de Vida?</h2><p>Conecta con la Palabra de Dios de manera simple y accesible</p></div>
+        <div class="features-grid">
+            <div class="feature-card reveal"><div class="feature-icon">🔍</div><h3>Búsqueda Rápida</h3><p>Encuentra cualquier versículo al instante seleccionando libro, capítulo y versículo.</p></div>
+            <div class="feature-card reveal"><div class="feature-icon">🔊</div><h3>Escucha en Audio</h3><p>Escucha cada versículo leído en voz alta. Perfecto para meditar o mientras conduces.</p></div>
+            <div class="feature-card reveal"><div class="feature-icon">💾</div><h3>Descarga Gratis</h3><p>Descarga cualquier versículo para escucharlo sin conexión cuando lo necesites.</p></div>
+            <div class="feature-card reveal"><div class="feature-icon">🎲</div><h3>Versículo Aleatorio</h3><p>¿No sabes qué leer? Descubre un versículo inspirador al azar cada vez.</p></div>
+        </div>
+    </section>
+
+    <section class="search-section" id="search">
+        <div class="section-header reveal"><h2>Buscar un Versículo</h2><p>Selecciona el libro, capítulo y versículo que deseas encontrar</p></div>
+        <div class="search-container reveal">
+            <div class="search-box">
+                <div class="search-selectors">
+                    <div class="form-group"><label>Libro</label><select id="bookSelect"><option value="">Cargando libros...</option></select></div>
+                    <div class="form-group"><label>Capítulo</label><select id="chapterSelect"><option value="">Cap.</option></select></div>
+                    <div class="form-group"><label>Versículo</label><select id="verseSelect"><option value="">Vers.</option></select></div>
+                </div>
+                <button class="search-btn" id="searchBtn" onclick="searchVerse()">🔍 Buscar Versículo</button>
+            </div>
+            <div class="verse-result" id="verseResult">
+                <div class="verse-card">
+                    <div class="verse-ref" id="verseRef"></div>
+                    <div class="verse-text" id="verseText"></div>
+                    <div class="verse-actions">
+                        <button class="verse-action-btn btn-play" id="playBtn" onclick="togglePlay(this, 'search')">🔊 Escuchar</button>
+                        <button class="verse-action-btn btn-download" id="downloadBtn" onclick="downloadVerse('search')">💾 Descargar Audio</button>
+                        <button class="verse-action-btn btn-copy" onclick="copyVerse('search')">📋 Copiar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="random-section" id="random">
+        <div class="section-header reveal"><h2>Versículo del Momento</h2><p>Deja que Dios hable a tu corazón con un versículo inspirador al azar</p></div>
+        <div class="random-container reveal">
+            <button class="random-btn" onclick="getRandomVerse()">🎲 Descubre un Versículo</button>
+            <div class="random-result" id="randomResult">
+                <div class="random-verse-card">
+                    <div class="verse-ref" id="randomRef"></div>
+                    <div class="verse-text" id="randomText"></div>
+                    <div class="random-actions">
+                        <button class="random-action-btn ra-play" id="randomPlayBtn" onclick="togglePlay(this, 'random')">🔊 Escuchar</button>
+                        <button class="random-action-btn ra-download" id="randomDownloadBtn" onclick="downloadVerse('random')">💾 Descargar Audio</button>
+                        <button class="random-action-btn ra-copy" onclick="copyVerse('random')">📋 Copiar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section">
+        <div class="cta-content reveal">
+            <h2>La Palabra de Dios es para todos</h2>
+            <p>"Porque la palabra de Dios es viva y eficaz, y más cortante que toda espada de dos filos" — Hebreos 4:12</p>
+            <a href="#search" class="btn-primary">✨ Comenzar Ahora</a>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">✝ Sonido de Vida</div>
+            <p class="footer-text">"Lámpara es a mis pies tu palabra, y lumbrera a mi camino." — Salmo 119:105</p>
+            <div class="footer-links">
+                <a href="#features">Características</a>
+                <a href="#search">Buscar</a>
+                <a href="#random">Aleatorio</a>
+            </div>
+            <div class="footer-divider"></div>
+            <p class="footer-bottom">© 2026 Sonido de Vida · sonidodevida.com · La Palabra de Dios, libre para todos.</p>
+        </div>
+    </footer>
+
+    <div class="audio-player-bar" id="audioPlayerBar">
+        <div class="player-inner">
+            <div class="player-wave paused" id="playerWave">
+                <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+            </div>
+            <div class="player-info">
+                <div class="player-ref" id="playerRef"></div>
+                <div class="player-text" id="playerText"></div>
+            </div>
+            <div class="player-controls">
+                <button class="player-play-btn" id="playerPlayBtn" onclick="toggleGlobalPlay()">
+                    <svg id="playIcon" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                    <svg id="pauseIcon" viewBox="0 0 24 24" style="display:none"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+                </button>
+            </div>
+            <button class="player-close" onclick="closePlayer()">✕</button>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg><span id="toastText"></span></div>
+
+    <!-- 🔗 CARGA LA BIBLIA COMPLETA -->
+    <script src="bible.js"></script>
+    
+    <script>
+        let currentVerse = { ref: '', text: '' };
+        let randomVerse = { ref: '', text: '' };
+        let currentPlayingType = null;
+        let isPlaying = false;
+        let isPaused = false;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!window.BIBLE) {
+                showToast('⚠️ Error: No se cargó la base bíblica. Verifica que bible.js esté en la misma carpeta.');
+                return;
+            }
+            populateBooks();
+            createParticles();
+            initScrollAnimations();
+            initNavbar();
+            initSpeechVoices();
+        });
+
+        function initSpeechVoices() {
+            if ('speechSynthesis' in window) {
+                speechSynthesis.getVoices();
+                speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
+            }
+        }
+
+        const BIBLE_ORDER = [
+            "Genesis","Exodo","Levitico","Numeros","Deuteronomio",
+            "Josue","Jueces","Rut","1 Samuel","2 Samuel",
+            "1 Reyes","2 Reyes","1 Cronicas","2 Cronicas","Esdras",
+            "Nehemias","Ester","Job","Salmos","Proverbios",
+            "Cantares","Isaias","Jeremias","Lamentaciones","Ezequiel",
+            "Daniel","Oseas","Joel","Amos","Abdias",
+            "Jonas","Miqueas","Nahum","Habacuc","Sofonias",
+            "Hageo","Zacarias","Malaquias",
+            "Mateo","Marcos","Lucas","Juan","Hechos",
+            "Romanos","1 Corintios","2 Corintios","Galatas","Efesios",
+            "Filipenses","Colosenses","1 Tesalonicenses","2 Tesalonicenses",
+            "1 Timoteo","2 Timoteo","Tito","Filemon","Hebreos",
+            "Santiago","1 Pedro","2 Pedro","1 Juan","2 Juan",
+            "3 Juan","Judas","Apocalipsis"
+        ];
+
+        function populateBooks() {
+            const bookSelect = document.getElementById('bookSelect');
+            bookSelect.innerHTML = '<option value="">Selecciona un libro</option>';
+            const available = Object.keys(window.BIBLE);
+            const books = BIBLE_ORDER.filter(b => available.includes(b))
+                          .concat(available.filter(b => !BIBLE_ORDER.includes(b)).sort());
+            books.forEach(book => {
+                const option = document.createElement('option');
+                option.value = book;
+                option.textContent = book;
+                option.dataset.chapters = window.BIBLE[book].length;
+                bookSelect.appendChild(option);
+            });
+
+            bookSelect.addEventListener('change', () => {
+                const book = bookSelect.value;
+                if (book && window.BIBLE[book]) {
+                    const chapters = window.BIBLE[book].length;
+                    populateChapters(chapters);
+                    document.getElementById('verseSelect').innerHTML = '<option value="">Vers.</option>';
+                } else {
+                    document.getElementById('chapterSelect').innerHTML = '<option value="">Cap.</option>';
+                    document.getElementById('verseSelect').innerHTML = '<option value="">Vers.</option>';
+                }
+            });
+
+            document.getElementById('chapterSelect').addEventListener('change', function() {
+                const book = document.getElementById('bookSelect').value;
+                if (book && this.value && window.BIBLE[book] && window.BIBLE[book][this.value - 1]) {
+                    const versesCount = window.BIBLE[book][this.value - 1].length;
+                    populateVerses(versesCount);
+                }
+            });
+        }
+
+        function populateChapters(count) {
+            const select = document.getElementById('chapterSelect');
+            select.innerHTML = '<option value="">Cap.</option>';
+            for (let i = 1; i <= count; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = i;
+                select.appendChild(option);
+            }
+            select.disabled = false;
+        }
+
+        function populateVerses(count) {
+            const select = document.getElementById('verseSelect');
+            select.innerHTML = '<option value="">Vers.</option>';
+            for (let i = 1; i <= count; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = i;
+                select.appendChild(option);
+            }
+            select.disabled = false;
+        }
+
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDuration = (Math.random() * 8 + 5) + 's';
+                particle.style.animationDelay = (Math.random() * 5) + 's';
+                particle.style.width = (Math.random() * 4 + 2) + 'px';
+                particle.style.height = particle.style.width;
+                container.appendChild(particle);
+            }
+        }
+
+        function initScrollAnimations() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+            }, { threshold: 0.1 });
+            document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+        }
+
+        function initNavbar() {
+            window.addEventListener('scroll', () => {
+                document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
+            });
+        }
+
+        function toggleMobileMenu() {
+            const btn = document.getElementById('mobileMenuBtn');
+            const links = document.getElementById('navLinks');
+            btn.classList.toggle('active');
+            links.classList.toggle('open');
+        }
+
+        function closeMenu() {
+            document.getElementById('mobileMenuBtn').classList.remove('active');
+            document.getElementById('navLinks').classList.remove('open');
+        }
+
+        function searchVerse() {
+            const book = document.getElementById('bookSelect').value;
+            const chapter = document.getElementById('chapterSelect').value;
+            const verse = document.getElementById('verseSelect').value;
+
+            if (!book || !chapter) {
+                showToast('Por favor selecciona un libro y capítulo');
+                return;
+            }
+
+            const btn = document.getElementById('searchBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading-spinner"></span> Buscando...';
+
+            try {
+                const verses = window.BIBLE[book]?.[chapter - 1];
+                if (!verses) {
+                    showToast('⚠️ Capítulo no disponible.');
+                } else if (verse && !verses[verse - 1]) {
+                    showToast('⚠️ Versículo fuera de rango.');
+                } else {
+                    const text = verse ? verses[verse - 1] : verses.join(' ');
+                    currentVerse.ref = `${book} ${chapter}${verse ? ':' + verse : ''}`;
+                    currentVerse.text = text;
+                    showResult('search');
+                }
+            } catch (e) {
+                showToast('⚠️ Error al buscar.');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '🔍 Buscar Versículo';
+            }
+        }
+
+        function getRandomVerse() {
+            const btn = document.querySelector('.random-btn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading-spinner"></span> Descubriendo...';
+
+            try {
+                const books = Object.keys(window.BIBLE);
+                const randomBook = books[Math.floor(Math.random() * books.length)];
+                const chapters = window.BIBLE[randomBook].length;
+                const randomChapter = Math.floor(Math.random() * chapters) + 1;
+                const verses = window.BIBLE[randomBook][randomChapter - 1];
+                const randomVerseIdx = Math.floor(Math.random() * verses.length);
+
+                randomVerse.ref = `${randomBook} ${randomChapter}:${randomVerseIdx + 1}`;
+                randomVerse.text = verses[randomVerseIdx];
+                showResult('random');
+            } catch (e) {
+                showToast('⚠️ Error al obtener versículo');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '🎲 Descubre un Versículo';
+            }
+        }
+
+        function showResult(type) {
+            const verse = type === 'search' ? currentVerse : randomVerse;
+            const resultEl = type === 'search' ? document.getElementById('verseResult') : document.getElementById('randomResult');
+            const refEl = type === 'search' ? document.getElementById('verseRef') : document.getElementById('randomRef');
+            const textEl = type === 'search' ? document.getElementById('verseText') : document.getElementById('randomText');
+
+            refEl.textContent = verse.ref;
+            textEl.textContent = verse.text;
+            resultEl.classList.add('visible');
+            resetPlayButton(type);
+            resultEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function speakText(text, ref, type) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'es-ES';
+                utterance.rate = 0.85;
+                const voices = speechSynthesis.getVoices();
+                const spanishVoice = voices.find(v => v.lang.startsWith('es'));
+                if (spanishVoice) utterance.voice = spanishVoice;
+                utterance.onend = () => stopPlaying(type);
+                utterance.onerror = () => stopPlaying(type);
+                speechSynthesis.speak(utterance);
+                isPlaying = true;
+                currentPlayingType = type;
+                showPlayerBar(ref, text);
+                updatePlayButtons(type, true);
+            } else {
+                showToast('Tu navegador no soporta audio');
+            }
+        }
+
+        function stopPlaying(type) {
+            window.speechSynthesis.cancel();
+            isPlaying = false;
+            isPaused = false;
+            currentPlayingType = null;
+            updatePlayButtons(type, false);
+            hidePlayerBar();
+        }
+
+        function togglePlay(btn, type) {
+            const verse = type === 'search' ? currentVerse : randomVerse;
+            if (!verse.text) return showToast('Primero busca o genera un versículo');
+            
+            if (isPlaying && currentPlayingType === type) {
+                if (isPaused) { speechSynthesis.resume(); isPaused = false; isPlaying = true; }
+                else { speechSynthesis.pause(); isPaused = true; isPlaying = false; }
+                updatePlayButtons(type, !isPaused);
+                document.getElementById('playerWave').classList.toggle('paused', isPaused);
+            } else if (isPlaying && currentPlayingType !== type) {
+                stopPlaying(currentPlayingType);
+                speakText(verse.text, verse.ref, type);
+            } else {
+                speakText(verse.text, verse.ref, type);
+            }
+        }
+
+        function toggleGlobalPlay() {
+            if (!currentPlayingType) return;
+            const verse = currentPlayingType === 'search' ? currentVerse : randomVerse;
+            if (isPlaying && !isPaused) { speechSynthesis.pause(); isPaused = true; isPlaying = false; }
+            else {
+                if (isPaused) { speechSynthesis.resume(); isPaused = false; isPlaying = true; }
+                else { speakText(verse.text, verse.ref, currentPlayingType); return; }
+            }
+            updatePlayButtons(currentPlayingType, isPlaying);
+            document.getElementById('playerWave').classList.toggle('paused', !isPlaying);
+            updatePlayerControls();
+        }
+
+        function updatePlayerControls() {
+            document.getElementById('playIcon').style.display = isPlaying ? 'none' : 'block';
+            document.getElementById('pauseIcon').style.display = isPlaying ? 'block' : 'none';
+        }
+
+        function updatePlayButtons(type, playing) {
+            const btn = type === 'search' ? document.getElementById('playBtn') : document.getElementById('randomPlayBtn');
+            btn.classList.toggle('playing', playing);
+            btn.innerHTML = playing ? '⏸ Pausar' : '🔊 Escuchar';
+            updatePlayerControls();
+        }
+
+        function resetPlayButton(type) { updatePlayButtons(type, false); }
+
+        function showPlayerBar(ref, text) {
+            document.getElementById('playerRef').textContent = ref;
+            document.getElementById('playerText').textContent = text.substring(0, 80) + (text.length > 80 ? '...' : '');
+            document.getElementById('playIcon').style.display = 'none';
+            document.getElementById('pauseIcon').style.display = 'block';
+            document.getElementById('playerWave').classList.remove('paused');
+            document.getElementById('audioPlayerBar').classList.add('visible');
+        }
+
+        function hidePlayerBar() { document.getElementById('audioPlayerBar').classList.remove('visible'); }
+        function closePlayer() { if (currentPlayingType) stopPlaying(currentPlayingType); hidePlayerBar(); }
+
+        function downloadVerse(type) {
+            const verse = type === 'search' ? currentVerse : randomVerse;
+            const btnId = type === 'search' ? 'downloadBtn' : 'randomDownloadBtn';
+            const btn = document.getElementById(btnId);
+            if (!verse.text) return showToast('Primero busca o genera un versículo');
+
+            const originalHTML = btn.innerHTML;
+            btn.classList.add('recording');
+            btn.innerHTML = '<span class="loading-spinner"></span> Generando...';
+
+            try {
+                const safeRef = verse.ref.replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ ]/g, '_');
+                // Usamos JSON.stringify para escapar el texto de forma segura (maneja comillas, saltos de línea, etc.)
+                const jsonText = JSON.stringify(verse.text);
+                const jsonRef  = JSON.stringify(verse.ref);
+
+                const htmlContent = `<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>${verse.ref} - Sonido de Vida</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Georgia,serif;background:linear-gradient(135deg,#0d0d1a,#1a1a3e);
+     color:#f5f0e8;display:flex;align-items:center;justify-content:center;
+     min-height:100vh;padding:2rem}
+.container{max-width:600px;text-align:center}
+h1{font-size:1.8rem;color:#c9a84c;margin-bottom:1.5rem}
+.verse{font-size:1.3rem;line-height:1.8;font-style:italic;margin-bottom:2rem;opacity:.9}
+.btn{background:linear-gradient(135deg,#c9a84c,#a07c2a);color:#0d0d1a;border:none;
+     padding:1rem 2rem;border-radius:50px;font-size:1rem;cursor:pointer;margin:.5rem;
+     font-family:Georgia,serif;transition:transform .2s}
+.btn:hover{transform:scale(1.05)}
+.note{font-size:.8rem;opacity:.4;margin-top:1.5rem}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1 id="r"></h1>
+  <p class="verse" id="v"></p>
+  <button class="btn" id="b" onclick="toggle()">&#128266; Escuchar Vers\u00EDculo</button>
+  <p class="note">Sonido de Vida \u00B7 sonidodevida.com</p>
+</div>
+<script>
+var T=${jsonText},R=${jsonRef},playing=false;
+document.getElementById('r').textContent=R;
+document.getElementById('v').textContent='\u201C'+T+'\u201D';
+function toggle(){
+  var b=document.getElementById('b');
+  if(playing){speechSynthesis.cancel();playing=false;b.textContent='\uD83D\uDD0A Escuchar Vers\u00EDculo';return;}
+  var u=new SpeechSynthesisUtterance(T);
+  u.lang='es-ES';u.rate=0.85;
+  u.onend=function(){playing=false;b.textContent='\uD83D\uDD0A Escuchar Vers\u00EDculo';};
+  speechSynthesis.speak(u);playing=true;b.textContent='\u23F8 Pausar';
+}
+window.addEventListener('load',function(){setTimeout(function(){if('speechSynthesis' in window)toggle();},600);});
+<\/script>
+</body>
+</html>`;
+
+                // Convertir a base64 para evitar bloqueos de Brave/Safari con createObjectURL
+                const b64 = btoa(unescape(encodeURIComponent(htmlContent)));
+                const dataUrl = 'data:text/html;base64,' + b64;
+
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = dataUrl;
+                a.download = 'sonidodevida_' + safeRef + '.html';
+                document.body.appendChild(a);
+                a.click();
+                setTimeout(() => document.body.removeChild(a), 300);
+
+                showToast('✅ ¡Descargado! Ábrelo en tu navegador para escucharlo.');
+            } catch(e) {
+                showToast('⚠️ Error: ' + e.message);
+            } finally {
+                btn.classList.remove('recording');
+                btn.innerHTML = originalHTML;
+            }
+        }
+
+        async function copyVerse(type) {
+            const verse = type === 'search' ? currentVerse : randomVerse;
+            if (!verse.text) return showToast('No hay versículo para copiar');
+            try {
+                await navigator.clipboard.writeText(`${verse.ref}\n\n"${verse.text}"`);
+                showToast('¡Versículo copiado!');
+            } catch {
+                const ta = document.createElement('textarea');
+                ta.value = `${verse.ref}\n\n"${verse.text}"`;
+                document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+                showToast('¡Versículo copiado!');
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastText').textContent = message;
+            toast.classList.add('visible');
+            setTimeout(() => toast.classList.remove('visible'), 3000);
+        }
+    </script>
+</body>
+</html>
