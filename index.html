@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sonido de Vida - Biblia Gratuita en Audio</title>
+    <title>Sonido de Vida - Biblia en Audio</title>
     <meta name="description" content="Lee, escucha y descarga cualquier versículo de la Biblia. Gratis, sin registro.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Lora:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
         :root{--gold:#c9a84c;--gold-light:#e8d48b;--gold-dark:#a07c2a;--deep-blue:#1a1a3e;--dark:#0d0d1a;--cream:#f5f0e8;--warm-white:#faf8f4;--text-dark:#2c2c3e;--text-light:#6b6b80;--purple:#2d1b69}
@@ -95,8 +95,6 @@
         .btn-download.recording{background:rgba(244,67,54,.2);color:#ef9a9a;border-color:#ef5350;animation:pulse 1.5s infinite}
         .btn-copy{background:rgba(100,181,246,.15);color:#90caf9;border:1px solid rgba(100,181,246,.3)}
         .btn-copy:hover{background:rgba(100,181,246,.25)}
-        .btn-share{background:rgba(171,71,188,.15);color:#ce93d8;border:1px solid rgba(171,71,188,.3)}
-        .btn-share:hover{background:rgba(171,71,188,.25)}
         .verse-action-btn svg{width:16px;height:16px}
         .random-section{padding:6rem 2rem;background:var(--cream);text-align:center}
         .random-container{max-width:700px;margin:0 auto}
@@ -121,8 +119,6 @@
         .ra-download.recording{background:rgba(244,67,54,.1);color:#d32f2f;border-color:#ef5350;animation:pulse 1.5s infinite}
         .ra-copy{background:rgba(100,181,246,.08);color:#1565c0;border-color:rgba(100,181,246,.2)}
         .ra-copy:hover{background:rgba(100,181,246,.15)}
-        .ra-share{background:rgba(171,71,188,.08);color:#7b1fa2;border-color:rgba(171,71,188,.2)}
-        .ra-share:hover{background:rgba(171,71,188,.15)}
         .random-action-btn svg{width:16px;height:16px}
         .cta-section{padding:6rem 2rem;background:linear-gradient(135deg,var(--deep-blue) 0%,var(--purple) 100%);text-align:center;position:relative;overflow:hidden}
         .cta-section::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle,rgba(201,168,76,.1) 0%,transparent 50%);animation:rotateBg 20s linear infinite}
@@ -189,8 +185,13 @@
     </style>
 </head>
 <body>
+
+    <!-- NAVBAR -->
     <nav id="navbar">
-        <a href="#" class="nav-logo"><span style="font-size:1.8rem">✝</span> Sonido de Vida</a>
+        <a href="#" class="nav-logo">
+            <span style="font-size:1.8rem">✝</span>
+            Sonido de Vida
+        </a>
         <ul class="nav-links" id="navLinks">
             <li><a href="#features" onclick="closeMenu()">Características</a></li>
             <li><a href="#search" onclick="closeMenu()">Buscar</a></li>
@@ -202,11 +203,15 @@
         </button>
     </nav>
 
+    <!-- HERO -->
     <section class="hero">
         <div class="hero-bg"></div>
         <div class="hero-particles" id="particles"></div>
         <div class="hero-content">
-            <div class="hero-badge"><span class="pulse-dot"></span> 100% Gratuita · Sin registro · Toda la Biblia</div>
+            <div class="hero-badge">
+                <span class="pulse-dot"></span>
+                100% Gratuita · Sin registro · Toda la Biblia
+            </div>
             <h1>Escucha la <span>Palabra</span> de Dios en cualquier momento</h1>
             <p>Lee, escucha y descarga cualquier versículo de la Biblia. La Palabra de Dios al alcance de tu corazón, siempre gratis y sin límites.</p>
             <div class="hero-buttons">
@@ -215,10 +220,13 @@
             </div>
         </div>
         <div class="hero-scroll">
-            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 13l5 5 5-5M7 6l5 5 5-5"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M7 13l5 5 5-5M7 6l5 5 5-5"/>
+            </svg>
         </div>
     </section>
 
+    <!-- STATS -->
     <section class="stats-bar">
         <div class="stats-grid">
             <div class="stat-item"><h3>66</h3><p>Libros</p></div>
@@ -228,24 +236,48 @@
         </div>
     </section>
 
+    <!-- FEATURES -->
     <section class="features" id="features">
-        <div class="section-header reveal"><h2>¿Por qué Sonido de Vida?</h2><p>Conecta con la Palabra de Dios de manera simple y accesible</p></div>
+        <div class="section-header reveal">
+            <h2>¿Por qué Sonido de Vida?</h2>
+            <p>Una experiencia única para conectar con la Palabra de Dios de manera simple y accesible</p>
+        </div>
         <div class="features-grid">
-            <div class="feature-card reveal"><div class="feature-icon">🔍</div><h3>Búsqueda Rápida</h3><p>Encuentra cualquier versículo al instante seleccionando libro, capítulo y versículo.</p></div>
-            <div class="feature-card reveal"><div class="feature-icon">🔊</div><h3>Escucha en Audio</h3><p>Escucha cada versículo leído en voz alta. Perfecto para meditar o mientras conduces.</p></div>
-            <div class="feature-card reveal"><div class="feature-icon">💾</div><h3>Descarga Gratis</h3><p>Descarga cualquier versículo para escucharlo sin conexión cuando lo necesites.</p></div>
-            <div class="feature-card reveal"><div class="feature-icon">🎲</div><h3>Versículo Aleatorio</h3><p>¿No sabes qué leer? Descubre un versículo inspirador al azar cada vez.</p></div>
+            <div class="feature-card reveal">
+                <div class="feature-icon">🔍</div>
+                <h3>Búsqueda Rápida</h3>
+                <p>Encuentra cualquier versículo al instante. Selecciona libro, capítulo y versículo para obtener el texto exacto.</p>
+            </div>
+            <div class="feature-card reveal">
+                <div class="feature-icon">🔊</div>
+                <h3>Escucha en Audio</h3>
+                <p>Escucha cada versículo leído en voz alta. Perfecto para meditar durante el día o mientras conduces.</p>
+            </div>
+            <div class="feature-card reveal">
+                <div class="feature-icon">💾</div>
+                <h3>Descarga Gratis</h3>
+                <p>Descarga cualquier versículo para escucharlo sin conexión cuando lo necesites.</p>
+            </div>
+            <div class="feature-card reveal">
+                <div class="feature-icon">🎲</div>
+                <h3>Versículo Aleatorio</h3>
+                <p>¿No sabes qué leer? Descubre un versículo inspirador al azar cada vez que lo necesites.</p>
+            </div>
         </div>
     </section>
 
+    <!-- SEARCH SECTION -->
     <section class="search-section" id="search">
-        <div class="section-header reveal"><h2>Buscar un Versículo</h2><p>Selecciona el libro, capítulo y versículo que deseas encontrar</p></div>
+        <div class="section-header reveal">
+            <h2>Buscar un Versículo</h2>
+            <p>Selecciona el libro, capítulo y versículo que deseas encontrar</p>
+        </div>
         <div class="search-container reveal">
             <div class="search-box">
                 <div class="search-selectors">
-                    <div class="form-group"><label>Libro</label><select id="bookSelect"><option value="">Cargando libros...</option></select></div>
-                    <div class="form-group"><label>Capítulo</label><select id="chapterSelect" disabled><option value="">Cap.</option></select></div>
-                    <div class="form-group"><label>Versículo</label><select id="verseSelect" disabled><option value="">Vers.</option></select></div>
+                    <div class="form-group"><label>Libro</label><select id="bookSelect"><option value="">Selecciona un libro</option></select></div>
+                    <div class="form-group"><label>Capítulo</label><select id="chapterSelect"><option value="">Cap.</option></select></div>
+                    <div class="form-group"><label>Versículo</label><select id="verseSelect"><option value="">Vers.</option></select></div>
                 </div>
                 <button class="search-btn" id="searchBtn" onclick="searchVerse()">🔍 Buscar Versículo</button>
             </div>
@@ -263,8 +295,12 @@
         </div>
     </section>
 
+    <!-- RANDOM SECTION -->
     <section class="random-section" id="random">
-        <div class="section-header reveal"><h2>Versículo del Momento</h2><p>Deja que Dios hable a tu corazón con un versículo inspirador al azar</p></div>
+        <div class="section-header reveal">
+            <h2>Versículo del Momento</h2>
+            <p>Deja que Dios hable a tu corazón con un versículo inspirador al azar</p>
+        </div>
         <div class="random-container reveal">
             <button class="random-btn" onclick="getRandomVerse()">🎲 Descubre un Versículo</button>
             <div class="random-result" id="randomResult">
@@ -281,6 +317,7 @@
         </div>
     </section>
 
+    <!-- CTA -->
     <section class="cta-section">
         <div class="cta-content reveal">
             <h2>La Palabra de Dios es para todos</h2>
@@ -289,6 +326,7 @@
         </div>
     </section>
 
+    <!-- FOOTER -->
     <footer>
         <div class="footer-content">
             <div class="footer-logo">✝ Sonido de Vida</div>
@@ -303,6 +341,7 @@
         </div>
     </footer>
 
+    <!-- AUDIO PLAYER BAR -->
     <div class="audio-player-bar" id="audioPlayerBar">
         <div class="player-inner">
             <div class="player-wave paused" id="playerWave">
@@ -322,12 +361,116 @@
         </div>
     </div>
 
+    <!-- TOAST -->
     <div class="toast" id="toast"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg><span id="toastText"></span></div>
 
-    <!-- 🔗 CARGA LA BIBLIA COMPLETA -->
-    <script src="bible_data.js"></script>
-    
     <script>
+        // === BASE DE DATOS BÍBLICA EMBEBIDA (Funciona sin archivos externos) ===
+        // Formato: { "NombreLibro": { 1: ["Verso 1", "Verso 2", ...], 2: [...] } }
+        const BIBLIA = {
+            "Juan": {
+                3: [
+                    "Había un hombre de los fariseos que se llamaba Nicodemo, un principal entre los judíos.",
+                    "Este vino a Jesús de noche, y le dijo: Rabí, sabemos que has venido de Dios como maestro; porque nadie puede hacer estas señales que tú haces, si no está Dios con él.",
+                    "Respondió Jesús y le dijo: De cierto, de cierto te digo, que el que no naciere de nuevo, no puede ver el reino de Dios.",
+                    "Nicodemo le dijo: ¿Cómo puede un hombre nacer siendo viejo? ¿Puede entrar por segunda vez en el vientre de su madre, y nacer?",
+                    "Respondió Jesús: De cierto, de cierto te digo, que el que no naciere de agua y del Espíritu, no puede entrar en el reino de Dios.",
+                    "Lo que es nacido de la carne, carne es; y lo que es nacido del Espíritu, espíritu es.",
+                    "No te maravilles de que te dije: Os es necesario nacer de nuevo.",
+                    "El viento sopla de donde quiere, y oyes su sonido; mas ni sabes de dónde viene, ni a dónde va; así es todo aquel que es nacido del Espíritu.",
+                    "Respondió Nicodemo y le dijo: ¿Cómo puede hacerse esto?",
+                    "Respondió Jesús y le dijo: ¿Eres tú maestro de Israel, y no sabes esto?",
+                    "De cierto, de cierto te digo, que lo que sabemos hablamos, y lo que hemos visto, testificamos; y no recibís nuestro testimonio.",
+                    "Si os he dicho cosas terrenales, y no creéis, ¿cómo creeréis si os dijere las celestiales?",
+                    "Nadie subió al cielo, sino el que descendió del cielo; el Hijo del Hombre, que está en el cielo.",
+                    "Y como Moisés levantó la serpiente en el desierto, así es necesario que el Hijo del Hombre sea levantado,",
+                    "para que todo aquel que en él cree, no se pierda, mas tenga vida eterna.",
+                    "Porque de tal manera amó Dios al mundo, que ha dado a su Hijo unigénito, para que todo aquel que en él cree, no se pierda, mas tenga vida eterna.",
+                    "Porque no envió Dios a su Hijo al mundo para condenar al mundo, mas para que el mundo sea salvo por él.",
+                    "El que en él cree, no es condenado; pero el que no cree, ya ha sido condenado, porque no ha creído en el nombre del unigénito Hijo de Dios."
+                ]
+            },
+            "Salmos": {
+                23: [
+                    "Jehová es mi pastor; nada me faltará.",
+                    "En lugares de delicados pastos me hará descansar; Junto a aguas de reposo me pastoreará.",
+                    "Confortará mi alma; Me guiará por sendas de justicia por amor de su nombre.",
+                    "Aunque ande en valle de sombra de muerte, No temeré mal alguno, porque tú estarás conmigo;",
+                    "Tu vara y tu cayado me infundirán aliento.",
+                    "Aderezas mesa delante de mí en presencia de mis angustiadores; Unges mi cabeza con aceite; mi copa está rebosando."
+                ],
+                91: [
+                    "El que habita al abrigo del Altísimo Morará bajo la sombra del Omnipotente.",
+                    "Diré yo a Jehová: Esperanza mía, y castillo mío; Mi Dios, en quien confiaré.",
+                    "Él te librará del lazo del cazador, De la peste destructora.",
+                    "Con sus plumas te cubrirá, Y debajo de sus alas estarás seguro;",
+                    "Escudo y adarga es su verdad."
+                ]
+            },
+            "Romanos": {
+                8: [
+                    "Ahora, pues, ninguna condenación hay para los que están en Cristo Jesús, los que no andan conforme a la carne, mas conforme al espíritu.",
+                    "Porque la ley del Espíritu de vida en Cristo Jesús me ha librado de la ley del pecado y de la muerte.",
+                    "Porque lo que era imposible para la ley, por cuanto era débil por la carne, Dios, enviando a su Hijo en semejanza de carne de pecado y a causa del pecado, condenó al pecado en la carne;",
+                    "para que la justicia de la ley se cumpliese en nosotros, que no andamos conforme a la carne, sino conforme al Espíritu.",
+                    "Porque los que son de la carne piensan en las cosas de la carne; pero los que son del Espíritu, en las cosas del Espíritu.",
+                    "Porque la intención de la carne es muerte, pero la intención del Espíritu es vida y paz.",
+                    "Porque la intención de la carne es enemistad contra Dios; porque no se sujeta a la ley de Dios, ni tampoco puede;",
+                    "y los que viven según la carne no pueden agradar a Dios.",
+                    "Mas vosotros no vivís según la carne, sino según el Espíritu, si es que el Espíritu de Dios mora en vosotros. Y si alguno no tiene el Espíritu de Cristo, no es de él.",
+                    "Pero si Cristo está en vosotros, el cuerpo en verdad está muerto a causa del pecado, mas el espíritu vive a causa de la justicia."
+                ]
+            },
+            "Filipenses": {
+                4: [
+                    "Por lo demás, hermanos míos, gozaos en el Señor. A mí no me es molesto el escribiros las mismas cosas, y para vosotros es seguro.",
+                    "Guardaos de los perros, guardaos de los malos obreros, guardaos de los mutiladores del cuerpo.",
+                    "Porque nosotros somos la circuncisión, los que en espíritu servimos a Dios y nos gloriamos en Cristo Jesús, no teniendo confianza en la carne.",
+                    "Aunque yo tengo también de qué confiar en la carne. Si alguno piensa que tiene de qué confiar en la carne, yo más:",
+                    "circuncidado al octavo día, del linaje de Israel, de la tribu de Benjamín, hebreo de hebreos; en cuanto a la ley, fariseo;",
+                    "en cuanto a celo, perseguidor de la iglesia; en cuanto a la justicia que es en la ley, irreprensible.",
+                    "Pero cuantas cosas eran para mí ganancia, las he estimado como pérdida por amor de Cristo.",
+                    "Y ciertamente, aun estimo todas las cosas como pérdida por la excelencia del conocimiento de Cristo Jesús, mi Señor, por amor del cual lo he perdido todo, y lo tengo por basura, para ganar a Cristo,",
+                    "y ser hallado en él, no teniendo mi justicia, que es por la ley, sino la que es por la fe de Cristo, la justicia que es de Dios por la fe;",
+                    "a fin de conocerle, y el poder de su resurrección, y la participación de sus padecimientos, llegando a ser semejante a él en su muerte,",
+                    "si en alguna manera llegase a la resurrección de entre los muertos.",
+                    "No que lo haya alcanzado ya, ni que ya sea perfecto; sino que prosigo, por ver si logro asir aquello para lo cual fui también asido por Cristo Jesús.",
+                    "Hermanos, yo mismo no pretendo haberlo ya alcanzado; pero una cosa hago: olvidando ciertamente lo que queda atrás, y extendiéndome a lo que está delante,",
+                    "prosigo a la meta, al premio del supremo llamamiento de Dios en Cristo Jesús.",
+                    "Así que, todos los que somos perfectos, esto mismo sintamos; y si otra cosa sentís, esto también os lo revelará Dios.",
+                    "Pero en aquello a que hemos llegado, sigamos una misma regla, sintamos una misma cosa.",
+                    "Hermanos, sed imitadores de mí, y mirad a los que así se conducen como nos tenéis por ejemplo.",
+                    "Porque por ahí andan muchos, de los cuales os dije muchas veces, y aun ahora lo digo llorando, que son enemigos de la cruz de Cristo;",
+                    "el fin de los cuales será perdición, cuyo dios es el vientre, y cuya gloria es su vergüenza; que sólo piensan en lo terrenal.",
+                    "Mas nuestra ciudadanía está en los cielos, de donde también esperamos al Salvador, al Señor Jesucristo;",
+                    "el cual transformará el cuerpo de la humillación nuestra, para que sea semejante al cuerpo de la gloria suya, por el poder con el cual puede también sujetar a sí mismo todas las cosas.",
+                    "Así que, hermanos míos amados y deseados, gozo y corona mía, estad así firmes en el Señor, amados.",
+                    "Ruego a Evodia y a Síntique, que sean de un mismo sentir en el Señor.",
+                    "Y a ti también, fiel compañero, ruego que ayudes a éstas que combatieron juntamente conmigo en el evangelio, con Clemente también y los demás colaboradores míos, cuyos nombres están en el libro de la vida.",
+                    "Regocijaos en el Señor siempre. Otra vez digo: ¡Regocijaos!",
+                    "Vuestra modestia sea conocida de todos los hombres. El Señor está cerca.",
+                    "Por nada estéis afanosos, sino sean conocidas vuestras peticiones delante de Dios en toda oración y ruego, con acción de gracias.",
+                    "Y la paz de Dios, que sobrepasa todo entendimiento, guardará vuestros corazones y vuestros pensamientos en Cristo Jesús.",
+                    "Por lo demás, hermanos, todo lo que es verdadero, todo lo honesto, todo lo justo, todo lo puro, todo lo amable, todo lo que es de buen nombre; si hay virtud alguna, si algo digno de alabanza, en esto pensad.",
+                    "Lo que aprendisteis y recibisteis y oísteis y visteis en mí, esto haced; y el Dios de paz estará con vosotros.",
+                    "En gran manera me gozé en el Señor de que ya al fin habéis revivido vuestro cuidado de mí; de lo cual también estabais solícitos, pero os faltaba la oportunidad.",
+                    "No lo digo porque tenga escasez, pues he aprendido a contentarme, cualquiera que sea mi situación.",
+                    "Sé vivir humildemente, y sé tener abundancia; en todo y por todo estoy enseñado, así para estar saciado como para tener hambre, así para tener abundancia como para padecer necesidad.",
+                    "Todo lo puedo en Cristo que me fortalece.",
+                    "Sin embargo, bien hicisteis en participar conmigo en mis tribulaciones.",
+                    "Y sabéis también vosotros, filipenses, que al principio de la predicación del evangelio, cuando partí de Macedonia, ninguna iglesia participó conmigo en razón de dar y recibir, sino vosotros solos;",
+                    "pues aun a Tesalónica enviasteis una y otra vez para mi necesidad.",
+                    "No es que busque dádivas, sino que busco fruto que abunde en vuestra cuenta.",
+                    "Pero todo lo he recibido, y tengo abundancia; estoy lleno, habiendo recibido de Epafrodito lo que enviasteis; olor fragante, sacrificio acepto, agradable a Dios.",
+                    "Mi Dios, pues, suplirá todo lo que os falta conforme a sus riquezas en gloria en Cristo Jesús.",
+                    "Al Dios y Padre nuestro sea gloria por los siglos de los siglos. Amén.",
+                    "Saludad a todo santo en Cristo Jesús. Los hermanos que están conmigo os saludan.",
+                    "Todos los santos os saludan, y principalmente los que son de la casa de César.",
+                    "La gracia de nuestro Señor Jesucristo sea con todos vosotros. Amén."
+                ]
+            }
+        };
+
         let currentVerse = { ref: '', text: '' };
         let randomVerse = { ref: '', text: '' };
         let currentPlayingType = null;
@@ -335,10 +478,6 @@
         let isPaused = false;
 
         document.addEventListener('DOMContentLoaded', () => {
-            if (!window.BIBLE) {
-                showToast('⚠️ Error: No se cargó la base de datos bíblica.');
-                return;
-            }
             populateBooks();
             createParticles();
             initScrollAnimations();
@@ -355,25 +494,18 @@
 
         function populateBooks() {
             const bookSelect = document.getElementById('bookSelect');
-            bookSelect.innerHTML = '<option value="">Selecciona un libro...</option>';
-            
-            // Los keys de window.BIBLE son como "1_juan", "genesis", "exodo", etc.
-            const books = Object.keys(window.BIBLE).sort();
-            
-            books.forEach(key => {
+            bookSelect.innerHTML = '<option value="">Selecciona un libro</option>';
+            Object.keys(BIBLIA).sort().forEach(book => {
                 const option = document.createElement('option');
-                option.value = key;
-                // Formatear nombre para mostrar: "1_juan" -> "1 Juan"
-                const displayName = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-                option.textContent = displayName;
-                option.dataset.chapters = window.BIBLE[key].length;
+                option.value = book;
+                option.textContent = book;
                 bookSelect.appendChild(option);
             });
 
             bookSelect.addEventListener('change', () => {
-                const selected = bookSelect.options[bookSelect.selectedIndex];
-                if (selected.dataset.chapters) {
-                    populateChapters(parseInt(selected.dataset.chapters));
+                const book = bookSelect.value;
+                if (book && BIBLIA[book]) {
+                    populateChapters(Object.keys(BIBLIA[book]).map(Number).sort((a,b)=>a-b));
                     document.getElementById('verseSelect').innerHTML = '<option value="">Vers.</option>';
                 } else {
                     document.getElementById('chapterSelect').innerHTML = '<option value="">Cap.</option>';
@@ -382,37 +514,35 @@
             });
 
             document.getElementById('chapterSelect').addEventListener('change', function() {
-                if (this.value) {
-                    const bookKey = document.getElementById('bookSelect').value;
-                    const chapterIndex = parseInt(this.value) - 1;
-                    const versesCount = window.BIBLE[bookKey][chapterIndex].length;
-                    populateVerses(versesCount);
+                const book = document.getElementById('bookSelect').value;
+                if (book && this.value && BIBLIA[book] && BIBLIA[book][this.value]) {
+                    populateVerses(BIBLIA[book][this.value].length);
                 }
             });
         }
 
-        function populateChapters(count) {
-            const chapterSelect = document.getElementById('chapterSelect');
-            chapterSelect.innerHTML = '<option value="">Cap.</option>';
-            for (let i = 1; i <= count; i++) {
+        function populateChapters(chapters) {
+            const select = document.getElementById('chapterSelect');
+            select.innerHTML = '<option value="">Cap.</option>';
+            chapters.forEach(cap => {
                 const option = document.createElement('option');
-                option.value = i;
-                option.textContent = i;
-                chapterSelect.appendChild(option);
-            }
-            chapterSelect.disabled = false;
+                option.value = cap;
+                option.textContent = cap;
+                select.appendChild(option);
+            });
+            select.disabled = false;
         }
 
         function populateVerses(count) {
-            const verseSelect = document.getElementById('verseSelect');
-            verseSelect.innerHTML = '<option value="">Vers.</option>';
+            const select = document.getElementById('verseSelect');
+            select.innerHTML = '<option value="">Vers.</option>';
             for (let i = 1; i <= count; i++) {
                 const option = document.createElement('option');
                 option.value = i;
                 option.textContent = i;
-                verseSelect.appendChild(option);
+                select.appendChild(option);
             }
-            verseSelect.disabled = false;
+            select.disabled = false;
         }
 
         function createParticles() {
@@ -454,17 +584,12 @@
             document.getElementById('navLinks').classList.remove('open');
         }
 
-        function getBookDisplayName(key) {
-            return key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-        }
-
-        // === BÚSQUEDA ===
         function searchVerse() {
-            const bookKey = document.getElementById('bookSelect').value;
+            const book = document.getElementById('bookSelect').value;
             const chapter = document.getElementById('chapterSelect').value;
             const verse = document.getElementById('verseSelect').value;
 
-            if (!bookKey || !chapter) {
+            if (!book || !chapter) {
                 showToast('Por favor selecciona un libro y capítulo');
                 return;
             }
@@ -473,65 +598,63 @@
             btn.disabled = true;
             btn.innerHTML = '<span class="loading-spinner"></span> Buscando...';
 
-            try {
-                const chapterIndex = parseInt(chapter) - 1;
-                const verseIndex = verse ? parseInt(verse) - 1 : 0;
-                
-                if (!window.BIBLE[bookKey] || !window.BIBLE[bookKey][chapterIndex]) {
-                    showToast('⚠️ Capítulo no disponible');
-                } else if (verse && !window.BIBLE[bookKey][chapterIndex][verseIndex]) {
-                    showToast('⚠️ Versículo fuera de rango');
-                } else {
-                    const text = verse ? window.BIBLE[bookKey][chapterIndex][verseIndex] : window.BIBLE[bookKey][chapterIndex].join(' ');
-                    currentVerse.ref = `${getBookDisplayName(bookKey)} ${chapter}${verse ? ':' + verse : ''}`;
-                    currentVerse.text = text;
-                    
-                    document.getElementById('verseRef').textContent = currentVerse.ref;
-                    document.getElementById('verseText').textContent = currentVerse.text;
-                    document.getElementById('verseResult').classList.add('visible');
-                    resetPlayButton('search');
-                    document.getElementById('verseResult').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            setTimeout(() => {
+                try {
+                    const verses = BIBLIA[book]?.[chapter];
+                    if (!verses) {
+                        showToast('⚠️ Capítulo no disponible en la base local.');
+                    } else if (verse && !verses[verse - 1]) {
+                        showToast('⚠️ Versículo fuera de rango.');
+                    } else {
+                        const text = verse ? verses[verse - 1] : verses.join(' ');
+                        currentVerse.ref = `${book} ${chapter}${verse ? ':' + verse : ''}`;
+                        currentVerse.text = text;
+                        showResult('search');
+                    }
+                } catch (e) {
+                    showToast('⚠️ Error al buscar.');
+                } finally {
+                    btn.disabled = false;
+                    btn.innerHTML = '🔍 Buscar Versículo';
                 }
-            } catch (e) {
-                showToast('⚠️ Error al buscar. Intenta de nuevo.');
-                console.error(e);
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = '🔍 Buscar Versículo';
-            }
+            }, 300);
         }
 
-        // === ALEATORIO ===
         function getRandomVerse() {
             const btn = document.querySelector('.random-btn');
             btn.disabled = true;
             btn.innerHTML = '<span class="loading-spinner"></span> Descubriendo...';
 
-            try {
-                const books = Object.keys(window.BIBLE);
+            setTimeout(() => {
+                const books = Object.keys(BIBLIA);
                 const randomBook = books[Math.floor(Math.random() * books.length)];
-                const chapters = window.BIBLE[randomBook];
-                const randomChapterIdx = Math.floor(Math.random() * chapters.length);
-                const verses = chapters[randomChapterIdx];
+                const chapters = Object.keys(BIBLIA[randomBook]).map(Number);
+                const randomChapter = chapters[Math.floor(Math.random() * chapters.length)];
+                const verses = BIBLIA[randomBook][randomChapter];
                 const randomVerseIdx = Math.floor(Math.random() * verses.length);
 
-                randomVerse.ref = `${getBookDisplayName(randomBook)} ${randomChapterIdx + 1}:${randomVerseIdx + 1}`;
+                randomVerse.ref = `${randomBook} ${randomChapter}:${randomVerseIdx + 1}`;
                 randomVerse.text = verses[randomVerseIdx];
+                showResult('random');
 
-                document.getElementById('randomRef').textContent = randomVerse.ref;
-                document.getElementById('randomText').textContent = randomVerse.text;
-                document.getElementById('randomResult').classList.add('visible');
-                resetPlayButton('random');
-                document.getElementById('randomResult').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            } catch (e) {
-                showToast('⚠️ Error al obtener versículo');
-            } finally {
                 btn.disabled = false;
                 btn.innerHTML = '🎲 Descubre un Versículo';
-            }
+            }, 300);
         }
 
-        // === AUDIO ===
+        function showResult(type) {
+            const verse = type === 'search' ? currentVerse : randomVerse;
+            const resultEl = type === 'search' ? document.getElementById('verseResult') : document.getElementById('randomResult');
+            const refEl = type === 'search' ? document.getElementById('verseRef') : document.getElementById('randomRef');
+            const textEl = type === 'search' ? document.getElementById('verseText') : document.getElementById('randomText');
+
+            refEl.textContent = verse.ref;
+            textEl.textContent = verse.text;
+            resultEl.classList.add('visible');
+            resetPlayButton(type);
+            resultEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
         function speakText(text, ref, type) {
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
@@ -618,7 +741,6 @@
         function hidePlayerBar() { document.getElementById('audioPlayerBar').classList.remove('visible'); }
         function closePlayer() { if (currentPlayingType) stopPlaying(currentPlayingType); hidePlayerBar(); }
 
-        // === DESCARGA ===
         function downloadVerse(type) {
             const verse = type === 'search' ? currentVerse : randomVerse;
             const btnId = type === 'search' ? 'downloadBtn' : 'randomDownloadBtn';
@@ -644,7 +766,6 @@
             showToast('¡Archivo descargado! Ábrelo en tu navegador para escuchar.');
         }
 
-        // === COPIAR ===
         async function copyVerse(type) {
             const verse = type === 'search' ? currentVerse : randomVerse;
             if (!verse.text) return showToast('No hay versículo para copiar');
@@ -659,7 +780,6 @@
             }
         }
 
-        // === TOAST ===
         function showToast(message) {
             const toast = document.getElementById('toast');
             document.getElementById('toastText').textContent = message;
