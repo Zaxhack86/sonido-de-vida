@@ -210,6 +210,18 @@
             .player-next-hint{display:none}
         }
 
+        /* ====== Límite de descargas ====== */
+        .btn-download.limit-reached{background:rgba(255,152,0,.12);color:#ffb74d;border-color:rgba(255,152,0,.3);cursor:pointer}
+        .btn-download.limit-reached:hover{background:rgba(255,152,0,.22)}
+        .dl-limit-info{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:.9rem 1rem;color:rgba(255,255,255,.7);font-size:.88rem;line-height:1.5;text-align:center;margin-bottom:.8rem}
+        .dl-limit-info strong{color:var(--gold-light)}
+        .btn-share-bonus{width:100%;background:rgba(37,211,102,.12);color:#4caf50;border:1px solid rgba(37,211,102,.3);border-radius:12px;padding:.9rem 1rem;font-size:.92rem;font-weight:600;cursor:pointer;transition:all .25s;font-family:'Inter',sans-serif;display:flex;align-items:center;justify-content:center;gap:.5rem;margin-bottom:.7rem}
+        .btn-share-bonus:hover:not(:disabled){background:rgba(37,211,102,.22);transform:translateY(-1px)}
+        .btn-share-bonus:disabled{opacity:.4;cursor:not-allowed}
+        .btn-upgrade-cta{width:100%;background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:var(--dark);border:none;border-radius:12px;padding:.9rem 1rem;font-size:.92rem;font-weight:700;cursor:pointer;transition:all .25s;font-family:'Inter',sans-serif;display:flex;align-items:center;justify-content:center;gap:.5rem;margin-bottom:.7rem}
+        .btn-upgrade-cta:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(201,168,76,.35)}
+        .upgrade-badge{background:rgba(13,13,26,.25);color:var(--dark);font-size:.65rem;padding:.15rem .5rem;border-radius:50px;font-weight:700;letter-spacing:.3px;text-transform:uppercase}
+
         /* ====== Modal: modo de reproducción ====== */
         .modal-overlay{position:fixed;inset:0;background:rgba(5,5,15,.85);backdrop-filter:blur(8px);z-index:3000;display:none;align-items:center;justify-content:center;padding:1.5rem;animation:fadeOverlay .25s ease}
         .modal-overlay.visible{display:flex}
@@ -441,6 +453,27 @@
         </div>
     </div>
 
+    <!-- Modal: límite de descargas -->
+    <div class="modal-overlay" id="downloadLimitModal" onclick="if(event.target===this)closeDownloadLimitModal()">
+        <div class="modal-card" role="dialog" aria-labelledby="dlModalTitle">
+            <div class="modal-icon">🔒</div>
+            <div class="modal-title" id="dlModalTitle">Límite diario alcanzado</div>
+            <div class="modal-subtitle">Usaste tus 3 descargas gratuitas de hoy</div>
+            <div class="dl-limit-info">
+                Tu cupo se renueva <strong id="dlResetTime">mañana a las 00:00</strong>
+            </div>
+            <button class="btn-share-bonus" id="shareBonusBtn" onclick="useShareBonusAction()">
+                📤 Compartir Sonido de Vida · +1 descarga gratis
+            </button>
+            <button class="btn-upgrade-cta" onclick="showUpgradeInterest()">
+                🚀 Quiero más descargas <span class="upgrade-badge">Próximamente</span>
+            </button>
+            <div class="modal-footer">
+                Pronto podrás obtener hasta 15 descargas diarias
+            </div>
+        </div>
+    </div>
+
     <audio id="mainAudio" preload="none"></audio>
     <script src="/bible.js"></script>
 
@@ -502,6 +535,7 @@
         registerSW();
         initPWA();
         updateNavModeIndicator();
+        updateDownloadBtn();
     });
 
     function registerSW() {
@@ -566,6 +600,7 @@
         const pb = document.getElementById('playBtn');
         pb.disabled = false; pb.classList.remove('playing'); pb.innerHTML = '🔊 Escuchar';
         document.getElementById('downloadBtn').disabled = false;
+        updateDownloadBtn();
         document.getElementById('chapterResult').classList.add('visible');
 
         updateChapterNavButtons();
@@ -809,6 +844,7 @@
 
     async function downloadChapter() {
         if (!state.book || !state.chapter) return;
+        if (getRemainingDL() <= 0) { openDownloadLimitModal(); return; }
         const btn = document.getElementById('downloadBtn');
         btn.disabled = true; btn.innerHTML = '<span class="loading-spinner"></span> Descargando...';
         try {
@@ -820,9 +856,10 @@
             a.download = `${state.book.replace(/\s+/g,'_')}_Capitulo${state.chapter}.mp3`;
             document.body.appendChild(a); a.click();
             setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(a.href); }, 500);
+            incrementDL();
             showToast('✅ ¡MP3 descargado!');
         } catch (e) { showToast('⚠️ Error al descargar: ' + e.message); }
-        finally { btn.disabled = false; btn.innerHTML = '💾 Descargar MP3'; }
+        finally { btn.disabled = false; updateDownloadBtn(); }
     }
 
     async function copyChapter() {
@@ -884,6 +921,84 @@
         } else {
             showToast(`Modo: ${PLAYBACK_MODES[mode].label}`);
         }
+    }
+
+    // ════════════════════════════════════════════════════════════════
+    // Límite diario de descargas
+    // ════════════════════════════════════════════════════════════════
+    const DL_LIMIT      = 3;
+    const DL_KEY_COUNT  = 'sdv-dl-count';
+    const DL_KEY_DATE   = 'sdv-dl-date';
+    const DL_KEY_SHARED = 'sdv-dl-shared';
+
+    function todayStr() { return new Date().toISOString().slice(0, 10); }
+
+    function getDLCount() {
+        if (localStorage.getItem(DL_KEY_DATE) !== todayStr()) {
+            localStorage.setItem(DL_KEY_DATE, todayStr());
+            localStorage.setItem(DL_KEY_COUNT, '0');
+            return 0;
+        }
+        return parseInt(localStorage.getItem(DL_KEY_COUNT) || '0');
+    }
+
+    function getRemainingDL() { return Math.max(0, DL_LIMIT - getDLCount()); }
+
+    function incrementDL() {
+        localStorage.setItem(DL_KEY_DATE, todayStr());
+        localStorage.setItem(DL_KEY_COUNT, String(getDLCount() + 1));
+    }
+
+    function updateDownloadBtn() {
+        const btn = document.getElementById('downloadBtn');
+        if (!btn || btn.disabled) return;
+        const rem = getRemainingDL();
+        if (rem <= 0) {
+            btn.innerHTML = '🔒 Límite alcanzado (0/3)';
+            btn.classList.add('limit-reached');
+        } else {
+            btn.innerHTML = `💾 Descargar MP3 · ${rem}/${DL_LIMIT}`;
+            btn.classList.remove('limit-reached');
+        }
+    }
+
+    function openDownloadLimitModal() {
+        const now = new Date();
+        const midnight = new Date(now);
+        midnight.setDate(midnight.getDate() + 1);
+        midnight.setHours(0, 0, 0, 0);
+        const diffH = Math.ceil((midnight - now) / 3600000);
+        const resetEl = document.getElementById('dlResetTime');
+        if (resetEl) resetEl.textContent = diffH <= 1 ? 'en menos de 1 hora' : `en ${diffH} horas`;
+        const shareBtn = document.getElementById('shareBonusBtn');
+        if (shareBtn) {
+            const alreadyShared = localStorage.getItem(DL_KEY_SHARED) === todayStr();
+            shareBtn.disabled = alreadyShared;
+            shareBtn.innerHTML = alreadyShared
+                ? '✅ Bonus de compartir ya usado hoy'
+                : '📤 Compartir Sonido de Vida · +1 descarga gratis';
+        }
+        document.getElementById('downloadLimitModal').classList.add('visible');
+    }
+
+    function closeDownloadLimitModal() {
+        document.getElementById('downloadLimitModal').classList.remove('visible');
+    }
+
+    function useShareBonusAction() {
+        if (localStorage.getItem(DL_KEY_SHARED) === todayStr()) return;
+        const msg = encodeURIComponent('Escucha la Biblia completa en audio gratis 🎧✝ → sonidodevida.com');
+        window.open(`https://wa.me/?text=${msg}`, '_blank');
+        localStorage.setItem(DL_KEY_SHARED, todayStr());
+        localStorage.setItem(DL_KEY_COUNT, String(Math.max(0, getDLCount() - 1)));
+        showToast('🎉 ¡+1 descarga desbloqueada! Gracias por compartir.');
+        closeDownloadLimitModal();
+        updateDownloadBtn();
+    }
+
+    function showUpgradeInterest() {
+        closeDownloadLimitModal();
+        showToast('¡Gracias por tu interés! Te avisaremos cuando esté disponible.');
     }
 
     let deferredPrompt;
