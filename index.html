@@ -538,7 +538,7 @@
         const verses = window.BIBLE[book]?.[chapter - 1];
         if (!verses) return showToast('⚠️ Capítulo no disponible en la base de datos');
 
-        audio.pause(); audio.src = '';
+        audio.pause(); audio.removeAttribute('src'); audio.load();
         updatePlayUI(false);
         state.book = book; state.chapter = chapter; state.verses = verses;
 
@@ -799,7 +799,7 @@
         document.getElementById('playerProgressFill').style.width = '0%';
         document.getElementById('playerTime').textContent = '0:00';
     }
-    function closePlayer() { audio.pause(); audio.src=''; updatePlayUI(false); hidePlayerBar(); }
+    function closePlayer() { audio.pause(); audio.removeAttribute('src'); audio.load(); updatePlayUI(false); hidePlayerBar(); }
     function seekAudio(e) {
         if (!audio.duration) return;
         const r = document.getElementById('playerProgress').getBoundingClientRect();
