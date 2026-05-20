@@ -210,6 +210,14 @@
             .player-next-hint{display:none}
         }
 
+        /* ====== Toggle de Traducción ====== */
+        .translation-toggle-wrap{display:flex;align-items:center;justify-content:center;gap:.6rem;margin-bottom:1.4rem}
+        .translation-toggle-label{font-size:.8rem;color:rgba(255,255,255,.5);letter-spacing:.3px;text-transform:uppercase;font-weight:500}
+        .translation-toggle{position:relative;display:inline-flex;border-radius:50px;background:rgba(255,255,255,.06);border:1px solid rgba(201,168,76,.2);overflow:hidden;padding:3px}
+        .translation-toggle input{display:none}
+        .tt-option{position:relative;z-index:1;padding:.45rem 1.1rem;font-size:.8rem;font-weight:600;font-family:'Inter',sans-serif;color:rgba(255,255,255,.5);cursor:pointer;border-radius:50px;transition:color .25s;white-space:nowrap;user-select:none;letter-spacing:.2px}
+        .tt-option.active{color:var(--dark);background:linear-gradient(135deg,var(--gold-light),var(--gold));box-shadow:0 2px 8px rgba(201,168,76,.35)}
+
         /* ====== Límite de descargas ====== */
         .btn-download.limit-reached{background:rgba(255,152,0,.12);color:#ffb74d;border-color:rgba(255,152,0,.3);cursor:pointer}
         .btn-download.limit-reached:hover{background:rgba(255,152,0,.22)}
@@ -300,6 +308,14 @@
         <div class="section-header reveal"><h2>Escuchar la Biblia</h2><p>Selecciona un libro y capítulo para escuchar el audio completo</p></div>
         <div class="listen-container reveal">
             <div class="listen-box">
+                <!-- Toggle de Traducción -->
+                <div class="translation-toggle-wrap">
+                    <span class="translation-toggle-label">Traducción</span>
+                    <div class="translation-toggle" id="translationToggle">
+                        <span class="tt-option active" id="tt-rva" onclick="setTranslation('rva')">🎤 RVA 1909</span>
+                        <span class="tt-option" id="tt-sbll" onclick="setTranslation('sbll')">🎧 SBLL 2026</span>
+                    </div>
+                </div>
                 <div class="listen-selectors">
                     <div class="form-group">
                         <label>Libro</label>
@@ -476,6 +492,7 @@
 
     <audio id="mainAudio" preload="none"></audio>
     <script src="/bible.js"></script>
+    <script src="/bible_sbll.js"></script>
 
     <script>
     // ══════════════════════════════════════════════════════════════
@@ -483,6 +500,32 @@
     // Ejemplo: 'https://sonido-de-vida-audio.zax.workers.dev'
     // ══════════════════════════════════════════════════════════════
     const AUDIO_BASE = 'https://sonido-de-vida-audio.sonidodevida.workers.dev';
+
+    // ── Traducción activa: 'rva' (RVA 1909) | 'sbll' (SBLL 2026) ──
+    let translationMode = 'rva';
+
+    function getActiveBible() {
+        return (translationMode === 'sbll' && window.BIBLE_SBLL) ? window.BIBLE_SBLL : window.BIBLE;
+    }
+    function getTranslationLabel() {
+        return translationMode === 'sbll' ? 'SBLL 2026' : 'RVA 1909';
+    }
+    function setTranslation(mode) {
+        if (translationMode === mode) return;
+        translationMode = mode;
+        // Actualizar botones del toggle
+        document.getElementById('tt-rva').classList.toggle('active', mode === 'rva');
+        document.getElementById('tt-sbll').classList.toggle('active', mode === 'sbll');
+        // Si hay capítulo cargado, recargarlo con la nueva traducción
+        if (state.book && state.chapter) {
+            const wasPlaying = !audio.paused && !!audio.src;
+            loadChapter({ book: state.book, chapter: state.chapter, autoplay: wasPlaying, silent: true });
+        }
+        // Actualizar subtítulo del player si está activo
+        const sub = document.getElementById('playerSub');
+        if (sub) sub.textContent = `${getTranslationLabel()} · Sonido de Vida`;
+        showToast(`Traducción: ${getTranslationLabel()}`);
+    }
 
     // Mapeo: nombre del libro en BIBLE → clave normalizada en R2
     const BOOK_KEY = {
@@ -527,6 +570,7 @@
 
     document.addEventListener('DOMContentLoaded', () => {
         if (!window.BIBLE) { showToast('⚠️ Error: No se cargó bible.js'); return; }
+        document.getElementById('playerSub').textContent = `${getTranslationLabel()} · Sonido de Vida`;
         populateBooks();
         createParticles();
         initScrollAnimations();
@@ -545,7 +589,7 @@
     function populateBooks() {
         const sel = document.getElementById('bookSelect');
         sel.innerHTML = '<option value="">Selecciona un libro...</option>';
-        const available = Object.keys(window.BIBLE);
+        const available = Object.keys(getActiveBible());
         const books = BIBLE_ORDER.filter(b => available.includes(b))
                       .concat(available.filter(b => !BIBLE_ORDER.includes(b)).sort());
         books.forEach(book => {
@@ -554,7 +598,7 @@
         sel.addEventListener('change', () => {
             const book = sel.value;
             const cs = document.getElementById('chapterSelect');
-            if (book && window.BIBLE[book]) { populateChapters(window.BIBLE[book].length); cs.disabled = false; }
+            if (book && getActiveBible()[book]) { populateChapters(getActiveBible()[book].length); cs.disabled = false; }
             else { cs.innerHTML = '<option value="">Cap.</option>'; cs.disabled = true; }
         });
     }
@@ -569,7 +613,7 @@
         const book    = opts.book    ?? document.getElementById('bookSelect').value;
         const chapter = opts.chapter ?? parseInt(document.getElementById('chapterSelect').value);
         if (!book || !chapter) return showToast('Selecciona un libro y capítulo');
-        const verses = window.BIBLE[book]?.[chapter - 1];
+        const verses = getActiveBible()[book]?.[chapter - 1];
         if (!verses) return showToast('⚠️ Capítulo no disponible en la base de datos');
 
         audio.pause(); audio.removeAttribute('src'); audio.load();
@@ -581,7 +625,7 @@
         const chapSel = document.getElementById('chapterSelect');
         if (bookSel.value !== book) {
             bookSel.value = book;
-            populateChapters(window.BIBLE[book].length);
+            populateChapters(getActiveBible()[book].length);
             chapSel.disabled = false;
         }
         chapSel.value = chapter;
@@ -619,7 +663,7 @@
             navigator.mediaSession.metadata = new MediaMetadata({
                 title: `${state.book} — Capítulo ${state.chapter}`,
                 artist: 'Sonido de Vida',
-                album: 'Biblia RVA 1909',
+                album: getTranslationLabel(),
                 artwork: [{ src: '/icon-192.png', sizes: '192x192', type: 'image/png' },
                           { src: '/icon-512.png', sizes: '512x512', type: 'image/png' }],
             });
@@ -628,7 +672,8 @@
 
     function audioUrl(book, chapter) {
         const key = BOOK_KEY[book] || book.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/\s+/g,'-');
-        return `${AUDIO_BASE}/${key}/${chapter}`;
+        const prefix = translationMode === 'sbll' ? 'sbll/' : '';
+        return `${AUDIO_BASE}/${prefix}${key}/${chapter}`;
     }
 
     async function startPlaying() {
@@ -712,7 +757,7 @@
     // Devuelve { book, chapter } o null si no hay siguiente según el modo
     function getNextChapterInfo(mode) {
         if (!state.book) return null;
-        const totalChapters = window.BIBLE[state.book]?.length || 0;
+        const totalChapters = getActiveBible()[state.book]?.length || 0;
         // Si hay siguiente capítulo en este libro → siempre lo damos
         if (state.chapter < totalChapters) {
             return { book: state.book, chapter: state.chapter + 1 };
@@ -720,7 +765,7 @@
         // Estamos en el último capítulo del libro:
         if (mode === 'full') {
             // Saltar al primer capítulo del siguiente libro disponible
-            const available = Object.keys(window.BIBLE);
+            const available = Object.keys(getActiveBible());
             const ordered = BIBLE_ORDER.filter(b => available.includes(b))
                             .concat(available.filter(b => !BIBLE_ORDER.includes(b)).sort());
             const idx = ordered.indexOf(state.book);
@@ -739,13 +784,13 @@
             return { book: state.book, chapter: state.chapter - 1 };
         }
         // Primer capítulo: ofrecer último capítulo del libro anterior
-        const available = Object.keys(window.BIBLE);
+        const available = Object.keys(getActiveBible());
         const ordered = BIBLE_ORDER.filter(b => available.includes(b))
                         .concat(available.filter(b => !BIBLE_ORDER.includes(b)).sort());
         const idx = ordered.indexOf(state.book);
         if (idx > 0) {
             const prevBook = ordered[idx - 1];
-            return { book: prevBook, chapter: window.BIBLE[prevBook].length };
+            return { book: prevBook, chapter: getActiveBible()[prevBook].length };
         }
         return null;
     }
@@ -825,6 +870,7 @@
 
     function showPlayerBar() {
         document.getElementById('playerRef').textContent = `${state.book} — Capítulo ${state.chapter}`;
+        document.getElementById('playerSub').textContent = `${getTranslationLabel()} · Sonido de Vida`;
         document.getElementById('audioPlayerBar').classList.add('visible');
         updatePlayerNextHint();
         updateChapterNavButtons();
@@ -853,7 +899,8 @@
             const blob = await res.blob();
             const a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
-            a.download = `${state.book.replace(/\s+/g,'_')}_Capitulo${state.chapter}.mp3`;
+            const ext = translationMode === 'sbll' ? 'm4a' : 'mp3';
+            a.download = `${state.book.replace(/\s+/g,'_')}_Capitulo${state.chapter}_${getTranslationLabel().replace(/\s/g,'')}.${ext}`;
             document.body.appendChild(a); a.click();
             setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(a.href); }, 500);
             incrementDL();
@@ -872,10 +919,10 @@
 
     function getRandomVerse() {
         try {
-            const books = Object.keys(window.BIBLE);
+            const books = Object.keys(getActiveBible());
             const book  = books[Math.floor(Math.random() * books.length)];
-            const chap  = Math.floor(Math.random() * window.BIBLE[book].length) + 1;
-            const vers  = window.BIBLE[book][chap - 1];
+            const chap  = Math.floor(Math.random() * getActiveBible()[book].length) + 1;
+            const vers  = getActiveBible()[book][chap - 1];
             const vIdx  = Math.floor(Math.random() * vers.length);
             document.getElementById('randomRef').textContent  = `${book} ${chap}:${vIdx + 1}`;
             document.getElementById('randomText').textContent = vers[vIdx];
