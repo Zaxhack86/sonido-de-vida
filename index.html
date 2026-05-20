@@ -613,7 +613,13 @@
         const book    = opts.book    ?? document.getElementById('bookSelect').value;
         const chapter = opts.chapter ?? parseInt(document.getElementById('chapterSelect').value);
         if (!book || !chapter) return showToast('Selecciona un libro y capítulo');
-        const verses = getActiveBible()[book]?.[chapter - 1];
+        let verses = getActiveBible()[book]?.[chapter - 1];
+        let textFallback = false;
+        // Fallback: si SBLL no tiene texto para este capítulo, usar RVA 1909
+        if (translationMode === 'sbll' && (!verses || verses.length === 0)) {
+            verses = window.BIBLE[book]?.[chapter - 1];
+            if (verses) textFallback = true;
+        }
         if (!verses) return showToast('⚠️ Capítulo no disponible en la base de datos');
 
         audio.pause(); audio.removeAttribute('src'); audio.load();
@@ -635,6 +641,12 @@
 
         const container = document.getElementById('chapterVerses');
         container.innerHTML = '';
+        if (textFallback) {
+            const note = document.createElement('p');
+            note.style.cssText = 'font-size:.75rem;color:rgba(255,255,255,.35);font-style:italic;margin-bottom:.8rem;padding:.4rem .6rem;border-left:2px solid rgba(201,168,76,.2)';
+            note.textContent = '· Texto no disponible en SBLL · Mostrando RVA 1909';
+            container.appendChild(note);
+        }
         verses.forEach((text, i) => {
             const p = document.createElement('p'); p.className = 'verse-line';
             p.innerHTML = `<span class="verse-number">${i + 1}</span>${text}`;
