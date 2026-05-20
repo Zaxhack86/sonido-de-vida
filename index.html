@@ -217,6 +217,11 @@
         .translation-toggle input{display:none}
         .tt-option{position:relative;z-index:1;padding:.45rem 1.1rem;font-size:.8rem;font-weight:600;font-family:'Inter',sans-serif;color:rgba(255,255,255,.5);cursor:pointer;border-radius:50px;transition:color .25s;white-space:nowrap;user-select:none;letter-spacing:.2px}
         .tt-option.active{color:var(--dark);background:linear-gradient(135deg,var(--gold-light),var(--gold));box-shadow:0 2px 8px rgba(201,168,76,.35)}
+        @media(max-width:480px){
+            .translation-toggle-wrap{flex-direction:column;gap:.5rem}
+            .translation-toggle{display:flex;width:100%;max-width:320px}
+            .tt-option{flex:1;text-align:center;padding:.45rem .7rem}
+        }
 
         /* ====== Límite de descargas ====== */
         .btn-download.limit-reached{background:rgba(255,152,0,.12);color:#ffb74d;border-color:rgba(255,152,0,.3);cursor:pointer}
@@ -388,7 +393,7 @@
         <div class="footer-content">
             <div class="footer-logo">✝ Sonido de Vida</div>
             <p class="footer-text">"Lámpara es a mis pies tu palabra, y lumbrera a mi camino." — Salmo 119:105</p>
-            <div class="footer-links"><a href="#features">Características</a><a href="#listen">Escuchar</a><a href="#random">Aleatorio</a><a href="/terminos_condiciones">Términos y Condiciones</a><a href="/privacidad">Política de Privacidad</a></div>
+            <div class="footer-links"><a href="#features">Características</a><a href="#listen">Escuchar</a><a href="#random">Aleatorio</a><a href="/terminos_condiciones">Términos y Condiciones</a><a href="/privacidad">Política de Privacidad</a><a href="https://buy.stripe.com/test_3cI28qfuncoheTl2Mp6c000" target="_blank" rel="noopener" style="color:var(--gold-light)">♡ Donar</a></div>
             <div class="footer-divider"></div>
             <p class="footer-bottom">© 2026 Sonido de Vida · sonidodevida.com · La Palabra de Dios, libre para todos.</p>
         </div>
@@ -486,6 +491,7 @@
             </button>
             <div class="modal-footer">
                 Pronto podrás obtener hasta 15 descargas diarias
+                <div style="margin-top:.7rem"><a href="https://buy.stripe.com/test_3cI28qfuncoheTl2Mp6c000" target="_blank" rel="noopener" style="color:rgba(201,168,76,.7);font-size:.78rem;text-decoration:none;font-style:normal">♡ Apoyar el proyecto con una donación voluntaria</a></div>
             </div>
         </div>
     </div>
