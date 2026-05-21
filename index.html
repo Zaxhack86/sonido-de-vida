@@ -695,7 +695,7 @@
         // Actualizar metadatos de pantalla de bloqueo aunque no haya play nuevo
         if ('mediaSession' in navigator && state.book) {
             navigator.mediaSession.metadata = new MediaMetadata({
-                title: `${state.book} — Capítulo ${state.chapter}`,
+                title: state.book,
                 artist: 'Sonido de Vida',
                 album: getTranslationLabel(),
                 artwork: [{ src: '/icon-192.png', sizes: '192x192', type: 'image/png' },
@@ -707,6 +707,14 @@
     function audioUrl(book, chapter) {
         const key = BOOK_KEY[book] || book.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/\s+/g,'-');
         const prefix = translationMode === 'sbll' ? 'sbll/' : '';
+        // Stream continuo del servidor: para modos "continuar" y "full", el Worker
+        // concatena varios MP3 en una sola respuesta. Esto evita el evento 'ended'
+        // entre capítulos y permite reproducción confiable con pantalla bloqueada.
+        // En modo "single" usamos la URL individual de siempre.
+        if (playbackMode === 'continue' || playbackMode === 'full') {
+            const m = playbackMode === 'full' ? 'full' : 'continuar';
+            return `${AUDIO_BASE}/stream/${prefix}${key}/${chapter}?modo=${m}`;
+        }
         return `${AUDIO_BASE}/${prefix}${key}/${chapter}`;
     }
 
@@ -850,7 +858,7 @@
             navigator.mediaSession.playbackState = 'playing';
             try {
                 navigator.mediaSession.metadata = new MediaMetadata({
-                    title: `${next.book} — Capítulo ${next.chapter}`,
+                    title: next.book,
                     artist: 'Sonido de Vida',
                     album: getTranslationLabel(),
                     artwork: [
@@ -981,9 +989,9 @@
     function setupMediaSession() {
         if (!('mediaSession' in navigator)) return;
         navigator.mediaSession.metadata = new MediaMetadata({
-            title: `${state.book} — Capítulo ${state.chapter}`,
+            title: state.book || 'Sonido de Vida',
             artist: 'Sonido de Vida',
-            album: 'Biblia RVA 1909',
+            album: getTranslationLabel(),
             artwork: [{ src: '/icon-192.png', sizes: '192x192', type: 'image/png' },
                       { src: '/icon-512.png', sizes: '512x512', type: 'image/png' }],
         });
