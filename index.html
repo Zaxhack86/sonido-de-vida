@@ -734,23 +734,36 @@
         else audio.pause();
     }
 
+    let chapterTransitioning = false;
+
     function initAudioEvents() {
-        audio.addEventListener('play', () => { updatePlayUI(true); setupMediaSession(); if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing'; });
+        audio.addEventListener('play', () => { chapterTransitioning = false; updatePlayUI(true); setupMediaSession(); if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing'; });
         audio.addEventListener('pause', () => { updatePlayUI(false); if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused'; });
         audio.addEventListener('ended', () => {
+            if (chapterTransitioning) { chapterTransitioning = false; return; }
             updatePlayUI(false);
-            // NO ponemos playbackState='none' aquí — eso cerraría la sesión de audio
-            // y el OS dejaría de permitir reproducción en pantalla bloqueada.
-            // handleChapterEnded decide si cerrar la sesión (último capítulo) o seguir.
             handleChapterEnded();
         });
         audio.addEventListener('timeupdate', () => {
             if (!audio.duration) return;
             document.getElementById('playerProgressFill').style.width = (audio.currentTime / audio.duration * 100) + '%';
             document.getElementById('playerTime').textContent = formatTime(audio.currentTime);
+            // ⚡ Auto-avance PREVENTIVO: cambiar de capítulo 0.4s antes del final
+            // mantiene viva la sesión de audio del OS en pantalla bloqueada
+            // (el evento 'ended' nunca se dispara y el OS no cierra el foco).
+            if (!chapterTransitioning && playbackMode && playbackMode !== 'single') {
+                const remaining = audio.duration - audio.currentTime;
+                if (remaining > 0 && remaining < 0.4) {
+                    chapterTransitioning = true;
+                    handleChapterEnded();
+                }
+            }
         });
         audio.addEventListener('canplay', () => document.getElementById('playerLoading').classList.remove('active'));
         audio.addEventListener('error', () => {
+            // Durante transición de capítulo el src cambia y puede dispararse un error
+            // transitorio mientras se carga el siguiente — ignorar para no romper la UI.
+            if (chapterTransitioning) return;
             showToast('⚠️ No se pudo cargar el audio de este capítulo');
             hidePlayerBar(); updatePlayUI(false);
             const pb = document.getElementById('playBtn'); if(pb){pb.disabled=false;pb.innerHTML='🔊 Escuchar';}
