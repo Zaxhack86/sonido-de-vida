@@ -560,7 +560,21 @@
 
     const BIBLE_ORDER = Object.keys(BOOK_KEY);
     const state = { book: '', chapter: 0, verses: [] };
-    const audio = document.getElementById('mainAudio');
+
+    // ⚡ Plan C: dos elementos <audio> con pre-carga para transiciones sin gap.
+    // El próximo capítulo se descarga en `audioPreload` mientras `audio` reproduce
+    // el actual. Al final, se intercambian (swap) y el siguiente arranca sin
+    // delay de red, manteniendo la sesión de audio del OS viva en pantalla bloqueada.
+    const audioA = document.getElementById('mainAudio');
+    audioA.preload = 'auto';
+    const audioB = document.createElement('audio');
+    audioB.id = 'mainAudioB';
+    audioB.preload = 'auto';
+    audioB.setAttribute('playsinline', '');
+    audioA.parentNode.insertBefore(audioB, audioA.nextSibling);
+    let audio = audioA;          // elemento activo (reproduce)
+    let audioPreload = audioB;   // elemento en stand-by (precarga el próximo)
+    let preloadedFor = null;     // {book, chapter} ya cargado en audioPreload
 
     // ════════════════════════════════════════════════════════════════
     // Modos de reproducción
@@ -736,37 +750,80 @@
 
     let chapterTransitioning = false;
 
+    // Pre-carga el siguiente capítulo en el elemento <audio> en stand-by.
+    function preloadNextChapter() {
+        if (!playbackMode || playbackMode === 'single') return;
+        if (!state.book) return;
+        const next = getNextChapterInfo(playbackMode);
+        if (!next) { preloadedFor = null; return; }
+        if (preloadedFor && preloadedFor.book === next.book && preloadedFor.chapter === next.chapter) return;
+        const url = audioUrl(next.book, next.chapter);
+        try {
+            audioPreload.src = url;
+            audioPreload.load();
+            preloadedFor = { book: next.book, chapter: next.chapter };
+        } catch(e) {}
+    }
+
+    // Intercambia roles: el que estaba precargando pasa a ser el activo.
+    function swapAudioElements() {
+        const t = audio;
+        audio = audioPreload;
+        audioPreload = t;
+        // Resetear el ahora-stand-by para liberar memoria
+        try { audioPreload.pause(); audioPreload.removeAttribute('src'); audioPreload.load(); } catch(e) {}
+        preloadedFor = null;
+    }
+
     function initAudioEvents() {
-        audio.addEventListener('play', () => { chapterTransitioning = false; updatePlayUI(true); setupMediaSession(); if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing'; });
-        audio.addEventListener('pause', () => { updatePlayUI(false); if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused'; });
-        audio.addEventListener('ended', () => {
-            if (chapterTransitioning) { chapterTransitioning = false; return; }
-            updatePlayUI(false);
-            handleChapterEnded();
-        });
-        audio.addEventListener('timeupdate', () => {
-            if (!audio.duration) return;
-            document.getElementById('playerProgressFill').style.width = (audio.currentTime / audio.duration * 100) + '%';
-            document.getElementById('playerTime').textContent = formatTime(audio.currentTime);
-            // ⚡ Auto-avance PREVENTIVO: cambiar de capítulo 0.4s antes del final
-            // mantiene viva la sesión de audio del OS en pantalla bloqueada
-            // (el evento 'ended' nunca se dispara y el OS no cierra el foco).
-            if (!chapterTransitioning && playbackMode && playbackMode !== 'single') {
-                const remaining = audio.duration - audio.currentTime;
-                if (remaining > 0 && remaining < 0.4) {
-                    chapterTransitioning = true;
-                    handleChapterEnded();
+        // Bindear handlers a AMBOS elementos. Cada handler ignora eventos
+        // que no provengan del elemento activo (`this !== audio`).
+        [audioA, audioB].forEach(el => {
+            el.addEventListener('play', function() {
+                if (this !== audio) return;
+                chapterTransitioning = false;
+                updatePlayUI(true);
+                setupMediaSession();
+                if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing';
+                // Iniciar pre-carga del próximo capítulo en cuanto este arranca
+                preloadNextChapter();
+            });
+            el.addEventListener('pause', function() {
+                if (this !== audio) return;
+                updatePlayUI(false);
+                if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused';
+            });
+            el.addEventListener('ended', function() {
+                if (this !== audio) return;
+                if (chapterTransitioning) { chapterTransitioning = false; return; }
+                updatePlayUI(false);
+                handleChapterEnded();
+            });
+            el.addEventListener('timeupdate', function() {
+                if (this !== audio) return;
+                if (!audio.duration) return;
+                document.getElementById('playerProgressFill').style.width = (audio.currentTime / audio.duration * 100) + '%';
+                document.getElementById('playerTime').textContent = formatTime(audio.currentTime);
+                // Transición preventiva 0.4s antes del final
+                if (!chapterTransitioning && playbackMode && playbackMode !== 'single') {
+                    const remaining = audio.duration - audio.currentTime;
+                    if (remaining > 0 && remaining < 0.4) {
+                        chapterTransitioning = true;
+                        handleChapterEnded();
+                    }
                 }
-            }
-        });
-        audio.addEventListener('canplay', () => document.getElementById('playerLoading').classList.remove('active'));
-        audio.addEventListener('error', () => {
-            // Durante transición de capítulo el src cambia y puede dispararse un error
-            // transitorio mientras se carga el siguiente — ignorar para no romper la UI.
-            if (chapterTransitioning) return;
-            showToast('⚠️ No se pudo cargar el audio de este capítulo');
-            hidePlayerBar(); updatePlayUI(false);
-            const pb = document.getElementById('playBtn'); if(pb){pb.disabled=false;pb.innerHTML='🔊 Escuchar';}
+            });
+            el.addEventListener('canplay', function() {
+                if (this !== audio) return;
+                document.getElementById('playerLoading').classList.remove('active');
+            });
+            el.addEventListener('error', function() {
+                if (this !== audio) return;
+                if (chapterTransitioning) return;
+                showToast('⚠️ No se pudo cargar el audio de este capítulo');
+                hidePlayerBar(); updatePlayUI(false);
+                const pb = document.getElementById('playBtn'); if(pb){pb.disabled=false;pb.innerHTML='🔊 Escuchar';}
+            });
         });
     }
 
@@ -787,9 +844,8 @@
             hidePlayerBar();
             return;
         }
-        // CRÍTICO para pantalla bloqueada: mantener playbackState='playing'
-        // y actualizar metadata ANTES de cambiar el src, así el OS no cierra
-        // la sesión de audio y el nuevo play() recibe foco automáticamente.
+        // Mantener playbackState='playing' y actualizar metadata ANTES de la
+        // transición para que el OS no cierre la sesión de audio.
         if ('mediaSession' in navigator) {
             navigator.mediaSession.playbackState = 'playing';
             try {
@@ -804,12 +860,25 @@
                 });
             } catch(e) {}
         }
-        // Iniciar audio INMEDIATAMENTE (aún dentro del evento 'ended')
-        audio.src = audioUrl(next.book, next.chapter);
-        const p = audio.play();
-        if (p) p.catch(e => {
-            if (e.name === 'AbortError') { audio.play().catch(() => {}); }
-        });
+        // Si el próximo capítulo ya está precargado en audioPreload → swap y
+        // play() instantáneo (sin esperar red). Esto es lo que mantiene viva
+        // la sesión de audio en iOS/Android con pantalla bloqueada.
+        const useSwap = preloadedFor && preloadedFor.book === next.book && preloadedFor.chapter === next.chapter && audioPreload.readyState >= 2;
+        if (useSwap) {
+            swapAudioElements();
+            try { audio.currentTime = 0; } catch(e) {}
+            const p = audio.play();
+            if (p) p.catch(e => {
+                if (e.name === 'AbortError') audio.play().catch(() => {});
+            });
+        } else {
+            // Fallback: precarga no lista — cargar src en el activo
+            audio.src = audioUrl(next.book, next.chapter);
+            const p = audio.play();
+            if (p) p.catch(e => {
+                if (e.name === 'AbortError') audio.play().catch(() => {});
+            });
+        }
         // Actualizar DOM y estado (sin tocar el audio)
         loadChapter({ book: next.book, chapter: next.chapter, skipAudio: true, silent: true });
     }
