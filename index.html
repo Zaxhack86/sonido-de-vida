@@ -628,7 +628,7 @@
         }
         if (!verses) return showToast('⚠️ Capítulo no disponible en la base de datos');
 
-        if (!opts.autoplay) {
+        if (!opts.autoplay && !opts.skipAudio) {
             audio.pause(); audio.removeAttribute('src'); audio.load();
             updatePlayUI(false);
         }
@@ -675,7 +675,7 @@
             document.getElementById('chapterResult').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
 
-        if (opts.autoplay) {
+        if (opts.autoplay && !opts.skipAudio) {
             startPlaying();
         }
         // Actualizar metadatos de pantalla de bloqueo aunque no haya play nuevo
@@ -771,8 +771,16 @@
             hidePlayerBar();
             return;
         }
-        // Cargar y reproducir automáticamente sin cerrar la barra
-        loadChapter({ book: next.book, chapter: next.chapter, autoplay: true, silent: true });
+        // Iniciar audio INMEDIATAMENTE (aún dentro del evento 'ended')
+        // para conservar la sesión de audio en iOS/Android con pantalla bloqueada.
+        // El DOM se actualiza después — no bloquea el inicio del audio.
+        audio.src = audioUrl(next.book, next.chapter);
+        const p = audio.play();
+        if (p) p.catch(e => {
+            if (e.name === 'AbortError') { audio.play().catch(() => {}); }
+        });
+        // Actualizar UI y estado (sin tocar el audio)
+        loadChapter({ book: next.book, chapter: next.chapter, skipAudio: true, silent: true });
     }
 
     // Devuelve { book, chapter } o null si no hay siguiente según el modo
