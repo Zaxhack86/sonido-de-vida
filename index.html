@@ -628,8 +628,10 @@
         }
         if (!verses) return showToast('⚠️ Capítulo no disponible en la base de datos');
 
-        audio.pause(); audio.removeAttribute('src'); audio.load();
-        updatePlayUI(false);
+        if (!opts.autoplay) {
+            audio.pause(); audio.removeAttribute('src'); audio.load();
+            updatePlayUI(false);
+        }
         state.book = book; state.chapter = chapter; state.verses = verses;
 
         // Sincronizar selectores con el capítulo actual
@@ -733,9 +735,10 @@
     }
 
     function initAudioEvents() {
-        audio.addEventListener('play', () => { updatePlayUI(true); setupMediaSession(); });
-        audio.addEventListener('pause', () => updatePlayUI(false));
+        audio.addEventListener('play', () => { updatePlayUI(true); setupMediaSession(); if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing'; });
+        audio.addEventListener('pause', () => { updatePlayUI(false); if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused'; });
         audio.addEventListener('ended', () => {
+            if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'none';
             updatePlayUI(false);
             // ¡AQUÍ está el auto-avance! Según el modo elegido.
             handleChapterEnded();
