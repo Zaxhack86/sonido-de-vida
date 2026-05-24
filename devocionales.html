@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Devocionales Bíblicos en Español — Sonido de Vida</title>
+  <meta name="description" content="Devocionales bíblicos profundos en español. Reflexiones sobre los versículos más buscados de la Biblia: Salmos 23, Juan 3:16, Filipenses 4:13 y más. Con audio incluido.">
+  <link rel="canonical" href="https://sonidodevida.com/devocionales">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://sonidodevida.com/devocionales">
+  <meta property="og:title" content="Devocionales Bíblicos en Español — Sonido de Vida">
+  <meta property="og:description" content="Devocionales profundos sobre los versículos más buscados de la Biblia, con audio incluido. Gratis.">
+  <meta property="og:image" content="https://sonidodevida.com/og-image.png">
+  <meta property="og:site_name" content="Sonido de Vida">
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"CollectionPage",
+    "name":"Devocionales Bíblicos en Español",
+    "description":"Reflexiones profundas sobre versículos clave de la Biblia en español, con audio incluido.",
+    "url":"https://sonidodevida.com/devocionales",
+    "publisher":{"@type":"Organization","name":"Sonido de Vida","url":"https://sonidodevida.com"}
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Lora:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    :root{--gold:#c9a84c;--gold-light:#e8d48b;--gold-dark:#a07c2a;--deep-blue:#1a1a3e;--dark:#0d0d1a;--cream:#f5f0e8;--warm-white:#faf8f4;--text-dark:#2c2c3e;--text-light:#6b6b80}
+    body{font-family:'Inter',sans-serif;background:var(--warm-white);color:var(--text-dark)}
+
+    nav{background:var(--dark);padding:.9rem 2rem;display:flex;justify-content:space-between;align-items:center}
+    .nav-logo{font-family:'Cinzel',serif;font-size:1.3rem;font-weight:700;color:var(--gold-light);text-decoration:none;display:flex;align-items:center;gap:.5rem}
+    .nav-links{display:flex;gap:1.5rem;list-style:none}
+    .nav-links a{color:rgba(255,255,255,.75);text-decoration:none;font-size:.88rem;transition:color .2s}
+    .nav-links a:hover{color:var(--gold-light)}
+
+    .hero{background:linear-gradient(135deg,#0d0d1a 0%,#1a1a3e 60%,#2d1b69 100%);padding:5rem 2rem 4rem;text-align:center}
+    .hero-tag{display:inline-block;background:rgba(201,168,76,.15);border:1px solid rgba(201,168,76,.3);color:var(--gold-light);font-size:.78rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:.35rem 1rem;border-radius:50px;margin-bottom:1.5rem}
+    .hero h1{font-family:'Cinzel',serif;font-size:clamp(1.8rem,4vw,2.8rem);color:white;margin-bottom:1rem;line-height:1.25}
+    .hero h1 span{background:linear-gradient(135deg,var(--gold-light),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .hero p{font-family:'Lora',serif;font-size:1.1rem;color:rgba(255,255,255,.75);max-width:580px;margin:0 auto 2.5rem;line-height:1.7}
+    .hero-cta{display:inline-flex;align-items:center;gap:.6rem;background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:var(--dark);padding:.85rem 2rem;border-radius:50px;font-weight:700;font-size:.95rem;text-decoration:none;transition:transform .2s,box-shadow .2s}
+    .hero-cta:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(201,168,76,.4)}
+
+    .filter-bar{background:white;border-bottom:1px solid #eee;padding:1rem 2rem;display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center}
+    .filter-btn{background:var(--cream);border:1px solid #e0d8cc;color:var(--text-dark);padding:.4rem 1rem;border-radius:50px;font-size:.83rem;font-weight:500;cursor:pointer;transition:all .2s;font-family:inherit}
+    .filter-btn:hover,.filter-btn.active{background:var(--deep-blue);color:white;border-color:var(--deep-blue)}
+
+    .grid-wrap{max-width:1100px;margin:0 auto;padding:3rem 2rem 5rem}
+    .grid-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem}
+    .grid-header h2{font-family:'Cinzel',serif;font-size:1.2rem;color:var(--deep-blue)}
+    .grid-count{font-size:.85rem;color:var(--text-light)}
+
+    .devocionales-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.5rem}
+
+    .card{background:white;border:1px solid #eee;border-radius:16px;overflow:hidden;text-decoration:none;transition:transform .2s,box-shadow .2s,border-color .2s;display:flex;flex-direction:column}
+    .card:hover{transform:translateY(-4px);box-shadow:0 12px 35px rgba(0,0,0,.1);border-color:rgba(201,168,76,.3)}
+    .card-top{background:linear-gradient(135deg,var(--deep-blue),#2d1b69);padding:1.5rem;position:relative}
+    .card-ref{font-family:'Cinzel',serif;font-size:.85rem;color:var(--gold);letter-spacing:.06em;margin-bottom:.5rem}
+    .card-verse{font-family:'Lora',serif;font-size:1rem;color:white;line-height:1.55;font-style:italic}
+    .card-verse::before{content:'"';color:var(--gold-light)}
+    .card-verse::after{content:'"';color:var(--gold-light)}
+    .card-body{padding:1.2rem 1.4rem;flex:1;display:flex;flex-direction:column}
+    .card-title{font-family:'Cinzel',serif;font-size:.95rem;color:var(--deep-blue);line-height:1.35;margin-bottom:.6rem}
+    .card-excerpt{font-family:'Lora',serif;font-size:.9rem;color:var(--text-light);line-height:1.65;flex:1;margin-bottom:1.1rem}
+    .card-footer{display:flex;justify-content:space-between;align-items:center}
+    .card-tags{display:flex;gap:.4rem;flex-wrap:wrap}
+    .card-tag{font-size:.72rem;color:var(--gold-dark);background:var(--cream);padding:.2rem .6rem;border-radius:50px;border:1px solid rgba(201,168,76,.2)}
+    .card-arrow{color:var(--gold);font-size:1.1rem;font-weight:600;flex-shrink:0}
+
+    .cta-section{background:linear-gradient(135deg,var(--deep-blue),#2d1b69);padding:4rem 2rem;text-align:center;margin-top:2rem}
+    .cta-section h2{font-family:'Cinzel',serif;font-size:1.5rem;color:var(--gold-light);margin-bottom:.75rem}
+    .cta-section p{font-family:'Lora',serif;color:rgba(255,255,255,.75);margin-bottom:1.8rem;font-size:1rem}
+
+    @media(max-width:640px){
+      .devocionales-grid{grid-template-columns:1fr}
+      .hero{padding:3.5rem 1.5rem 3rem}
+      .grid-wrap{padding:2rem 1.25rem 4rem}
+      .nav-links{display:none}
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">♪ Sonido de Vida</a>
+  <ul class="nav-links">
+    <li><a href="/">Reproductor</a></li>
+    <li><a href="/devocionales">Devocionales</a></li>
+  </ul>
+</nav>
+
+<div class="hero">
+  <div class="hero-tag">✦ Devocionales</div>
+  <h1>Palabras que <span>alimentan el alma</span></h1>
+  <p>Reflexiones profundas sobre los versículos más buscados de la Biblia. Con cada devocional puedes escuchar el capítulo completo en audio.</p>
+  <a href="/" class="hero-cta">
+    <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none"/></svg>
+    Abrir el reproductor
+  </a>
+</div>
+
+<div class="filter-bar">
+  <button class="filter-btn active" onclick="filterCards('todos',this)">Todos</button>
+  <button class="filter-btn" onclick="filterCards('Salmos',this)">Salmos</button>
+  <button class="filter-btn" onclick="filterCards('Nuevo Testamento',this)">Nuevo Testamento</button>
+  <button class="filter-btn" onclick="filterCards('Profetas',this)">Profetas</button>
+  <button class="filter-btn" onclick="filterCards('Sabiduría',this)">Sabiduría</button>
+</div>
+
+<div class="grid-wrap">
+  <div class="grid-header">
+    <h2>Todos los devocionales</h2>
+    <span class="grid-count" id="grid-count">11 devocionales</span>
+  </div>
+
+  <div class="devocionales-grid" id="devocionales-grid">
+
+    <a href="/devocional/genesis-1-1" class="card" data-category="Antiguo Testamento">
+      <div class="card-top">
+        <div class="card-ref">Génesis 1:1</div>
+        <div class="card-verse">En el principio creó Dios los cielos y la tierra.</div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Génesis 1:1: Antes que Existieras Tú, Existía Él</div>
+        <div class="card-excerpt">Lo que la primera frase de la Biblia dice sobre tu valor, tu identidad y el significado de "bara" — la creación que solo Dios puede hacer.</div>
+        <div class="card-footer">
+          <div class="card-tags"><span class="card-tag">Génesis</span><span class="card-tag">Identidad</span></div>
+          <span class="card-arrow">→</span>
+        </div>
+      </div>
+    </a>
+
+    <a href="/devocional/salmos-23" class="card" data-category="Salmos">
+      <div class="card-top">
+        <div class="card-ref">Salmos 23:1</div>
+        <div class="card-verse">El Señor es mi pastor; nada me faltará.</div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Salmos 23: Lo Que David Sabía Que Tú Necesitas Saber Hoy</div>
+        <div class="card-excerpt">David lo escribió huyendo de su propio hijo. Por eso sus palabras de confianza no son teoría — son fe probada en el fuego más doloroso.</div>
+        <div class="card-footer">
+          <div class="card-tags"><span class="card-tag">Salmos</span><span class="card-tag">Confianza</span></div>
+          <span class="card-arrow">→</span>
+        </div>
+      </div>
+    </a>
+
+    <a href="/devocional/salmos-91" class="card" data-category="Salmos">
+      <div class="card-top">
+        <div class="card-ref">Salmos 91:1</div>
+        <div class="card-verse">El que habita al abrigo del Altísimo morará bajo la sombra del Omnipotente.</div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Salmos 91: Habitar en Dios No es lo Mismo que Visitarlo</div>
+        <div class="card-excerpt">Las promesas del Salmo 91 son reales — pero dependen de una condición en el primer versículo que casi nadie menciona. ¿Estás habitando o visitando?</div>
+        <div class="card-footer">
+          <div class="card-tags"><span class="card-tag">Salmos</span><span class="card-tag">Protección</span></div>
+          <span class="card-arrow">→</span>
+        </div>
+      </div>
+    </a>
+
+    <a href="/devocional/proverbios-3-5" class="card" data-category="Sabiduría">
+      <div class="card-top">
+        <div class="card-ref">Proverbios 3:5-6</div>
+        <div class="card-verse">Confía en Jehová con todo tu corazón, y no te apoyes en tu propio entendimiento.</div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Proverbios 3:5-6: El Arte de Soltar el Mapa Cuando Dios es el GPS</div>
+        <div class="card-excerpt">Lo que la palabra hebrea "batach" revela sobre lo que significa confiar de verdad — no de respaldo, sino con todo el peso encima.</div>
+        <div class="card-footer">
+          <div class="card-tags"><span class="card-tag">Proverbios</span><span class="card-tag">Sabiduría</span></div>
+          <span class="card-arrow">→</span>
+        </div>
+      </div>
+    </a>
+
+    <a href="/devocional/isaias-40-31" class="card" data-category="Profetas">
+      <div class="card-top">
+        <div class="card-ref">Isaías 40:31</div>
+        <div class="card-verse">Los que esperan a Jehová tendrán nuevas fuerzas; levantarán alas como las águilas.</div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Isaías 40:31: La Promesa Más Importante No es Volar — es No Desmayar</div>
+        <div class="card-excerpt">El orden de las tres promesas (águilas, carrera, caminata) es descendente, no ascendente. La más difícil y más necesaria es la última.</div>
+        <div class="card-footer">
+          <div class="card-tags"><span class="card-tag">Isaías</span><span class="card-tag">Esperanza</span></div>
+          <span class="card-arrow">→</span>
+        </div>
+      </div>
+    </a>
+
+    <a href="/devocional/jeremias-29-11" class="card" data-category="Profetas">
+      <div class="card-top">
+        <div class="card-ref">Jeremías 29:11</div>
+        <div class="card-verse">Pensamientos de paz y no de mal, para daros el fin que esperáis.</div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Jeremías 29:11: Lo Que Esta Promesa Realmente Costó Escuchar</div>
+        <div class="card-excerpt">Esta promesa fue escrita para personas en exilio que esperarían setenta años. El contexto lo hace más poderoso — y más exigente — de lo que parece en una taza de café.</div>
+        <div class="card-footer">
+          <div class="card-tags"><span class="card-tag">Jeremías</span><span class="card-tag">Esperanza</span></div>
+          <span class="card-arrow">→</span>
+        </div>
+      </div>
+    </a>
+
+    <a href="/devocional/mateo-6-33" class="card" data-category="Nuevo Testamento">
+      <div class="card-top">
+        <div class="card-ref">Mateo 6:33</div>
+        <div class="card-verse">Buscad primeramente el reino de Dios y su justicia.</div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Mateo 6:33: Jesús No Dijo Esto Desde un Escenario — Lo Dijo en una Colina</div>
+        <div class="card-excerpt">Jesús habló a campesinos pobres que tenían razones concretas para afanarse. Lo que significa "buscar primero" en la vida real y desordenada.</div>
+        <div class="card-footer">
+          <div class="card-tags"><span class="card-tag">Mateo</span><span class="card-tag">Reino</span></div>
+          <span class="card-arrow">→</span>
+        </div>
+      </div>
+    </a>
+
+    <a href="/devocional/juan-3-16" class="card" data-category="Nuevo Testamento">
+      <div class="card-top">
+        <div class="card-ref">Juan 3:16</div>
+        <div class="card-verse">Porque de tal manera amó Dios al mundo, que ha dado a su Hijo unigénito.</div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Juan 3:16: El Versículo Más Conocido del Mundo y el Más Malentendido</div>
+        <div class="card-excerpt">Dicho de noche a un experto religioso que no entendía lo más básico. "De tal manera" no habla de cuánto amó Dios — habla de cómo amó.</div>
+        <div class="card-footer">
+          <div class="card-tags"><span class="card-tag">Juan</span><span class="card-tag">Salvación</span></div>
+          <span class="card-arrow">→</span>
+        </div>
+      </div>
+    </a>
+
+    <a href="/devocional/romanos-8-1" class="card" data-category="Nuevo Testamento">
+      <div class="card-top">
+        <div class="card-ref">Romanos 8:1</div>
+        <div class="card-verse">Ahora, pues, ninguna condenación hay para los que están en Cristo Jesús.</div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Romanos 8:1: El Veredicto Que Nadie Esperaba Después del Capítulo 7</div>
+        <div class="card-excerpt">Pablo acababa de confesar su fracaso más honesto. Y entonces: ninguna condenación. La diferencia entre lo que el juez declara y lo que el acusador susurra.</div>
+        <div class="card-footer">
+          <div class="card-tags"><span class="card-tag">Romanos</span><span class="card-tag">Libertad</span></div>
+          <span class="card-arrow">→</span>
+        </div>
+      </div>
+    </a>
+
+    <a href="/devocional/romanos-8-28" class="card" data-category="Nuevo Testamento">
+      <div class="card-top">
+        <div class="card-ref">Romanos 8:28</div>
+        <div class="card-verse">A los que aman a Dios, todas las cosas les ayudan a bien.</div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Romanos 8:28: Dios No Causó Tu Dolor, Pero Hará Algo con Él</div>
+        <div class="card-excerpt">No dice que todo es bueno. Dice que Dios puede tomar cualquier cosa — incluso lo que usó el enemigo — y hacerla cooperar hacia un propósito de bien.</div>
+        <div class="card-footer">
+          <div class="card-tags"><span class="card-tag">Romanos</span><span class="card-tag">Sufrimiento</span></div>
+          <span class="card-arrow">→</span>
+        </div>
+      </div>
+    </a>
+
+    <a href="/devocional/filipenses-4-13" class="card" data-category="Nuevo Testamento">
+      <div class="card-top">
+        <div class="card-ref">Filipenses 4:13</div>
+        <div class="card-verse">Todo lo puedo en Cristo que me fortalece.</div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Filipenses 4:13: Pablo Lo Escribió en Cadenas, No Desde un Escenario</div>
+        <div class="card-excerpt">"He aprendido a contentarme" — el verbo que lo cambia todo. El contentamiento no era natural para Pablo. Era aprendido. Y esa es la promesa real del versículo.</div>
+        <div class="card-footer">
+          <div class="card-tags"><span class="card-tag">Filipenses</span><span class="card-tag">Fortaleza</span></div>
+          <span class="card-arrow">→</span>
+        </div>
+      </div>
+    </a>
+
+  </div>
+</div>
+
+<div class="cta-section">
+  <h2>Escucha la Biblia completa en audio</h2>
+  <p>Los 66 libros, capítulo por capítulo. Reina Valera 1909. Gratis y sin registro.</p>
+  <a href="/" class="hero-cta">
+    <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none"/></svg>
+    Abrir el reproductor de audio
+  </a>
+</div>
+
+<script>
+function filterCards(cat, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const cards = document.querySelectorAll('.card');
+  let visible = 0;
+  cards.forEach(card => {
+    const cardCat = card.dataset.category || '';
+    if (cat === 'todos') {
+      card.style.display = '';
+      visible++;
+    } else if (cat === 'Salmos' && cardCat === 'Salmos') {
+      card.style.display = ''; visible++;
+    } else if (cat === 'Nuevo Testamento' && cardCat === 'Nuevo Testamento') {
+      card.style.display = ''; visible++;
+    } else if (cat === 'Profetas' && cardCat === 'Profetas') {
+      card.style.display = ''; visible++;
+    } else if (cat === 'Sabiduría' && cardCat === 'Sabiduría') {
+      card.style.display = ''; visible++;
+    } else {
+      card.style.display = 'none';
+    }
+  });
+  document.getElementById('grid-count').textContent = visible + (visible === 1 ? ' devocional' : ' devocionales');
+}
+</script>
+
+</body>
+</html>
