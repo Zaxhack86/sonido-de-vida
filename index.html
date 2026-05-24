@@ -170,6 +170,19 @@
         .random-action-btn{display:inline-flex;align-items:center;gap:.5rem;padding:.65rem 1.3rem;border-radius:10px;font-size:.85rem;font-weight:500;cursor:pointer;transition:all .3s;border:1px solid;font-family:'Inter',sans-serif}
         .ra-copy{background:rgba(100,181,246,.08);color:#1565c0;border-color:rgba(100,181,246,.2)}
         .ra-copy:hover{background:rgba(100,181,246,.15)}
+        .devocionales-section{padding:6rem 2rem;background:white}
+        .devocionales-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:2rem;max-width:1100px;margin:0 auto}
+        .devocional-card{background:var(--warm-white);border-radius:20px;padding:2rem;border:1px solid rgba(0,0,0,.06);transition:all .4s ease;text-decoration:none;display:flex;flex-direction:column;position:relative;overflow:hidden;color:inherit}
+        .devocional-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--gold-dark));transform:scaleX(0);transition:transform .4s ease}
+        .devocional-card:hover::before{transform:scaleX(1)}
+        .devocional-card:hover{transform:translateY(-6px);box-shadow:0 20px 50px rgba(0,0,0,.1)}
+        .devocional-card-tag{font-size:.75rem;font-weight:600;color:var(--gold-dark);text-transform:uppercase;letter-spacing:.8px;margin-bottom:.8rem}
+        .devocional-card-ref{font-family:'Cinzel',serif;font-size:1.4rem;color:var(--deep-blue);margin-bottom:.7rem}
+        .devocional-card-title{font-family:'Lora',serif;font-size:1rem;color:var(--text-dark);line-height:1.6;margin-bottom:1rem;flex:1}
+        .devocional-card-verse{font-family:'Lora',serif;font-style:italic;color:var(--text-light);font-size:.9rem;line-height:1.6;border-left:3px solid var(--gold);padding-left:1rem;margin-bottom:1.2rem}
+        .devocional-card-link{display:inline-flex;align-items:center;gap:.4rem;color:var(--gold-dark);font-weight:600;font-size:.88rem;transition:gap .2s}
+        .devocional-card:hover .devocional-card-link{gap:.7rem}
+        .devocionales-cta{text-align:center;margin-top:3rem}
         .cta-section{padding:6rem 2rem;background:linear-gradient(135deg,var(--deep-blue) 0%,var(--purple) 100%);text-align:center;position:relative;overflow:hidden}
         .cta-section::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle,rgba(201,168,76,.1) 0%,transparent 50%);animation:rotateBg 20s linear infinite}
         @keyframes rotateBg{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
@@ -313,6 +326,7 @@
             <li><a href="#features" onclick="closeMenu()">Características</a></li>
             <li><a href="#listen" onclick="closeMenu()">Escuchar</a></li>
             <li><a href="#random" onclick="closeMenu()">Aleatorio</a></li>
+            <li><a href="/devocionales" onclick="closeMenu()">Devocionales</a></li>
             <li><a href="#listen" class="nav-cta" onclick="closeMenu()">Escuchar Ahora</a></li>
         </ul>
         <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleMobileMenu()">
@@ -428,6 +442,39 @@
         </div>
     </section>
 
+    <section class="devocionales-section" id="devocionales">
+        <div class="section-header reveal">
+            <h2>Devocionales Bíblicos</h2>
+            <p>Reflexiones profundas sobre la Palabra de Dios para tu vida diaria</p>
+        </div>
+        <div class="devocionales-grid">
+            <a href="/devocional/salmos-23" class="devocional-card reveal">
+                <div class="devocional-card-tag">Salmos</div>
+                <div class="devocional-card-ref">Salmos 23</div>
+                <div class="devocional-card-title">El Señor Es Mi Pastor: La Promesa de Guía en Tiempos Difíciles</div>
+                <div class="devocional-card-verse">"Jehová es mi pastor; nada me faltará. En lugares de delicados pastos me hará descansar..."</div>
+                <span class="devocional-card-link">Leer devocional →</span>
+            </a>
+            <a href="/devocional/juan-3-16" class="devocional-card reveal">
+                <div class="devocional-card-tag">Juan</div>
+                <div class="devocional-card-ref">Juan 3:16</div>
+                <div class="devocional-card-title">Porque Tanto Amó Dios al Mundo: El Amor Sin Medida</div>
+                <div class="devocional-card-verse">"Porque de tal manera amó Dios al mundo, que ha dado a su Hijo unigénito..."</div>
+                <span class="devocional-card-link">Leer devocional →</span>
+            </a>
+            <a href="/devocional/filipenses-4-13" class="devocional-card reveal">
+                <div class="devocional-card-tag">Filipenses</div>
+                <div class="devocional-card-ref">Filipenses 4:13</div>
+                <div class="devocional-card-title">Todo Lo Puedo: La Fuente Real de la Fortaleza Cristiana</div>
+                <div class="devocional-card-verse">"Todo lo puedo en Cristo que me fortalece..."</div>
+                <span class="devocional-card-link">Leer devocional →</span>
+            </a>
+        </div>
+        <div class="devocionales-cta reveal">
+            <a href="/devocionales" class="btn-primary">📖 Ver Todos los Devocionales</a>
+        </div>
+    </section>
+
     <section class="cta-section">
         <div class="cta-content reveal">
             <h2>La Palabra de Dios es para todos</h2>
@@ -440,7 +487,7 @@
         <div class="footer-content">
             <div class="footer-logo">✝ Sonido de Vida</div>
             <p class="footer-text">"Lámpara es a mis pies tu palabra, y lumbrera a mi camino." — Salmo 119:105</p>
-            <div class="footer-links"><a href="#features">Características</a><a href="#listen">Escuchar</a><a href="#random">Aleatorio</a><a href="/terminos_condiciones">Términos y Condiciones</a><a href="/privacidad">Política de Privacidad</a><a href="https://donate.stripe.com/28E6oG2C29yneiJ5k33F600" target="_blank" rel="noopener" style="color:var(--gold-light)">♡ Donar</a></div>
+            <div class="footer-links"><a href="#features">Características</a><a href="#listen">Escuchar</a><a href="#random">Aleatorio</a><a href="/devocionales">Devocionales</a><a href="/terminos_condiciones">Términos y Condiciones</a><a href="/privacidad">Política de Privacidad</a><a href="https://donate.stripe.com/28E6oG2C29yneiJ5k33F600" target="_blank" rel="noopener" style="color:var(--gold-light)">♡ Donar</a></div>
             <div class="footer-divider"></div>
             <p class="footer-bottom">© 2026 Sonido de Vida · sonidodevida.com · La Palabra de Dios, libre para todos.</p>
         </div>
