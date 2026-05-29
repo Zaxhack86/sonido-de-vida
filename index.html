@@ -335,6 +335,10 @@
         .share-btn.gold{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:var(--dark)}
         .share-btn.ghost{background:rgba(255,255,255,.06);color:rgba(255,255,255,.85);border:1px solid rgba(255,255,255,.15)}
         .share-btn:hover{transform:translateY(-1px)}
+        /* Ventana de bienvenida (instalar) */
+        .welcome-badge{display:block;width:fit-content;margin:0 auto .9rem;background:rgba(201,168,76,.15);border:1px solid rgba(201,168,76,.35);color:var(--gold-light);font-size:.72rem;font-weight:600;letter-spacing:.5px;text-transform:uppercase;padding:.3rem .85rem;border-radius:50px;font-family:'Inter',sans-serif}
+        .welcome-perks{list-style:none;margin:0 0 1.4rem;padding:0;display:flex;flex-direction:column;gap:.55rem}
+        .welcome-perks li{color:rgba(255,255,255,.88);font-family:'Inter',sans-serif;font-size:.92rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:.7rem .9rem}
     </style>
 </head>
 <body>
@@ -544,10 +548,23 @@
         </div>
     </div>
 
-    <div class="install-banner" id="installBanner">
-        <p><strong>Instala Sonido de Vida</strong>Escucha la Biblia como app nativa</p>
-        <button class="btn-install" id="installBannerBtn" onclick="installApp()">Instalar</button>
-        <button class="btn-install-close" onclick="dismissInstall()">✕</button>
+    <!-- Ventana de bienvenida: instalar la app -->
+    <div class="modal-overlay" id="welcomeInstallModal" onclick="if(event.target===this)closeWelcomeInstall()">
+        <div class="modal-card">
+            <span class="welcome-badge">App gratuita</span>
+            <div class="modal-icon" style="width:74px;height:74px;font-size:2.3rem">✝</div>
+            <div class="modal-title" style="font-size:1.6rem">Instala Sonido de Vida</div>
+            <div class="modal-subtitle">Llévala en tu pantalla de inicio y escucha la Biblia con un solo toque, sin abrir el navegador. Es gratis y ocupa muy poco.</div>
+            <ul class="welcome-perks">
+                <li>🎧 Toda la Biblia en audio, capítulo por capítulo</li>
+                <li>📲 Acceso directo desde tu pantalla de inicio</li>
+                <li>📶 Funciona aunque tengas poca señal</li>
+            </ul>
+            <div class="share-btns">
+                <button class="share-btn gold" style="font-size:1.05rem;padding:1rem" onclick="triggerInstall()">📲 Instalar app</button>
+                <button class="share-btn ghost" onclick="closeWelcomeInstall()">Ahora no</button>
+            </div>
+        </div>
     </div>
 
     <!-- Flecha que apunta al botón Compartir de Safari (iOS) -->
@@ -1344,32 +1361,33 @@
     let deferredPrompt;
     function initPWA() {
         if (isStandalone()) return; // ya instalada: no molestar
-        window.addEventListener('beforeinstallprompt', e => {
-            e.preventDefault(); deferredPrompt = e;
-            if (!localStorage.getItem('sdv-dismissed'))
-                setTimeout(() => document.getElementById('installBanner').classList.add('visible'), 4000);
-        });
-        window.addEventListener('appinstalled', () => { document.getElementById('installBanner').classList.remove('visible'); deferredPrompt = null; });
-        // iOS no dispara beforeinstallprompt: el banner abre la guía visual
-        if (isIOS() && !localStorage.getItem('sdv-dismissed')) {
-            document.getElementById('installBannerBtn').setAttribute('onclick', 'openIosInstall()');
-            setTimeout(() => document.getElementById('installBanner').classList.add('visible'), 4000);
-        }
+        window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferredPrompt = e; });
+        window.addEventListener('appinstalled', () => { closeWelcomeInstall(); deferredPrompt = null; });
+        // Bienvenida en cada visita mientras no esté instalada
+        setTimeout(() => { if (!isStandalone()) openWelcomeInstall(); }, 1500);
     }
-    function installApp() { if(!deferredPrompt) return; deferredPrompt.prompt(); deferredPrompt.userChoice.then(()=>{deferredPrompt=null; document.getElementById('installBanner').classList.remove('visible');}); }
-    function dismissInstall() { localStorage.setItem('sdv-dismissed','1'); document.getElementById('installBanner').classList.remove('visible'); }
+    function openWelcomeInstall() { closeMenu(); document.getElementById('welcomeInstallModal').classList.add('visible'); }
+    function closeWelcomeInstall() { document.getElementById('welcomeInstallModal').classList.remove('visible'); }
+    // CTA principal: instalar (adaptado a la plataforma)
+    function triggerInstall() {
+        if (deferredPrompt) { // Android / navegadores compatibles: prompt nativo
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then(() => { deferredPrompt = null; closeWelcomeInstall(); });
+            return;
+        }
+        if (isIOS()) { closeWelcomeInstall(); openIosInstall(); return; }
+        showToast('Abre el menú de tu navegador y elige "Instalar app"');
+    }
 
-    // Punto de entrada universal (menú "Instalar app")
+    // Punto de entrada del menú "Instalar app"
     function openInstall(e) {
         if (e) e.preventDefault();
         closeMenu();
         if (isStandalone()) { showToast('✅ Ya tienes la app instalada'); return; }
-        if (deferredPrompt) { installApp(); return; }
-        if (isIOS()) { openIosInstall(); return; }
-        showToast('Abre el menú de tu navegador y elige "Instalar app"');
+        openWelcomeInstall();
     }
     function openIosInstall() {
-        document.getElementById('installBanner').classList.remove('visible');
+        closeWelcomeInstall();
         const note = document.getElementById('iosSafariNote');
         note.textContent = isIOSSafari() ? '' : '⚠️ Abre sonidodevida.com en Safari para poder instalarla.';
         document.getElementById('iosInstallModal').classList.add('visible');
