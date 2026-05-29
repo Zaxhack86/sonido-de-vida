@@ -316,6 +316,25 @@
         .modal-footer{text-align:center;color:rgba(255,255,255,.4);font-size:.78rem;font-family:'Lora',serif;font-style:italic}
         .modal-footer label{display:inline-flex;align-items:center;gap:.4rem;cursor:pointer;color:rgba(255,255,255,.5);font-style:normal;font-family:'Inter',sans-serif;margin-bottom:.5rem}
         .modal-footer input[type=checkbox]{accent-color:var(--gold)}
+        /* iOS install guide */
+        .ios-steps{display:flex;flex-direction:column;gap:.8rem;margin:.3rem 0 1.3rem}
+        .ios-step{display:flex;align-items:center;gap:.9rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:.85rem 1rem;color:rgba(255,255,255,.9);font-family:'Inter',sans-serif;font-size:.92rem;line-height:1.45}
+        .ios-step strong{color:var(--gold-light)}
+        .ios-step-num{width:28px;height:28px;flex-shrink:0;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:var(--dark);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.9rem}
+        .ios-share-ico{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border:1.5px solid var(--gold-light);border-radius:5px;color:var(--gold-light);vertical-align:middle;font-size:.85rem;line-height:1}
+        .ios-note{font-size:.8rem;color:rgba(255,255,255,.55);text-align:center;font-family:'Inter',sans-serif;margin-top:.2rem}
+        .ios-arrow{position:fixed;left:50%;bottom:1.4rem;transform:translateX(-50%);z-index:3100;color:var(--gold-light);font-size:2.6rem;animation:iosArrowBounce 1.2s infinite;pointer-events:none;display:none;filter:drop-shadow(0 4px 12px rgba(0,0,0,.6))}
+        .ios-arrow.visible{display:block}
+        @keyframes iosArrowBounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(12px)}}
+        /* QR / compartir */
+        .qr-box{background:#fff;border-radius:16px;padding:14px;width:236px;height:236px;margin:0 auto 1.3rem;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 30px rgba(0,0,0,.4)}
+        .qr-box img,.qr-box canvas{width:208px!important;height:208px!important;display:block}
+        .share-btns{display:flex;flex-direction:column;gap:.6rem}
+        .share-btn{display:flex;align-items:center;justify-content:center;gap:.5rem;padding:.85rem 1rem;border-radius:12px;font-size:.92rem;font-weight:600;cursor:pointer;border:none;font-family:'Inter',sans-serif;transition:transform .2s}
+        .share-btn.wa{background:rgba(37,211,102,.14);color:#4caf50;border:1px solid rgba(37,211,102,.3)}
+        .share-btn.gold{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:var(--dark)}
+        .share-btn.ghost{background:rgba(255,255,255,.06);color:rgba(255,255,255,.85);border:1px solid rgba(255,255,255,.15)}
+        .share-btn:hover{transform:translateY(-1px)}
     </style>
 </head>
 <body>
@@ -327,6 +346,7 @@
             <li><a href="#listen" onclick="closeMenu()">Escuchar</a></li>
             <li><a href="#random" onclick="closeMenu()">Aleatorio</a></li>
             <li><a href="/devocionales" onclick="closeMenu()">Devocionales</a></li>
+            <li><a href="#" onclick="openInstall(event)">📲 Instalar app</a></li>
             <li><a href="#listen" class="nav-cta" onclick="closeMenu()">Escuchar Ahora</a></li>
         </ul>
         <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleMobileMenu()">
@@ -487,7 +507,7 @@
         <div class="footer-content">
             <div class="footer-logo">✝ Sonido de Vida</div>
             <p class="footer-text">"Lámpara es a mis pies tu palabra, y lumbrera a mi camino." — Salmo 119:105</p>
-            <div class="footer-links"><a href="#features">Características</a><a href="#listen">Escuchar</a><a href="#random">Aleatorio</a><a href="/devocionales">Devocionales</a><a href="/terminos_condiciones">Términos y Condiciones</a><a href="/privacidad">Política de Privacidad</a><a href="https://donate.stripe.com/28E6oG2C29yneiJ5k33F600" target="_blank" rel="noopener" style="color:var(--gold-light)">♡ Donar</a></div>
+            <div class="footer-links"><a href="#features">Características</a><a href="#listen">Escuchar</a><a href="#random">Aleatorio</a><a href="/devocionales">Devocionales</a><a href="#" onclick="openShareModal();return false;">Compartir / QR</a><a href="/terminos_condiciones">Términos y Condiciones</a><a href="/privacidad">Política de Privacidad</a><a href="https://donate.stripe.com/28E6oG2C29yneiJ5k33F600" target="_blank" rel="noopener" style="color:var(--gold-light)">♡ Donar</a></div>
             <div class="footer-divider"></div>
             <p class="footer-bottom">© 2026 Sonido de Vida · sonidodevida.com · La Palabra de Dios, libre para todos.</p>
         </div>
@@ -526,8 +546,43 @@
 
     <div class="install-banner" id="installBanner">
         <p><strong>Instala Sonido de Vida</strong>Escucha la Biblia como app nativa</p>
-        <button class="btn-install" onclick="installApp()">Instalar</button>
+        <button class="btn-install" id="installBannerBtn" onclick="installApp()">Instalar</button>
         <button class="btn-install-close" onclick="dismissInstall()">✕</button>
+    </div>
+
+    <!-- Flecha que apunta al botón Compartir de Safari (iOS) -->
+    <div class="ios-arrow" id="iosArrow">⬇️</div>
+
+    <!-- Modal: guía de instalación para iPhone/iPad -->
+    <div class="modal-overlay" id="iosInstallModal" onclick="if(event.target===this)closeIosInstall()">
+        <div class="modal-card">
+            <div class="modal-icon">📲</div>
+            <div class="modal-title">Instala la app en tu iPhone</div>
+            <div class="modal-subtitle">Sin tiendas, en 3 pasos. Tendrás Sonido de Vida en tu pantalla de inicio como una app.</div>
+            <div class="ios-steps">
+                <div class="ios-step"><span class="ios-step-num">1</span><span>Toca el botón <strong>Compartir</strong> <span class="ios-share-ico">⬆</span> en la barra de tu navegador.</span></div>
+                <div class="ios-step"><span class="ios-step-num">2</span><span>Desliza y toca <strong>"Añadir a pantalla de inicio"</strong>.</span></div>
+                <div class="ios-step"><span class="ios-step-num">3</span><span>Toca <strong>"Añadir"</strong>. ¡Listo, ya la tienes!</span></div>
+            </div>
+            <div class="share-btns"><button class="share-btn gold" onclick="closeIosInstall()">Entendido</button></div>
+            <p class="ios-note" id="iosSafariNote"></p>
+        </div>
+    </div>
+
+    <!-- Modal: compartir / código QR -->
+    <div class="modal-overlay" id="shareModal" onclick="if(event.target===this)closeShareModal()">
+        <div class="modal-card">
+            <div class="modal-icon">🔗</div>
+            <div class="modal-title">Comparte Sonido de Vida</div>
+            <div class="modal-subtitle">Escanea o comparte el código para que otros escuchen la Palabra de Dios, gratis.</div>
+            <div class="qr-box" id="qrBox"></div>
+            <div class="share-btns">
+                <button class="share-btn wa" onclick="shareApp('whatsapp')">💬 Compartir por WhatsApp</button>
+                <button class="share-btn gold" onclick="shareApp('native')">📤 Compartir…</button>
+                <button class="share-btn ghost" onclick="shareApp('copy')">🔗 Copiar enlace</button>
+            </div>
+            <div class="modal-footer" style="margin-top:1.1rem"><label style="cursor:pointer" onclick="closeShareModal()">Cerrar</label></div>
+        </div>
     </div>
 
     <div class="toast" id="toast"></div>
@@ -1279,17 +1334,83 @@
         showToast('¡Gracias por tu interés! Te avisaremos cuando esté disponible.');
     }
 
+    const APP_URL = 'https://sonidodevida.com';
+    const APP_SHARE_TEXT = 'Escucha la Biblia completa en audio gratis 🎧✝ → sonidodevida.com';
+
+    function isStandalone() { return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true; }
+    function isIOS() { return /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); }
+    function isIOSSafari() { return isIOS() && /Safari/.test(navigator.userAgent) && !/CriOS|FxiOS|EdgiOS|OPiOS/.test(navigator.userAgent); }
+
     let deferredPrompt;
     function initPWA() {
+        if (isStandalone()) return; // ya instalada: no molestar
         window.addEventListener('beforeinstallprompt', e => {
             e.preventDefault(); deferredPrompt = e;
             if (!localStorage.getItem('sdv-dismissed'))
                 setTimeout(() => document.getElementById('installBanner').classList.add('visible'), 4000);
         });
-        window.addEventListener('appinstalled', () => { document.getElementById('installBanner').classList.remove('visible'); });
+        window.addEventListener('appinstalled', () => { document.getElementById('installBanner').classList.remove('visible'); deferredPrompt = null; });
+        // iOS no dispara beforeinstallprompt: el banner abre la guía visual
+        if (isIOS() && !localStorage.getItem('sdv-dismissed')) {
+            document.getElementById('installBannerBtn').setAttribute('onclick', 'openIosInstall()');
+            setTimeout(() => document.getElementById('installBanner').classList.add('visible'), 4000);
+        }
     }
     function installApp() { if(!deferredPrompt) return; deferredPrompt.prompt(); deferredPrompt.userChoice.then(()=>{deferredPrompt=null; document.getElementById('installBanner').classList.remove('visible');}); }
     function dismissInstall() { localStorage.setItem('sdv-dismissed','1'); document.getElementById('installBanner').classList.remove('visible'); }
+
+    // Punto de entrada universal (menú "Instalar app")
+    function openInstall(e) {
+        if (e) e.preventDefault();
+        closeMenu();
+        if (isStandalone()) { showToast('✅ Ya tienes la app instalada'); return; }
+        if (deferredPrompt) { installApp(); return; }
+        if (isIOS()) { openIosInstall(); return; }
+        showToast('Abre el menú de tu navegador y elige "Instalar app"');
+    }
+    function openIosInstall() {
+        document.getElementById('installBanner').classList.remove('visible');
+        const note = document.getElementById('iosSafariNote');
+        note.textContent = isIOSSafari() ? '' : '⚠️ Abre sonidodevida.com en Safari para poder instalarla.';
+        document.getElementById('iosInstallModal').classList.add('visible');
+    }
+    function closeIosInstall() {
+        document.getElementById('iosInstallModal').classList.remove('visible');
+        if (isIOSSafari()) {
+            const arrow = document.getElementById('iosArrow');
+            arrow.classList.add('visible');
+            setTimeout(() => arrow.classList.remove('visible'), 6000);
+        }
+    }
+
+    // Compartir / QR
+    let qrRendered = false;
+    function openShareModal() {
+        closeMenu();
+        document.getElementById('shareModal').classList.add('visible');
+        if (!qrRendered) renderQR();
+    }
+    function closeShareModal() { document.getElementById('shareModal').classList.remove('visible'); }
+    function renderQR() {
+        const box = document.getElementById('qrBox');
+        const fallback = () => { box.innerHTML = '<img alt="Código QR de sonidodevida.com" src="https://api.qrserver.com/v1/create-qr-code/?size=320x320&margin=0&data=' + encodeURIComponent(APP_URL) + '">'; qrRendered = true; };
+        const draw = () => { box.innerHTML = ''; new QRCode(box, { text: APP_URL, width: 320, height: 320, colorDark: '#0d0d1a', colorLight: '#ffffff' }); qrRendered = true; };
+        if (window.QRCode) { draw(); return; }
+        const s = document.createElement('script');
+        s.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
+        s.onload = draw; s.onerror = fallback;
+        document.head.appendChild(s);
+    }
+    function shareApp(how) {
+        if (how === 'whatsapp') {
+            window.open('https://wa.me/?text=' + encodeURIComponent(APP_SHARE_TEXT), '_blank');
+        } else if (how === 'native') {
+            if (navigator.share) { navigator.share({ title: 'Sonido de Vida', text: 'Escucha la Biblia completa en audio gratis 🎧✝', url: APP_URL }).catch(()=>{}); }
+            else { shareApp('copy'); }
+        } else if (how === 'copy') {
+            navigator.clipboard.writeText(APP_URL).then(()=>showToast('🔗 Enlace copiado')).catch(()=>showToast(APP_URL));
+        }
+    }
 
     let toastTimer;
     function showToast(msg) {
