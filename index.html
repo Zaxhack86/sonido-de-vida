@@ -351,6 +351,7 @@
             <li><a href="#random" onclick="closeMenu()">Aleatorio</a></li>
             <li><a href="/devocionales" onclick="closeMenu()">Devocionales</a></li>
             <li><a href="#" onclick="openInstall(event)">📲 Instalar app</a></li>
+            <li id="navAccountItem" style="display:none"><a href="#" onclick="SDV_Account.open();return false">👤 Mi cuenta</a></li>
             <li><a href="#listen" class="nav-cta" onclick="closeMenu()">Escuchar Ahora</a></li>
         </ul>
         <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleMobileMenu()">
@@ -604,6 +605,35 @@
 
     <div class="toast" id="toast"></div>
 
+    <!-- Modal: Mi cuenta (Firebase Auth). Oculto hasta abrirse. -->
+    <div class="modal-overlay" id="accountModal" onclick="if(event.target===this)SDV_Account.close()">
+        <div class="modal-card" role="dialog" aria-labelledby="accountTitle" style="max-width:420px">
+            <button class="modal-close" onclick="SDV_Account.close()" aria-label="Cerrar">&times;</button>
+
+            <!-- Estado: no logueado -->
+            <div id="accountLoggedOut">
+                <h3 id="accountTitle" style="margin:0 0 .4rem">Tu cuenta</h3>
+                <p style="color:var(--text-light,#666);font-size:.92rem;margin:0 0 1.2rem">Entra para guardar tus versículos y acceder a ellos cuando quieras.</p>
+                <button class="share-btn gold" style="width:100%;font-size:1rem;padding:.9rem;margin-bottom:.7rem" onclick="SDV_Account.google()">Entrar con Google</button>
+                <div style="display:flex;gap:.5rem;margin-top:.6rem">
+                    <input id="accountEmail" type="email" placeholder="tu@correo.com" style="flex:1;padding:.7rem;border-radius:10px;border:1px solid rgba(0,0,0,.15);font-family:inherit">
+                    <button class="share-btn" onclick="SDV_Account.magicLink()">Enviar enlace</button>
+                </div>
+                <p id="accountMsg" style="font-size:.82rem;color:var(--text-light,#666);margin:.7rem 0 0"></p>
+            </div>
+
+            <!-- Estado: logueado -->
+            <div id="accountLoggedIn" style="display:none">
+                <h3 style="margin:0 0 .2rem">Hola <span id="accountName">👋</span></h3>
+                <p id="accountEmailShown" style="color:var(--text-light,#666);font-size:.85rem;margin:0 0 .3rem"></p>
+                <p id="accountPlan" style="font-size:.8rem;margin:0 0 1rem"></p>
+                <h4 style="margin:0 0 .6rem;font-size:.95rem">Mis versículos guardados</h4>
+                <div id="accountVerses" style="max-height:300px;overflow-y:auto;display:flex;flex-direction:column;gap:.5rem"></div>
+                <button class="share-btn" style="width:100%;margin-top:1.2rem" onclick="SDV_Account.signOut()">Cerrar sesión</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal: ¿cómo quieres escuchar? -->
     <div class="modal-overlay" id="playbackModeModal" onclick="if(event.target===this)closePlaybackModal(false)">
         <div class="modal-card" role="dialog" aria-labelledby="modalTitle">
@@ -665,6 +695,10 @@
     <audio id="mainAudio" preload="none"></audio>
     <script src="/bible.js"></script>
     <script src="/bible_sbll.js"></script>
+    <!-- Cuenta de usuario (Firebase Auth). Inerte hasta poner config real en auth.js -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+    <script src="/auth.js"></script>
 
     <script>
     // ══════════════════════════════════════════════════════════════
@@ -769,7 +803,33 @@
     });
 
     function registerSW() {
-        if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => {});
+        if (!('serviceWorker' in navigator)) return;
+        navigator.serviceWorker.register('/sw.js').then(reg => {
+            reg.addEventListener('updatefound', () => {
+                const nw = reg.installing;
+                if (!nw) return;
+                nw.addEventListener('statechange', () => {
+                    if (nw.state === 'installed' && navigator.serviceWorker.controller) showUpdateBanner(nw);
+                });
+            });
+        }).catch(() => {});
+
+        let refreshing = false;
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+            if (refreshing) return;
+            refreshing = true;
+            window.location.reload();
+        });
+    }
+
+    function showUpdateBanner(worker) {
+        if (document.getElementById('sdvUpdateBanner')) return;
+        const b = document.createElement('div');
+        b.id = 'sdvUpdateBanner';
+        b.style.cssText = 'position:fixed;left:50%;bottom:96px;transform:translateX(-50%);z-index:9999;background:var(--gold,#c9a84c);color:#1a1a1a;font-family:Inter,sans-serif;font-weight:600;font-size:.9rem;padding:.7rem 1.1rem;border-radius:999px;box-shadow:0 8px 30px rgba(0,0,0,.25);cursor:pointer';
+        b.textContent = '✨ Nueva versión disponible — Actualizar';
+        b.onclick = () => { b.textContent = 'Actualizando…'; worker.postMessage({ type: 'SKIP_WAITING' }); };
+        document.body.appendChild(b);
     }
 
     function populateBooks() {
@@ -838,6 +898,7 @@
         verses.forEach((text, i) => {
             const p = document.createElement('p'); p.className = 'verse-line';
             p.innerHTML = `<span class="verse-number">${i + 1}</span>${text}`;
+            if (window.SDV_Account?.decorateVerse) window.SDV_Account.decorateVerse(p, book, chapter, i + 1, text);
             container.appendChild(p);
         });
 
@@ -1467,6 +1528,101 @@
         document.getElementById('mobileMenuBtn').classList.remove('active');
         document.getElementById('navLinks').classList.remove('open');
     }
+    </script>
+
+    <!-- ════ Cuenta de usuario: glue UI ↔ SDV_Auth (api en auth.js) ════ -->
+    <!-- Se activa SOLO cuando Firebase está configurado (SDV_Auth.enabled). -->
+    <script>
+    (function () {
+        const Acc = {};
+        window.SDV_Account = Acc;
+
+        const $ = (id) => document.getElementById(id);
+        function toast(m) { if (window.showToast) showToast(m); }
+
+        Acc.open = function () {
+            if (window.closeMenu) closeMenu();
+            $('accountModal').classList.add('visible');
+            if (window.SDV_Auth?.user) Acc.loadVerses();
+        };
+        Acc.close = function () { $('accountModal').classList.remove('visible'); };
+
+        Acc.google = function () {
+            SDV_Auth.signInGoogle().catch(e => toast('No se pudo entrar: ' + e.message));
+        };
+        Acc.magicLink = function () {
+            const email = $('accountEmail').value.trim();
+            if (!email) return toast('Escribe tu correo');
+            SDV_Auth.sendMagicLink(email)
+                .then(() => { $('accountMsg').textContent = '✉️ Te enviamos un enlace a ' + email + '. Ábrelo en este dispositivo.'; })
+                .catch(e => toast('Error: ' + e.message));
+        };
+        Acc.signOut = function () { SDV_Auth.signOut().then(() => Acc.close()); };
+
+        // Botón 🔖 en cada versículo (inyectado por el hook del render).
+        Acc.decorateVerse = function (p, libro, capitulo, versiculo, texto) {
+            if (!window.SDV_Auth?.enabled) return; // inerte hasta configurar Firebase
+            const btn = document.createElement('button');
+            btn.textContent = '🔖';
+            btn.title = 'Guardar versículo';
+            btn.style.cssText = 'background:none;border:none;cursor:pointer;font-size:.85rem;opacity:.45;margin-left:.4rem;vertical-align:middle';
+            btn.onmouseenter = () => btn.style.opacity = '1';
+            btn.onmouseleave = () => btn.style.opacity = '.45';
+            btn.onclick = (e) => {
+                e.stopPropagation();
+                if (!SDV_Auth.user) { Acc.open(); return; }
+                SDV_Auth.saveVerse(libro, capitulo, versiculo, texto).then(r => {
+                    if (r.ok) { btn.textContent = '✅'; toast('Versículo guardado'); }
+                    else if (r.status === 402) toast('Llegaste al límite gratis. Hazte premium para guardar más.');
+                    else toast('No se pudo guardar');
+                }).catch(() => toast('No se pudo guardar'));
+            };
+            p.appendChild(btn);
+        };
+
+        Acc.loadVerses = function () {
+            const box = $('accountVerses');
+            box.innerHTML = '<p style="color:#888;font-size:.85rem">Cargando…</p>';
+            SDV_Auth.listVerses().then(r => {
+                const list = (r.ok && r.data.verses) || [];
+                if (!list.length) { box.innerHTML = '<p style="color:#888;font-size:.85rem">Aún no guardas versículos. Toca 🔖 junto a un versículo.</p>'; return; }
+                box.innerHTML = '';
+                list.forEach(v => {
+                    const row = document.createElement('div');
+                    row.style.cssText = 'border-left:3px solid var(--gold,#c9a84c);padding:.4rem .6rem;background:rgba(0,0,0,.03);border-radius:8px';
+                    row.innerHTML = `<div style="font-size:.72rem;color:var(--gold,#c9a84c);font-weight:700">${v.libro} ${v.capitulo}:${v.versiculo}</div><div style="font-family:Lora,serif;font-size:.9rem;color:#333">${v.texto}</div>`;
+                    const del = document.createElement('button');
+                    del.textContent = 'Quitar';
+                    del.style.cssText = 'background:none;border:none;color:#c33;cursor:pointer;font-size:.75rem;margin-top:.2rem';
+                    del.onclick = () => SDV_Auth.removeVerse(v.id).then(() => Acc.loadVerses());
+                    row.appendChild(del);
+                    box.appendChild(row);
+                });
+            });
+        };
+
+        function reflectSession(user) {
+            $('navAccountItem').style.display = '';
+            $('accountLoggedOut').style.display = user ? 'none' : '';
+            $('accountLoggedIn').style.display = user ? '' : 'none';
+            if (user) {
+                $('accountName').textContent = user.displayName || '👋';
+                $('accountEmailShown').textContent = user.email || '';
+                $('accountPlan').textContent = SDV_Auth.premium ? '⭐ Premium' : 'Plan gratis';
+                $('accountPlan').style.color = SDV_Auth.premium ? '#c9a84c' : '#888';
+                if ($('accountModal').classList.contains('visible')) Acc.loadVerses();
+            }
+        }
+
+        // Esperar a que auth.js esté listo. Si Firebase no está configurado, no mostramos nada.
+        function init() {
+            if (!window.SDV_Auth) return setTimeout(init, 200);
+            if (!SDV_Auth.enabled) return; // inerte: app intacta
+            SDV_Auth.on.change = reflectSession;
+            reflectSession(SDV_Auth.user);
+        }
+        init();
+    })();
     </script>
 </body>
 </html>

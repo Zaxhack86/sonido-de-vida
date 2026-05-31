@@ -1,0 +1,25 @@
+name = "sonido-de-vida-api"
+main = "api-worker.js"
+compatibility_date = "2024-10-01"
+
+[vars]
+# Tu projectId de Firebase (Project Settings → General). NO es secreto.
+FIREBASE_PROJECT_ID = "sonidodevida-7ebe7"
+# Origen del frontend en producción.
+ALLOWED_ORIGIN = "https://sonidodevida.com"
+# UIDs con acceso total (admin = premium permanente). Separados por coma.
+# Pega aquí tu UID tras entrar una vez (Firebase → Authentication → Usuarios).
+ADMIN_UIDS = ""
+
+# D1: crear con  ->  npx wrangler d1 create sonido-de-vida-db
+# luego pega aquí el database_id que imprime el comando.
+[[d1_databases]]
+binding = "DB"
+database_name = "sonido-de-vida-db"
+database_id = "REEMPLAZAR_tras_wrangler_d1_create"
+
+# KV: crear con  ->  npx wrangler kv namespace create PREMIUM
+# luego pega aquí el id que imprime el comando.
+[[kv_namespaces]]
+binding = "PREMIUM"
+id = "REEMPLAZAR_tras_wrangler_kv_create"
