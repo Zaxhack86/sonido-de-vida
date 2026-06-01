@@ -1303,25 +1303,41 @@
     async function downloadChapter() {
         if (!state.book || !state.chapter) return;
         // Cuenta obligatoria para descargar (escuchar sigue siendo libre y sin registro)
-        if (window.SDV_Auth?.enabled && !window.SDV_Auth.user) {
+        if (serverDL() && !window.SDV_Auth.user) {
             if (window.SDV_Account) SDV_Account.open();
             showToast('🔒 Crea tu cuenta gratis para descargar');
             return;
         }
-        if (getRemainingDL() <= 0) { openDownloadLimitModal(); return; }
+        // Atajo: si ya sabemos que no quedan, abrir el modal sin bajar nada.
+        if (getRemainingDL() <= 0 && (serverDL() ? !!dlState : true)) { openDownloadLimitModal(); return; }
+
         const btn = document.getElementById('downloadBtn');
         btn.disabled = true; btn.innerHTML = '<span class="loading-spinner"></span> Descargando...';
         try {
+            // 1) Bajar el archivo primero (si falla la red, no se gasta descarga).
             const res = await fetch(audioUrl(state.book, state.chapter));
             if (!res.ok) throw new Error(`Error ${res.status}`);
             const blob = await res.blob();
+
+            // 2) Consumir un crédito en el servidor (anti-abuso real por uid).
+            if (serverDL()) {
+                let c;
+                try { c = await SDV_Auth.consumeDownload(); }
+                catch { showToast('⚠️ Sin conexión. Intenta de nuevo.'); return; }
+                if (c.status === 402) { dlState = c.data; openDownloadLimitModal(); return; }
+                if (!c.ok) { showToast('⚠️ No se pudo registrar la descarga.'); return; }
+                dlState = c.data;
+            } else {
+                incrementDLLocal();
+            }
+
+            // 3) Entregar el archivo.
             const a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
             const ext = translationMode === 'sbll' ? 'm4a' : 'mp3';
             a.download = `${state.book.replace(/\s+/g,'_')}_Capitulo${state.chapter}_${getTranslationLabel().replace(/\s/g,'')}.${ext}`;
             document.body.appendChild(a); a.click();
             setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(a.href); }, 500);
-            incrementDL();
             showToast('✅ ¡MP3 descargado!');
         } catch (e) { showToast('⚠️ Error al descargar: ' + e.message); }
         finally { btn.disabled = false; updateDownloadBtn(); }
@@ -1391,16 +1407,23 @@
     // ════════════════════════════════════════════════════════════════
     // Límite diario de descargas
     // ════════════════════════════════════════════════════════════════
-    const DL_LIMIT_FREE    = 3;
-    const DL_LIMIT_PREMIUM = 20;
-    function dlLimit() { return (window.SDV_Auth && window.SDV_Auth.premium) ? DL_LIMIT_PREMIUM : DL_LIMIT_FREE; }
+    // Fuente de verdad: el servidor (contador por uid en D1). localStorage solo
+    // es respaldo en modo inerte (sin Firebase configurado, p.ej. dev local).
+    const DL_LIMIT_FREE = 3;   // se usa solo en el respaldo local
     const DL_KEY_COUNT  = 'sdv-dl-count';
     const DL_KEY_DATE   = 'sdv-dl-date';
     const DL_KEY_SHARED = 'sdv-dl-shared';
 
+    // ¿Hay backend de cuentas activo? Entonces el servidor manda.
+    const serverDL = () => !!(window.SDV_Auth && window.SDV_Auth.enabled);
+
+    // Estado devuelto por el servidor: {usadas, limite, bonus, restantes, premium}
+    let dlState = null;
+
     function todayStr() { return new Date().toISOString().slice(0, 10); }
 
-    function getDLCount() {
+    // ── Respaldo local (solo modo inerte sin Firebase) ──
+    function getDLCountLocal() {
         if (localStorage.getItem(DL_KEY_DATE) !== todayStr()) {
             localStorage.setItem(DL_KEY_DATE, todayStr());
             localStorage.setItem(DL_KEY_COUNT, '0');
@@ -1408,29 +1431,55 @@
         }
         return parseInt(localStorage.getItem(DL_KEY_COUNT) || '0');
     }
-
-    function getRemainingDL() { return Math.max(0, dlLimit() - getDLCount()); }
-
-    function incrementDL() {
+    function incrementDLLocal() {
         localStorage.setItem(DL_KEY_DATE, todayStr());
-        localStorage.setItem(DL_KEY_COUNT, String(getDLCount() + 1));
+        localStorage.setItem(DL_KEY_COUNT, String(getDLCountLocal() + 1));
     }
+
+    function dlLimit() {
+        if (serverDL()) return dlState ? dlState.limite : DL_LIMIT_FREE;
+        return DL_LIMIT_FREE;
+    }
+    function getRemainingDL() {
+        if (serverDL()) return dlState ? dlState.restantes : 0;
+        return Math.max(0, DL_LIMIT_FREE - getDLCountLocal());
+    }
+
+    // Sincroniza el estado de descargas desde el servidor (al loguearse, etc.).
+    async function refreshDownloads() {
+        if (serverDL()) {
+            if (!window.SDV_Auth.user) { dlState = null; updateDownloadBtn(); return; }
+            try {
+                const r = await SDV_Auth.getDownloads();
+                if (r.ok) dlState = r.data;
+            } catch { /* sin conexión: conservamos el último estado conocido */ }
+        }
+        updateDownloadBtn();
+    }
+    window.refreshDownloads = refreshDownloads;
 
     function updateDownloadBtn() {
         const btn = document.getElementById('downloadBtn');
         if (!btn || btn.disabled) return;
         // Sin sesión: invitar a crear cuenta (escuchar sigue libre)
-        if (window.SDV_Auth?.enabled && !window.SDV_Auth.user) {
+        if (serverDL() && !window.SDV_Auth.user) {
             btn.innerHTML = '🔒 Inicia sesión para descargar';
             btn.classList.remove('limit-reached');
             return;
         }
+        // Logueado pero aún sin datos del servidor: estado neutro.
+        if (serverDL() && !dlState) {
+            btn.innerHTML = '💾 Descargar MP3';
+            btn.classList.remove('limit-reached');
+            return;
+        }
         const rem = getRemainingDL();
+        const lim = dlLimit();
         if (rem <= 0) {
-            btn.innerHTML = `🔒 Límite alcanzado (0/${dlLimit()})`;
+            btn.innerHTML = `🔒 Límite alcanzado (0/${lim})`;
             btn.classList.add('limit-reached');
         } else {
-            btn.innerHTML = `💾 Descargar MP3 · ${rem}/${dlLimit()}`;
+            btn.innerHTML = `💾 Descargar MP3 · ${rem}/${lim}`;
             btn.classList.remove('limit-reached');
         }
     }
@@ -1445,7 +1494,9 @@
         if (resetEl) resetEl.textContent = diffH <= 1 ? 'en menos de 1 hora' : `en ${diffH} horas`;
         const shareBtn = document.getElementById('shareBonusBtn');
         if (shareBtn) {
-            const alreadyShared = localStorage.getItem(DL_KEY_SHARED) === todayStr();
+            const alreadyShared = serverDL()
+                ? !!(dlState && dlState.bonus >= 1)
+                : localStorage.getItem(DL_KEY_SHARED) === todayStr();
             shareBtn.disabled = alreadyShared;
             shareBtn.innerHTML = alreadyShared
                 ? '✅ Bonus de compartir ya usado hoy'
@@ -1466,12 +1517,16 @@
         document.getElementById('downloadLimitModal').classList.remove('visible');
     }
 
-    function useShareBonusAction() {
-        if (localStorage.getItem(DL_KEY_SHARED) === todayStr()) return;
+    async function useShareBonusAction() {
         const msg = encodeURIComponent('Escucha la Biblia completa en audio gratis 🎧✝ → sonidodevida.com');
         window.open(`https://wa.me/?text=${msg}`, '_blank');
-        localStorage.setItem(DL_KEY_SHARED, todayStr());
-        localStorage.setItem(DL_KEY_COUNT, String(Math.max(0, getDLCount() - 1)));
+        if (serverDL()) {
+            try { const r = await SDV_Auth.shareBonus(); if (r.ok) dlState = r.data; } catch {}
+        } else {
+            if (localStorage.getItem(DL_KEY_SHARED) === todayStr()) return;
+            localStorage.setItem(DL_KEY_SHARED, todayStr());
+            localStorage.setItem(DL_KEY_COUNT, String(Math.max(0, getDLCountLocal() - 1)));
+        }
         showToast('🎉 ¡+1 descarga desbloqueada! Gracias por compartir.');
         closeDownloadLimitModal();
         updateDownloadBtn();
@@ -1729,8 +1784,10 @@
                 $('accountPlan').style.color = SDV_Auth.premium ? 'var(--gold-light,#e8d48b)' : 'rgba(255,255,255,.6)';
                 if ($('accountModal').classList.contains('visible')) Acc.loadVerses();
             }
-            // Refrescar el botón de descarga (sin sesión = bloqueado; premium = más cupo)
-            if (window.updateDownloadBtn) window.updateDownloadBtn();
+            // Sincronizar cupo de descargas desde el servidor (por uid).
+            // Sin sesión = bloqueado; logueado = trae usadas/restantes/límite reales.
+            if (window.refreshDownloads) window.refreshDownloads();
+            else if (window.updateDownloadBtn) window.updateDownloadBtn();
         }
 
         // Esperar a que auth.js esté listo. Si Firebase no está configurado, no mostramos nada.

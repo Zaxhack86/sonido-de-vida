@@ -19,6 +19,14 @@
 
 const FREE_VERSE_LIMIT = 25;
 
+// Límite de descargas diario (anti-abuso, atado al uid en D1).
+const DL_LIMIT_FREE    = 3;
+const DL_LIMIT_PREMIUM = 20;
+const DL_SHARE_BONUS   = 1;   // +1 por compartir, máximo una vez al día
+
+// Día actual en UTC ('YYYY-MM-DD'). Una clave por usuario y día.
+function todayUTC() { return new Date().toISOString().slice(0, 10); }
+
 // ── Verificación del ID token de Firebase ────────────────────────────
 let JWKS_CACHE = { keys: null, exp: 0 };
 
@@ -204,6 +212,82 @@ async function deleteVerse(env, request, uid, id) {
     return json(env, request, { ok: true });
 }
 
+// ── Descargas: contador diario por uid ───────────────────────────────
+// Devuelve el estado del día sin modificar nada.
+async function readDownloadState(env, uid, premium) {
+    const dia = todayUTC();
+    const row = await env.DB
+        .prepare('SELECT descargas, bonus FROM user_download_counts WHERE uid = ? AND dia = ?')
+        .bind(uid, dia).first();
+    const usadas = row ? row.descargas : 0;
+    const bonus  = row ? row.bonus : 0;
+    const base   = premium ? DL_LIMIT_PREMIUM : DL_LIMIT_FREE;
+    const limite = base + bonus;
+    return { usadas, bonus, base, limite, restantes: Math.max(0, limite - usadas), premium };
+}
+
+async function getDownloads(env, request, uid) {
+    const premium = await isPremium(env, uid);
+    return json(env, request, await readDownloadState(env, uid, premium));
+}
+
+// Consume UNA descarga de forma segura ante carreras (UPDATE condicional).
+async function consumeDownload(env, request, uid) {
+    const premium = await isPremium(env, uid);
+    const dia = todayUTC();
+    await env.DB
+        .prepare('INSERT OR IGNORE INTO user_download_counts (uid, dia, descargas, bonus) VALUES (?, ?, 0, 0)')
+        .bind(uid, dia).run();
+
+    const st = await readDownloadState(env, uid, premium);
+    // El WHERE descargas < limite evita exceder el tope aunque lleguen
+    // varias peticiones a la vez; si no afecta filas, ya estaba en el límite.
+    const res = await env.DB
+        .prepare('UPDATE user_download_counts SET descargas = descargas + 1 WHERE uid = ? AND dia = ? AND descargas < ?')
+        .bind(uid, dia, st.limite).run();
+
+    if (!res.meta || res.meta.changes === 0) {
+        return json(env, request, { error: 'limite', ...st, restantes: 0 }, 402);
+    }
+    return json(env, request, { ok: true, ...(await readDownloadState(env, uid, premium)) });
+}
+
+// Otorga el bonus de compartir (+1) una sola vez al día.
+async function grantShareBonus(env, request, uid) {
+    const premium = await isPremium(env, uid);
+    const dia = todayUTC();
+    await env.DB
+        .prepare('INSERT OR IGNORE INTO user_download_counts (uid, dia, descargas, bonus) VALUES (?, ?, 0, 0)')
+        .bind(uid, dia).run();
+    await env.DB
+        .prepare('UPDATE user_download_counts SET bonus = ? WHERE uid = ? AND dia = ? AND bonus < ?')
+        .bind(DL_SHARE_BONUS, uid, dia, DL_SHARE_BONUS).run();
+    return json(env, request, { ok: true, ...(await readDownloadState(env, uid, premium)) });
+}
+
+// ── Portero de contenido premium ─────────────────────────────────────
+// Sirve un archivo desde un bucket R2 PRIVADO solo si el usuario es premium.
+// Activación: añade el binding R2 `CONTENT` en wrangler-api.toml y registra
+// filas en content_items. Sin binding responde 503 (queda inerte y seguro).
+async function serveContent(env, request, uid, id) {
+    if (!(await isPremium(env, uid))) throw { status: 403, msg: 'Contenido solo para miembros premium' };
+    if (!env.CONTENT) throw { status: 503, msg: 'Almacén de contenido aún no configurado' };
+
+    const item = await env.DB
+        .prepare('SELECT r2_key, tipo FROM content_items WHERE id = ? AND es_premium = 1')
+        .bind(parseInt(id, 10)).first();
+    if (!item) throw { status: 404, msg: 'Contenido no encontrado' };
+
+    const obj = await env.CONTENT.get(item.r2_key);
+    if (!obj) throw { status: 404, msg: 'Archivo no disponible' };
+
+    const headers = corsHeaders(env, request);
+    obj.writeHttpMetadata(headers);
+    headers['etag'] = obj.httpEtag;
+    headers['Cache-Control'] = 'private, no-store';   // nunca cachear contenido premium
+    return new Response(obj.body, { headers });
+}
+
 export default {
     async fetch(request, env) {
         if (request.method === 'OPTIONS') {
@@ -228,6 +312,23 @@ export default {
             const del = path.match(/^\/api\/verses\/(\d+)$/);
             if (del && request.method === 'DELETE') {
                 return deleteVerse(env, request, user.uid, del[1]);
+            }
+
+            // Descargas (límite diario por uid)
+            if (path === '/api/downloads' && request.method === 'GET') {
+                return getDownloads(env, request, user.uid);
+            }
+            if (path === '/api/downloads' && request.method === 'POST') {
+                return consumeDownload(env, request, user.uid);
+            }
+            if (path === '/api/downloads/bonus' && request.method === 'POST') {
+                return grantShareBonus(env, request, user.uid);
+            }
+
+            // Portero de contenido premium
+            const content = path.match(/^\/api\/content\/(\d+)$/);
+            if (content && request.method === 'GET') {
+                return serveContent(env, request, user.uid, content[1]);
             }
 
             return json(env, request, { error: 'no encontrado' }, 404);

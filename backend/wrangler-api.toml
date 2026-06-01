@@ -23,3 +23,10 @@ database_id = "69d3734a-91bc-4001-a2fb-bcfe99f7e890"
 [[kv_namespaces]]
 binding = "PREMIUM"
 id = "3dabdded16a542b7948b1ab0cb7d0018"
+
+# R2 (portero premium): descomenta y pon el nombre de tu bucket PRIVADO para
+# activar GET /api/content/:id. Sin esto, el portero responde 503 (inerte).
+# Crea uno aparte del de audio público, ej:  npx wrangler r2 bucket create sdv-premium
+# [[r2_buckets]]
+# binding = "CONTENT"
+# bucket_name = "sdv-premium"

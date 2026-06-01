@@ -68,6 +68,11 @@
     SDV.listVerses = () => api('/api/verses', { method: 'GET' });
     SDV.removeVerse = (id) => api('/api/verses/' + id, { method: 'DELETE' });
 
+    // Descargas: el límite vive en el servidor (por uid), no en localStorage.
+    SDV.getDownloads     = () => api('/api/downloads', { method: 'GET' });
+    SDV.consumeDownload  = () => api('/api/downloads', { method: 'POST' });
+    SDV.shareBonus       = () => api('/api/downloads/bonus', { method: 'POST' });
+
     // ── Login ────────────────────────────────────────────────────────
     SDV.signInGoogle = () => {
         const provider = new firebase.auth.GoogleAuthProvider();
