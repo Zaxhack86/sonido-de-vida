@@ -38,6 +38,8 @@
 
     firebase.initializeApp(FIREBASE_CONFIG);
     const auth = firebase.auth();
+    // Los correos de Firebase (enlace de acceso) llegan en español, no en inglés.
+    auth.languageCode = 'es';
 
     // ── Token e API ──────────────────────────────────────────────────
     async function getToken() {
