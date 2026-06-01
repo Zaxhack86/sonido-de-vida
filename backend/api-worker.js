@@ -82,19 +82,36 @@ async function verifyFirebaseToken(token, projectId) {
 }
 
 // ── Helpers HTTP ─────────────────────────────────────────────────────
-function corsHeaders(env) {
+// Orígenes permitidos: el apex y el www (el apex redirige a www en prod).
+function allowedOrigins(env) {
+    const base = env.ALLOWED_ORIGIN || 'https://sonidodevida.com';
+    const set = new Set([base]);
+    try {
+        const u = new URL(base);
+        const host = u.hostname.replace(/^www\./, '');
+        set.add(`${u.protocol}//${host}`);
+        set.add(`${u.protocol}//www.${host}`);
+    } catch { /* base no es URL válida */ }
+    return set;
+}
+
+function corsHeaders(env, request) {
+    const origin = request && request.headers.get('Origin');
+    const allowed = allowedOrigins(env);
+    const allowOrigin = origin && allowed.has(origin) ? origin : (env.ALLOWED_ORIGIN || '*');
     return {
-        'Access-Control-Allow-Origin': env.ALLOWED_ORIGIN || '*',
+        'Access-Control-Allow-Origin': allowOrigin,
+        'Vary': 'Origin',
         'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
         'Access-Control-Allow-Headers': 'Authorization, Content-Type',
         'Access-Control-Max-Age': '86400',
     };
 }
 
-function json(env, body, status = 200) {
+function json(env, request, body, status = 200) {
     return new Response(JSON.stringify(body), {
         status,
-        headers: { ...corsHeaders(env), 'Content-Type': 'application/json' },
+        headers: { ...corsHeaders(env, request), 'Content-Type': 'application/json' },
     });
 }
 
@@ -132,12 +149,12 @@ async function isPremium(env, uid) {
 }
 
 // ── Endpoints ────────────────────────────────────────────────────────
-async function getVerses(env, uid) {
+async function getVerses(env, request, uid) {
     const { results } = await env.DB
         .prepare('SELECT id, libro, capitulo, versiculo, texto, coleccion, creado_en FROM user_saved_verses WHERE uid = ? ORDER BY creado_en DESC')
         .bind(uid)
         .all();
-    return json(env, { verses: results || [] });
+    return json(env, request, { verses: results || [] });
 }
 
 async function saveVerse(request, env, uid) {
@@ -165,7 +182,7 @@ async function saveVerse(request, env, uid) {
             .prepare('SELECT COUNT(*) AS n FROM user_saved_verses WHERE uid = ?')
             .bind(uid).first();
         if (row && row.n >= FREE_VERSE_LIMIT) {
-            return json(env, { error: 'limite_gratis', limite: FREE_VERSE_LIMIT, premium: false }, 402);
+            return json(env, request, { error: 'limite_gratis', limite: FREE_VERSE_LIMIT, premium: false }, 402);
         }
     }
 
@@ -174,23 +191,23 @@ async function saveVerse(request, env, uid) {
         .bind(uid, libro, capitulo, versiculo, texto, coleccion)
         .run();
 
-    return json(env, { ok: true, premium }, 201);
+    return json(env, request, { ok: true, premium }, 201);
 }
 
-async function deleteVerse(env, uid, id) {
+async function deleteVerse(env, request, uid, id) {
     const vid = parseInt(id, 10);
     if (!vid) throw { status: 400, msg: 'id inválido' };
     await env.DB
         .prepare('DELETE FROM user_saved_verses WHERE id = ? AND uid = ?')
         .bind(vid, uid)
         .run();
-    return json(env, { ok: true });
+    return json(env, request, { ok: true });
 }
 
 export default {
     async fetch(request, env) {
         if (request.method === 'OPTIONS') {
-            return new Response(null, { status: 204, headers: corsHeaders(env) });
+            return new Response(null, { status: 204, headers: corsHeaders(env, request) });
         }
 
         const url = new URL(request.url);
@@ -200,23 +217,23 @@ export default {
             const user = await requireUser(request, env);
 
             if (path === '/api/me' && request.method === 'GET') {
-                return json(env, { uid: user.uid, email: user.email, premium: await isPremium(env, user.uid), admin: isAdmin(env, user.uid) });
+                return json(env, request, { uid: user.uid, email: user.email, premium: await isPremium(env, user.uid), admin: isAdmin(env, user.uid) });
             }
             if (path === '/api/verses' && request.method === 'GET') {
-                return getVerses(env, user.uid);
+                return getVerses(env, request, user.uid);
             }
             if (path === '/api/verses' && request.method === 'POST') {
                 return saveVerse(request, env, user.uid);
             }
             const del = path.match(/^\/api\/verses\/(\d+)$/);
             if (del && request.method === 'DELETE') {
-                return deleteVerse(env, user.uid, del[1]);
+                return deleteVerse(env, request, user.uid, del[1]);
             }
 
-            return json(env, { error: 'no encontrado' }, 404);
+            return json(env, request, { error: 'no encontrado' }, 404);
         } catch (e) {
-            if (e && e.status) return json(env, { error: e.msg }, e.status);
-            return json(env, { error: 'error interno' }, 500);
+            if (e && e.status) return json(env, request, { error: e.msg }, e.status);
+            return json(env, request, { error: 'error interno' }, 500);
         }
     },
 };

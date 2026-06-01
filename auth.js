@@ -16,7 +16,7 @@
     };
 
     // URL del API Worker (sonido-de-vida-api). Ajusta tras desplegarlo.
-    const API_BASE = "https://sonido-de-vida-api.REEMPLAZAR.workers.dev";
+    const API_BASE = "https://sonido-de-vida-api.sonidodevida.workers.dev";
 
     const configured =
         !FIREBASE_CONFIG.apiKey.startsWith('REEMPLAZAR') &&
