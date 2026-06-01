@@ -288,6 +288,157 @@ async function serveContent(env, request, uid, id) {
     return new Response(obj.body, { headers });
 }
 
+// ── Magic link propio (Brevo) ────────────────────────────────────────
+// Endpoint PÚBLICO (sin token): genera el enlace de acceso con la API admin
+// de Identity Toolkit (returnOobLink) y lo envía con correo de marca vía Brevo,
+// desde @sonidodevida.com. Reemplaza el envío integrado de Firebase (sin marca
+// y con bug de traducción). Secretos: BREVO_API_KEY y FIREBASE_SERVICE_ACCOUNT.
+
+function bytesToB64url(bytes) {
+    let bin = '';
+    for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+    return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+function strToB64url(s) { return bytesToB64url(new TextEncoder().encode(s)); }
+
+// Importa la private_key (PEM PKCS8) de la cuenta de servicio para firmar RS256.
+async function importServiceKey(pem) {
+    const der = b64urlToBytes(pem.replace(/-----[^-]+-----/g, '').replace(/\s+/g, ''));
+    return crypto.subtle.importKey(
+        'pkcs8', der.buffer, { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' }, false, ['sign']
+    );
+}
+
+// Access token OAuth2 de Google a partir de la cuenta de servicio (cacheado ~1h).
+let GTOKEN_CACHE = { token: null, exp: 0 };
+async function getGoogleAccessToken(env) {
+    const now = Date.now();
+    if (GTOKEN_CACHE.token && now < GTOKEN_CACHE.exp) return GTOKEN_CACHE.token;
+    if (!env.FIREBASE_SERVICE_ACCOUNT) throw new Error('falta FIREBASE_SERVICE_ACCOUNT');
+    const sa = JSON.parse(env.FIREBASE_SERVICE_ACCOUNT);
+    const tokenUri = sa.token_uri || 'https://oauth2.googleapis.com/token';
+    const iat = Math.floor(now / 1000);
+    const claim = {
+        iss: sa.client_email,
+        scope: 'https://www.googleapis.com/auth/identitytoolkit https://www.googleapis.com/auth/firebase',
+        aud: tokenUri,
+        iat,
+        exp: iat + 3600,
+    };
+    const unsigned = strToB64url(JSON.stringify({ alg: 'RS256', typ: 'JWT' })) + '.' + strToB64url(JSON.stringify(claim));
+    const key = await importServiceKey(sa.private_key);
+    const sig = await crypto.subtle.sign('RSASSA-PKCS1-v1_5', key, new TextEncoder().encode(unsigned));
+    const jwt = unsigned + '.' + bytesToB64url(new Uint8Array(sig));
+
+    const res = await fetch(tokenUri, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: 'grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=' + encodeURIComponent(jwt),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data.access_token) {
+        throw new Error('OAuth Google: ' + (data.error_description || data.error || res.status));
+    }
+    const ttl = (data.expires_in ? data.expires_in - 60 : 3000) * 1000;
+    GTOKEN_CACHE = { token: data.access_token, exp: now + ttl };
+    return GTOKEN_CACHE.token;
+}
+
+// Pide a Identity Toolkit el enlace de acceso (sin enviarlo) con returnOobLink.
+async function generateSignInLink(env, email, continueUrl) {
+    const accessToken = await getGoogleAccessToken(env);
+    const res = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode', {
+        method: 'POST',
+        headers: {
+            'Authorization': 'Bearer ' + accessToken,
+            'Content-Type': 'application/json',
+            'X-Goog-User-Project': env.FIREBASE_PROJECT_ID,
+        },
+        body: JSON.stringify({
+            requestType: 'EMAIL_SIGNIN',
+            email,
+            continueUrl,
+            canHandleCodeInApp: true,
+            returnOobLink: true,
+        }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data.oobLink) {
+        throw new Error('Identity Toolkit: ' + ((data.error && data.error.message) || res.status));
+    }
+    return data.oobLink;
+}
+
+// Correo de marca (HTML + texto). Sin imágenes externas para mejor entrega.
+function magicLinkEmail(link) {
+    const html = `<!doctype html><html lang="es"><body style="margin:0;background:#0f0d0a;font-family:Arial,Helvetica,sans-serif;color:#e8e2d6">
+  <div style="max-width:480px;margin:0 auto;padding:32px 24px">
+    <h1 style="font-size:22px;color:#d9b66b;margin:0 0 8px">Sonido de Vida</h1>
+    <p style="font-size:15px;line-height:1.6;color:#e8e2d6;margin:18px 0">Hola:</p>
+    <p style="font-size:15px;line-height:1.6;color:#e8e2d6;margin:0 0 24px">Recibimos una solicitud para entrar a tu cuenta. Haz clic en el botón para iniciar sesión:</p>
+    <p style="text-align:center;margin:28px 0">
+      <a href="${link}" style="background:#d9b66b;color:#1a1610;text-decoration:none;font-weight:bold;font-size:16px;padding:14px 28px;border-radius:10px;display:inline-block">Entrar a Sonido de Vida</a>
+    </p>
+    <p style="font-size:13px;line-height:1.6;color:#9a9387;margin:24px 0 0">Si el botón no funciona, copia y pega este enlace en tu navegador:</p>
+    <p style="font-size:12px;line-height:1.5;word-break:break-all;color:#7e9bd1;margin:6px 0 0">${link}</p>
+    <hr style="border:none;border-top:1px solid #2a261f;margin:28px 0">
+    <p style="font-size:12px;line-height:1.6;color:#7c766b;margin:0">Si no solicitaste este enlace, puedes ignorar este correo sin problema; tu cuenta sigue segura.</p>
+    <p style="font-size:12px;line-height:1.6;color:#7c766b;margin:16px 0 0">Con cariño,<br>El equipo de Sonido de Vida</p>
+  </div>
+</body></html>`;
+    const text = `Sonido de Vida\n\nRecibimos una solicitud para entrar a tu cuenta. Abre este enlace para iniciar sesión:\n\n${link}\n\nSi no solicitaste este enlace, puedes ignorarlo sin problema.\n\nEl equipo de Sonido de Vida`;
+    return { html, text };
+}
+
+async function sendBrevoEmail(env, toEmail, link) {
+    if (!env.BREVO_API_KEY) throw new Error('falta BREVO_API_KEY');
+    const { html, text } = magicLinkEmail(link);
+    const res = await fetch('https://api.brevo.com/v3/smtp/email', {
+        method: 'POST',
+        headers: { 'api-key': env.BREVO_API_KEY, 'Content-Type': 'application/json', 'accept': 'application/json' },
+        body: JSON.stringify({
+            sender: { name: 'Sonido de Vida', email: env.SENDER_EMAIL || 'noreply@sonidodevida.com' },
+            to: [{ email: toEmail }],
+            subject: 'Tu enlace para entrar a Sonido de Vida',
+            htmlContent: html,
+            textContent: text,
+        }),
+    });
+    if (!res.ok) {
+        const t = await res.text().catch(() => '');
+        throw new Error('Brevo: ' + res.status + ' ' + t.slice(0, 200));
+    }
+}
+
+async function handleMagicLink(request, env) {
+    let body;
+    try { body = await request.json(); } catch { throw { status: 400, msg: 'JSON inválido' }; }
+
+    const email = String(body.email || '').trim().toLowerCase();
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) throw { status: 400, msg: 'Correo inválido' };
+
+    // El enlace solo puede volver a un origen propio (evita abuso / redirección abierta).
+    let continueUrl = env.ALLOWED_ORIGIN || 'https://sonidodevida.com';
+    if (body.continueUrl) {
+        try {
+            const u = new URL(body.continueUrl);
+            if (allowedOrigins(env).has(u.origin)) continueUrl = u.origin;
+        } catch { /* continueUrl inválido: usa el por defecto */ }
+    }
+
+    // Anti-spam: un enlace por correo cada 60s (protege la cuota de Brevo).
+    const rateKey = 'mlrate:' + email;
+    if (env.PREMIUM && await env.PREMIUM.get(rateKey)) {
+        throw { status: 429, msg: 'Ya te enviamos un enlace hace poco. Revisa tu correo (y spam) o espera un minuto.' };
+    }
+
+    const link = await generateSignInLink(env, email, continueUrl);
+    await sendBrevoEmail(env, email, link);
+
+    if (env.PREMIUM) await env.PREMIUM.put(rateKey, String(Date.now()), { expirationTtl: 60 });
+    return json(env, request, { ok: true });
+}
+
 export default {
     async fetch(request, env) {
         if (request.method === 'OPTIONS') {
@@ -298,6 +449,11 @@ export default {
         const path = url.pathname.replace(/\/+$/, '');
 
         try {
+            // Endpoint público (sin token): envío del enlace de acceso por Brevo.
+            if (path === '/api/magic-link' && request.method === 'POST') {
+                return handleMagicLink(request, env);
+            }
+
             const user = await requireUser(request, env);
 
             if (path === '/api/me' && request.method === 'GET') {

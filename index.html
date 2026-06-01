@@ -1713,9 +1713,19 @@
         Acc.magicLink = function () {
             const email = $('accountEmail').value.trim();
             if (!email) return toast('Escribe tu correo');
+            const msg = $('accountMsg');
+            msg.style.color = 'rgba(255,255,255,.7)';
+            msg.textContent = 'Enviando...';
             SDV_Auth.sendMagicLink(email)
-                .then(() => { $('accountMsg').textContent = '✉️ Te enviamos un enlace a ' + email + '. Ábrelo en este dispositivo.'; })
-                .catch(e => toast('Error: ' + e.message));
+                .then(() => {
+                    msg.style.color = '#7bd88f';
+                    msg.textContent = '✉️ Te enviamos un enlace a ' + email + '. Ábrelo en este dispositivo (revisa también spam).';
+                })
+                .catch(e => {
+                    msg.style.color = '#ff7b7b';
+                    msg.textContent = 'Error (' + (e.code || 'desconocido') + '): ' + e.message;
+                    console.error('[SDV magicLink]', e);
+                });
         };
         Acc.signOut = function () {
             if (!confirm('¿Seguro que quieres cerrar sesión?')) return;

@@ -10,6 +10,13 @@ ALLOWED_ORIGIN = "https://sonidodevida.com"
 # UIDs con acceso total (admin = premium permanente). Separados por coma.
 # Pega aquí tu UID tras entrar una vez (Firebase → Authentication → Usuarios).
 ADMIN_UIDS = "h1u8iq53w8T7oBcVfN1167zEsC22"
+# Remitente de los correos de login (debe ser de un dominio autenticado en Brevo).
+SENDER_EMAIL = "noreply@sonidodevida.com"
+
+# SECRETOS (NO van aquí, se ponen en el dashboard de Cloudflare como cifrados):
+#   BREVO_API_KEY           -> la API key de Brevo (SMTP & API → API Keys)
+#   FIREBASE_SERVICE_ACCOUNT-> el contenido COMPLETO del .json de la cuenta de
+#                              servicio de Firebase (pegado tal cual, todo el JSON)
 
 # D1: crear con  ->  npx wrangler d1 create sonido-de-vida-db
 # luego pega aquí el database_id que imprime el comando.

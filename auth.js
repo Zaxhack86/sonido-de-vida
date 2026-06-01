@@ -80,11 +80,18 @@
     };
 
     const EMAIL_KEY = 'sdv-emailForSignIn';
-    SDV.sendMagicLink = (email) => {
-        const settings = { url: window.location.origin, handleCodeInApp: true };
-        return auth.sendSignInLinkToEmail(email, settings).then(() => {
-            localStorage.setItem(EMAIL_KEY, email);
+    // El enlace lo genera y envía nuestro Worker (correo de marca vía Brevo),
+    // no el servicio integrado de Firebase. La parte de completar el login con
+    // signInWithEmailLink (más abajo) no cambia.
+    SDV.sendMagicLink = async (email) => {
+        const res = await fetch(API_BASE + '/api/magic-link', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, continueUrl: window.location.origin }),
         });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.error || ('No se pudo enviar el enlace (' + res.status + ')'));
+        localStorage.setItem(EMAIL_KEY, email);
     };
 
     SDV.signOut = () => auth.signOut();
