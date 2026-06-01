@@ -1,4 +1,4 @@
-const CACHE_STATIC = 'sdv-static-v5';
+const CACHE_STATIC = 'sdv-static-v6';
 const CACHE_AUDIO  = 'sdv-audio-v1';
 
 const STATIC_ASSETS = ['/', '/index.html', '/bible.js', '/manifest.json'];
@@ -20,7 +20,11 @@ self.addEventListener('activate', e => {
 self.addEventListener('fetch', e => {
     const url = new URL(e.request.url);
 
-    if (url.hostname.includes('workers.dev')) {
+    // Solo el Worker de AUDIO se cachea. El Worker de API (sonido-de-vida-api.*)
+    // NO debe interceptarse: sus POST/DELETE/GET deben ir siempre a la red.
+    // (Antes 'workers.dev' atrapaba también la API y devolvía respuestas GET
+    //  cacheadas para los POST → guardar parecía OK pero nunca llegaba al server.)
+    if (url.hostname.startsWith('sonido-de-vida-audio.')) {
         e.respondWith(handleAudio(e.request));
         return;
     }
