@@ -427,6 +427,22 @@
         .yo-menu li .yo-ico{font-size:1.2rem;width:1.6rem;text-align:center}
         .yo-menu li .yo-arrow{margin-left:auto;color:var(--gold-light)}
         .yo-cta{width:100%;background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:var(--dark);border:none;border-radius:14px;padding:1rem;font-size:1rem;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;margin-bottom:1.1rem}
+        /* Mis descargas (offline) */
+        .offline-panel{padding:1.2rem 1.3rem;margin-top:1.1rem}
+        .offline-head{display:flex;justify-content:space-between;align-items:baseline;gap:.5rem;margin-bottom:.4rem;color:#fff;font-family:'Cinzel',serif;font-size:1.05rem}
+        .offline-total{font-family:'Inter',sans-serif;font-size:.78rem;color:var(--gold-light);font-weight:600;white-space:nowrap}
+        .offline-note{font-size:.78rem;color:rgba(255,255,255,.5);margin-bottom:1rem;line-height:1.5}
+        .offline-empty{color:rgba(255,255,255,.55);font-family:'Lora',serif;font-size:.9rem;text-align:center;padding:1rem .5rem;line-height:1.6}
+        .offline-item{display:flex;align-items:center;gap:.5rem;border-bottom:1px solid rgba(255,255,255,.07);padding:.55rem 0}
+        .offline-item:last-child{border-bottom:none}
+        .offline-play{flex:1;display:flex;align-items:center;gap:.7rem;background:none;border:none;cursor:pointer;text-align:left;color:rgba(255,255,255,.9);font-family:'Inter',sans-serif;min-width:0}
+        .offline-ico{font-size:1.15rem}
+        .offline-meta{display:flex;flex-direction:column;min-width:0}
+        .offline-meta strong{font-size:.95rem;font-family:'Cinzel',serif}
+        .offline-meta small{font-size:.74rem;color:rgba(255,255,255,.5)}
+        .offline-play:hover .offline-meta strong{color:var(--gold-light)}
+        .offline-del{background:none;border:none;cursor:pointer;font-size:1rem;opacity:.55;transition:opacity .2s;padding:.3rem}
+        .offline-del:hover{opacity:1}
     </style>
 </head>
 <body data-tab-active="inicio">
@@ -636,11 +652,20 @@
             <ul class="yo-menu">
                 <li onclick="resumeListening()"><span class="yo-ico">📖</span> Seguir escuchando <span class="yo-arrow">›</span></li>
                 <li onclick="SDV_Account.open();return false;"><span class="yo-ico">🔖</span> Mis versículos <span class="yo-arrow">›</span></li>
-                <li onclick="SDV_Account.open();return false;"><span class="yo-ico">💾</span> Mis descargas <span class="yo-arrow">›</span></li>
+                <li onclick="toggleOfflinePanel()"><span class="yo-ico">💾</span> Mis descargas <span class="yo-arrow">›</span></li>
                 <li onclick="window.location.href='/devocionales'"><span class="yo-ico">📿</span> Devocionales <span class="yo-arrow">›</span></li>
                 <li onclick="openInstall(event)"><span class="yo-ico">📲</span> Instalar app <span class="yo-arrow">›</span></li>
                 <li onclick="openShareModal();return false;"><span class="yo-ico">🔗</span> Compartir / QR <span class="yo-arrow">›</span></li>
             </ul>
+
+            <div class="yo-card offline-panel" id="offlinePanel" style="display:none">
+                <div class="offline-head">
+                    <span>💾 Mis descargas</span>
+                    <span class="offline-total" id="offlineTotal"></span>
+                </div>
+                <p class="offline-note">📌 Se guardan en este dispositivo para escuchar sin conexión. Si borras los datos del navegador, se pierden.</p>
+                <div id="offlineListItems"></div>
+            </div>
 
             <div class="yo-card" style="text-align:center;margin-top:1.1rem">
                 <p style="font-family:'Lora',serif;color:rgba(255,255,255,.6);font-size:.9rem;font-style:italic">"Lámpara es a mis pies tu palabra, y lumbrera a mi camino." — Salmo 119:105</p>
@@ -1442,7 +1467,18 @@
             a.download = `${state.book.replace(/\s+/g,'_')}_Capitulo${state.chapter}_${getTranslationLabel().replace(/\s/g,'')}.${ext}`;
             document.body.appendChild(a); a.click();
             setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(a.href); }, 500);
-            showToast('✅ ¡MP3 descargado!');
+
+            // 4) Guardar también dentro de la app (offline real): el mismo blob se
+            //    cachea bajo la ruta que lee el service worker, y se registra en la
+            //    biblioteca "Mis descargas".
+            try {
+                const path = new URL(audioUrl(state.book, state.chapter)).pathname;
+                const cache = await caches.open(OFFLINE_CACHE);
+                await cache.put(new Request(path, { method: 'GET' }), new Response(blob));
+                recordOffline({ book: state.book, chapter: state.chapter, size: blob.size, ts: Date.now() });
+            } catch (e) {}
+
+            showToast('✅ ¡Capítulo descargado!');
         } catch (e) { showToast('⚠️ Error al descargar: ' + e.message); }
         finally { btn.disabled = false; updateDownloadBtn(); }
     }
@@ -1818,6 +1854,73 @@
         } else {
             showToast('Aún no has escuchado ningún capítulo. ¡Elige uno para empezar!');
         }
+    }
+
+    /* ════════ Mis descargas (offline real) ════════ */
+    const OFFLINE_KEY = 'sdv:offline';
+    const OFFLINE_CACHE = 'sdv-audio-v1';
+
+    function getOfflineList() {
+        try { return JSON.parse(localStorage.getItem(OFFLINE_KEY) || '[]'); } catch (e) { return []; }
+    }
+    function saveOfflineList(list) {
+        try { localStorage.setItem(OFFLINE_KEY, JSON.stringify(list)); } catch (e) {}
+    }
+    function fmtSize(bytes) {
+        if (!bytes) return '';
+        const mb = bytes / 1048576;
+        return mb >= 1 ? mb.toFixed(1) + ' MB' : Math.max(1, Math.round(bytes / 1024)) + ' KB';
+    }
+    function recordOffline(entry) {
+        const list = getOfflineList();
+        if (list.some(x => x.book === entry.book && x.chapter === entry.chapter)) return;
+        list.unshift(entry);
+        saveOfflineList(list);
+        if (document.getElementById('offlinePanel').style.display !== 'none') renderOfflineList();
+    }
+    async function removeOffline(book, chapter) {
+        const list = getOfflineList().filter(x => !(x.book === book && x.chapter === chapter));
+        saveOfflineList(list);
+        try {
+            const cache = await caches.open(OFFLINE_CACHE);
+            const path = new URL(audioUrl(book, chapter)).pathname;
+            await cache.delete(new Request(path, { method: 'GET' }));
+        } catch (e) {}
+        renderOfflineList();
+    }
+    function playOffline(book, chapter) {
+        showTab('biblia');
+        loadChapter({ book, chapter });
+    }
+    function toggleOfflinePanel() {
+        showTab('yo');
+        const panel = document.getElementById('offlinePanel');
+        const show = panel.style.display === 'none';
+        panel.style.display = show ? '' : 'none';
+        if (show) { renderOfflineList(); panel.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+    }
+    function renderOfflineList() {
+        const list = getOfflineList();
+        const box = document.getElementById('offlineListItems');
+        const total = document.getElementById('offlineTotal');
+        if (!box) return;
+        if (!list.length) {
+            box.innerHTML = '<div class="offline-empty">Aún no has descargado capítulos.<br>Descarga uno desde el reproductor con 💾.</div>';
+            total.textContent = '';
+            return;
+        }
+        const bytes = list.reduce((s, x) => s + (x.size || 0), 0);
+        total.textContent = list.length + (list.length === 1 ? ' capítulo' : ' capítulos') + (bytes ? ' · ' + fmtSize(bytes) : '');
+        box.innerHTML = list.map(x => {
+            const b = x.book.replace(/"/g, '&quot;');
+            return '<div class="offline-item">' +
+                '<button class="offline-play" onclick="playOffline(&quot;' + b + '&quot;,' + x.chapter + ')">' +
+                    '<span class="offline-ico">🎧</span>' +
+                    '<span class="offline-meta"><strong>' + x.book + ' ' + x.chapter + '</strong><small>' + (x.size ? fmtSize(x.size) : 'Disponible sin conexión') + '</small></span>' +
+                '</button>' +
+                '<button class="offline-del" title="Quitar descarga" onclick="removeOffline(&quot;' + b + '&quot;,' + x.chapter + ')">🗑️</button>' +
+            '</div>';
+        }).join('');
     }
 
     // Mapear los enlaces internos (#listen, #features...) a sus pestañas
