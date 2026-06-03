@@ -432,25 +432,7 @@
 <body data-tab-active="inicio">
 
     <nav id="navbar">
-        <a href="#" class="nav-logo"><span style="font-size:1.8rem">✝</span> Sonido de Vida</a>
-        <div class="nav-right">
-            <ul class="nav-links" id="navLinks">
-                <li><a href="#features" onclick="closeMenu()">Características</a></li>
-                <li><a href="#listen" onclick="closeMenu()">Escuchar</a></li>
-                <li><a href="#random" onclick="closeMenu()">Aleatorio</a></li>
-                <li id="navCrearCuentaItem"><a href="#cuenta" onclick="closeMenu()">Crear cuenta</a></li>
-                <li><a href="/devocionales" onclick="closeMenu()">Devocionales</a></li>
-                <li><a href="#" onclick="openInstall(event)">📲 Instalar app</a></li>
-                <li><a href="#listen" class="nav-cta" onclick="closeMenu()">Escuchar Ahora</a></li>
-            </ul>
-            <div class="nav-actions">
-                <button class="nav-account-btn" id="navAccountBtn" onclick="SDV_Account.open();return false;" style="display:none">👤 <span id="navAccountLabel">Entrar</span></button>
-                <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleMobileMenu()" aria-label="Abrir menú">
-                    <span class="mb-bars"><span></span><span></span><span></span></span>
-                    <span class="mb-text">Menú</span>
-                </button>
-            </div>
-        </div>
+        <a href="#" class="nav-logo" onclick="showTab('inicio');return false;"><span style="font-size:1.8rem">✝</span> Sonido de Vida</a>
     </nav>
 
     <section class="hero" data-tab="inicio">
@@ -652,10 +634,10 @@
             </div>
 
             <ul class="yo-menu">
-                <li onclick="showTab('biblia')"><span class="yo-ico">📖</span> Seguir escuchando <span class="yo-arrow">›</span></li>
+                <li onclick="resumeListening()"><span class="yo-ico">📖</span> Seguir escuchando <span class="yo-arrow">›</span></li>
                 <li onclick="SDV_Account.open();return false;"><span class="yo-ico">🔖</span> Mis versículos <span class="yo-arrow">›</span></li>
                 <li onclick="SDV_Account.open();return false;"><span class="yo-ico">💾</span> Mis descargas <span class="yo-arrow">›</span></li>
-                <li onclick="showTab('explorar')"><span class="yo-ico">📿</span> Devocionales <span class="yo-arrow">›</span></li>
+                <li onclick="window.location.href='/devocionales'"><span class="yo-ico">📿</span> Devocionales <span class="yo-arrow">›</span></li>
                 <li onclick="openInstall(event)"><span class="yo-ico">📲</span> Instalar app <span class="yo-arrow">›</span></li>
                 <li onclick="openShareModal();return false;"><span class="yo-ico">🔗</span> Compartir / QR <span class="yo-arrow">›</span></li>
             </ul>
@@ -1042,6 +1024,7 @@
             updatePlayUI(false);
         }
         state.book = book; state.chapter = chapter; state.verses = verses;
+        try { localStorage.setItem('sdv:last', JSON.stringify({ book, chapter })); } catch (e) {}
 
         // Sincronizar selectores con el capítulo actual
         const bookSel = document.getElementById('bookSelect');
@@ -1802,12 +1785,12 @@
     }
 
     function toggleMobileMenu() {
-        document.getElementById('mobileMenuBtn').classList.toggle('active');
-        document.getElementById('navLinks').classList.toggle('open');
+        const b = document.getElementById('mobileMenuBtn'); if (b) b.classList.toggle('active');
+        const l = document.getElementById('navLinks'); if (l) l.classList.toggle('open');
     }
     function closeMenu() {
-        document.getElementById('mobileMenuBtn').classList.remove('active');
-        document.getElementById('navLinks').classList.remove('open');
+        const b = document.getElementById('mobileMenuBtn'); if (b) b.classList.remove('active');
+        const l = document.getElementById('navLinks'); if (l) l.classList.remove('open');
     }
 
     /* ════════ Router de pestañas (app-shell) ════════ */
@@ -1823,6 +1806,18 @@
         document.querySelectorAll('[data-tab="' + name + '"] .reveal').forEach(el => el.classList.add('visible'));
         closeMenu();
         if (!opts || opts.scroll !== false) window.scrollTo({ top: 0, behavior: 'auto' });
+    }
+
+    // Retomar la escucha donde se quedó (último capítulo cargado)
+    function resumeListening() {
+        showTab('biblia');
+        let last = null;
+        try { last = JSON.parse(localStorage.getItem('sdv:last') || 'null'); } catch (e) {}
+        if (last && last.book && last.chapter && getActiveBible()[last.book]) {
+            loadChapter({ book: last.book, chapter: last.chapter });
+        } else {
+            showToast('Aún no has escuchado ningún capítulo. ¡Elige uno para empezar!');
+        }
     }
 
     // Mapear los enlaces internos (#listen, #features...) a sus pestañas
@@ -1847,6 +1842,17 @@
         if (ql.length < 2) { box.innerHTML = '<div class="search-empty">Escribe al menos 2 letras para buscar.</div>'; return; }
         const bible = getActiveBible();
         if (!bible) { box.innerHTML = '<div class="search-empty">No se pudo cargar el texto bíblico.</div>'; return; }
+        // Coincidencia por palabra completa (evita falsos positivos: "amor" no marca "amorreos").
+        // Usa límites Unicode para respetar acentos; si el navegador no soporta lookbehind, cae a \b.
+        const esc = ql.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        let testRe, hlRe;
+        try {
+            testRe = new RegExp('(?<![\\p{L}\\p{N}])' + esc + '(?![\\p{L}\\p{N}])', 'iu');
+            hlRe   = new RegExp('(?<![\\p{L}\\p{N}])(' + esc + ')(?![\\p{L}\\p{N}])', 'giu');
+        } catch (e) {
+            testRe = new RegExp('\\b' + esc + '\\b', 'i');
+            hlRe   = new RegExp('\\b(' + esc + ')\\b', 'gi');
+        }
         const results = [];
         const MAX = 60;
         let truncated = false;
@@ -1859,15 +1865,15 @@
                 if (!verses) continue;
                 for (let v = 0; v < verses.length; v++) {
                     const text = verses[v];
-                    if (text && text.toLowerCase().includes(ql)) {
+                    if (text && testRe.test(text)) {
                         results.push({ book, chapter: c + 1, verse: v + 1, text });
                         if (results.length >= MAX) { truncated = true; break outer; }
                     }
                 }
             }
         }
-        if (!results.length) { box.innerHTML = '<div class="search-empty">Sin resultados para “' + q.replace(/</g,'&lt;') + '”.</div>'; return; }
-        const re = new RegExp('(' + ql.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
+        if (!results.length) { box.innerHTML = '<div class="search-empty">Sin resultados para “' + q.replace(/</g,'&lt;') + '” como palabra completa.</div>'; return; }
+        const re = hlRe;
         let html = results.map(r => {
             const safe = r.text.replace(/</g,'&lt;').replace(re, '<mark>$1</mark>');
             const bookAttr = r.book.replace(/"/g, '&quot;');
