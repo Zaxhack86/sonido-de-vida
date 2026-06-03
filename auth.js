@@ -80,6 +80,22 @@
     SDV.consumeDownload  = () => api('/api/downloads', { method: 'POST' });
     SDV.shareBonus       = () => api('/api/downloads/bonus', { method: 'POST' });
 
+    // Contenido premium (Modo Enfoque, etc.): descarga el archivo desde el
+    // portero /api/content/:id usando el token y devuelve un objectURL para
+    // <audio>. El binario nunca queda en una URL pública: el Worker solo lo
+    // sirve si el uid es premium. Quien usa el objectURL debe revocarlo
+    // (URL.revokeObjectURL) al terminar para liberar memoria.
+    SDV.loadContentBlob = async (id) => {
+        const token = await getToken();
+        if (!token) throw new Error('no logueado');
+        const res = await fetch(API_BASE + '/api/content/' + id, {
+            headers: { 'Authorization': 'Bearer ' + token },
+        });
+        if (!res.ok) throw new Error('contenido no disponible (' + res.status + ')');
+        const blob = await res.blob();
+        return URL.createObjectURL(blob);
+    };
+
     // ── Login ────────────────────────────────────────────────────────
     SDV.signInGoogle = () => {
         const provider = new firebase.auth.GoogleAuthProvider();

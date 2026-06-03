@@ -451,6 +451,39 @@
         .offline-play:hover .offline-meta strong{color:var(--gold-light)}
         .offline-del{background:none;border:none;cursor:pointer;font-size:1rem;opacity:.55;transition:opacity .2s;padding:.3rem}
         .offline-del:hover{opacity:1}
+
+        /* ════ Modo Enfoque (premium) ════ */
+        .focus-overlay{position:fixed;inset:0;z-index:4000;display:none;flex-direction:column;align-items:center;justify-content:center;padding:calc(env(safe-area-inset-top) + 1.2rem) 1.2rem calc(env(safe-area-inset-bottom) + 1.2rem);background:radial-gradient(120% 120% at 50% 0%,#15131f 0%,#0b0a12 55%,#050409 100%);opacity:0;transition:opacity .5s ease}
+        .focus-overlay.open{display:flex;opacity:1}
+        .focus-overlay .focus-bg{position:absolute;inset:0;background:radial-gradient(60% 50% at 50% 38%,rgba(201,168,76,.10),transparent 70%);pointer-events:none}
+        .focus-close{position:absolute;top:calc(env(safe-area-inset-top) + .9rem);right:1rem;width:42px;height:42px;border-radius:50%;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.05);color:rgba(255,255,255,.8);font-size:1.1rem;cursor:pointer;z-index:2;transition:all .25s}
+        .focus-close:hover{background:rgba(255,255,255,.12);color:#fff}
+        .focus-stage{position:relative;z-index:1;width:100%;max-width:560px;display:flex;flex-direction:column;align-items:center;gap:1.4rem;text-align:center}
+        .focus-ref{font-family:'Cinzel',serif;color:var(--gold-light);font-size:1.05rem;letter-spacing:.08em;text-transform:uppercase;opacity:.85}
+        .focus-verses{max-height:34vh;overflow-y:auto;width:100%;padding:0 .4rem;-webkit-mask-image:linear-gradient(180deg,transparent,#000 12%,#000 88%,transparent);mask-image:linear-gradient(180deg,transparent,#000 12%,#000 88%,transparent)}
+        .focus-verses p{font-family:'Lora',serif;color:rgba(255,255,255,.86);font-size:1.35rem;line-height:1.85;margin:0 0 1rem;text-wrap:balance}
+        .focus-verses .fv-num{color:var(--gold);font-size:.7em;font-family:'Inter',sans-serif;vertical-align:super;margin-right:.35em;opacity:.7}
+        .focus-empty{font-family:'Lora',serif;font-style:italic;color:rgba(255,255,255,.6);font-size:1.15rem}
+        .focus-play{width:78px;height:78px;border-radius:50%;border:none;cursor:pointer;background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#0d0d1a;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 36px rgba(201,168,76,.35);transition:transform .2s}
+        .focus-play:active{transform:scale(.94)}
+        .focus-play svg{width:34px;height:34px;fill:#0d0d1a}
+        .focus-ambients{display:flex;flex-wrap:wrap;gap:.55rem;justify-content:center}
+        .focus-chip{display:inline-flex;align-items:center;gap:.4rem;padding:.55rem .95rem;border-radius:50px;border:1px solid rgba(201,168,76,.3);background:rgba(201,168,76,.07);color:rgba(255,255,255,.85);font-family:'Inter',sans-serif;font-size:.88rem;cursor:pointer;transition:all .25s}
+        .focus-chip:hover{border-color:rgba(201,168,76,.6)}
+        .focus-chip.active{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#0d0d1a;border-color:transparent;font-weight:600}
+        .focus-chip.loading{opacity:.6;pointer-events:none}
+        .focus-chip.soon{opacity:.45}
+        .focus-mixer{width:100%;max-width:340px;display:flex;flex-direction:column;gap:.85rem}
+        .focus-mixer label{display:flex;align-items:center;gap:.7rem;color:rgba(255,255,255,.75);font-family:'Inter',sans-serif;font-size:.85rem}
+        .focus-mixer label span{width:84px;text-align:left;flex:none}
+        .focus-mixer input[type=range]{flex:1;-webkit-appearance:none;appearance:none;height:4px;border-radius:4px;background:rgba(255,255,255,.18);outline:none}
+        .focus-mixer input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--gold-light);cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.4)}
+        .focus-mixer input[type=range]::-moz-range-thumb{width:18px;height:18px;border:none;border-radius:50%;background:var(--gold-light);cursor:pointer}
+        .focus-timer{display:flex;flex-direction:column;align-items:center;gap:.55rem;color:rgba(255,255,255,.6);font-family:'Inter',sans-serif;font-size:.82rem}
+        .focus-timer-opts{display:flex;gap:.4rem}
+        .focus-timer-opts button{padding:.35rem .8rem;border-radius:50px;border:1px solid rgba(255,255,255,.15);background:transparent;color:rgba(255,255,255,.7);font-family:inherit;font-size:.8rem;cursor:pointer;transition:all .2s}
+        .focus-timer-opts button.active{background:rgba(201,168,76,.2);border-color:rgba(201,168,76,.5);color:var(--gold-light)}
+        .focus-premium-badge{display:inline-block;margin-left:.4rem;font-size:.7rem;padding:.1rem .5rem;border-radius:50px;background:rgba(201,168,76,.18);color:var(--gold-light);font-weight:600}
     </style>
 </head>
 <body data-tab-active="inicio">
@@ -659,6 +692,7 @@
 
             <ul class="yo-menu">
                 <li onclick="resumeListening()"><span class="yo-ico">📖</span> Seguir escuchando <span class="yo-arrow">›</span></li>
+                <li id="yoFocusItem" onclick="Focus.enter()"><span class="yo-ico">🌿</span> Modo Enfoque <span class="focus-premium-badge" id="focusBadge">✨ Premium</span> <span class="yo-arrow">›</span></li>
                 <li onclick="SDV_Account.open();return false;"><span class="yo-ico">🔖</span> Mis versículos <span class="yo-arrow">›</span></li>
                 <li onclick="toggleOfflinePanel()"><span class="yo-ico">💾</span> Mis descargas <span class="yo-arrow">›</span></li>
                 <li onclick="window.location.href='/devocionales'"><span class="yo-ico">📿</span> Devocionales <span class="yo-arrow">›</span></li>
@@ -726,6 +760,7 @@
             <button class="player-nav-btn" id="playerNextBtn" onclick="goNextChapter()" title="Capítulo siguiente" aria-label="Siguiente">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4" fill="currentColor"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
             </button>
+            <button class="player-nav-btn" id="playerFocusBtn" onclick="Focus.enter()" title="Modo Enfoque" aria-label="Modo Enfoque" style="font-size:1.1rem">🌿</button>
             <button class="player-close" onclick="closePlayer()">✕</button>
         </div>
     </div>
@@ -876,6 +911,38 @@
     </div>
 
     <audio id="mainAudio" preload="none"></audio>
+
+    <!-- ════ Modo Enfoque (premium): capa de música ambiente + UI inmersiva ════ -->
+    <audio id="ambientAudio" loop preload="none" playsinline></audio>
+    <div class="focus-overlay" id="focusOverlay" aria-hidden="true" role="dialog" aria-label="Modo Enfoque">
+        <div class="focus-bg"></div>
+        <button class="focus-close" onclick="Focus.exit()" aria-label="Salir del Modo Enfoque">✕</button>
+        <div class="focus-stage">
+            <div class="focus-ref" id="focusRef">Modo Enfoque</div>
+            <div class="focus-verses" id="focusVerses">
+                <p class="focus-empty">Elige un capítulo y un ambiente. Respira, escucha y medita en la Palabra.</p>
+            </div>
+            <button class="focus-play" id="focusPlayBtn" onclick="togglePlay()" aria-label="Reproducir o pausar la narración">
+                <svg id="focusPlayIcon" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                <svg id="focusPauseIcon" viewBox="0 0 24 24" style="display:none"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+            </button>
+            <div class="focus-ambients" id="focusAmbients"></div>
+            <div class="focus-mixer">
+                <label><span>🎙️ Voz</span><input type="range" id="volVoz" min="0" max="100" value="100" oninput="Focus.setVoz(this.value)"></label>
+                <label><span>🎵 Música</span><input type="range" id="volMusica" min="0" max="100" value="55" oninput="Focus.setMusica(this.value)"></label>
+            </div>
+            <div class="focus-timer">
+                <span>⏱️ Temporizador de sueño</span>
+                <div class="focus-timer-opts" id="focusTimerOpts">
+                    <button data-min="0" class="active" onclick="Focus.setTimer(0,this)">Off</button>
+                    <button data-min="10" onclick="Focus.setTimer(10,this)">10m</button>
+                    <button data-min="20" onclick="Focus.setTimer(20,this)">20m</button>
+                    <button data-min="30" onclick="Focus.setTimer(30,this)">30m</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="/bible.js"></script>
     <script src="/bible_sbll.js"></script>
     <!-- Cuenta de usuario (Firebase Auth). Inerte hasta poner config real en auth.js -->
@@ -1096,6 +1163,7 @@
         updateChapterNavButtons();
         updateNavModeIndicator();
         updatePlayerNextHint();
+        if (window.Focus) Focus.syncVerse();
 
         if (!opts.silent) {
             document.getElementById('chapterResult').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -1207,11 +1275,13 @@
                 if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing';
                 // Iniciar pre-carga del próximo capítulo en cuanto este arranca
                 preloadNextChapter();
+                if (window.Focus) Focus.onNarration(true);
             });
             el.addEventListener('pause', function() {
                 if (this !== audio) return;
                 updatePlayUI(false);
                 if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused';
+                if (window.Focus) Focus.onNarration(false);
             });
             el.addEventListener('ended', function() {
                 if (this !== audio) return;
@@ -1435,6 +1505,150 @@
         const r = document.getElementById('playerProgress').getBoundingClientRect();
         audio.currentTime = ((e.clientX - r.left) / r.width) * audio.duration;
     }
+
+    // ════════════════════════════════════════════════════════════════
+    // Modo Enfoque (premium): música ambiente bajo la narración + mezclador
+    // ════════════════════════════════════════════════════════════════
+    const Focus = (function () {
+        const overlay   = document.getElementById('focusOverlay');
+        const ambientEl = document.getElementById('ambientAudio');
+        // Catálogo de ambientes. `contentId` = id en content_items (D1) servido
+        // por el portero premium. Mientras sea null, el chip aparece como
+        // "pronto". Al subir cada loop a R2 y registrarlo, se rellena su id aquí.
+        const ambients = [
+            { id: 'lluvia', label: 'Lluvia',      emoji: '🌧️', contentId: null },
+            { id: 'piano',  label: 'Piano suave', emoji: '🎹', contentId: null },
+            { id: 'pads',   label: 'Ambiente',    emoji: '🌌', contentId: null },
+            { id: 'olas',   label: 'Olas',        emoji: '🌊', contentId: null },
+        ];
+
+        let vozVol = 1, musicaVol = 0.55;
+        let currentAmbient = null, blobUrl = null, timerId = null, loading = false;
+
+        function premiumReady() {
+            return !!(window.SDV_Auth && SDV_Auth.enabled && SDV_Auth.user && SDV_Auth.premium);
+        }
+        function applyVolumes() {
+            audioA.volume = vozVol; audioB.volume = vozVol;
+            ambientEl.volume = musicaVol;
+        }
+
+        function renderAmbients() {
+            const box = document.getElementById('focusAmbients');
+            box.innerHTML = '';
+            ambients.forEach(a => {
+                const b = document.createElement('button');
+                const soon = a.contentId == null;
+                b.className = 'focus-chip' + (soon ? ' soon' : '') + (currentAmbient === a.id ? ' active' : '');
+                b.dataset.ambient = a.id;
+                b.innerHTML = `<span>${a.emoji}</span> ${a.label}` + (soon ? ' · pronto' : '');
+                b.onclick = () => selectAmbient(a.id);
+                box.appendChild(b);
+            });
+        }
+        function markChips() {
+            document.querySelectorAll('#focusAmbients .focus-chip').forEach(c => {
+                c.classList.toggle('active', c.dataset.ambient === currentAmbient);
+                c.classList.toggle('loading', loading && c.dataset.ambient === currentAmbient);
+            });
+        }
+
+        async function selectAmbient(id) {
+            const a = ambients.find(x => x.id === id);
+            if (!a) return;
+            if (a.contentId == null) { showToast('🌿 Este ambiente estará disponible muy pronto'); return; }
+            if (currentAmbient === id) { stopAmbient(); return; }   // tocar de nuevo = apagar
+            stopAmbient();
+            currentAmbient = id; loading = true; markChips();
+            try {
+                blobUrl = await SDV_Auth.loadContentBlob(a.contentId);
+                ambientEl.src = blobUrl;
+                ambientEl.loop = true;
+                applyVolumes();
+                await ambientEl.play();
+            } catch (e) {
+                currentAmbient = null;
+                showToast('No se pudo cargar el ambiente');
+            } finally {
+                loading = false; markChips();
+            }
+        }
+        function stopAmbient() {
+            ambientEl.pause();
+            ambientEl.removeAttribute('src');
+            ambientEl.load();
+            if (blobUrl) { URL.revokeObjectURL(blobUrl); blobUrl = null; }
+            currentAmbient = null;
+            markChips();
+        }
+
+        function syncVerse() {
+            const ref = document.getElementById('focusRef');
+            const box = document.getElementById('focusVerses');
+            if (!state.book || !state.verses || !state.verses.length) {
+                ref.textContent = 'Modo Enfoque';
+                box.innerHTML = '<p class="focus-empty">Elige un capítulo y un ambiente. Respira, escucha y medita en la Palabra.</p>';
+                return;
+            }
+            ref.textContent = `${state.book} ${state.chapter}`;
+            box.innerHTML = state.verses
+                .map((t, i) => `<p><span class="fv-num">${i + 1}</span>${t}</p>`)
+                .join('');
+        }
+
+        function setVoz(v)    { vozVol = Math.max(0, Math.min(1, v / 100)); applyVolumes(); }
+        function setMusica(v) { musicaVol = Math.max(0, Math.min(1, v / 100)); applyVolumes(); }
+
+        function setTimer(min, btn) {
+            if (timerId) { clearTimeout(timerId); timerId = null; }
+            document.querySelectorAll('#focusTimerOpts button').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            if (min > 0) {
+                timerId = setTimeout(() => {
+                    try { audio.pause(); } catch (e) {}
+                    stopAmbient();
+                    showToast('⏱️ Temporizador: descanso iniciado');
+                }, min * 60000);
+            }
+        }
+
+        function onNarration(playing) {
+            document.getElementById('focusPlayIcon').style.display  = playing ? 'none'  : 'block';
+            document.getElementById('focusPauseIcon').style.display = playing ? 'block' : 'none';
+        }
+
+        function enter() {
+            if (!(window.SDV_Auth && SDV_Auth.enabled)) { showToast('🌿 Modo Enfoque llegará muy pronto'); return; }
+            if (!SDV_Auth.user) { showToast('Entra a tu cuenta para usar el Modo Enfoque'); if (window.SDV_Account) SDV_Account.open(); return; }
+            if (!SDV_Auth.premium) { showToast('🌿 El Modo Enfoque es una función Premium ✨ (muy pronto)'); return; }
+            renderAmbients();
+            syncVerse();
+            onNarration(!audio.paused && !!audio.src);
+            applyVolumes();
+            overlay.classList.add('open');
+            overlay.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+        }
+        function exit() {
+            overlay.classList.remove('open');
+            overlay.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+            stopAmbient();
+            if (timerId) { clearTimeout(timerId); timerId = null; }
+            vozVol = 1; audioA.volume = 1; audioB.volume = 1;   // restaurar volumen normal
+        }
+
+        // Refleja el estado premium en la entrada del menú "Yo".
+        function refreshGate() {
+            const badge = document.getElementById('focusBadge');
+            if (!badge) return;
+            if (premiumReady()) { badge.textContent = '⭐ Activo'; }
+            else { badge.textContent = '✨ Premium'; }
+        }
+
+        return { enter, exit, selectAmbient, setVoz, setMusica, setTimer, onNarration, syncVerse, refreshGate, ambients };
+    })();
+    window.Focus = Focus;
     function formatTime(s) { return `${Math.floor(s/60)}:${Math.floor(s%60).toString().padStart(2,'0')}`; }
 
     async function downloadChapter() {
@@ -2191,6 +2405,8 @@
             else if (window.updateDownloadBtn) window.updateDownloadBtn();
             // Sincronizar la biblioteca de descargas entre dispositivos.
             if (user && window.syncLibraryFromCloud) window.syncLibraryFromCloud();
+            // Reflejar premium en la entrada del Modo Enfoque.
+            if (window.Focus) Focus.refreshGate();
         }
 
         // Esperar a que auth.js esté listo. Si Firebase no está configurado, no mostramos nada.
