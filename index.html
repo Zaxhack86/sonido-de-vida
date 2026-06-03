@@ -268,11 +268,19 @@
             .stats-grid{grid-template-columns:repeat(2,1fr)}
             .features-grid{grid-template-columns:1fr}
             .player-sub,.player-time{display:none}
+            /* En móvil hay poco ancho: reducimos el padding lateral y el espacio
+               entre controles para que ⏮ ▶ ⏭ ✕ no se salgan del recuadro. */
+            .audio-player-bar{padding:.7rem .8rem}
+            .player-inner{gap:.45rem}
         }
         @media(max-width:480px){
             .stats-grid{grid-template-columns:1fr;gap:1.5rem}
             .hero-buttons{flex-direction:column;align-items:center}
             .btn-primary,.btn-secondary{width:100%;justify-content:center}
+            /* Pantallas muy estrechas: ocultamos la onda decorativa para dar
+               todo el ancho a la info + controles. */
+            .player-wave{display:none}
+            .player-nav-btn{padding:.3rem}
         }
 
         /* ====== Navegación entre capítulos (tarjeta + player) ====== */
@@ -455,9 +463,9 @@
         <div class="hero-bg"></div>
         <div class="hero-particles" id="particles"></div>
         <div class="hero-content">
-            <div class="hero-badge"><span class="pulse-dot"></span> Audio Real · Sin registro · Toda la Biblia</div>
+            <div class="hero-badge"><span class="pulse-dot"></span> Audio Real · Toda la Biblia · En español</div>
             <h1>Escucha la <span>Palabra</span> de Dios en cualquier momento</h1>
-            <p>La Biblia completa narrada en audio, capítulo por capítulo. Escucha mientras manejas, descansas o con la pantalla apagada. Gratis, siempre.</p>
+            <p>La Biblia completa narrada en audio, capítulo por capítulo. Escucha mientras manejas, descansas o con la pantalla apagada.</p>
             <div class="hero-buttons">
                 <a href="#listen" class="btn-primary">🎧 Escuchar la Biblia</a>
                 <a href="#random" class="btn-secondary">🎲 Versículo Aleatorio</a>
@@ -594,9 +602,9 @@
 
     <section class="account-promo" id="cuenta" data-tab="explorar">
         <div class="account-promo-inner reveal">
-            <div class="hero-badge" style="margin-bottom:1.5rem">✦ Gratis para siempre</div>
+            <div class="hero-badge" style="margin-bottom:1.5rem">✦ Cuenta gratuita</div>
             <h2>Crea tu cuenta gratis</h2>
-            <p class="account-promo-lead">Escuchar siempre será gratis y sin registro. Con tu cuenta gratuita desbloqueas tu espacio personal en Sonido de Vida:</p>
+            <p class="account-promo-lead">Con tu cuenta gratuita desbloqueas tu espacio personal en Sonido de Vida:</p>
             <div class="account-benefits">
                 <div class="acc-benefit"><span class="acc-ico">🔖</span><h4>Guarda tus versículos</h4><p>Marca los versículos que tocan tu corazón y vuelve a ellos cuando quieras.</p></div>
                 <div class="acc-benefit"><span class="acc-ico">💾</span><h4>Descarga y escucha offline</h4><p>Lleva tus capítulos en MP3 para escuchar sin conexión, donde sea.</p></div>
@@ -642,7 +650,7 @@
 
             <div id="yoLoggedOut">
                 <div class="yo-card" style="text-align:center">
-                    <div class="hero-badge" style="margin-bottom:1rem">✦ Gratis para siempre</div>
+                    <div class="hero-badge" style="margin-bottom:1rem">✦ Cuenta gratuita</div>
                     <h3 style="font-family:'Cinzel',serif;color:#fff;margin-bottom:.5rem">Crea tu cuenta gratis</h3>
                     <p style="color:rgba(255,255,255,.65);font-size:.92rem;margin-bottom:1.2rem">Guarda tus versículos favoritos, descarga capítulos y lleva tu biblioteca en todos tus dispositivos.</p>
                     <button class="yo-cta" onclick="SDV_Account.open();return false;">✦ Crear mi cuenta gratis</button>
