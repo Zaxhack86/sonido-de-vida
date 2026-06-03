@@ -663,7 +663,7 @@
                     <span>💾 Mis descargas</span>
                     <span class="offline-total" id="offlineTotal"></span>
                 </div>
-                <p class="offline-note">📌 Se guardan en este dispositivo para escuchar sin conexión. Si borras los datos del navegador, se pierden.</p>
+                <p class="offline-note" id="offlineNote">📌 Se guardan en este dispositivo para escuchar sin conexión. Si borras los datos del navegador, se pierden.</p>
                 <div id="offlineListItems"></div>
             </div>
 
@@ -1871,11 +1871,19 @@
         const mb = bytes / 1048576;
         return mb >= 1 ? mb.toFixed(1) + ' MB' : Math.max(1, Math.round(bytes / 1024)) + ' KB';
     }
+    // Empuja la entrada a la nube (best-effort). Si no hay sesión o el endpoint
+    // no responde, la lista local sigue funcionando igual.
+    function pushLibrary(book, chapter) {
+        if (window.SDV_Auth && SDV_Auth.user && SDV_Auth.saveLibrary) {
+            SDV_Auth.saveLibrary(book, chapter).catch(() => {});
+        }
+    }
     function recordOffline(entry) {
         const list = getOfflineList();
-        if (list.some(x => x.book === entry.book && x.chapter === entry.chapter)) return;
-        list.unshift(entry);
-        saveOfflineList(list);
+        const ex = list.find(x => x.book === entry.book && x.chapter === entry.chapter);
+        if (ex) { ex.size = entry.size || ex.size; ex.cloud = false; saveOfflineList(list); }
+        else { list.unshift(entry); saveOfflineList(list); }
+        pushLibrary(entry.book, entry.chapter);
         if (document.getElementById('offlinePanel').style.display !== 'none') renderOfflineList();
     }
     async function removeOffline(book, chapter) {
@@ -1886,24 +1894,83 @@
             const path = new URL(audioUrl(book, chapter)).pathname;
             await cache.delete(new Request(path, { method: 'GET' }));
         } catch (e) {}
+        if (window.SDV_Auth && SDV_Auth.user && SDV_Auth.removeLibrary) {
+            SDV_Auth.removeLibrary(book, chapter).catch(() => {});
+        }
         renderOfflineList();
     }
     function playOffline(book, chapter) {
         showTab('biblia');
         loadChapter({ book, chapter });
     }
+    // Capítulo que está en la nube pero cuyo audio no vive en este equipo:
+    // lo baja desde R2 y lo cachea (no gasta crédito diario: ya es tuyo).
+    async function downloadToDevice(book, chapter) {
+        showToast('⬇️ Guardando en este equipo…');
+        try {
+            const url = audioUrl(book, chapter);
+            const path = new URL(url).pathname;
+            const cache = await caches.open(OFFLINE_CACHE);
+            let res = await cache.match(new Request(path, { method: 'GET' }));
+            if (!res) {
+                res = await fetch(url);
+                if (!res.ok) throw new Error('Error ' + res.status);
+                await cache.put(new Request(path, { method: 'GET' }), res.clone());
+            }
+            const blob = await res.blob();
+            const list = getOfflineList();
+            const it = list.find(x => x.book === book && x.chapter === chapter);
+            if (it) { it.size = blob.size; it.cloud = false; saveOfflineList(list); }
+            renderOfflineList();
+            showToast('✅ Guardado para escuchar sin conexión');
+        } catch (e) {
+            showToast('⚠️ No se pudo guardar: ' + e.message);
+        }
+    }
     function toggleOfflinePanel() {
         showTab('yo');
         const panel = document.getElementById('offlinePanel');
         const show = panel.style.display === 'none';
         panel.style.display = show ? '' : 'none';
-        if (show) { renderOfflineList(); panel.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+        if (show) { renderOfflineList(); syncLibraryFromCloud(); panel.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+    }
+    // Une la lista de la nube con la local: trae los que faltan (como "en la
+    // nube", listos para guardar en este equipo) y sube los locales que aún no
+    // estén sincronizados. Best-effort; sin sesión no hace nada.
+    async function syncLibraryFromCloud() {
+        if (!(window.SDV_Auth && SDV_Auth.user && SDV_Auth.listLibrary)) return;
+        let r;
+        try { r = await SDV_Auth.listLibrary(); } catch (e) { return; }
+        if (!r || !r.ok) return;
+        const cloud = r.data.items || [];
+        const list = getOfflineList();
+        let changed = false;
+        for (const c of cloud) {
+            if (!list.some(x => x.book === c.libro && x.chapter === c.capitulo)) {
+                list.push({ book: c.libro, chapter: c.capitulo, size: 0, ts: Date.parse(c.creado_en) || Date.now(), cloud: true });
+                changed = true;
+            }
+        }
+        for (const x of list) {
+            if (!cloud.some(c => c.libro === x.book && c.capitulo === x.chapter)) {
+                if (SDV_Auth.saveLibrary) SDV_Auth.saveLibrary(x.book, x.chapter).catch(() => {});
+            }
+        }
+        if (changed) saveOfflineList(list);
+        const panel = document.getElementById('offlinePanel');
+        if (panel && panel.style.display !== 'none') renderOfflineList();
     }
     function renderOfflineList() {
         const list = getOfflineList();
         const box = document.getElementById('offlineListItems');
         const total = document.getElementById('offlineTotal');
         if (!box) return;
+        const note = document.getElementById('offlineNote');
+        if (note) {
+            note.textContent = (window.SDV_Auth && SDV_Auth.user)
+                ? '☁️ Tu lista se guarda en tu cuenta: aunque borres los datos del navegador o cambies de equipo, podrás volver a descargar tus capítulos.'
+                : '📌 Se guardan en este dispositivo para escuchar sin conexión. Si borras los datos del navegador, se pierden. Crea una cuenta gratis para sincronizarlos.';
+        }
         if (!list.length) {
             box.innerHTML = '<div class="offline-empty">Aún no has descargado capítulos.<br>Descarga uno desde el reproductor con 💾.</div>';
             total.textContent = '';
@@ -1913,11 +1980,17 @@
         total.textContent = list.length + (list.length === 1 ? ' capítulo' : ' capítulos') + (bytes ? ' · ' + fmtSize(bytes) : '');
         box.innerHTML = list.map(x => {
             const b = x.book.replace(/"/g, '&quot;');
-            return '<div class="offline-item">' +
-                '<button class="offline-play" onclick="playOffline(&quot;' + b + '&quot;,' + x.chapter + ')">' +
-                    '<span class="offline-ico">🎧</span>' +
-                    '<span class="offline-meta"><strong>' + x.book + ' ' + x.chapter + '</strong><small>' + (x.size ? fmtSize(x.size) : 'Disponible sin conexión') + '</small></span>' +
-                '</button>' +
+            const cached = !!x.size;
+            const main = cached
+                ? '<button class="offline-play" onclick="playOffline(&quot;' + b + '&quot;,' + x.chapter + ')">' +
+                      '<span class="offline-ico">🎧</span>' +
+                      '<span class="offline-meta"><strong>' + x.book + ' ' + x.chapter + '</strong><small>' + fmtSize(x.size) + '</small></span>' +
+                  '</button>'
+                : '<button class="offline-play" onclick="downloadToDevice(&quot;' + b + '&quot;,' + x.chapter + ')">' +
+                      '<span class="offline-ico">☁️</span>' +
+                      '<span class="offline-meta"><strong>' + x.book + ' ' + x.chapter + '</strong><small>Toca para guardar en este equipo</small></span>' +
+                  '</button>';
+            return '<div class="offline-item">' + main +
                 '<button class="offline-del" title="Quitar descarga" onclick="removeOffline(&quot;' + b + '&quot;,' + x.chapter + ')">🗑️</button>' +
             '</div>';
         }).join('');
@@ -2108,6 +2181,8 @@
             // Sin sesión = bloqueado; logueado = trae usadas/restantes/límite reales.
             if (window.refreshDownloads) window.refreshDownloads();
             else if (window.updateDownloadBtn) window.updateDownloadBtn();
+            // Sincronizar la biblioteca de descargas entre dispositivos.
+            if (user && window.syncLibraryFromCloud) window.syncLibraryFromCloud();
         }
 
         // Esperar a que auth.js esté listo. Si Firebase no está configurado, no mostramos nada.

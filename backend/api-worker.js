@@ -212,6 +212,44 @@ async function deleteVerse(env, request, uid, id) {
     return json(env, request, { ok: true });
 }
 
+// ── Biblioteca de descargas: lista sincronizada por uid ──────────────
+// Guarda solo QUÉ capítulos descargó el usuario (libro+capítulo), no el audio
+// (ese vive en R2). Sirve para reconstruir "Mis descargas" en otro dispositivo
+// o tras borrar los datos del navegador. Gratis: la lista es diminuta.
+async function getLibrary(env, request, uid) {
+    const { results } = await env.DB
+        .prepare('SELECT id, libro, capitulo, creado_en FROM user_downloads WHERE uid = ? ORDER BY creado_en DESC')
+        .bind(uid)
+        .all();
+    return json(env, request, { items: results || [] });
+}
+
+async function addLibrary(request, env, uid) {
+    let body;
+    try { body = await request.json(); } catch { throw { status: 400, msg: 'JSON inválido' }; }
+    const libro = String(body.libro || '').trim();
+    const capitulo = parseInt(body.capitulo, 10);
+    if (!libro || !capitulo) throw { status: 400, msg: 'Faltan datos del capítulo' };
+    await env.DB
+        .prepare('INSERT OR IGNORE INTO user_downloads (uid, libro, capitulo) VALUES (?, ?, ?)')
+        .bind(uid, libro, capitulo)
+        .run();
+    return json(env, request, { ok: true }, 201);
+}
+
+async function removeLibrary(request, env, uid) {
+    let body;
+    try { body = await request.json(); } catch { throw { status: 400, msg: 'JSON inválido' }; }
+    const libro = String(body.libro || '').trim();
+    const capitulo = parseInt(body.capitulo, 10);
+    if (!libro || !capitulo) throw { status: 400, msg: 'Faltan datos del capítulo' };
+    await env.DB
+        .prepare('DELETE FROM user_downloads WHERE uid = ? AND libro = ? AND capitulo = ?')
+        .bind(uid, libro, capitulo)
+        .run();
+    return json(env, request, { ok: true });
+}
+
 // ── Descargas: contador diario por uid ───────────────────────────────
 // Devuelve el estado del día sin modificar nada.
 async function readDownloadState(env, uid, premium) {
@@ -479,6 +517,17 @@ export default {
             }
             if (path === '/api/downloads/bonus' && request.method === 'POST') {
                 return grantShareBonus(env, request, user.uid);
+            }
+
+            // Biblioteca de descargas (lista sincronizada entre dispositivos)
+            if (path === '/api/library' && request.method === 'GET') {
+                return getLibrary(env, request, user.uid);
+            }
+            if (path === '/api/library' && request.method === 'POST') {
+                return addLibrary(request, env, user.uid);
+            }
+            if (path === '/api/library' && request.method === 'DELETE') {
+                return removeLibrary(request, env, user.uid);
             }
 
             // Portero de contenido premium

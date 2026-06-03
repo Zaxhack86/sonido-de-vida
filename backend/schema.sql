@@ -28,6 +28,20 @@ CREATE TABLE IF NOT EXISTS user_download_counts (
   PRIMARY KEY (uid, dia)
 );
 
+-- ── Fase 3: biblioteca de descargas sincronizada por uid ─────────────
+-- Solo guarda la LISTA de capítulos descargados (libro+capítulo). El audio
+-- vive en R2; esto permite reconstruir "Mis descargas" en otro dispositivo o
+-- tras borrar los datos del navegador. Lista diminuta = prácticamente gratis.
+CREATE TABLE IF NOT EXISTS user_downloads (
+  id         INTEGER PRIMARY KEY AUTOINCREMENT,
+  uid        TEXT    NOT NULL,
+  libro      TEXT    NOT NULL,
+  capitulo   INTEGER NOT NULL,
+  creado_en  TEXT    NOT NULL DEFAULT (datetime('now')),
+  UNIQUE(uid, libro, capitulo)              -- un mismo capítulo no se duplica
+);
+CREATE INDEX IF NOT EXISTS idx_downloads_uid ON user_downloads(uid, creado_en DESC);
+
 -- ── Premium: catálogo de contenido protegido servido por el portero ───
 -- El archivo vive en un bucket R2 PRIVADO; solo el Worker (tras verificar
 -- token + premium) lo entrega. Nunca se expone una URL pública.

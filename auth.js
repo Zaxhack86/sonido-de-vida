@@ -68,6 +68,13 @@
     SDV.listVerses = () => api('/api/verses', { method: 'GET' });
     SDV.removeVerse = (id) => api('/api/verses/' + id, { method: 'DELETE' });
 
+    // Biblioteca de descargas: lista sincronizada entre dispositivos (solo
+    // libro+capítulo; el audio sigue en R2). Permite recuperarla tras borrar
+    // los datos del navegador o al entrar desde otro equipo.
+    SDV.listLibrary   = () => api('/api/library', { method: 'GET' });
+    SDV.saveLibrary   = (libro, capitulo) => api('/api/library', { method: 'POST', body: JSON.stringify({ libro, capitulo }) });
+    SDV.removeLibrary = (libro, capitulo) => api('/api/library', { method: 'DELETE', body: JSON.stringify({ libro, capitulo }) });
+
     // Descargas: el límite vive en el servidor (por uid), no en localStorage.
     SDV.getDownloads     = () => api('/api/downloads', { method: 'GET' });
     SDV.consumeDownload  = () => api('/api/downloads', { method: 'POST' });
