@@ -368,13 +368,13 @@
         /* ════════ Barra de navegación inferior (app-shell) ════════ */
         :root{--bottomnav-h:62px}
         body{padding-bottom:var(--bottomnav-h)}
-        .bottom-nav{position:fixed;top:auto;bottom:0;left:0;right:0;z-index:1001;height:var(--bottomnav-h);background:rgba(250,248,244,.97);backdrop-filter:blur(20px);border-top:1px solid rgba(0,0,0,.07);display:flex;justify-content:space-around;align-items:stretch;box-shadow:0 -4px 24px rgba(0,0,0,.06);padding-bottom:env(safe-area-inset-bottom)}
-        .bn-item{flex:1;background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.18rem;color:var(--text-light);font-family:'Inter',sans-serif;font-size:.66rem;font-weight:500;transition:color .2s;padding:.35rem 0;min-width:0}
-        .bn-item .bn-ico{font-size:1.32rem;line-height:1;transition:transform .2s}
+        .bottom-nav{position:fixed;top:auto;bottom:0;left:0;right:0;z-index:1001;height:var(--bottomnav-h);background:rgba(13,13,26,.97);backdrop-filter:blur(20px);border-top:1px solid rgba(201,168,76,.2);display:flex;justify-content:space-around;align-items:stretch;box-shadow:0 -6px 30px rgba(0,0,0,.35);padding-bottom:env(safe-area-inset-bottom)}
+        .bn-item{flex:1;background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.18rem;color:rgba(255,255,255,.55);font-family:'Inter',sans-serif;font-size:.66rem;font-weight:500;transition:color .25s;padding:.35rem 0;min-width:0}
+        .bn-item .bn-ico{font-size:1.32rem;line-height:1;transition:transform .25s;filter:grayscale(.35) opacity(.85)}
         .bn-item .bn-label{letter-spacing:.2px;white-space:nowrap}
-        .bn-item:hover{color:var(--gold-dark)}
-        .bn-item.active{color:var(--gold-dark)}
-        .bn-item.active .bn-ico{transform:translateY(-1px) scale(1.08)}
+        .bn-item:hover{color:var(--gold-light)}
+        .bn-item.active{color:var(--gold-light)}
+        .bn-item.active .bn-ico{transform:translateY(-2px) scale(1.1);filter:none;text-shadow:0 0 12px rgba(201,168,76,.6)}
         .bn-item.active .bn-label{font-weight:700}
         /* El reproductor flota justo encima de la barra inferior */
         .audio-player-bar{bottom:var(--bottomnav-h)}
@@ -390,37 +390,42 @@
         body[data-tab-active="yo"]       [data-tab]:not([data-tab="yo"]){display:none!important}
 
         /* ════════ Pestaña Buscar ════════ */
-        .search-section{padding:5rem 2rem 3rem;background:var(--warm-white);min-height:80vh}
+        .search-section{padding:5rem 2rem 3rem;background:linear-gradient(180deg,var(--deep-blue) 0%,var(--dark) 100%);min-height:80vh}
+        .search-section .section-header h2{color:#fff}
+        .search-section .section-header p{color:rgba(255,255,255,.6)}
         .search-box-wrap{max-width:700px;margin:0 auto}
         .search-input-row{display:flex;gap:.6rem;margin-bottom:1.5rem}
-        .search-input{flex:1;padding:.9rem 1.1rem;border:1px solid rgba(0,0,0,.12);border-radius:14px;font-size:1rem;font-family:'Inter',sans-serif;background:#fff;color:var(--text-dark);transition:border-color .25s,box-shadow .25s}
-        .search-input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,.12)}
+        .search-input{flex:1;padding:.9rem 1.1rem;border:1px solid rgba(201,168,76,.25);border-radius:14px;font-size:1rem;font-family:'Inter',sans-serif;background:rgba(255,255,255,.07);color:#fff;transition:border-color .25s,box-shadow .25s}
+        .search-input::placeholder{color:rgba(255,255,255,.4)}
+        .search-input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,.18)}
         .search-go-btn{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:var(--dark);border:none;border-radius:14px;padding:0 1.3rem;font-size:1.1rem;cursor:pointer;font-weight:600}
-        .search-hint{color:var(--text-light);font-size:.9rem;text-align:center;margin-top:.5rem}
+        .search-hint{color:rgba(255,255,255,.5);font-size:.9rem;text-align:center;margin-top:.5rem}
         .search-results{margin-top:1.5rem;display:flex;flex-direction:column;gap:.7rem}
-        .search-result{background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:14px;padding:1rem 1.2rem;cursor:pointer;transition:transform .2s,box-shadow .2s;text-align:left}
-        .search-result:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,.07)}
-        .search-result-ref{font-family:'Cinzel',serif;color:var(--gold-dark);font-size:.9rem;font-weight:600;margin-bottom:.3rem}
-        .search-result-text{font-family:'Lora',serif;color:var(--text-dark);font-size:.95rem;line-height:1.6}
-        .search-result-text mark{background:rgba(201,168,76,.3);color:inherit;padding:0 .1em;border-radius:3px}
-        .search-empty{text-align:center;color:var(--text-light);padding:3rem 1rem;font-family:'Lora',serif}
+        .search-result{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:1rem 1.2rem;cursor:pointer;transition:transform .2s,box-shadow .2s,border-color .2s;text-align:left;backdrop-filter:blur(10px)}
+        .search-result:hover{transform:translateY(-2px);box-shadow:0 12px 34px rgba(0,0,0,.3);border-color:rgba(201,168,76,.4)}
+        .search-result-ref{font-family:'Cinzel',serif;color:var(--gold-light);font-size:.9rem;font-weight:600;margin-bottom:.3rem}
+        .search-result-text{font-family:'Lora',serif;color:rgba(255,255,255,.82);font-size:.95rem;line-height:1.6}
+        .search-result-text mark{background:rgba(201,168,76,.35);color:var(--gold-light);padding:0 .1em;border-radius:3px}
+        .search-empty{text-align:center;color:rgba(255,255,255,.55);padding:3rem 1rem;font-family:'Lora',serif}
 
         /* ════════ Pestaña Yo ════════ */
-        .yo-section{padding:4.5rem 1.5rem 3rem;background:var(--warm-white);min-height:80vh}
+        .yo-section{padding:4.5rem 1.5rem 3rem;background:linear-gradient(135deg,#14142e 0%,var(--dark) 100%);min-height:80vh}
         .yo-inner{max-width:640px;margin:0 auto}
         .yo-head{text-align:center;margin-bottom:2rem}
-        .yo-head h2{font-family:'Cinzel',serif;font-size:1.8rem;color:var(--deep-blue);margin-bottom:.3rem}
-        .yo-head p{color:var(--text-light);font-size:.95rem}
-        .yo-card{background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:18px;padding:1.4rem 1.5rem;margin-bottom:1.1rem;box-shadow:0 6px 24px rgba(0,0,0,.04)}
-        .yo-account-name{font-family:'Cinzel',serif;font-size:1.2rem;color:var(--deep-blue)}
-        .yo-account-mail{color:var(--text-light);font-size:.85rem;margin-top:.15rem}
-        .yo-account-plan{font-size:.82rem;margin-top:.4rem;font-weight:600}
-        .yo-menu{list-style:none;background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:18px;overflow:hidden;box-shadow:0 6px 24px rgba(0,0,0,.04)}
-        .yo-menu li{display:flex;align-items:center;gap:.9rem;padding:1rem 1.3rem;cursor:pointer;border-bottom:1px solid rgba(0,0,0,.05);transition:background .15s;font-size:.96rem;color:var(--text-dark)}
+        .yo-head h2{font-family:'Cinzel',serif;font-size:1.8rem;color:var(--gold-light);margin-bottom:.3rem}
+        .yo-head p{color:rgba(255,255,255,.55);font-size:.95rem}
+        .yo-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:1.4rem 1.5rem;margin-bottom:1.1rem;box-shadow:0 8px 30px rgba(0,0,0,.25);backdrop-filter:blur(10px)}
+        .yo-card h3{color:#fff}
+        .yo-card > p{color:rgba(255,255,255,.65)}
+        .yo-account-name{font-family:'Cinzel',serif;font-size:1.2rem;color:#fff}
+        .yo-account-mail{color:rgba(255,255,255,.55);font-size:.85rem;margin-top:.15rem}
+        .yo-account-plan{font-size:.82rem;margin-top:.4rem;font-weight:600;color:var(--gold-light)}
+        .yo-menu{list-style:none;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:18px;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,.25);backdrop-filter:blur(10px)}
+        .yo-menu li{display:flex;align-items:center;gap:.9rem;padding:1rem 1.3rem;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.07);transition:background .15s;font-size:.96rem;color:rgba(255,255,255,.85)}
         .yo-menu li:last-child{border-bottom:none}
-        .yo-menu li:hover{background:rgba(201,168,76,.06)}
+        .yo-menu li:hover{background:rgba(201,168,76,.12)}
         .yo-menu li .yo-ico{font-size:1.2rem;width:1.6rem;text-align:center}
-        .yo-menu li .yo-arrow{margin-left:auto;color:var(--text-light)}
+        .yo-menu li .yo-arrow{margin-left:auto;color:var(--gold-light)}
         .yo-cta{width:100%;background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:var(--dark);border:none;border-radius:14px;padding:1rem;font-size:1rem;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;margin-bottom:1.1rem}
     </style>
 </head>
@@ -640,8 +645,8 @@
             <div id="yoLoggedOut">
                 <div class="yo-card" style="text-align:center">
                     <div class="hero-badge" style="margin-bottom:1rem">✦ Gratis para siempre</div>
-                    <h3 style="font-family:'Cinzel',serif;color:var(--deep-blue);margin-bottom:.5rem">Crea tu cuenta gratis</h3>
-                    <p style="color:var(--text-light);font-size:.92rem;margin-bottom:1.2rem">Guarda tus versículos favoritos, descarga capítulos y lleva tu biblioteca en todos tus dispositivos.</p>
+                    <h3 style="font-family:'Cinzel',serif;color:#fff;margin-bottom:.5rem">Crea tu cuenta gratis</h3>
+                    <p style="color:rgba(255,255,255,.65);font-size:.92rem;margin-bottom:1.2rem">Guarda tus versículos favoritos, descarga capítulos y lleva tu biblioteca en todos tus dispositivos.</p>
                     <button class="yo-cta" onclick="SDV_Account.open();return false;">✦ Crear mi cuenta gratis</button>
                 </div>
             </div>
@@ -656,7 +661,7 @@
             </ul>
 
             <div class="yo-card" style="text-align:center;margin-top:1.1rem">
-                <p style="font-family:'Lora',serif;color:var(--text-light);font-size:.9rem;font-style:italic">"Lámpara es a mis pies tu palabra, y lumbrera a mi camino." — Salmo 119:105</p>
+                <p style="font-family:'Lora',serif;color:rgba(255,255,255,.6);font-size:.9rem;font-style:italic">"Lámpara es a mis pies tu palabra, y lumbrera a mi camino." — Salmo 119:105</p>
             </div>
         </div>
     </section>
