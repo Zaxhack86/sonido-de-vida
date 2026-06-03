@@ -364,9 +364,67 @@
         .welcome-badge{display:block;width:fit-content;margin:0 auto .9rem;background:rgba(201,168,76,.15);border:1px solid rgba(201,168,76,.35);color:var(--gold-light);font-size:.72rem;font-weight:600;letter-spacing:.5px;text-transform:uppercase;padding:.3rem .85rem;border-radius:50px;font-family:'Inter',sans-serif}
         .welcome-perks{list-style:none;margin:0 0 1.4rem;padding:0;display:flex;flex-direction:column;gap:.55rem}
         .welcome-perks li{color:rgba(255,255,255,.88);font-family:'Inter',sans-serif;font-size:.92rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:.7rem .9rem}
+
+        /* ════════ Barra de navegación inferior (app-shell) ════════ */
+        :root{--bottomnav-h:62px}
+        body{padding-bottom:var(--bottomnav-h)}
+        .bottom-nav{position:fixed;top:auto;bottom:0;left:0;right:0;z-index:1001;height:var(--bottomnav-h);background:rgba(250,248,244,.97);backdrop-filter:blur(20px);border-top:1px solid rgba(0,0,0,.07);display:flex;justify-content:space-around;align-items:stretch;box-shadow:0 -4px 24px rgba(0,0,0,.06);padding-bottom:env(safe-area-inset-bottom)}
+        .bn-item{flex:1;background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.18rem;color:var(--text-light);font-family:'Inter',sans-serif;font-size:.66rem;font-weight:500;transition:color .2s;padding:.35rem 0;min-width:0}
+        .bn-item .bn-ico{font-size:1.32rem;line-height:1;transition:transform .2s}
+        .bn-item .bn-label{letter-spacing:.2px;white-space:nowrap}
+        .bn-item:hover{color:var(--gold-dark)}
+        .bn-item.active{color:var(--gold-dark)}
+        .bn-item.active .bn-ico{transform:translateY(-1px) scale(1.08)}
+        .bn-item.active .bn-label{font-weight:700}
+        /* El reproductor flota justo encima de la barra inferior */
+        .audio-player-bar{bottom:var(--bottomnav-h)}
+        .install-banner{bottom:calc(var(--bottomnav-h) + 1rem)}
+        .toast{bottom:calc(var(--bottomnav-h) + 1rem)}
+        /* Cada pestaña arranca su scroll desde arriba */
+        [data-tab]{scroll-margin-top:0}
+        /* Mostrar solo la pestaña activa (preserva el display natural de cada sección) */
+        body[data-tab-active="inicio"]   [data-tab]:not([data-tab="inicio"]),
+        body[data-tab-active="explorar"] [data-tab]:not([data-tab="explorar"]),
+        body[data-tab-active="biblia"]   [data-tab]:not([data-tab="biblia"]),
+        body[data-tab-active="buscar"]   [data-tab]:not([data-tab="buscar"]),
+        body[data-tab-active="yo"]       [data-tab]:not([data-tab="yo"]){display:none!important}
+
+        /* ════════ Pestaña Buscar ════════ */
+        .search-section{padding:5rem 2rem 3rem;background:var(--warm-white);min-height:80vh}
+        .search-box-wrap{max-width:700px;margin:0 auto}
+        .search-input-row{display:flex;gap:.6rem;margin-bottom:1.5rem}
+        .search-input{flex:1;padding:.9rem 1.1rem;border:1px solid rgba(0,0,0,.12);border-radius:14px;font-size:1rem;font-family:'Inter',sans-serif;background:#fff;color:var(--text-dark);transition:border-color .25s,box-shadow .25s}
+        .search-input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,.12)}
+        .search-go-btn{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:var(--dark);border:none;border-radius:14px;padding:0 1.3rem;font-size:1.1rem;cursor:pointer;font-weight:600}
+        .search-hint{color:var(--text-light);font-size:.9rem;text-align:center;margin-top:.5rem}
+        .search-results{margin-top:1.5rem;display:flex;flex-direction:column;gap:.7rem}
+        .search-result{background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:14px;padding:1rem 1.2rem;cursor:pointer;transition:transform .2s,box-shadow .2s;text-align:left}
+        .search-result:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,.07)}
+        .search-result-ref{font-family:'Cinzel',serif;color:var(--gold-dark);font-size:.9rem;font-weight:600;margin-bottom:.3rem}
+        .search-result-text{font-family:'Lora',serif;color:var(--text-dark);font-size:.95rem;line-height:1.6}
+        .search-result-text mark{background:rgba(201,168,76,.3);color:inherit;padding:0 .1em;border-radius:3px}
+        .search-empty{text-align:center;color:var(--text-light);padding:3rem 1rem;font-family:'Lora',serif}
+
+        /* ════════ Pestaña Yo ════════ */
+        .yo-section{padding:4.5rem 1.5rem 3rem;background:var(--warm-white);min-height:80vh}
+        .yo-inner{max-width:640px;margin:0 auto}
+        .yo-head{text-align:center;margin-bottom:2rem}
+        .yo-head h2{font-family:'Cinzel',serif;font-size:1.8rem;color:var(--deep-blue);margin-bottom:.3rem}
+        .yo-head p{color:var(--text-light);font-size:.95rem}
+        .yo-card{background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:18px;padding:1.4rem 1.5rem;margin-bottom:1.1rem;box-shadow:0 6px 24px rgba(0,0,0,.04)}
+        .yo-account-name{font-family:'Cinzel',serif;font-size:1.2rem;color:var(--deep-blue)}
+        .yo-account-mail{color:var(--text-light);font-size:.85rem;margin-top:.15rem}
+        .yo-account-plan{font-size:.82rem;margin-top:.4rem;font-weight:600}
+        .yo-menu{list-style:none;background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:18px;overflow:hidden;box-shadow:0 6px 24px rgba(0,0,0,.04)}
+        .yo-menu li{display:flex;align-items:center;gap:.9rem;padding:1rem 1.3rem;cursor:pointer;border-bottom:1px solid rgba(0,0,0,.05);transition:background .15s;font-size:.96rem;color:var(--text-dark)}
+        .yo-menu li:last-child{border-bottom:none}
+        .yo-menu li:hover{background:rgba(201,168,76,.06)}
+        .yo-menu li .yo-ico{font-size:1.2rem;width:1.6rem;text-align:center}
+        .yo-menu li .yo-arrow{margin-left:auto;color:var(--text-light)}
+        .yo-cta{width:100%;background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:var(--dark);border:none;border-radius:14px;padding:1rem;font-size:1rem;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;margin-bottom:1.1rem}
     </style>
 </head>
-<body>
+<body data-tab-active="inicio">
 
     <nav id="navbar">
         <a href="#" class="nav-logo"><span style="font-size:1.8rem">✝</span> Sonido de Vida</a>
@@ -390,7 +448,7 @@
         </div>
     </nav>
 
-    <section class="hero">
+    <section class="hero" data-tab="inicio">
         <div class="hero-bg"></div>
         <div class="hero-particles" id="particles"></div>
         <div class="hero-content">
@@ -407,7 +465,7 @@
         </div>
     </section>
 
-    <section class="stats-bar">
+    <section class="stats-bar" data-tab="inicio">
         <div class="stats-grid">
             <div class="stat-item"><h3>66</h3><p>Libros</p></div>
             <div class="stat-item"><h3>1,189</h3><p>Capítulos en audio</p></div>
@@ -416,7 +474,7 @@
         </div>
     </section>
 
-    <section class="features" id="features">
+    <section class="features" id="features" data-tab="explorar">
         <div class="section-header reveal"><h2>¿Por qué Sonido de Vida?</h2><p>Conecta con la Palabra de Dios de manera simple y accesible</p></div>
         <div class="features-grid">
             <div class="feature-card reveal"><div class="feature-icon">🎧</div><h3>Audio por Capítulo</h3><p>Cada capítulo narrado con claridad y reverencia en español latinoamericano. Disponible en dos versiones: RVA 1909 y SBLL 2026.</p></div>
@@ -426,7 +484,7 @@
         </div>
     </section>
 
-    <section class="listen-section" id="listen">
+    <section class="listen-section" id="listen" data-tab="biblia">
         <div class="section-header reveal"><h2>Escuchar la Biblia</h2><p>Selecciona un libro y capítulo para escuchar el audio completo</p></div>
         <div class="listen-container reveal">
             <div class="listen-box">
@@ -479,7 +537,7 @@
         </div>
     </section>
 
-    <section class="random-section" id="random">
+    <section class="random-section" id="random" data-tab="inicio">
         <div class="section-header reveal"><h2>Versículo del Momento</h2><p>Deja que Dios hable a tu corazón con un versículo al azar</p></div>
         <div class="random-container reveal">
             <button class="random-btn" onclick="getRandomVerse()">
@@ -498,7 +556,7 @@
         </div>
     </section>
 
-    <section class="devocionales-section" id="devocionales">
+    <section class="devocionales-section" id="devocionales" data-tab="explorar">
         <div class="section-header reveal">
             <h2>Devocionales Bíblicos</h2>
             <p>Reflexiones profundas sobre la Palabra de Dios para tu vida diaria</p>
@@ -531,7 +589,7 @@
         </div>
     </section>
 
-    <section class="account-promo" id="cuenta">
+    <section class="account-promo" id="cuenta" data-tab="explorar">
         <div class="account-promo-inner reveal">
             <div class="hero-badge" style="margin-bottom:1.5rem">✦ Gratis para siempre</div>
             <h2>Crea tu cuenta gratis</h2>
@@ -546,11 +604,60 @@
         </div>
     </section>
 
-    <section class="cta-section">
+    <section class="cta-section" data-tab="inicio">
         <div class="cta-content reveal">
             <h2>La Palabra de Dios es para todos</h2>
             <p>"Porque la palabra de Dios es viva y eficaz, y más cortante que toda espada de dos filos" — Hebreos 4:12</p>
             <a href="#listen" class="btn-primary">✨ Comenzar a Escuchar</a>
+        </div>
+    </section>
+
+    <section class="search-section" data-tab="buscar">
+        <div class="section-header"><h2>Buscar en la Biblia</h2><p>Escribe una palabra o frase y encuentra el versículo</p></div>
+        <div class="search-box-wrap">
+            <div class="search-input-row">
+                <input type="search" class="search-input" id="searchInput" placeholder="Ej: amor, fe, pastor, Jehová..." autocomplete="off" onkeydown="if(event.key==='Enter')runSearch()">
+                <button class="search-go-btn" onclick="runSearch()" aria-label="Buscar">🔍</button>
+            </div>
+            <p class="search-hint">Busca en la versión activa (RVA 1909 / SBLL 2026). Toca un resultado para escucharlo.</p>
+            <div class="search-results" id="searchResults"></div>
+        </div>
+    </section>
+
+    <section class="yo-section" data-tab="yo">
+        <div class="yo-inner">
+            <div class="yo-head">
+                <h2>Mi Espacio</h2>
+                <p>Tu rincón en Sonido de Vida</p>
+            </div>
+
+            <div class="yo-card" id="yoLoggedIn" style="display:none">
+                <div class="yo-account-name" id="yoName">—</div>
+                <div class="yo-account-mail" id="yoMail"></div>
+                <div class="yo-account-plan" id="yoPlan" style="color:var(--gold-dark)">Cuenta gratuita</div>
+            </div>
+
+            <div id="yoLoggedOut">
+                <div class="yo-card" style="text-align:center">
+                    <div class="hero-badge" style="margin-bottom:1rem">✦ Gratis para siempre</div>
+                    <h3 style="font-family:'Cinzel',serif;color:var(--deep-blue);margin-bottom:.5rem">Crea tu cuenta gratis</h3>
+                    <p style="color:var(--text-light);font-size:.92rem;margin-bottom:1.2rem">Guarda tus versículos favoritos, descarga capítulos y lleva tu biblioteca en todos tus dispositivos.</p>
+                    <button class="yo-cta" onclick="SDV_Account.open();return false;">✦ Crear mi cuenta gratis</button>
+                </div>
+            </div>
+
+            <ul class="yo-menu">
+                <li onclick="showTab('biblia')"><span class="yo-ico">📖</span> Seguir escuchando <span class="yo-arrow">›</span></li>
+                <li onclick="SDV_Account.open();return false;"><span class="yo-ico">🔖</span> Mis versículos <span class="yo-arrow">›</span></li>
+                <li onclick="SDV_Account.open();return false;"><span class="yo-ico">💾</span> Mis descargas <span class="yo-arrow">›</span></li>
+                <li onclick="showTab('explorar')"><span class="yo-ico">📿</span> Devocionales <span class="yo-arrow">›</span></li>
+                <li onclick="openInstall(event)"><span class="yo-ico">📲</span> Instalar app <span class="yo-arrow">›</span></li>
+                <li onclick="openShareModal();return false;"><span class="yo-ico">🔗</span> Compartir / QR <span class="yo-arrow">›</span></li>
+            </ul>
+
+            <div class="yo-card" style="text-align:center;margin-top:1.1rem">
+                <p style="font-family:'Lora',serif;color:var(--text-light);font-size:.9rem;font-style:italic">"Lámpara es a mis pies tu palabra, y lumbrera a mi camino." — Salmo 119:105</p>
+            </div>
         </div>
     </section>
 
@@ -563,6 +670,14 @@
             <p class="footer-bottom">© 2026 Sonido de Vida · sonidodevida.com · La Palabra de Dios, libre para todos.</p>
         </div>
     </footer>
+
+    <nav class="bottom-nav" id="bottomNav" role="tablist" aria-label="Navegación principal">
+        <button class="bn-item active" data-bn="inicio" onclick="showTab('inicio')" role="tab"><span class="bn-ico">🏠</span><span class="bn-label">Inicio</span></button>
+        <button class="bn-item" data-bn="explorar" onclick="showTab('explorar')" role="tab"><span class="bn-ico">🧭</span><span class="bn-label">Explorar</span></button>
+        <button class="bn-item" data-bn="biblia" onclick="showTab('biblia')" role="tab"><span class="bn-ico">📖</span><span class="bn-label">Biblia</span></button>
+        <button class="bn-item" data-bn="buscar" onclick="showTab('buscar')" role="tab"><span class="bn-ico">🔍</span><span class="bn-label">Buscar</span></button>
+        <button class="bn-item" data-bn="yo" onclick="showTab('yo')" role="tab"><span class="bn-ico">👤</span><span class="bn-label">Yo</span></button>
+    </nav>
 
     <div class="audio-player-bar" id="audioPlayerBar">
         <div class="player-inner">
@@ -842,6 +957,7 @@
         populateBooks();
         createParticles();
         initScrollAnimations();
+        initTabLinks();
         initNavbar();
         initAudioEvents();
         registerSW();
@@ -1688,6 +1804,79 @@
         document.getElementById('mobileMenuBtn').classList.remove('active');
         document.getElementById('navLinks').classList.remove('open');
     }
+
+    /* ════════ Router de pestañas (app-shell) ════════ */
+    const TABS = ['inicio','explorar','biblia','buscar','yo'];
+    function showTab(name, opts) {
+        if (!TABS.includes(name)) name = 'inicio';
+        document.body.setAttribute('data-tab-active', name);
+        // Resaltar el botón activo de la barra inferior
+        document.querySelectorAll('.bottom-nav .bn-item').forEach(b => {
+            b.classList.toggle('active', b.dataset.bn === name);
+        });
+        // Forzar la aparición de los elementos .reveal de la pestaña (no esperan al scroll)
+        document.querySelectorAll('[data-tab="' + name + '"] .reveal').forEach(el => el.classList.add('visible'));
+        closeMenu();
+        if (!opts || opts.scroll !== false) window.scrollTo({ top: 0, behavior: 'auto' });
+    }
+
+    // Mapear los enlaces internos (#listen, #features...) a sus pestañas
+    const HASH_TAB = { '#features':'explorar', '#listen':'biblia', '#random':'inicio', '#cuenta':'explorar', '#devocionales':'explorar' };
+    function initTabLinks() {
+        document.addEventListener('click', (e) => {
+            const a = e.target.closest('a[href^="#"]');
+            if (!a) return;
+            const tab = HASH_TAB[a.getAttribute('href')];
+            if (!tab) return;
+            e.preventDefault();
+            showTab(tab);
+        });
+    }
+
+    /* ════════ Búsqueda en la Biblia ════════ */
+    function runSearch() {
+        const input = document.getElementById('searchInput');
+        const box = document.getElementById('searchResults');
+        const q = (input.value || '').trim();
+        const ql = q.toLowerCase();
+        if (ql.length < 2) { box.innerHTML = '<div class="search-empty">Escribe al menos 2 letras para buscar.</div>'; return; }
+        const bible = getActiveBible();
+        if (!bible) { box.innerHTML = '<div class="search-empty">No se pudo cargar el texto bíblico.</div>'; return; }
+        const results = [];
+        const MAX = 60;
+        let truncated = false;
+        outer:
+        for (const book of Object.keys(bible)) {
+            const chapters = bible[book];
+            if (!chapters) continue;
+            for (let c = 0; c < chapters.length; c++) {
+                const verses = chapters[c];
+                if (!verses) continue;
+                for (let v = 0; v < verses.length; v++) {
+                    const text = verses[v];
+                    if (text && text.toLowerCase().includes(ql)) {
+                        results.push({ book, chapter: c + 1, verse: v + 1, text });
+                        if (results.length >= MAX) { truncated = true; break outer; }
+                    }
+                }
+            }
+        }
+        if (!results.length) { box.innerHTML = '<div class="search-empty">Sin resultados para “' + q.replace(/</g,'&lt;') + '”.</div>'; return; }
+        const re = new RegExp('(' + ql.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
+        let html = results.map(r => {
+            const safe = r.text.replace(/</g,'&lt;').replace(re, '<mark>$1</mark>');
+            const bookAttr = r.book.replace(/"/g, '&quot;');
+            return '<button class="search-result" onclick="openSearchResult(&quot;' + bookAttr + '&quot;,' + r.chapter + ')">' +
+                '<div class="search-result-ref">' + r.book + ' ' + r.chapter + ':' + r.verse + '</div>' +
+                '<div class="search-result-text">' + safe + '</div></button>';
+        }).join('');
+        if (truncated) html += '<div class="search-empty">Mostrando los primeros ' + MAX + ' resultados. Afina tu búsqueda.</div>';
+        box.innerHTML = html;
+    }
+    function openSearchResult(book, chapter) {
+        showTab('biblia');
+        loadChapter({ book, chapter });
+    }
     </script>
 
     <!-- ════ Cuenta de usuario: glue UI ↔ SDV_Auth (api en auth.js) ════ -->
@@ -1787,11 +1976,18 @@
             if (crearItem) crearItem.style.display = user ? 'none' : '';
             $('accountLoggedOut').style.display = user ? 'none' : '';
             $('accountLoggedIn').style.display = user ? '' : 'none';
+            // Pestaña "Yo": tarjeta de cuenta según sesión
+            const yoIn = $('yoLoggedIn'), yoOut = $('yoLoggedOut');
+            if (yoIn) yoIn.style.display = user ? '' : 'none';
+            if (yoOut) yoOut.style.display = user ? 'none' : '';
             if (user) {
                 $('accountName').textContent = user.displayName || '👋';
                 $('accountEmailShown').textContent = user.email || '';
                 $('accountPlan').textContent = SDV_Auth.premium ? '⭐ Premium' : 'Plan gratis';
                 $('accountPlan').style.color = SDV_Auth.premium ? 'var(--gold-light,#e8d48b)' : 'rgba(255,255,255,.6)';
+                if ($('yoName')) $('yoName').textContent = user.displayName || '👋';
+                if ($('yoMail')) $('yoMail').textContent = user.email || '';
+                if ($('yoPlan')) $('yoPlan').textContent = SDV_Auth.premium ? '⭐ Premium' : 'Cuenta gratuita';
                 if ($('accountModal').classList.contains('visible')) Acc.loadVerses();
             }
             // Sincronizar cupo de descargas desde el servidor (por uid).
