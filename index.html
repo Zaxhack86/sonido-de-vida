@@ -467,7 +467,10 @@
         .focus-play{width:78px;height:78px;border-radius:50%;border:none;cursor:pointer;background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#0d0d1a;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 36px rgba(201,168,76,.35);transition:transform .2s}
         .focus-play:active{transform:scale(.94)}
         .focus-play svg{width:34px;height:34px;fill:#0d0d1a}
-        .focus-ambients{display:flex;flex-wrap:wrap;gap:.55rem;justify-content:center}
+        .focus-ambients{display:flex;flex-direction:column;gap:1rem;width:100%;max-width:520px}
+        .focus-cat{display:flex;flex-direction:column;gap:.5rem}
+        .focus-cat-label{font-family:'Inter',sans-serif;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.5);text-align:left}
+        .focus-cat-row{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:flex-start}
         .focus-chip{display:inline-flex;align-items:center;gap:.4rem;padding:.55rem .95rem;border-radius:50px;border:1px solid rgba(201,168,76,.3);background:rgba(201,168,76,.07);color:rgba(255,255,255,.85);font-family:'Inter',sans-serif;font-size:.88rem;cursor:pointer;transition:all .25s}
         .focus-chip:hover{border-color:rgba(201,168,76,.6)}
         .focus-chip.active{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#0d0d1a;border-color:transparent;font-weight:600}
@@ -1513,14 +1516,24 @@
         const overlay   = document.getElementById('focusOverlay');
         const ambientEl = document.getElementById('ambientAudio');
         // Catálogo de ambientes. `contentId` = id en content_items (D1) servido
-        // por el portero premium. Mientras sea null, el chip aparece como
-        // "pronto". Al subir cada loop a R2 y registrarlo, se rellena su id aquí.
+        // por el portero premium (/api/content/:id). Si es null, el chip sale
+        // como "pronto". Los archivos viven en el bucket privado sdv-premium.
         const ambients = [
-            { id: 'lluvia', label: 'Lluvia',      emoji: '🌧️', contentId: null },
-            { id: 'piano',  label: 'Piano suave', emoji: '🎹', contentId: null },
-            { id: 'pads',   label: 'Ambiente',    emoji: '🌌', contentId: null },
-            { id: 'olas',   label: 'Olas',        emoji: '🌊', contentId: null },
+            { id: 'piano-romantico',    cat: 'piano',      label: 'Piano Romántico',    emoji: '🎹', contentId: 1 },
+            { id: 'piano-relajante',    cat: 'piano',      label: 'Piano Relajante',    emoji: '🎹', contentId: 2 },
+            { id: 'piano-suave',        cat: 'piano',      label: 'Piano Suave',        emoji: '🎹', contentId: 3 },
+            { id: 'piano-instrumental', cat: 'piano',      label: 'Piano Instrumental', emoji: '🎹', contentId: 4 },
+            { id: 'lluvia',             cat: 'naturaleza', label: 'Lluvia',             emoji: '🌧️', contentId: 5 },
+            { id: 'olas-lejanas',       cat: 'naturaleza', label: 'Olas',               emoji: '🌊', contentId: 6 },
+            { id: 'tormenta-nieve',     cat: 'naturaleza', label: 'Tormenta de Nieve',  emoji: '❄️', contentId: 7 },
+            { id: 'pradera-viento',     cat: 'naturaleza', label: 'Pradera y Viento',   emoji: '🍃', contentId: 8 },
+            { id: 'ambiente-calma',     cat: 'ambiente',   label: 'Ambiente en Calma',  emoji: '🌌', contentId: 9 },
+            { id: 'mar-viento',         cat: 'ambiente',   label: 'Mar y Viento',       emoji: '🌬️', contentId: 10 },
+            { id: 'paz-abraza',         cat: 'ambiente',   label: 'Paz que Abraza',     emoji: '🕊️', contentId: 11 },
+            { id: 'salmos-oceano',      cat: 'ambiente',   label: 'Salmos del Océano',  emoji: '🌊', contentId: 12 },
         ];
+        const CAT_LABELS = { piano: '🎹 Piano', naturaleza: '🌿 Naturaleza', ambiente: '🌌 Ambiente' };
+        const CAT_ORDER  = ['piano', 'naturaleza', 'ambiente'];
 
         let vozVol = 1, musicaVol = 0.55;
         let currentAmbient = null, blobUrl = null, timerId = null, loading = false;
@@ -1536,14 +1549,28 @@
         function renderAmbients() {
             const box = document.getElementById('focusAmbients');
             box.innerHTML = '';
-            ambients.forEach(a => {
-                const b = document.createElement('button');
-                const soon = a.contentId == null;
-                b.className = 'focus-chip' + (soon ? ' soon' : '') + (currentAmbient === a.id ? ' active' : '');
-                b.dataset.ambient = a.id;
-                b.innerHTML = `<span>${a.emoji}</span> ${a.label}` + (soon ? ' · pronto' : '');
-                b.onclick = () => selectAmbient(a.id);
-                box.appendChild(b);
+            CAT_ORDER.forEach(cat => {
+                const items = ambients.filter(a => a.cat === cat);
+                if (!items.length) return;
+                const group = document.createElement('div');
+                group.className = 'focus-cat';
+                const h = document.createElement('div');
+                h.className = 'focus-cat-label';
+                h.textContent = CAT_LABELS[cat] || cat;
+                group.appendChild(h);
+                const row = document.createElement('div');
+                row.className = 'focus-cat-row';
+                items.forEach(a => {
+                    const b = document.createElement('button');
+                    const soon = a.contentId == null;
+                    b.className = 'focus-chip' + (soon ? ' soon' : '') + (currentAmbient === a.id ? ' active' : '');
+                    b.dataset.ambient = a.id;
+                    b.innerHTML = `<span>${a.emoji}</span> ${a.label}` + (soon ? ' · pronto' : '');
+                    b.onclick = () => selectAmbient(a.id);
+                    row.appendChild(b);
+                });
+                group.appendChild(row);
+                box.appendChild(group);
             });
         }
         function markChips() {

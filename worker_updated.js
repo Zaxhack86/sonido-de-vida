@@ -86,23 +86,6 @@ async function getR2Object(env, primaryKey, isSBLL, ext) {
     return null;
 }
 
-async function handleFondo(env, key) {
-    const obj = await env.AUDIO_BUCKET.get(key).catch(() => null);
-    if (!obj) {
-        return new Response(
-            JSON.stringify({ error: "Sonido no encontrado", key }),
-            { status: 404, headers: { ...CORS, "Content-Type": "application/json" } }
-        );
-    }
-    const headers = new Headers(CORS);
-    headers.set("Content-Type", obj.httpMetadata?.contentType || "audio/mpeg");
-    headers.set("Accept-Ranges", "bytes");
-    headers.set("Cache-Control", "public, max-age=604800, immutable");
-    if (obj.size) headers.set("Content-Length", String(obj.size));
-    if (obj.httpEtag) headers.set("ETag", obj.httpEtag);
-    return new Response(obj.body, { status: 200, headers });
-}
-
 async function handleSingle(env, isSBLL, book, chapter) {
     const prefix = isSBLL ? "audio_sbll" : "audio";
     const obj = await getR2Object(env, `${prefix}/${book}/${chapter}.mp3`, isSBLL, "mp3");
@@ -183,14 +166,6 @@ const worker_default = {
         const pathname = url.pathname.replace(/^\//, "");
         const parts = pathname.split("/");
         const mode = url.searchParams.get("modo") || "continuar";
-
-        // Sonidos de fondo: /fondos/{categoria}/{archivo}.mp3
-        if (parts[0] === "fondos") {
-            if (parts.length < 3) {
-                return new Response("Bad Request", { status: 400, headers: CORS });
-            }
-            return handleFondo(env, pathname);
-        }
 
         // Detectar /stream/...
         if (parts[0] === "stream") {
