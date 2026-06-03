@@ -1,0 +1,7 @@
+name = "sonido-de-vida-audio"
+main = "worker_updated.js"
+compatibility_date = "2024-01-01"
+
+[[r2_buckets]]
+binding = "AUDIO_BUCKET"
+bucket_name = "sonido-de-vida-audio"
