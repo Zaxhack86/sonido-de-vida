@@ -471,9 +471,9 @@
         .focus-stage{position:relative;z-index:1;width:100%;max-width:560px;margin:auto 0;display:flex;flex-direction:column;align-items:center;gap:1.4rem;text-align:center}
         @media(max-height:760px){.focus-stage{gap:1rem}.focus-verses{max-height:26vh}.focus-play{width:64px;height:64px}.focus-play svg{width:28px;height:28px}}
         .focus-ref{font-family:'Cinzel',serif;color:var(--gold-light);font-size:1.05rem;letter-spacing:.08em;text-transform:uppercase;opacity:.85}
-        .focus-verses{max-height:34vh;overflow-y:auto;width:100%;padding:0 .4rem;scroll-behavior:auto;-webkit-mask-image:linear-gradient(180deg,transparent,#000 12%,#000 88%,transparent);mask-image:linear-gradient(180deg,transparent,#000 12%,#000 88%,transparent)}
-        .focus-verses p{font-family:'Lora',serif;color:rgba(255,255,255,.86);font-size:1.35rem;line-height:1.85;margin:0 0 1rem;text-wrap:balance}
-        .focus-verses .fv-num{color:var(--gold);font-size:.7em;font-family:'Inter',sans-serif;vertical-align:super;margin-right:.35em;opacity:.7}
+        .focus-verses{max-height:34vh;overflow-y:auto;width:100%;padding:0 .4rem;scroll-behavior:auto;-webkit-mask-image:linear-gradient(180deg,transparent,#000 7%,#000 93%,transparent);mask-image:linear-gradient(180deg,transparent,#000 7%,#000 93%,transparent)}
+        .focus-verses p{font-family:'Lora',serif;color:rgba(255,255,255,.97);font-size:1.35rem;line-height:1.85;margin:0 0 1rem;text-wrap:balance}
+        .focus-verses .fv-num{color:var(--gold);font-size:.7em;font-family:'Inter',sans-serif;vertical-align:super;margin-right:.35em;opacity:.85}
         .focus-empty{font-family:'Lora',serif;font-style:italic;color:rgba(255,255,255,.6);font-size:1.15rem}
         .focus-play{width:78px;height:78px;border-radius:50%;border:none;cursor:pointer;background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#0d0d1a;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 36px rgba(201,168,76,.35);transition:transform .2s}
         .focus-play:active{transform:scale(.94)}
@@ -506,8 +506,9 @@
         .teaser-list li{display:flex;align-items:flex-start;gap:.6rem;color:rgba(255,255,255,.85);font-family:'Inter',sans-serif;font-size:.92rem;line-height:1.4}
         .teaser-list li::before{content:'✓';color:var(--gold-light);font-weight:700;flex:none}
         .teaser-price{margin:1rem 0 .4rem;text-align:center;font-family:'Inter',sans-serif}
-        .teaser-price strong{display:block;font-size:1.5rem;color:var(--gold-light);font-weight:700}
-        .teaser-price small{display:block;margin-top:.3rem;font-size:.8rem;color:rgba(255,255,255,.55)}
+        .teaser-promo{display:block;margin-bottom:.5rem;font-size:.82rem;font-weight:600;color:var(--gold-light);letter-spacing:.01em}
+        .teaser-price strong{display:block;font-size:1.7rem;color:var(--gold-light);font-weight:700;line-height:1.1}
+        .teaser-price small{display:block;margin-top:.35rem;font-size:.82rem;color:rgba(255,255,255,.7)}
         .teaser-cta{width:100%;margin-top:.6rem}
     </style>
 </head>
@@ -521,7 +522,7 @@
         <div class="hero-bg"></div>
         <div class="hero-particles" id="particles"></div>
         <div class="hero-content">
-            <div class="hero-badge"><span class="pulse-dot"></span> Audio Real · Toda la Biblia · En español</div>
+            <div class="hero-badge"><span class="pulse-dot"></span> Audio Real · Toda la Biblia · En Español</div>
             <h1>Escucha la <span>Palabra</span> de Dios en cualquier momento</h1>
             <p>La Biblia completa narrada en audio, capítulo por capítulo. Escucha mientras manejas, descansas o con la pantalla apagada.</p>
             <div class="hero-buttons">
@@ -860,7 +861,12 @@
                 <li><span>📖</span> El texto avanza solo, como créditos de cine</li>
                 <li><span>⏱️</span> Temporizador de sueño y velocidad de la voz</li>
             </ul>
-            <div class="teaser-price">Precio fundador: <strong>$4.99/mes</strong> para los primeros · luego $7.99 · 7 días gratis</div>
+            <div class="teaser-price">
+                <span class="teaser-promo">🔥 Promoción para los primeros 1000 suscriptores</span>
+                <strong>$4.99/mes</strong>
+                <small>Y lo conservas para siempre. Después: $7.99/mes o $85.99/año.</small>
+                <small>Incluye 7 días de prueba gratis.</small>
+            </div>
             <button class="btn-primary teaser-cta" id="focusTeaserCta">✨ Quiero Premium</button>
             <div class="modal-footer" style="margin-top:1rem"><label style="cursor:pointer" onclick="Focus.closeTeaser()">Ahora no</label></div>
         </div>
