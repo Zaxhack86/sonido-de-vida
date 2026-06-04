@@ -319,10 +319,11 @@ async function serveContent(env, request, uid, id) {
     const obj = await env.CONTENT.get(item.r2_key);
     if (!obj) throw { status: 404, msg: 'Archivo no disponible' };
 
-    const headers = corsHeaders(env, request);
-    obj.writeHttpMetadata(headers);
-    headers['etag'] = obj.httpEtag;
-    headers['Cache-Control'] = 'private, no-store';   // nunca cachear contenido premium
+    const headers = new Headers(corsHeaders(env, request));
+    obj.writeHttpMetadata(headers);            // R2 exige un objeto Headers real
+    headers.set('etag', obj.httpEtag);
+    headers.set('Cache-Control', 'private, no-store');   // nunca cachear contenido premium
+    if (!headers.has('content-type')) headers.set('content-type', 'audio/mpeg');
     return new Response(obj.body, { headers });
 }
 

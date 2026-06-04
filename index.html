@@ -460,7 +460,7 @@
         .focus-close:hover{background:rgba(255,255,255,.12);color:#fff}
         .focus-stage{position:relative;z-index:1;width:100%;max-width:560px;display:flex;flex-direction:column;align-items:center;gap:1.4rem;text-align:center}
         .focus-ref{font-family:'Cinzel',serif;color:var(--gold-light);font-size:1.05rem;letter-spacing:.08em;text-transform:uppercase;opacity:.85}
-        .focus-verses{max-height:34vh;overflow-y:auto;width:100%;padding:0 .4rem;-webkit-mask-image:linear-gradient(180deg,transparent,#000 12%,#000 88%,transparent);mask-image:linear-gradient(180deg,transparent,#000 12%,#000 88%,transparent)}
+        .focus-verses{max-height:34vh;overflow-y:auto;width:100%;padding:0 .4rem;scroll-behavior:auto;-webkit-mask-image:linear-gradient(180deg,transparent,#000 12%,#000 88%,transparent);mask-image:linear-gradient(180deg,transparent,#000 12%,#000 88%,transparent)}
         .focus-verses p{font-family:'Lora',serif;color:rgba(255,255,255,.86);font-size:1.35rem;line-height:1.85;margin:0 0 1rem;text-wrap:balance}
         .focus-verses .fv-num{color:var(--gold);font-size:.7em;font-family:'Inter',sans-serif;vertical-align:super;margin-right:.35em;opacity:.7}
         .focus-empty{font-family:'Lora',serif;font-style:italic;color:rgba(255,255,255,.6);font-size:1.15rem}
@@ -1297,6 +1297,7 @@
                 if (!audio.duration) return;
                 document.getElementById('playerProgressFill').style.width = (audio.currentTime / audio.duration * 100) + '%';
                 document.getElementById('playerTime').textContent = formatTime(audio.currentTime);
+                if (window.Focus) Focus.tickScroll(audio.currentTime, audio.duration);
                 // Transición preventiva 0.4s antes del final
                 if (!chapterTransitioning && playbackMode && playbackMode !== 'single') {
                     const remaining = audio.duration - audio.currentTime;
@@ -1541,9 +1542,13 @@
         function premiumReady() {
             return !!(window.SDV_Auth && SDV_Auth.enabled && SDV_Auth.user && SDV_Auth.premium);
         }
+        // El oído percibe el volumen de forma logarítmica: un control lineal
+        // "no hace nada" hasta el final. Curva de audio (taper) para que el
+        // deslizador cambie el volumen de forma pareja en todo su recorrido.
+        const taper = x => x * x;
         function applyVolumes() {
-            audioA.volume = vozVol; audioB.volume = vozVol;
-            ambientEl.volume = musicaVol;
+            audioA.volume = taper(vozVol); audioB.volume = taper(vozVol);
+            ambientEl.volume = taper(musicaVol);
         }
 
         function renderAmbients() {
@@ -1621,6 +1626,18 @@
             box.innerHTML = state.verses
                 .map((t, i) => `<p><span class="fv-num">${i + 1}</span>${t}</p>`)
                 .join('');
+            box.scrollTop = 0;   // nuevo capítulo: empezar desde arriba
+        }
+
+        // Desplaza el texto al ritmo de la narración (efecto "créditos de cine"):
+        // la posición del scroll sigue el porcentaje reproducido del capítulo.
+        function tickScroll(cur, dur) {
+            if (!overlay.classList.contains('open')) return;
+            const box = document.getElementById('focusVerses');
+            if (!box || !dur) return;
+            const max = box.scrollHeight - box.clientHeight;
+            if (max <= 0) return;
+            box.scrollTop = Math.min(max, (cur / dur) * max);
         }
 
         function setVoz(v)    { vozVol = Math.max(0, Math.min(1, v / 100)); applyVolumes(); }
@@ -1673,7 +1690,7 @@
             else { badge.textContent = '✨ Premium'; }
         }
 
-        return { enter, exit, selectAmbient, setVoz, setMusica, setTimer, onNarration, syncVerse, refreshGate, ambients };
+        return { enter, exit, selectAmbient, setVoz, setMusica, setTimer, onNarration, syncVerse, tickScroll, refreshGate, ambients };
     })();
     window.Focus = Focus;
     function formatTime(s) { return `${Math.floor(s/60)}:${Math.floor(s%60).toString().padStart(2,'0')}`; }
