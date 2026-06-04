@@ -498,6 +498,17 @@
         .focus-timer-opts button{padding:.35rem .8rem;border-radius:50px;border:1px solid rgba(255,255,255,.15);background:transparent;color:rgba(255,255,255,.7);font-family:inherit;font-size:.8rem;cursor:pointer;transition:all .2s}
         .focus-timer-opts button.active{background:rgba(201,168,76,.2);border-color:rgba(201,168,76,.5);color:var(--gold-light)}
         .focus-premium-badge{display:inline-block;margin-left:.4rem;font-size:.7rem;padding:.1rem .5rem;border-radius:50px;background:rgba(201,168,76,.18);color:var(--gold-light);font-weight:600}
+        .focus-ambients{max-height:46vh;overflow-y:auto;padding-right:.3rem}
+        .focus-shuffle{display:flex;align-items:center;justify-content:center;gap:.5rem;width:100%;padding:.7rem 1rem;border-radius:50px;border:1px solid rgba(201,168,76,.4);background:linear-gradient(135deg,rgba(201,168,76,.14),rgba(201,168,76,.05));color:var(--gold-light);font-family:'Inter',sans-serif;font-size:.9rem;font-weight:600;cursor:pointer;transition:all .25s}
+        .focus-shuffle:hover{border-color:rgba(201,168,76,.7);background:linear-gradient(135deg,rgba(201,168,76,.22),rgba(201,168,76,.08))}
+        .focus-shuffle.active{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#0d0d1a;border-color:transparent}
+        .teaser-list{list-style:none;padding:0;margin:1rem 0;display:flex;flex-direction:column;gap:.7rem;text-align:left}
+        .teaser-list li{display:flex;align-items:flex-start;gap:.6rem;color:rgba(255,255,255,.85);font-family:'Inter',sans-serif;font-size:.92rem;line-height:1.4}
+        .teaser-list li::before{content:'✓';color:var(--gold-light);font-weight:700;flex:none}
+        .teaser-price{margin:1rem 0 .4rem;text-align:center;font-family:'Inter',sans-serif}
+        .teaser-price strong{display:block;font-size:1.5rem;color:var(--gold-light);font-weight:700}
+        .teaser-price small{display:block;margin-top:.3rem;font-size:.8rem;color:rgba(255,255,255,.55)}
+        .teaser-cta{width:100%;margin-top:.6rem}
     </style>
 </head>
 <body data-tab-active="inicio">
@@ -836,6 +847,25 @@
         </div>
     </div>
 
+    <!-- Modal: teaser de venta del Modo Enfoque (para usuarios gratis). -->
+    <div class="modal-overlay" id="focusTeaser" onclick="if(event.target===this)Focus.closeTeaser()">
+        <div class="modal-card" role="dialog" aria-labelledby="teaserTitle">
+            <button class="modal-close" onclick="Focus.closeTeaser()" aria-label="Cerrar">&times;</button>
+            <div class="modal-icon">🌿</div>
+            <div class="modal-title" id="teaserTitle">Modo Enfoque <span class="focus-premium-badge">✨ Premium</span></div>
+            <div class="modal-subtitle">Convierte tu lectura en un momento de oración: música y ambientes suaves <em>bajo</em> la narración de la Palabra.</div>
+            <ul class="teaser-list">
+                <li><span>🎹</span> Decenas de ambientes: piano, naturaleza/ASMR y meditación</li>
+                <li><span>🎚️</span> Mezclador de voz y música a tu gusto</li>
+                <li><span>📖</span> El texto avanza solo, como créditos de cine</li>
+                <li><span>⏱️</span> Temporizador de sueño y velocidad de la voz</li>
+            </ul>
+            <div class="teaser-price">Precio fundador: <strong>$4.99/mes</strong> para los primeros · luego $7.99 · 7 días gratis</div>
+            <button class="btn-primary teaser-cta" id="focusTeaserCta">✨ Quiero Premium</button>
+            <div class="modal-footer" style="margin-top:1rem"><label style="cursor:pointer" onclick="Focus.closeTeaser()">Ahora no</label></div>
+        </div>
+    </div>
+
     <div class="toast" id="toast"></div>
 
     <!-- Modal: Mi cuenta (Firebase Auth). Oculto hasta abrirse. -->
@@ -951,7 +981,7 @@
             <div class="focus-timer">
                 <span>🐢 Velocidad de la voz</span>
                 <div class="focus-timer-opts" id="focusSpeedOpts">
-                    <button data-rate="0.75" onclick="Focus.setSpeed(0.75,this)">0.75×</button>
+                    <button data-rate="0.8" onclick="Focus.setSpeed(0.8,this)">0.8×</button>
                     <button data-rate="0.9" onclick="Focus.setSpeed(0.9,this)">0.9×</button>
                     <button data-rate="1" class="active" onclick="Focus.setSpeed(1,this)">Normal</button>
                     <button data-rate="1.25" onclick="Focus.setSpeed(1.25,this)">1.25×</button>
@@ -964,6 +994,7 @@
                     <button data-min="10" onclick="Focus.setTimer(10,this)">10m</button>
                     <button data-min="20" onclick="Focus.setTimer(20,this)">20m</button>
                     <button data-min="30" onclick="Focus.setTimer(30,this)">30m</button>
+                    <button data-min="60" onclick="Focus.setTimer(60,this)">60m</button>
                 </div>
             </div>
         </div>
@@ -1050,6 +1081,10 @@
     audioA.parentNode.insertBefore(audioB, audioA.nextSibling);
     let audio = audioA;          // elemento activo (reproduce)
     let audioPreload = audioB;   // elemento en stand-by (precarga el próximo)
+    // En Modo Enfoque la narración va capítulo-a-capítulo (no stream concatenado)
+    // para que el texto pueda avanzar al cambiar de capítulo. La continuidad sin
+    // silencios la da la precarga A/B (preloadNextChapter + swapAudioElements).
+    let focusNarration = false;
     let playbackSpeed = 1;       // velocidad de la voz (Modo Enfoque); cambiar src la resetea, se reaplica al reproducir
     let preloadedFor = null;     // {book, chapter} ya cargado en audioPreload
 
@@ -1218,7 +1253,7 @@
         // concatena varios MP3 en una sola respuesta. Esto evita el evento 'ended'
         // entre capítulos y permite reproducción confiable con pantalla bloqueada.
         // En modo "single" usamos la URL individual de siempre.
-        if (playbackMode === 'continue' || playbackMode === 'full') {
+        if ((playbackMode === 'continue' || playbackMode === 'full') && !focusNarration) {
             const m = playbackMode === 'full' ? 'full' : 'continuar';
             return `${AUDIO_BASE}/stream/${prefix}${key}/${chapter}?modo=${m}`;
         }
@@ -1544,25 +1579,57 @@
         // Catálogo de ambientes. `contentId` = id en content_items (D1) servido
         // por el portero premium (/api/content/:id). Si es null, el chip sale
         // como "pronto". Los archivos viven en el bucket privado sdv-premium.
+        // Cada "ambiente" es un mood con 2+ variantes (ids de content_items).
+        // Al elegirlo se barajan y van rotando con un fundido suave, para que
+        // nunca suene "una sola canción" en bucle.
         const ambients = [
-            { id: 'piano-romantico',    cat: 'piano',      label: 'Piano Romántico',    emoji: '🎹', contentId: 1 },
-            { id: 'piano-relajante',    cat: 'piano',      label: 'Piano Relajante',    emoji: '🎹', contentId: 2 },
-            { id: 'piano-suave',        cat: 'piano',      label: 'Piano Suave',        emoji: '🎹', contentId: 3 },
-            { id: 'piano-instrumental', cat: 'piano',      label: 'Piano Instrumental', emoji: '🎹', contentId: 4 },
-            { id: 'lluvia',             cat: 'naturaleza', label: 'Lluvia',             emoji: '🌧️', contentId: 5 },
-            { id: 'olas-lejanas',       cat: 'naturaleza', label: 'Olas',               emoji: '🌊', contentId: 6 },
-            { id: 'tormenta-nieve',     cat: 'naturaleza', label: 'Tormenta de Nieve',  emoji: '❄️', contentId: 7 },
-            { id: 'pradera-viento',     cat: 'naturaleza', label: 'Pradera y Viento',   emoji: '🍃', contentId: 8 },
-            { id: 'ambiente-calma',     cat: 'ambiente',   label: 'Ambiente en Calma',  emoji: '🌌', contentId: 9 },
-            { id: 'mar-viento',         cat: 'ambiente',   label: 'Mar y Viento',       emoji: '🌬️', contentId: 10 },
-            { id: 'paz-abraza',         cat: 'ambiente',   label: 'Paz que Abraza',     emoji: '🕊️', contentId: 11 },
-            { id: 'salmos-oceano',      cat: 'ambiente',   label: 'Salmos del Océano',  emoji: '🌊', contentId: 12 },
+            { id:'piano-romantico', cat:'piano', label:'Piano Romántico', emoji:'🎹', ids:[1,3] },
+            { id:'piano-relajante', cat:'piano', label:'Piano Relajante', emoji:'🎹', ids:[2,13] },
+            { id:'piano-meditacion', cat:'piano', label:'Piano Meditación', emoji:'🎼', ids:[16,15] },
+            { id:'piano-instrumental', cat:'piano', label:'Piano Instrumental', emoji:'🎹', ids:[4,14] },
+            { id:'piano-naturaleza', cat:'piano', label:'Piano y Naturaleza', emoji:'🌿', ids:[18,17] },
+            { id:'lluvia', cat:'asmr', label:'Lluvia', emoji:'🌧️', ids:[5,25] },
+            { id:'olas', cat:'asmr', label:'Olas del Mar', emoji:'🌊', ids:[6,26] },
+            { id:'tormenta', cat:'asmr', label:'Tormenta', emoji:'⛈️', ids:[7,24,21] },
+            { id:'viento', cat:'asmr', label:'Pradera y Viento', emoji:'🍃', ids:[8,19,31] },
+            { id:'ciudad', cat:'asmr', label:'Ciudad en Calma', emoji:'🏙️', ids:[20,23] },
+            { id:'parque', cat:'asmr', label:'Parque', emoji:'🌳', ids:[27,28] },
+            { id:'playa-campo', cat:'asmr', label:'Playa y Campo', emoji:'🏖️', ids:[29,22,30] },
+            { id:'calma', cat:'ambiente', label:'Calma', emoji:'🕊️', ids:[37,36,9] },
+            { id:'paz-abraza', cat:'ambiente', label:'Paz que Abraza', emoji:'🤍', ids:[11,59] },
+            { id:'paz-suspiros', cat:'ambiente', label:'Paz entre Suspiros', emoji:'🌬️', ids:[62,61,60] },
+            { id:'cuerdas-terciopelo', cat:'ambiente', label:'Cuerdas de Terciopelo', emoji:'🎻', ids:[43,40,41,42] },
+            { id:'seda-suave', cat:'ambiente', label:'Seda Suave', emoji:'🪷', ids:[66,65] },
+            { id:'aliento-agua', cat:'ambiente', label:'Aliento sobre el Agua', emoji:'💧', ids:[34,33] },
+            { id:'medianoche-agua', cat:'ambiente', label:'Medianoche sobre el Agua', emoji:'🌙', ids:[50,49,35] },
+            { id:'corrientes-calidas', cat:'ambiente', label:'Corrientes Cálidas', emoji:'♨️', ids:[39,38] },
+            { id:'deriva-umbral', cat:'ambiente', label:'Deriva al Umbral', emoji:'🌫️', ids:[45,44] },
+            { id:'luz-violeta', cat:'ambiente', label:'Luz Violeta', emoji:'💜', ids:[47,46] },
+            { id:'nube-segura', cat:'ambiente', label:'Nube Segura', emoji:'☁️', ids:[54,53] },
+            { id:'oceano-altares', cat:'ambiente', label:'Océano entre Altares', emoji:'⛪', ids:[56,55] },
+            { id:'orquesta-niebla', cat:'ambiente', label:'Orquesta de Niebla', emoji:'🎶', ids:[58,57] },
+            { id:'mar-viento', cat:'ambiente', label:'Mar y Viento', emoji:'🌊', ids:[10,48] },
+            { id:'meditacion', cat:'ambiente', label:'Meditación', emoji:'🧘', ids:[52,51] },
+            { id:'salmos-oceano', cat:'ambiente', label:'Salmos del Océano', emoji:'📜', ids:[12,32] },
+            { id:'relajacion', cat:'ambiente', label:'Relajación', emoji:'😌', ids:[63,64] },
         ];
-        const CAT_LABELS = { piano: '🎹 Piano', naturaleza: '🌿 Naturaleza', ambiente: '🌌 Ambiente' };
-        const CAT_ORDER  = ['piano', 'naturaleza', 'ambiente'];
+        const CAT_LABELS = { piano: '🎹 Piano', asmr: '🌿 Naturaleza / ASMR', ambiente: '🌌 Meditación / Ambiente' };
+        const CAT_ORDER  = ['piano', 'asmr', 'ambiente'];
+
+        // Segundo elemento de audio para fundir entre variantes/ambientes sin silencio.
+        const ambientElB = document.createElement('audio');
+        ambientElB.setAttribute('playsinline', '');
+        ambientEl.parentNode.insertBefore(ambientElB, ambientEl.nextSibling);
 
         let vozVol = 1, musicaVol = 0.55;
-        let currentAmbient = null, blobUrl = null, timerId = null, loading = false;
+        let currentAmbient = null, timerId = null, loading = false;
+        // Motor de ambiente: elemento activo + en espera, lista barajada de variantes,
+        // caché de blobs (para no re-descargar al rotar) y guardas de fundido.
+        let ambCur = ambientEl, ambNext = ambientElB;
+        let ambPlaylist = [], ambPos = 0, ambToken = 0;
+        let crossing = false;
+        const blobCache = new Map();   // contentId -> objectURL
+        const CROSSFADE_MS = 1400;
         // Cuando el usuario toca el texto para revisar un versículo, se pausa el
         // auto-scroll y se reanuda (volviendo a la posición del audio) tras un respiro.
         let userScrolling = false, scrollResumeId = null, returnToAudio = false;
@@ -1574,14 +1641,26 @@
         // "no hace nada" hasta el final. Curva de audio (taper) para que el
         // deslizador cambie el volumen de forma pareja en todo su recorrido.
         const taper = x => x * x;
+        const musicTarget = () => taper(musicaVol);
+        let rotating = false;
         function applyVolumes() {
             audioA.volume = taper(vozVol); audioB.volume = taper(vozVol);
-            ambientEl.volume = taper(musicaVol);
+            if (!crossing) ambCur.volume = musicTarget();   // en pleno fundido se controla a mano
+        }
+        function shuffle(arr) {
+            const a = arr.slice();
+            for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+            return a;
         }
 
         function renderAmbients() {
             const box = document.getElementById('focusAmbients');
             box.innerHTML = '';
+            const shuf = document.createElement('button');
+            shuf.className = 'focus-shuffle';
+            shuf.innerHTML = '🔀 Ambiente al azar · todas las categorías';
+            shuf.onclick = shuffleAll;
+            box.appendChild(shuf);
             CAT_ORDER.forEach(cat => {
                 const items = ambients.filter(a => a.cat === cat);
                 if (!items.length) return;
@@ -1595,10 +1674,9 @@
                 row.className = 'focus-cat-row';
                 items.forEach(a => {
                     const b = document.createElement('button');
-                    const soon = a.contentId == null;
-                    b.className = 'focus-chip' + (soon ? ' soon' : '') + (currentAmbient === a.id ? ' active' : '');
+                    b.className = 'focus-chip' + (currentAmbient === a.id ? ' active' : '');
                     b.dataset.ambient = a.id;
-                    b.innerHTML = `<span>${a.emoji}</span> ${a.label}` + (soon ? ' · pronto' : '');
+                    b.innerHTML = `<span>${a.emoji}</span> ${a.label}`;
                     b.onclick = () => selectAmbient(a.id);
                     row.appendChild(b);
                 });
@@ -1613,34 +1691,110 @@
             });
         }
 
+        // Descarga (con caché en sesión) el blob de una variante premium.
+        async function loadBlob(contentId) {
+            if (blobCache.has(contentId)) return blobCache.get(contentId);
+            const url = await SDV_Auth.loadContentBlob(contentId);
+            blobCache.set(contentId, url);
+            return url;
+        }
+        // Funde el volumen de un elemento de `from` a `to` en `ms`.
+        function fade(el, from, to, ms) {
+            return new Promise(resolve => {
+                const t0 = performance.now();
+                el.volume = Math.max(0, Math.min(1, from));
+                (function step(now) {
+                    const k = Math.min(1, (now - t0) / ms);
+                    el.volume = Math.max(0, Math.min(1, from + (to - from) * k));
+                    if (k < 1) requestAnimationFrame(step); else resolve();
+                })(performance.now());
+            });
+        }
+        // Pone `url` en el elemento en espera y lo funde con el activo: nunca hay silencio.
+        async function crossfadeTo(url) {
+            const incoming = ambNext;
+            incoming.src = url;
+            incoming.loop = (ambPlaylist.length === 1);
+            incoming.playbackRate = 1;
+            incoming.volume = 0;
+            try { await incoming.play(); } catch (e) {}
+            const outgoing = ambCur;
+            ambCur = incoming; ambNext = outgoing;   // el entrante ya es el activo
+            crossing = true;
+            const tgt = musicTarget();
+            const fadeOut = (outgoing.src && !outgoing.paused) ? fade(outgoing, outgoing.volume, 0, CROSSFADE_MS) : Promise.resolve();
+            await Promise.all([fade(incoming, 0, tgt, CROSSFADE_MS), fadeOut]);
+            try { outgoing.pause(); outgoing.removeAttribute('src'); outgoing.load(); } catch (e) {}
+            crossing = false;
+            incoming.volume = tgt;
+        }
+        function preloadNextVariant() {
+            if (ambPlaylist.length <= 1) return;
+            const n = (ambPos + 1) % ambPlaylist.length;
+            loadBlob(ambPlaylist[n]).catch(() => {});
+        }
+        // Rota a la siguiente variante del mismo ambiente (con fundido).
+        async function rotateNext() {
+            if (rotating || crossing || ambPlaylist.length <= 1) return;
+            rotating = true;
+            try {
+                ambPos = (ambPos + 1) % ambPlaylist.length;
+                const url = await loadBlob(ambPlaylist[ambPos]);
+                await crossfadeTo(url);
+                preloadNextVariant();
+            } catch (e) {} finally { rotating = false; }
+        }
+
         async function selectAmbient(id) {
             const a = ambients.find(x => x.id === id);
             if (!a) return;
-            if (a.contentId == null) { showToast('🌿 Este ambiente estará disponible muy pronto'); return; }
             if (currentAmbient === id) { stopAmbient(); return; }   // tocar de nuevo = apagar
-            stopAmbient();
-            currentAmbient = id; loading = true; markChips();
+            const my = ++ambToken;
+            currentAmbient = id;
+            ambPlaylist = shuffle(a.ids);
+            ambPos = 0;
+            loading = true; markChips();
             try {
-                blobUrl = await SDV_Auth.loadContentBlob(a.contentId);
-                ambientEl.src = blobUrl;
-                ambientEl.loop = true;
-                applyVolumes();
-                await ambientEl.play();
+                const url = await loadBlob(ambPlaylist[0]);
+                if (my !== ambToken) return;   // el usuario cambió de ambiente mientras descargaba
+                await crossfadeTo(url);
+                preloadNextVariant();
             } catch (e) {
-                currentAmbient = null;
-                showToast('No se pudo cargar el ambiente');
+                if (my === ambToken) { currentAmbient = null; showToast('No se pudo cargar el ambiente'); }
             } finally {
-                loading = false; markChips();
+                if (my === ambToken) { loading = false; markChips(); }
             }
         }
+        // Elige un ambiente al azar de cualquier categoría (distinto del actual).
+        function shuffleAll() {
+            const pool = ambients.filter(a => a.id !== currentAmbient);
+            const pick = pool[Math.floor(Math.random() * pool.length)];
+            if (pick) selectAmbient(pick.id);
+        }
         function stopAmbient() {
-            ambientEl.pause();
-            ambientEl.removeAttribute('src');
-            ambientEl.load();
-            if (blobUrl) { URL.revokeObjectURL(blobUrl); blobUrl = null; }
+            ambToken++;                 // cancela cargas en vuelo
+            crossing = false; rotating = false;
+            [ambientEl, ambientElB].forEach(el => { try { el.pause(); el.removeAttribute('src'); el.load(); } catch (e) {} });
+            ambCur = ambientEl; ambNext = ambientElB;
+            blobCache.forEach(u => { try { URL.revokeObjectURL(u); } catch (e) {} });
+            blobCache.clear();
+            ambPlaylist = []; ambPos = 0;
             currentAmbient = null;
             markChips();
         }
+        // Rotación automática entre variantes: fundir justo antes de que termine
+        // la pista; si igual llega al final, saltar en seco como respaldo.
+        [ambientEl, ambientElB].forEach(el => {
+            el.addEventListener('timeupdate', () => {
+                if (el !== ambCur || crossing || rotating || ambPlaylist.length <= 1 || !el.duration) return;
+                if (el.duration - el.currentTime < (CROSSFADE_MS / 1000 + 0.3)) rotateNext();
+            });
+            el.addEventListener('ended', () => {
+                if (el !== ambCur) return;
+                if (ambPlaylist.length <= 1) { try { el.currentTime = 0; el.play().catch(() => {}); } catch (e) {} return; }
+                if (!crossing && !rotating) rotateNext();
+            });
+        });
 
         function syncVerse() {
             const ref = document.getElementById('focusRef');
@@ -1688,10 +1842,10 @@
         function setVoz(v)    { vozVol = Math.max(0, Math.min(1, v / 100)); applyVolumes(); }
         function setMusica(v) { musicaVol = Math.max(0, Math.min(1, v / 100)); applyVolumes(); }
 
-        // Velocidad de la voz. Acotada a [0.75, 1.25] para que nunca distorsione
+        // Velocidad de la voz. Acotada a [0.8, 1.25] para que nunca distorsione
         // ni "se escuche mal" por llevarla demasiado lejos.
         function setSpeed(rate, btn) {
-            playbackSpeed = Math.max(0.75, Math.min(1.25, rate));
+            playbackSpeed = Math.max(0.8, Math.min(1.25, rate));
             try { audioA.playbackRate = playbackSpeed; audioB.playbackRate = playbackSpeed; } catch (e) {}
             document.querySelectorAll('#focusSpeedOpts button').forEach(b => b.classList.remove('active'));
             if (btn) btn.classList.add('active');
@@ -1716,28 +1870,37 @@
             // La música de fondo sigue a la voz: si se pausa la narración, se
             // pausa el ambiente; si vuelve, vuelve. Solo dentro del Modo Enfoque.
             if (!overlay.classList.contains('open')) return;
-            if (!currentAmbient || !ambientEl.src) return;
-            if (playing) ambientEl.play().catch(() => {});
-            else ambientEl.pause();
+            if (!currentAmbient || !ambCur.src) return;
+            if (playing) ambCur.play().catch(() => {});
+            else { try { ambientEl.pause(); ambientElB.pause(); } catch (e) {} }
         }
 
         function enter() {
-            if (!(window.SDV_Auth && SDV_Auth.enabled)) { showToast('🌿 Modo Enfoque llegará muy pronto'); return; }
-            if (!SDV_Auth.user) { showToast('Entra a tu cuenta para usar el Modo Enfoque'); if (window.SDV_Account) SDV_Account.open(); return; }
-            if (!SDV_Auth.premium) { showToast('🌿 El Modo Enfoque es una función Premium ✨ (muy pronto)'); return; }
+            // Usuario gratis (o sin cuenta): no entra al modo; ve el teaser de venta.
+            if (!premiumReady()) { openTeaser(); return; }
+            focusNarration = true;
+            // Si veníamos de un stream concatenado, reiniciar el capítulo actual en
+            // modo capítulo-a-capítulo para que el texto avance al cambiar de capítulo.
+            const wasStreaming = !!(audio.src && audio.src.includes('/stream/'));
+            const wasPlaying = !audio.paused && !!audio.src;
             renderAmbients();
             syncVerse();
-            onNarration(!audio.paused && !!audio.src);
-            applyVolumes();
             overlay.classList.add('open');
             overlay.setAttribute('aria-hidden', 'false');
             document.body.style.overflow = 'hidden';
             document.getElementById('playerFocusBtn')?.classList.add('active');
+            applyVolumes();
+            if (wasStreaming && wasPlaying) startPlaying();
+            onNarration(!audio.paused && !!audio.src);
         }
         function exit() {
             overlay.classList.remove('open');
             overlay.setAttribute('aria-hidden', 'true');
             document.body.style.overflow = '';
+            focusNarration = false;
+            // Al salir, detener TODO (voz + música): así no queda la narración
+            // sonando "por detrás" obligando a pausarla aparte en el modo normal.
+            try { audio.pause(); } catch (e) {}
             stopAmbient();
             if (timerId) { clearTimeout(timerId); timerId = null; }
             if (scrollResumeId) { clearTimeout(scrollResumeId); scrollResumeId = null; }
@@ -1745,6 +1908,31 @@
             vozVol = 1; audioA.volume = 1; audioB.volume = 1;   // restaurar volumen normal
             setSpeed(1, document.querySelector('#focusSpeedOpts button[data-rate="1"]')); // voz a velocidad normal al salir
             document.getElementById('playerFocusBtn')?.classList.remove('active');
+        }
+
+        // Teaser de venta para usuarios gratis: vende el Modo Enfoque sin abrirlo.
+        function openTeaser() {
+            const m = document.getElementById('focusTeaser');
+            if (!m) { showToast('🌿 El Modo Enfoque es Premium ✨'); return; }
+            const logged = !!(window.SDV_Auth && SDV_Auth.user);
+            const cta = document.getElementById('focusTeaserCta');
+            if (cta) {
+                if (!logged) {
+                    cta.textContent = '👤 Empezar con mi cuenta gratis';
+                    cta.onclick = () => { closeTeaser(); if (window.SDV_Account) SDV_Account.open(); };
+                } else {
+                    cta.textContent = '✨ Quiero ser de los primeros';
+                    cta.onclick = () => { closeTeaser(); showToast('🙏 ¡Gracias! El acceso Premium abre muy pronto.'); };
+                }
+            }
+            m.classList.add('visible');
+            m.setAttribute('aria-hidden', 'false');
+        }
+        function closeTeaser() {
+            const m = document.getElementById('focusTeaser');
+            if (!m) return;
+            m.classList.remove('visible');
+            m.setAttribute('aria-hidden', 'true');
         }
 
         // Refleja el estado premium en la entrada del menú "Yo".
@@ -1764,7 +1952,7 @@
             versesEl.addEventListener('touchmove', onUserScroll, { passive: true });
         }
 
-        return { enter, exit, selectAmbient, setVoz, setMusica, setSpeed, setTimer, onNarration, syncVerse, tickScroll, refreshGate, ambients };
+        return { enter, exit, selectAmbient, setVoz, setMusica, setSpeed, setTimer, onNarration, syncVerse, tickScroll, refreshGate, openTeaser, closeTeaser, ambients };
     })();
     window.Focus = Focus;
     function formatTime(s) { return `${Math.floor(s/60)}:${Math.floor(s%60).toString().padStart(2,'0')}`; }
