@@ -296,6 +296,14 @@
         .player-nav-btn:hover:not(:disabled){color:var(--gold-light)}
         .player-nav-btn:disabled{opacity:.25;cursor:not-allowed}
         .player-nav-btn svg{width:20px;height:20px}
+        /* Acceso al Modo Enfoque: píldora con la llama (Salmo 119:105). Gris
+           neutro en reposo → dorado al activarse. Etiqueta visible en ancho,
+           solo icono en móvil para no saturar la barra. */
+        .player-focus-btn{display:inline-flex;align-items:center;gap:.35rem;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.28);color:rgba(255,255,255,.7);padding:.38rem .7rem;border-radius:50px;cursor:pointer;font-family:'Inter',sans-serif;font-size:.78rem;font-weight:500;transition:all .25s;flex-shrink:0}
+        .player-focus-btn:hover{background:rgba(201,168,76,.2);border-color:rgba(201,168,76,.55);color:var(--gold-light)}
+        .player-focus-btn svg{width:17px;height:17px}
+        .player-focus-btn.active{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:var(--dark);border-color:transparent}
+        @media(max-width:480px){.player-focus-btn .pf-label{display:none}.player-focus-btn{padding:.38rem}}
         .player-next-hint{color:rgba(255,255,255,.45);font-size:.7rem;margin-top:.15rem;font-style:italic}
         @media(max-width:768px){
             .player-next-hint{display:none}
@@ -695,7 +703,7 @@
 
             <ul class="yo-menu">
                 <li onclick="resumeListening()"><span class="yo-ico">📖</span> Seguir escuchando <span class="yo-arrow">›</span></li>
-                <li id="yoFocusItem" onclick="Focus.enter()"><span class="yo-ico">🌿</span> Modo Enfoque <span class="focus-premium-badge" id="focusBadge">✨ Premium</span> <span class="yo-arrow">›</span></li>
+                <li id="yoFocusItem" onclick="Focus.enter()"><span class="yo-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg></span> Modo Enfoque <span class="focus-premium-badge" id="focusBadge">✨ Premium</span> <span class="yo-arrow">›</span></li>
                 <li onclick="SDV_Account.open();return false;"><span class="yo-ico">🔖</span> Mis versículos <span class="yo-arrow">›</span></li>
                 <li onclick="toggleOfflinePanel()"><span class="yo-ico">💾</span> Mis descargas <span class="yo-arrow">›</span></li>
                 <li onclick="window.location.href='/devocionales'"><span class="yo-ico">📿</span> Devocionales <span class="yo-arrow">›</span></li>
@@ -763,7 +771,10 @@
             <button class="player-nav-btn" id="playerNextBtn" onclick="goNextChapter()" title="Capítulo siguiente" aria-label="Siguiente">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4" fill="currentColor"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
             </button>
-            <button class="player-nav-btn" id="playerFocusBtn" onclick="Focus.enter()" title="Modo Enfoque" aria-label="Modo Enfoque" style="font-size:1.1rem">🌿</button>
+            <button class="player-focus-btn" id="playerFocusBtn" onclick="Focus.enter()" title="Modo Enfoque" aria-label="Modo Enfoque">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
+                <span class="pf-label">Enfoque</span>
+            </button>
             <button class="player-close" onclick="closePlayer()">✕</button>
         </div>
     </div>
@@ -1672,6 +1683,7 @@
             overlay.classList.add('open');
             overlay.setAttribute('aria-hidden', 'false');
             document.body.style.overflow = 'hidden';
+            document.getElementById('playerFocusBtn')?.classList.add('active');
         }
         function exit() {
             overlay.classList.remove('open');
@@ -1680,6 +1692,7 @@
             stopAmbient();
             if (timerId) { clearTimeout(timerId); timerId = null; }
             vozVol = 1; audioA.volume = 1; audioB.volume = 1;   // restaurar volumen normal
+            document.getElementById('playerFocusBtn')?.classList.remove('active');
         }
 
         // Refleja el estado premium en la entrada del menú "Yo".
