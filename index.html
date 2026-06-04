@@ -862,9 +862,9 @@
                 <li><span>⏱️</span> Temporizador de sueño y velocidad de la voz</li>
             </ul>
             <div class="teaser-price">
-                <span class="teaser-promo">🔥 Promoción para los primeros 1000 suscriptores</span>
+                <span class="teaser-promo">🔥 Promoción de lanzamiento · por tiempo limitado</span>
                 <strong>$4.99/mes</strong>
-                <small>Y lo conservas para siempre. Después: $7.99/mes o $85.99/año.</small>
+                <small>Precio normal: $7.99/mes.</small>
                 <small>Incluye 7 días de prueba gratis.</small>
             </div>
             <button class="btn-primary teaser-cta" id="focusTeaserCta">✨ Quiero Premium</button>
@@ -1363,7 +1363,6 @@
                 if (!audio.duration) return;
                 document.getElementById('playerProgressFill').style.width = (audio.currentTime / audio.duration * 100) + '%';
                 document.getElementById('playerTime').textContent = formatTime(audio.currentTime);
-                if (window.Focus) Focus.tickScroll(audio.currentTime, audio.duration);
                 // Transición preventiva 0.4s antes del final
                 if (!chapterTransitioning && playbackMode && playbackMode !== 'single') {
                     const remaining = audio.duration - audio.currentTime;
@@ -1819,21 +1818,33 @@
 
         // Desplaza el texto al ritmo de la narración (efecto "créditos de cine"):
         // la posición del scroll sigue el porcentaje reproducido del capítulo.
-        function tickScroll(cur, dur) {
-            if (!overlay.classList.contains('open')) return;
+        //
+        // Motor INDEPENDIENTE (requestAnimationFrame). Mientras el Modo Enfoque
+        // esté abierto lee SIEMPRE el <audio> activo (`audio`), que cambia con el
+        // swap A/B entre capítulos. Al no depender de eventos del audio ni del
+        // estado de la transición, se auto-corrige tras cualquier cambio de
+        // capítulo: nunca se "queda mudo" aunque una transición falle.
+        let scrollRaf = null, smoothUntil = 0;
+        function scrollStep() {
+            if (!overlay.classList.contains('open')) { scrollRaf = null; return; }
+            scrollRaf = requestAnimationFrame(scrollStep);
             const box = document.getElementById('focusVerses');
-            if (!box || !dur) return;
-            if (userScrolling) return;   // respeta el gesto: no peleamos con el dedo del usuario
+            const dur = audio.duration, cur = audio.currentTime;
+            if (!box || !dur || userScrolling) return;   // respeta el gesto del usuario
+            if (performance.now() < smoothUntil) return; // deja correr el retorno suave
             const max = box.scrollHeight - box.clientHeight;
             if (max <= 0) return;
             const target = Math.min(max, (cur / dur) * max);
             if (returnToAudio) {         // tras revisar un versículo, vuelve suave a donde va el audio
                 returnToAudio = false;
+                smoothUntil = performance.now() + 450;
                 box.scrollTo({ top: target, behavior: 'smooth' });
-            } else {
+            } else if (Math.abs(box.scrollTop - target) > 0.5) {
                 box.scrollTop = target;
             }
         }
+        function startScrollLoop() { if (!scrollRaf) scrollRaf = requestAnimationFrame(scrollStep); }
+        function stopScrollLoop() { if (scrollRaf) { cancelAnimationFrame(scrollRaf); scrollRaf = null; } }
         // El usuario tocó/desplazó el texto: pausamos el auto-scroll y lo
         // reanudamos (regresando a la posición del audio) tras 2.5s sin tocar.
         function onUserScroll() {
@@ -1896,6 +1907,7 @@
             document.body.style.overflow = 'hidden';
             document.getElementById('playerFocusBtn')?.classList.add('active');
             applyVolumes();
+            startScrollLoop();
             if (wasStreaming && wasPlaying) startPlaying();
             onNarration(!audio.paused && !!audio.src);
         }
@@ -1903,6 +1915,7 @@
             overlay.classList.remove('open');
             overlay.setAttribute('aria-hidden', 'true');
             document.body.style.overflow = '';
+            stopScrollLoop();
             focusNarration = false;
             // Al salir, detener TODO (voz + música): así no queda la narración
             // sonando "por detrás" obligando a pausarla aparte en el modo normal.
@@ -1958,7 +1971,7 @@
             versesEl.addEventListener('touchmove', onUserScroll, { passive: true });
         }
 
-        return { enter, exit, selectAmbient, setVoz, setMusica, setSpeed, setTimer, onNarration, syncVerse, tickScroll, refreshGate, openTeaser, closeTeaser, ambients };
+        return { enter, exit, selectAmbient, setVoz, setMusica, setSpeed, setTimer, onNarration, syncVerse, refreshGate, openTeaser, closeTeaser, ambients };
     })();
     window.Focus = Focus;
     function formatTime(s) { return `${Math.floor(s/60)}:${Math.floor(s%60).toString().padStart(2,'0')}`; }
