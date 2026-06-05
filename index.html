@@ -506,6 +506,12 @@
         .focus-timer-opts{display:flex;gap:.4rem}
         .focus-timer-opts button{padding:.35rem .8rem;border-radius:50px;border:1px solid rgba(255,255,255,.15);background:transparent;color:rgba(255,255,255,.7);font-family:inherit;font-size:.8rem;cursor:pointer;transition:all .2s}
         .focus-timer-opts button.active{background:rgba(201,168,76,.2);border-color:rgba(201,168,76,.5);color:var(--gold-light)}
+        .focus-timer-opts button.locked{opacity:.4}
+        .focus-speed-hint{display:none;font-family:'Inter',sans-serif;font-size:.74rem;color:rgba(255,255,255,.55);margin-top:.15rem;line-height:1.6;max-width:300px}
+        .focus-speed-hint.show{display:block}
+        .focus-speed-hint button{background:none;border:1px solid rgba(201,168,76,.45);color:var(--gold-light);border-radius:50px;padding:.18rem .65rem;font-size:.72rem;cursor:pointer;font-family:inherit;margin-left:.35rem;white-space:nowrap}
+        .focus-speed-hint.pulse{animation:hintPulse .5s ease}
+        @keyframes hintPulse{0%,100%{opacity:.55}50%{opacity:1}}
         .focus-premium-badge{display:inline-block;margin-left:.4rem;font-size:.7rem;padding:.1rem .5rem;border-radius:50px;background:rgba(201,168,76,.18);color:var(--gold-light);font-weight:600}
         .focus-ambients{max-height:46vh;overflow-y:auto;padding-right:.3rem}
         .focus-shuffle{display:flex;align-items:center;justify-content:center;gap:.5rem;width:100%;padding:.7rem 1rem;border-radius:50px;border:1px solid rgba(201,168,76,.4);background:linear-gradient(135deg,rgba(201,168,76,.14),rgba(201,168,76,.05));color:var(--gold-light);font-family:'Inter',sans-serif;font-size:.9rem;font-weight:600;cursor:pointer;transition:all .25s}
@@ -1006,6 +1012,7 @@
                     <button data-rate="1" class="active" onclick="Focus.setSpeed(1,this)">Normal</button>
                     <button data-rate="1.25" onclick="Focus.setSpeed(1.25,this)">1.25×</button>
                 </div>
+                <small class="focus-speed-hint" id="focusSpeedHint">🎧 La cámara lenta suena mejor con la voz SBLL 2026.<button type="button" onclick="Focus.useSbllVoice()">Usar voz 2026</button></small>
             </div>
             <div class="focus-timer">
                 <span>⏱️ Temporizador de sueño</span>
@@ -1851,11 +1858,33 @@
 
         // Velocidad de la voz. Acotada a [0.8, 1.25] para que nunca distorsione
         // ni "se escuche mal" por llevarla demasiado lejos.
+        // La cámara lenta (<1×) solo se permite con la voz SBLL 2026: la RVA 1909
+        // pierde calidad al ralentizarla, así que con esa voz se ofrece cambiar.
         function setSpeed(rate, btn) {
+            if (rate < 1 && translationMode === 'rva') {
+                const hint = document.getElementById('focusSpeedHint');
+                if (hint) { hint.classList.add('show'); hint.classList.remove('pulse'); void hint.offsetWidth; hint.classList.add('pulse'); }
+                return;   // no aplicar cámara lenta con la voz 1909
+            }
             playbackSpeed = Math.max(0.8, Math.min(1.25, rate));
             try { audioA.playbackRate = playbackSpeed; audioB.playbackRate = playbackSpeed; } catch (e) {}
             document.querySelectorAll('#focusSpeedOpts button').forEach(b => b.classList.remove('active'));
             if (btn) btn.classList.add('active');
+        }
+        // Atenúa los botones de cámara lenta y muestra el aviso cuando la voz es RVA 1909.
+        function updateSpeedAvailability() {
+            const rva = (translationMode === 'rva');
+            document.querySelectorAll('#focusSpeedOpts button').forEach(b => {
+                b.classList.toggle('locked', parseFloat(b.dataset.rate) < 1 && rva);
+            });
+            const hint = document.getElementById('focusSpeedHint');
+            if (hint) hint.classList.toggle('show', rva);
+        }
+        // Cambia a la voz SBLL 2026 desde el Modo Enfoque (para usar la cámara lenta).
+        function useSbllVoice() {
+            if (window.setTranslation) setTranslation('sbll');
+            updateSpeedAvailability();
+            showToast('🎧 Voz SBLL 2026 activada · suena mejor en cámara lenta');
         }
 
         function setTimer(min, btn) {
@@ -1898,6 +1927,7 @@
             document.body.style.overflow = 'hidden';
             document.getElementById('playerFocusBtn')?.classList.add('active');
             applyVolumes();
+            updateSpeedAvailability();
             if (wasStreaming && wasPlaying) startPlaying();
             onNarration(!audio.paused && !!audio.src);
         }
@@ -1962,7 +1992,7 @@
             }
         });
 
-        return { enter, exit, selectAmbient, setVoz, setMusica, setSpeed, setTimer, onNarration, syncVerse, refreshGate, openTeaser, closeTeaser, ambients };
+        return { enter, exit, selectAmbient, setVoz, setMusica, setSpeed, setTimer, onNarration, syncVerse, refreshGate, openTeaser, closeTeaser, useSbllVoice, ambients };
     })();
     window.Focus = Focus;
     function formatTime(s) { return `${Math.floor(s/60)}:${Math.floor(s%60).toString().padStart(2,'0')}`; }
