@@ -469,12 +469,21 @@
         .focus-close{position:absolute;top:calc(env(safe-area-inset-top) + .9rem);right:1rem;width:42px;height:42px;border-radius:50%;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.05);color:rgba(255,255,255,.8);font-size:1.1rem;cursor:pointer;z-index:2;transition:all .25s}
         .focus-close:hover{background:rgba(255,255,255,.12);color:#fff}
         .focus-stage{position:relative;z-index:1;width:100%;max-width:560px;margin:auto 0;display:flex;flex-direction:column;align-items:center;gap:1.4rem;text-align:center}
-        @media(max-height:760px){.focus-stage{gap:1rem}.focus-verses{max-height:26vh}.focus-play{width:64px;height:64px}.focus-play svg{width:28px;height:28px}}
+        @media(max-height:760px){.focus-stage{gap:1rem}.focus-emblem{width:180px;height:180px}.focus-emblem-icon{font-size:4.2rem}.focus-play{width:64px;height:64px}.focus-play svg{width:28px;height:28px}}
         .focus-ref{font-family:'Cinzel',serif;color:var(--gold-light);font-size:1.05rem;letter-spacing:.08em;text-transform:uppercase;opacity:.85}
-        .focus-verses{max-height:34vh;overflow-y:auto;width:100%;padding:0 .4rem;scroll-behavior:auto;-webkit-mask-image:linear-gradient(180deg,transparent,#000 7%,#000 93%,transparent);mask-image:linear-gradient(180deg,transparent,#000 7%,#000 93%,transparent)}
-        .focus-verses p{font-family:'Lora',serif;color:rgba(255,255,255,.97);font-size:1.35rem;line-height:1.85;margin:0 0 1rem;text-wrap:balance}
-        .focus-verses .fv-num{color:var(--gold);font-size:.7em;font-family:'Inter',sans-serif;vertical-align:super;margin-right:.35em;opacity:.85}
-        .focus-empty{font-family:'Lora',serif;font-style:italic;color:rgba(255,255,255,.6);font-size:1.15rem}
+        /* Emblema animado: reemplaza el texto que pasaba con el audio. Cambia de
+           icono y color de brillo según el ambiente activo. Solo CSS, sin imágenes. */
+        .focus-emblem{position:relative;width:230px;height:230px;display:flex;align-items:center;justify-content:center;border-radius:50%;--em-glow:rgba(201,168,76,.22);--em-edge:rgba(201,168,76,.36)}
+        .focus-emblem[data-cat="asmr"]{--em-glow:rgba(124,180,142,.22);--em-edge:rgba(150,205,168,.36)}
+        .focus-emblem[data-cat="ambiente"]{--em-glow:rgba(222,202,162,.22);--em-edge:rgba(232,214,176,.36)}
+        .focus-emblem-ring{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 50% 50%,var(--em-glow),transparent 68%);box-shadow:inset 0 0 60px 6px var(--em-glow),0 0 50px var(--em-glow);animation:emBreathe 6s ease-in-out infinite}
+        .focus-emblem-ring::after{content:'';position:absolute;inset:14px;border-radius:50%;border:1px solid var(--em-edge);animation:emSpin 30s linear infinite}
+        .focus-emblem-icon{position:relative;z-index:1;font-size:5.4rem;line-height:1;filter:drop-shadow(0 6px 22px rgba(0,0,0,.45));animation:emFloat 6s ease-in-out infinite}
+        .focus-emblem-caption{font-family:'Lora',serif;font-style:italic;color:rgba(255,255,255,.62);font-size:1.05rem;min-height:1.4em;text-wrap:balance}
+        @keyframes emBreathe{0%,100%{transform:scale(1);opacity:.82}50%{transform:scale(1.06);opacity:1}}
+        @keyframes emFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+        @keyframes emSpin{to{transform:rotate(360deg)}}
+        @media(prefers-reduced-motion:reduce){.focus-emblem-ring,.focus-emblem-icon,.focus-emblem-ring::after{animation:none}}
         .focus-play{width:78px;height:78px;border-radius:50%;border:none;cursor:pointer;background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#0d0d1a;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 36px rgba(201,168,76,.35);transition:transform .2s}
         .focus-play:active{transform:scale(.94)}
         .focus-play svg{width:34px;height:34px;fill:#0d0d1a}
@@ -856,9 +865,9 @@
             <div class="modal-title" id="teaserTitle">Modo Enfoque <span class="focus-premium-badge">✨ Premium</span></div>
             <div class="modal-subtitle">Convierte tu lectura en un momento de oración: música y ambientes suaves <em>bajo</em> la narración de la Palabra.</div>
             <ul class="teaser-list">
-                <li><span>🎹</span> Decenas de ambientes: piano, naturaleza/ASMR y meditación</li>
+                <li><span>🎹</span> Decenas de ambientes: piano, naturaleza y adoración</li>
                 <li><span>🎚️</span> Mezclador de voz y música a tu gusto</li>
-                <li><span>📖</span> El texto avanza solo, como créditos de cine</li>
+                <li><span>🕊️</span> Ambiente visual sereno para orar con la Palabra</li>
                 <li><span>⏱️</span> Temporizador de sueño y velocidad de la voz</li>
             </ul>
             <!-- Precio oculto hasta que Modo Enfoque quede pulido. Restaurar este bloque cuando esté listo:
@@ -975,9 +984,11 @@
         <button class="focus-close" onclick="Focus.exit()" aria-label="Salir del Modo Enfoque">✕</button>
         <div class="focus-stage">
             <div class="focus-ref" id="focusRef">Modo Enfoque</div>
-            <div class="focus-verses" id="focusVerses">
-                <p class="focus-empty">Elige un capítulo y un ambiente. Respira, escucha y medita en la Palabra.</p>
+            <div class="focus-emblem" id="focusEmblem">
+                <div class="focus-emblem-ring"></div>
+                <div class="focus-emblem-icon" id="focusEmblemIcon">🕊️</div>
             </div>
+            <div class="focus-emblem-caption" id="focusEmblemCaption">Elige un ambiente y reposa en la Palabra</div>
             <button class="focus-play" id="focusPlayBtn" onclick="togglePlay()" aria-label="Reproducir o pausar la narración">
                 <svg id="focusPlayIcon" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
                 <svg id="focusPauseIcon" viewBox="0 0 24 24" style="display:none"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
@@ -1593,7 +1604,7 @@
         const ambients = [
             { id:'piano-romantico', cat:'piano', label:'Piano Romántico', emoji:'🎹', ids:[1,3] },
             { id:'piano-relajante', cat:'piano', label:'Piano Relajante', emoji:'🎹', ids:[2,13] },
-            { id:'piano-meditacion', cat:'piano', label:'Piano Meditación', emoji:'🎼', ids:[16,15] },
+            { id:'piano-meditacion', cat:'piano', label:'Piano Sereno', emoji:'🎼', ids:[16,15] },
             { id:'piano-instrumental', cat:'piano', label:'Piano Instrumental', emoji:'🎹', ids:[4,14] },
             { id:'piano-naturaleza', cat:'piano', label:'Piano y Naturaleza', emoji:'🌿', ids:[18,17] },
             { id:'lluvia', cat:'asmr', label:'Lluvia', emoji:'🌧️', ids:[5,25] },
@@ -1603,25 +1614,25 @@
             { id:'ciudad', cat:'asmr', label:'Ciudad en Calma', emoji:'🏙️', ids:[20,23] },
             { id:'parque', cat:'asmr', label:'Parque', emoji:'🌳', ids:[27,28] },
             { id:'playa-campo', cat:'asmr', label:'Playa y Campo', emoji:'🏖️', ids:[29,22,30] },
-            { id:'calma', cat:'ambiente', label:'Calma', emoji:'🕊️', ids:[37,36,9] },
+            { id:'calma', cat:'ambiente', label:'Paz y Quietud', emoji:'🕊️', ids:[37,36,9] },
             { id:'paz-abraza', cat:'ambiente', label:'Paz que Abraza', emoji:'🤍', ids:[11,59] },
-            { id:'paz-suspiros', cat:'ambiente', label:'Paz entre Suspiros', emoji:'🌬️', ids:[62,61,60] },
-            { id:'cuerdas-terciopelo', cat:'ambiente', label:'Cuerdas de Terciopelo', emoji:'🎻', ids:[43,40,41,42] },
-            { id:'seda-suave', cat:'ambiente', label:'Seda Suave', emoji:'🪷', ids:[66,65] },
-            { id:'aliento-agua', cat:'ambiente', label:'Aliento sobre el Agua', emoji:'💧', ids:[34,33] },
-            { id:'medianoche-agua', cat:'ambiente', label:'Medianoche sobre el Agua', emoji:'🌙', ids:[50,49,35] },
-            { id:'corrientes-calidas', cat:'ambiente', label:'Corrientes Cálidas', emoji:'♨️', ids:[39,38] },
-            { id:'deriva-umbral', cat:'ambiente', label:'Deriva al Umbral', emoji:'🌫️', ids:[45,44] },
-            { id:'luz-violeta', cat:'ambiente', label:'Luz Violeta', emoji:'💜', ids:[47,46] },
-            { id:'nube-segura', cat:'ambiente', label:'Nube Segura', emoji:'☁️', ids:[54,53] },
-            { id:'oceano-altares', cat:'ambiente', label:'Océano entre Altares', emoji:'⛪', ids:[56,55] },
-            { id:'orquesta-niebla', cat:'ambiente', label:'Orquesta de Niebla', emoji:'🎶', ids:[58,57] },
+            { id:'paz-suspiros', cat:'ambiente', label:'Aliento de Paz', emoji:'🌬️', ids:[62,61,60] },
+            { id:'cuerdas-terciopelo', cat:'ambiente', label:'Cuerdas Suaves', emoji:'🎻', ids:[43,40,41,42] },
+            { id:'seda-suave', cat:'ambiente', label:'Calma Profunda', emoji:'🌾', ids:[66,65] },
+            { id:'aliento-agua', cat:'ambiente', label:'Aguas Tranquilas', emoji:'💧', ids:[34,33] },
+            { id:'medianoche-agua', cat:'ambiente', label:'Aguas en la Noche', emoji:'🌙', ids:[50,49,35] },
+            { id:'corrientes-calidas', cat:'ambiente', label:'Aguas Cálidas', emoji:'🌊', ids:[39,38] },
+            { id:'deriva-umbral', cat:'ambiente', label:'Bruma de Reposo', emoji:'🌫️', ids:[45,44] },
+            { id:'luz-violeta', cat:'ambiente', label:'Luz del Alba', emoji:'🌅', ids:[47,46] },
+            { id:'nube-segura', cat:'ambiente', label:'Bajo Sus Alas', emoji:'☁️', ids:[54,53] },
+            { id:'oceano-altares', cat:'ambiente', label:'Santuario', emoji:'⛪', ids:[56,55] },
+            { id:'orquesta-niebla', cat:'ambiente', label:'Cuerdas Celestiales', emoji:'🎶', ids:[58,57] },
             { id:'mar-viento', cat:'ambiente', label:'Mar y Viento', emoji:'🌊', ids:[10,48] },
-            { id:'meditacion', cat:'ambiente', label:'Meditación', emoji:'🧘', ids:[52,51] },
-            { id:'salmos-oceano', cat:'ambiente', label:'Salmos del Océano', emoji:'📜', ids:[12,32] },
-            { id:'relajacion', cat:'ambiente', label:'Relajación', emoji:'😌', ids:[63,64] },
+            { id:'meditacion', cat:'ambiente', label:'Reposo del Alma', emoji:'🕊️', ids:[52,51] },
+            { id:'salmos-oceano', cat:'ambiente', label:'Salmos en Calma', emoji:'📜', ids:[12,32] },
+            { id:'relajacion', cat:'ambiente', label:'Sosiego', emoji:'🍃', ids:[63,64] },
         ];
-        const CAT_LABELS = { piano: '🎹 Piano', asmr: '🌿 Naturaleza / ASMR', ambiente: '🌌 Meditación / Ambiente' };
+        const CAT_LABELS = { piano: '🎹 Piano', asmr: '🌿 Naturaleza', ambiente: '🙏 Adoración / Reposo' };
         const CAT_ORDER  = ['piano', 'asmr', 'ambiente'];
 
         // Segundo elemento de audio para fundir entre variantes/ambientes sin silencio.
@@ -1638,9 +1649,6 @@
         let crossing = false;
         const blobCache = new Map();   // contentId -> objectURL
         const CROSSFADE_MS = 1400;
-        // Cuando el usuario toca el texto para revisar un versículo, se pausa el
-        // auto-scroll y se reanuda (volviendo a la posición del audio) tras un respiro.
-        let userScrolling = false, scrollResumeId = null, returnToAudio = false;
 
         function premiumReady() {
             return !!(window.SDV_Auth && SDV_Auth.enabled && SDV_Auth.user && SDV_Auth.premium);
@@ -1707,15 +1715,22 @@
             return url;
         }
         // Funde el volumen de un elemento de `from` a `to` en `ms`.
+        // IMPORTANTE: usa setInterval, NO requestAnimationFrame. Con la pantalla
+        // bloqueada el navegador CONGELA rAF → el fundido se quedaba a medias,
+        // `crossing` nunca volvía a false y la música ambiente enmudecía hasta
+        // reabrir la app. setInterval sí corre en segundo plano (limitado a ~1s),
+        // y como medimos el progreso con el reloj real, el fundido SIEMPRE termina.
         function fade(el, from, to, ms) {
             return new Promise(resolve => {
+                from = Math.max(0, Math.min(1, from));
+                to   = Math.max(0, Math.min(1, to));
+                try { el.volume = from; } catch (e) {}
                 const t0 = performance.now();
-                el.volume = Math.max(0, Math.min(1, from));
-                (function step(now) {
-                    const k = Math.min(1, (now - t0) / ms);
-                    el.volume = Math.max(0, Math.min(1, from + (to - from) * k));
-                    if (k < 1) requestAnimationFrame(step); else resolve();
-                })(performance.now());
+                const id = setInterval(() => {
+                    const k = Math.min(1, (performance.now() - t0) / ms);
+                    try { el.volume = Math.max(0, Math.min(1, from + (to - from) * k)); } catch (e) {}
+                    if (k >= 1) { clearInterval(id); resolve(); }
+                }, 50);
             });
         }
         // Pone `url` en el elemento en espera y lo funde con el activo: nunca hay silencio.
@@ -1759,6 +1774,7 @@
             if (currentAmbient === id) { stopAmbient(); return; }   // tocar de nuevo = apagar
             const my = ++ambToken;
             currentAmbient = id;
+            setEmblem(a);
             ambPlaylist = shuffle(a.ids);
             ambPos = 0;
             loading = true; markChips();
@@ -1788,6 +1804,7 @@
             blobCache.clear();
             ambPlaylist = []; ambPos = 0;
             currentAmbient = null;
+            setEmblem(null);
             markChips();
         }
         // Rotación automática entre variantes: fundir justo antes de que termine
@@ -1804,59 +1821,29 @@
             });
         });
 
+        // Muestra la referencia (Libro Capítulo) sobre el emblema.
         function syncVerse() {
             const ref = document.getElementById('focusRef');
-            const box = document.getElementById('focusVerses');
-            if (!state.book || !state.verses || !state.verses.length) {
-                ref.textContent = 'Modo Enfoque';
-                box.innerHTML = '<p class="focus-empty">Elige un capítulo y un ambiente. Respira, escucha y medita en la Palabra.</p>';
-                return;
-            }
-            ref.textContent = `${state.book} ${state.chapter}`;
-            box.innerHTML = state.verses
-                .map((t, i) => `<p><span class="fv-num">${i + 1}</span>${t}</p>`)
-                .join('');
-            box.scrollTop = 0;   // nuevo capítulo: empezar desde arriba
+            if (!ref) return;
+            ref.textContent = (state.book && state.chapter) ? `${state.book} ${state.chapter}` : 'Modo Enfoque';
         }
 
-        // Desplaza el texto al ritmo de la narración (efecto "créditos de cine"):
-        // la posición del scroll sigue el porcentaje reproducido del capítulo.
-        //
-        // Motor INDEPENDIENTE (requestAnimationFrame). Mientras el Modo Enfoque
-        // esté abierto lee SIEMPRE el <audio> activo (`audio`), que cambia con el
-        // swap A/B entre capítulos. Al no depender de eventos del audio ni del
-        // estado de la transición, se auto-corrige tras cualquier cambio de
-        // capítulo: nunca se "queda mudo" aunque una transición falle.
-        let scrollRaf = null, smoothUntil = 0;
-        function scrollStep() {
-            if (!overlay.classList.contains('open')) { scrollRaf = null; return; }
-            scrollRaf = requestAnimationFrame(scrollStep);
-            const box = document.getElementById('focusVerses');
-            const dur = audio.duration, cur = audio.currentTime;
-            if (!box || !dur || userScrolling) return;   // respeta el gesto del usuario
-            if (performance.now() < smoothUntil) return; // deja correr el retorno suave
-            const max = box.scrollHeight - box.clientHeight;
-            if (max <= 0) return;
-            const target = Math.min(max, (cur / dur) * max);
-            if (returnToAudio) {         // tras revisar un versículo, vuelve suave a donde va el audio
-                returnToAudio = false;
-                smoothUntil = performance.now() + 450;
-                box.scrollTo({ top: target, behavior: 'smooth' });
-            } else if (Math.abs(box.scrollTop - target) > 0.5) {
-                box.scrollTop = target;
+        // Emblema animado: reemplaza el texto que pasaba con el audio. Cambia de
+        // icono según el ambiente y de color de brillo según su categoría.
+        function setEmblem(ambient) {
+            const icon = document.getElementById('focusEmblemIcon');
+            const cap  = document.getElementById('focusEmblemCaption');
+            const box  = document.getElementById('focusEmblem');
+            if (!icon || !box) return;
+            if (ambient) {
+                icon.textContent = ambient.emoji || '🕊️';
+                box.dataset.cat = ambient.cat || '';
+                if (cap) cap.textContent = ambient.label;
+            } else {
+                icon.textContent = '🕊️';
+                box.removeAttribute('data-cat');
+                if (cap) cap.textContent = state.book ? 'Reposa en la Palabra' : 'Elige un ambiente y reposa en la Palabra';
             }
-        }
-        function startScrollLoop() { if (!scrollRaf) scrollRaf = requestAnimationFrame(scrollStep); }
-        function stopScrollLoop() { if (scrollRaf) { cancelAnimationFrame(scrollRaf); scrollRaf = null; } }
-        // El usuario tocó/desplazó el texto: pausamos el auto-scroll y lo
-        // reanudamos (regresando a la posición del audio) tras 2.5s sin tocar.
-        function onUserScroll() {
-            userScrolling = true;
-            if (scrollResumeId) clearTimeout(scrollResumeId);
-            scrollResumeId = setTimeout(() => {
-                userScrolling = false;
-                returnToAudio = true;
-            }, 2500);
         }
 
         function setVoz(v)    { vozVol = Math.max(0, Math.min(1, v / 100)); applyVolumes(); }
@@ -1899,18 +1886,18 @@
             // Usuario gratis (o sin cuenta): no entra al modo; ve el teaser de venta.
             if (!premiumReady()) { openTeaser(); return; }
             focusNarration = true;
-            // Si veníamos de un stream concatenado, reiniciar el capítulo actual en
-            // modo capítulo-a-capítulo para que el texto avance al cambiar de capítulo.
+            // Si veníamos de un stream concatenado, reiniciar la narración en modo
+            // capítulo-a-capítulo dentro del Modo Enfoque.
             const wasStreaming = !!(audio.src && audio.src.includes('/stream/'));
             const wasPlaying = !audio.paused && !!audio.src;
             renderAmbients();
             syncVerse();
+            setEmblem(currentAmbient ? ambients.find(a => a.id === currentAmbient) : null);
             overlay.classList.add('open');
             overlay.setAttribute('aria-hidden', 'false');
             document.body.style.overflow = 'hidden';
             document.getElementById('playerFocusBtn')?.classList.add('active');
             applyVolumes();
-            startScrollLoop();
             if (wasStreaming && wasPlaying) startPlaying();
             onNarration(!audio.paused && !!audio.src);
         }
@@ -1918,15 +1905,12 @@
             overlay.classList.remove('open');
             overlay.setAttribute('aria-hidden', 'true');
             document.body.style.overflow = '';
-            stopScrollLoop();
             focusNarration = false;
             // Al salir, detener TODO (voz + música): así no queda la narración
             // sonando "por detrás" obligando a pausarla aparte en el modo normal.
             try { audio.pause(); } catch (e) {}
             stopAmbient();
             if (timerId) { clearTimeout(timerId); timerId = null; }
-            if (scrollResumeId) { clearTimeout(scrollResumeId); scrollResumeId = null; }
-            userScrolling = false; returnToAudio = false;
             vozVol = 1; audioA.volume = 1; audioB.volume = 1;   // restaurar volumen normal
             setSpeed(1, document.querySelector('#focusSpeedOpts button[data-rate="1"]')); // voz a velocidad normal al salir
             document.getElementById('playerFocusBtn')?.classList.remove('active');
@@ -1965,14 +1949,18 @@
             else { badge.textContent = '✨ Premium'; }
         }
 
-        // Detectar el gesto del usuario sobre el texto (rueda o dedo) para
-        // pausar el auto-scroll mientras revisa un versículo.
-        const versesEl = document.getElementById('focusVerses');
-        if (versesEl) {
-            versesEl.addEventListener('wheel', onUserScroll, { passive: true });
-            versesEl.addEventListener('touchstart', onUserScroll, { passive: true });
-            versesEl.addEventListener('touchmove', onUserScroll, { passive: true });
-        }
+        // Auto-recuperación al volver del segundo plano: con la pantalla bloqueada
+        // el navegador puede pausar la música ambiente o dejar un fundido a medias.
+        // Al reabrir la app reanudamos la pista activa y restauramos su volumen.
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) return;
+            if (!overlay.classList.contains('open') || !currentAmbient) return;
+            crossing = false;
+            applyVolumes();
+            if (ambCur && ambCur.src && ambCur.paused && !audio.paused) {
+                ambCur.play().catch(() => {});
+            }
+        });
 
         return { enter, exit, selectAmbient, setVoz, setMusica, setSpeed, setTimer, onNarration, syncVerse, refreshGate, openTeaser, closeTeaser, ambients };
     })();
