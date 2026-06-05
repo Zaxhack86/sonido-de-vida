@@ -161,6 +161,28 @@
         .chapter-verses::-webkit-scrollbar-thumb{background:rgba(201,168,76,.3);border-radius:4px}
         .verse-line{font-family:'Lora',serif;color:rgba(255,255,255,.85);font-size:1rem;line-height:1.9;padding:.25rem 0}
         .verse-number{font-size:.72rem;color:var(--gold);font-weight:700;vertical-align:super;margin-right:.35rem;font-family:'Inter',sans-serif}
+        .devohoy-section{padding:5rem 2rem 4rem;background:linear-gradient(180deg,var(--warm-white) 0%,var(--cream) 100%)}
+        .devohoy-card{max-width:720px;margin:0 auto;background:linear-gradient(160deg,#15132b 0%,#1c1838 55%,#241a47 100%);border-radius:24px;padding:2.6rem 2.4rem;box-shadow:0 24px 60px rgba(26,20,50,.28);border:1px solid rgba(201,168,76,.22);position:relative;overflow:hidden}
+        .devohoy-card::before{content:'';position:absolute;top:-30%;right:-15%;width:340px;height:340px;background:radial-gradient(circle,rgba(201,168,76,.16) 0%,transparent 65%);pointer-events:none}
+        .devohoy-top{position:relative;z-index:2;display:flex;align-items:center;gap:.8rem;margin-bottom:1.4rem}
+        .devohoy-badge{display:inline-flex;align-items:center;background:rgba(201,168,76,.16);border:1px solid rgba(201,168,76,.34);color:var(--gold-light);font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:.32rem .9rem;border-radius:50px}
+        .devohoy-date{color:rgba(255,255,255,.55);font-size:.85rem;text-transform:capitalize}
+        .devohoy-ref{position:relative;z-index:2;font-family:'Cinzel',serif;color:var(--gold);font-size:1.05rem;letter-spacing:.04em;margin-bottom:.7rem}
+        .devohoy-verse{position:relative;z-index:2;font-family:'Lora',serif;font-style:italic;color:#fff;font-size:clamp(1.25rem,3vw,1.6rem);line-height:1.55;margin:0 0 1.8rem;border:none}
+        .devohoy-verse::before{content:'\201C';color:var(--gold);margin-right:.1rem}
+        .devohoy-verse::after{content:'\201D';color:var(--gold);margin-left:.1rem}
+        .devohoy-title{position:relative;z-index:2;font-family:'Cinzel',serif;color:var(--gold-light);font-size:1.18rem;line-height:1.4;margin-bottom:1.1rem}
+        .devohoy-body{position:relative;z-index:2}
+        .devohoy-body p{font-family:'Lora',serif;color:rgba(255,255,255,.82);font-size:1.04rem;line-height:1.85;margin-bottom:1.1rem}
+        .devohoy-body strong{color:var(--gold-light);font-weight:600}
+        .devohoy-prayer{position:relative;z-index:2;font-family:'Lora',serif;font-style:italic;color:rgba(255,255,255,.72);font-size:.98rem;line-height:1.75;border-left:3px solid rgba(201,168,76,.5);padding-left:1.1rem;margin:1.6rem 0 2rem}
+        .devohoy-prayer b{color:var(--gold-light);font-style:normal;font-weight:600;display:block;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;margin-bottom:.4rem}
+        .devohoy-actions{position:relative;z-index:2;display:flex;align-items:center;gap:1.2rem;flex-wrap:wrap}
+        .devohoy-listen{display:inline-flex;align-items:center;gap:.55rem;background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:var(--dark);border:none;border-radius:50px;padding:.85rem 1.9rem;font-size:.95rem;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:transform .2s,box-shadow .2s}
+        .devohoy-listen:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(201,168,76,.35)}
+        .devohoy-more{color:var(--gold-light);font-weight:600;font-size:.9rem;text-decoration:none;transition:opacity .2s}
+        .devohoy-more:hover{opacity:.75}
+        @media(max-width:600px){.devohoy-card{padding:2rem 1.5rem}.devohoy-actions{gap:.9rem}}
         .random-section{padding:6rem 2rem;background:var(--cream);text-align:center}
         .random-container{max-width:700px;margin:0 auto}
         .random-btn{background:linear-gradient(135deg,var(--purple),#4a2fa0);color:white;padding:1.2rem 3rem;border:none;border-radius:50px;font-size:1.15rem;font-weight:600;cursor:pointer;transition:all .3s;font-family:'Inter',sans-serif;display:inline-flex;align-items:center;gap:.7rem;box-shadow:0 8px 30px rgba(45,27,105,.3)}
@@ -556,6 +578,31 @@
             <div class="stat-item"><h3>1,189</h3><p>Capítulos en audio</p></div>
             <div class="stat-item"><h3>100%</h3><p>Gratis</p></div>
             <div class="stat-item"><h3>2</h3><p>Versiones bíblicas</p></div>
+        </div>
+    </section>
+
+    <section class="devohoy-section" id="devocional-hoy" data-tab="inicio">
+        <div class="section-header reveal">
+            <h2>Devocional de Hoy</h2>
+            <p>Una palabra para acompañar tu día — cambia cada mañana</p>
+        </div>
+        <div class="devohoy-card reveal" id="devoHoyCard">
+            <div class="devohoy-top">
+                <span class="devohoy-badge">✦ Hoy</span>
+                <span class="devohoy-date" id="devoHoyDate"></span>
+            </div>
+            <div class="devohoy-ref" id="devoHoyRef"></div>
+            <blockquote class="devohoy-verse" id="devoHoyVerse"></blockquote>
+            <h3 class="devohoy-title" id="devoHoyTitle"></h3>
+            <div class="devohoy-body" id="devoHoyBody"></div>
+            <div class="devohoy-prayer" id="devoHoyPrayer"></div>
+            <div class="devohoy-actions">
+                <button type="button" class="devohoy-listen" id="devoHoyListen">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none"/></svg>
+                    Escuchar el capítulo
+                </button>
+                <a class="devohoy-more" id="devoHoyMore" href="#">Leer completo →</a>
+            </div>
         </div>
     </section>
 
@@ -1127,6 +1174,154 @@
     let playbackMode = localStorage.getItem(MODE_KEY) || null;  // null = no se ha elegido aún
     let pendingPlayAction = null;  // función a ejecutar tras elegir modo
 
+    /* ════════ Devocional de Hoy (rota cada día) ════════ */
+    const DAILY_DEVOS = [
+        {
+            slug: 'salmos-23', libro: 'Salmos', cap: 23,
+            ref: 'Salmos 23:1',
+            verse: 'Jehová es mi pastor; nada me faltará.',
+            title: 'El Pastor que va delante de ti',
+            body: [
+                'David escribió estas palabras siendo rey, pero las entendió siendo pastor adolescente en los campos de Belén. Sabía que la oveja no encuentra el agua sola; depende por completo de quien la guía. <strong>Nada me faltará</strong> no promete abundancia ilimitada, sino suficiencia: lo que necesites para hoy estará a su tiempo.',
+                'Quizás hoy no sabes hacia dónde caminar. El salmo no te pide ver el camino completo — solo confiar en Quien ya lo recorrió delante de ti.'
+            ],
+            prayer: 'Señor, hoy descanso en que tú eres mi pastor, no mi propio esfuerzo. Guíame aunque no vea el camino. Amén.'
+        },
+        {
+            slug: 'isaias-40-31', libro: 'Isaias', cap: 40,
+            ref: 'Isaías 40:31',
+            verse: 'Los que esperan a Jehová tendrán nuevas fuerzas; levantarán alas como las águilas.',
+            title: 'La fuerza que nace en la espera',
+            body: [
+                'Isaías habló a un pueblo cansado, al borde del exilio. La palabra hebrea para esperar, <strong>qavah</strong>, no significa cruzarse de brazos: es la imagen de una cuerda que se trenza, hilo sobre hilo, hasta volverse irrompible. Esperar en Dios es entrelazar tu vida con la suya hasta que su fuerza sea la tuya.',
+                'El águila no aletea contra la tormenta: abre las alas y deja que la corriente la levante. Hoy, deja de pelear con tus fuerzas y descansa en las de Él.'
+            ],
+            prayer: 'Padre, estoy cansado. Enséñame a esperar en ti hasta que tus fuerzas renueven las mías. Amén.'
+        },
+        {
+            slug: 'filipenses-4-13', libro: 'Filipenses', cap: 4,
+            ref: 'Filipenses 4:13',
+            verse: 'Todo lo puedo en Cristo que me fortalece.',
+            title: 'El secreto de un hombre preso',
+            body: [
+                'Pablo escribió esto encadenado en una cárcel romana, sin saber si viviría. No es un grito de éxito, sino de contentamiento: aprendió a vivir tanto con abundancia como con escasez. <strong>Todo lo puedo</strong> no significa lograrlo todo, sino sostenerme en todo — porque la fuerza no viene de mí.',
+                'Hoy no necesitas más capacidad. Necesitas más de Cristo en medio de lo que ya cargas.'
+            ],
+            prayer: 'Cristo, no te pido cambiar mi circunstancia primero, sino fortalecer mi corazón dentro de ella. Amén.'
+        },
+        {
+            slug: 'jeremias-29-11', libro: 'Jeremias', cap: 29,
+            ref: 'Jeremías 29:11',
+            verse: 'Yo sé los pensamientos que tengo acerca de vosotros, pensamientos de paz, y no de mal.',
+            title: 'Una promesa escrita en el exilio',
+            body: [
+                'Esta promesa no se dio en un día de victoria, sino a un pueblo deportado a Babilonia, lejos de casa por setenta años. Dios no prometió sacarlos pronto; les pidió plantar huertos y vivir donde estaban. La palabra para paz es <strong>shalom</strong>: no ausencia de problemas, sino integridad, vida completa bajo su cuidado.',
+                'Si hoy estás en una "Babilonia" que no elegiste, recuerda: Dios obra su bien incluso en el lugar donde no querías estar.'
+            ],
+            prayer: 'Señor, confío en que tus planes son buenos aun cuando no entiendo el presente. Dame paz para esperar. Amén.'
+        },
+        {
+            slug: 'proverbios-3-5', libro: 'Proverbios', cap: 3,
+            ref: 'Proverbios 3:5',
+            verse: 'Fíate de Jehová de todo tu corazón, y no estribes en tu propia prudencia.',
+            title: 'Cuando entender no es lo más importante',
+            body: [
+                'El verbo hebreo para confiar es <strong>batach</strong>: dejarse caer con todo el peso, como quien se recuesta sin reservas. No dice que tu razonamiento sea malo — dice que no apoyes tu vida solo en él. La mente humana ve un tramo; Dios ve el camino entero.',
+                'Hoy hay algo que no logras entender. La fe no te pide entenderlo, sino soltarlo en las manos de Aquel que sí lo entiende.'
+            ],
+            prayer: 'Padre, dejo de apoyarme solo en lo que comprendo. Me recuesto en ti con todo mi corazón. Amén.'
+        },
+        {
+            slug: 'mateo-6-33', libro: 'Mateo', cap: 6,
+            ref: 'Mateo 6:33',
+            verse: 'Buscad primeramente el reino de Dios y su justicia, y todas estas cosas os serán añadidas.',
+            title: 'El orden que lo cambia todo',
+            body: [
+                'Jesús hablaba a campesinos que vivían al día, preocupados por comida y ropa. No despreció esas necesidades — las puso en su lugar. <strong>Primeramente</strong> no es cuestión de tiempo, sino de prioridad: lo que ocupa el centro de tu corazón ordena todo lo demás.',
+                'Hoy tus afanes gritan más fuerte que tu fe. Jesús no te pide ignorarlos, sino dejar que Dios, y no la ansiedad, ocupe el primer lugar.'
+            ],
+            prayer: 'Señor, ordena mis prioridades. Que buscarte a ti sea lo primero, y lo demás caiga en su sitio. Amén.'
+        },
+        {
+            slug: 'romanos-8-28', libro: 'Romanos', cap: 8,
+            ref: 'Romanos 8:28',
+            verse: 'A los que aman a Dios, todas las cosas les ayudan a bien.',
+            title: 'El bien que aún no se ve',
+            body: [
+                'Pablo no dice que todo sea bueno, sino que todo <strong>coopera</strong> para bien — la palabra griega es <strong>synergéō</strong>, de donde viene "sinergia". Como ingredientes amargos que solos no se comen, pero juntos en las manos del Maestro se vuelven pan.',
+                'Hoy hay un hilo en tu vida que parece no tener sentido. No estás viendo la tela terminada; Dios sí, y está tejiendo bien incluso con ese hilo oscuro.'
+            ],
+            prayer: 'Dios, confío en que estás obrando bien aun en lo que hoy me duele. Dame fe para esperar el desenlace. Amén.'
+        },
+        {
+            slug: 'juan-3-16', libro: 'Juan', cap: 3,
+            ref: 'Juan 3:16',
+            verse: 'De tal manera amó Dios al mundo, que ha dado a su Hijo unigénito.',
+            title: 'La medida de un amor sin medida',
+            body: [
+                'Jesús dijo esto de noche, a un religioso llamado Nicodemo que lo buscó a escondidas. <strong>De tal manera</strong> no mide cantidad, sino forma: así, de esta manera concreta, amó Dios — entregando lo más amado. El amor que solo se siente es sentimiento; el amor que se entrega es el de la cruz.',
+                'Hoy no tienes que ganarte ese amor. Ya fue dado, antes de que lo merecieras, mientras todavía estabas lejos.'
+            ],
+            prayer: 'Padre, gracias porque me amaste primero, no por lo que hice, sino por quién eres. Amén.'
+        },
+        {
+            slug: 'salmos-91', libro: 'Salmos', cap: 91,
+            ref: 'Salmos 91:1',
+            verse: 'El que habita al abrigo del Altísimo morará bajo la sombra del Omnipotente.',
+            title: 'Habitar, no solo visitar',
+            body: [
+                'El salmo distingue dos verbos: <strong>habitar</strong> y <strong>morar</strong>. No habla de quien visita a Dios en la emergencia, sino de quien vive en su presencia como en casa. La "sombra" evoca la tienda del desierto: refugio del sol abrasador para el que se queda dentro.',
+                'Hoy puedes correr a Dios solo en la crisis, o hacer de su presencia tu morada diaria. El refugio es para los que habitan, no para los que pasan de visita.'
+            ],
+            prayer: 'Señor, no quiero buscarte solo en la tormenta. Enséñame a habitar en ti cada día. Amén.'
+        },
+        {
+            slug: 'romanos-8-1', libro: 'Romanos', cap: 8,
+            ref: 'Romanos 8:1',
+            verse: 'Ninguna condenación hay para los que están en Cristo Jesús.',
+            title: 'El veredicto que ya fue dado',
+            body: [
+                'Pablo usa una palabra de tribunal: <strong>katákrima</strong>, la sentencia condenatoria del juez. Y declara que para quien está en Cristo esa sentencia ya no existe — no "menos condenación", sino <strong>ninguna</strong>. El caso fue cerrado en la cruz.',
+                'Hoy tu conciencia quizás te acusa de lo mismo de siempre. Pero la voz de la culpa no es la voz final: el juez ya dictó su veredicto, y dice "libre".'
+            ],
+            prayer: 'Cristo, gracias porque en ti no hay condenación. Acallo la voz de la culpa y escucho tu gracia. Amén.'
+        }
+    ];
+
+    function devoOfToday() {
+        const now = new Date();
+        const start = new Date(now.getFullYear(), 0, 0);
+        const day = Math.floor((now - start) / 86400000);
+        return DAILY_DEVOS[day % DAILY_DEVOS.length];
+    }
+
+    function renderDevoHoy() {
+        const card = document.getElementById('devoHoyCard');
+        if (!card) return;
+        document.querySelectorAll('#devocional-hoy .reveal').forEach(el => el.classList.add('visible'));
+        const d = devoOfToday();
+        const dateEl = document.getElementById('devoHoyDate');
+        try {
+            dateEl.textContent = new Date().toLocaleDateString('es', { weekday: 'long', day: 'numeric', month: 'long' });
+        } catch (e) { dateEl.textContent = ''; }
+        document.getElementById('devoHoyRef').textContent = d.ref;
+        document.getElementById('devoHoyVerse').textContent = d.verse;
+        document.getElementById('devoHoyTitle').textContent = d.title;
+        document.getElementById('devoHoyBody').innerHTML = d.body.map(p => `<p>${p}</p>`).join('');
+        document.getElementById('devoHoyPrayer').innerHTML = `<b>Oración</b>${d.prayer}`;
+        const more = document.getElementById('devoHoyMore');
+        more.href = `/devocional/${d.slug}`;
+        const listen = document.getElementById('devoHoyListen');
+        listen.onclick = () => {
+            showTab('biblia');
+            if (getActiveBible()[d.libro]) {
+                loadChapter({ book: d.libro, chapter: d.cap, autoplay: true });
+            } else {
+                showToast('No se pudo cargar el capítulo');
+            }
+        };
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
         if (!window.BIBLE) { showToast('⚠️ Error: No se cargó bible.js'); return; }
         document.getElementById('playerSub').textContent = `${getTranslationLabel()} · Sonido de Vida`;
@@ -1140,6 +1335,7 @@
         initPWA();
         updateNavModeIndicator();
         updateDownloadBtn();
+        renderDevoHoy();
     });
 
     function registerSW() {
