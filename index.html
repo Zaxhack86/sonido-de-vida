@@ -539,7 +539,7 @@
         .focus-ambients{max-height:46vh;overflow-y:auto;padding-right:.3rem}
         .focus-shuffle{display:flex;align-items:center;justify-content:center;gap:.5rem;width:100%;padding:.7rem 1rem;border-radius:50px;border:1px solid rgba(201,168,76,.4);background:linear-gradient(135deg,rgba(201,168,76,.14),rgba(201,168,76,.05));color:var(--gold-light);font-family:'Inter',sans-serif;font-size:.9rem;font-weight:600;cursor:pointer;transition:all .25s}
         .focus-shuffle:hover{border-color:rgba(201,168,76,.7);background:linear-gradient(135deg,rgba(201,168,76,.22),rgba(201,168,76,.08))}
-        .focus-shuffle.active{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#0d0d1a;border-color:transparent}
+        .focus-shuffle.active{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#0d0d1a;border-color:transparent;box-shadow:0 4px 18px rgba(201,168,76,.45);letter-spacing:.02em}
         .teaser-list{list-style:none;padding:0;margin:1rem 0;display:flex;flex-direction:column;gap:.7rem;text-align:left}
         .teaser-list li{display:flex;align-items:flex-start;gap:.6rem;color:rgba(255,255,255,.85);font-family:'Inter',sans-serif;font-size:.92rem;line-height:1.4}
         .teaser-list li::before{content:'✓';color:var(--gold-light);font-weight:700;flex:none}
@@ -1717,7 +1717,11 @@
     // Lógica de auto-avance
     // ════════════════════════════════════════════════════════════════
     function handleChapterEnded() {
-        const mode = playbackMode || 'single';
+        // En Modo Enfoque siempre avanzar al menos como 'continue' aunque el
+        // usuario no haya elegido modo de reproducción (o haya elegido 'single').
+        const mode = focusNarration
+            ? (playbackMode === 'full' ? 'full' : 'continue')
+            : (playbackMode || 'single');
         if (mode === 'single') {
             if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'none';
             hidePlayerBar();
@@ -1960,6 +1964,7 @@
         let ambCur = ambientEl, ambNext = ambientElB;
         let ambPlaylist = [], ambPos = 0, ambToken = 0;
         let crossing = false;
+        let shuffleAuto = false;
         const blobCache = new Map();   // contentId -> objectURL
         const CROSSFADE_MS = 1400;
 
@@ -1986,8 +1991,10 @@
             const box = document.getElementById('focusAmbients');
             box.innerHTML = '';
             const shuf = document.createElement('button');
-            shuf.className = 'focus-shuffle';
-            shuf.innerHTML = '🔀 Ambiente al azar · todas las categorías';
+            shuf.className = 'focus-shuffle' + (shuffleAuto ? ' active' : '');
+            shuf.innerHTML = shuffleAuto
+                ? '🔀 Aleatorio automático · activado'
+                : '🔀 Ambiente al azar · todas las categorías';
             shuf.onclick = shuffleAll;
             box.appendChild(shuf);
             CAT_ORDER.forEach(cat => {
@@ -2070,11 +2077,19 @@
             loadBlob(ambPlaylist[n]).catch(() => {});
         }
         // Rota a la siguiente variante del mismo ambiente (con fundido).
+        // Si shuffleAuto está activo y la lista de variantes se termina, elige
+        // un ambiente completamente distinto en lugar de volver a empezar.
         async function rotateNext() {
             if (rotating || crossing || ambPlaylist.length <= 1) return;
             rotating = true;
             try {
-                ambPos = (ambPos + 1) % ambPlaylist.length;
+                const nextPos = (ambPos + 1) % ambPlaylist.length;
+                if (shuffleAuto && nextPos === 0) {
+                    rotating = false;
+                    pickRandomAmbient();
+                    return;
+                }
+                ambPos = nextPos;
                 const url = await loadBlob(ambPlaylist[ambPos]);
                 await crossfadeTo(url);
                 preloadNextVariant();
@@ -2103,10 +2118,25 @@
             }
         }
         // Elige un ambiente al azar de cualquier categoría (distinto del actual).
-        function shuffleAll() {
+        function pickRandomAmbient() {
             const pool = ambients.filter(a => a.id !== currentAmbient);
             const pick = pool[Math.floor(Math.random() * pool.length)];
             if (pick) selectAmbient(pick.id);
+        }
+        // Activa/desactiva el modo aleatorio automático: al activar elige un
+        // ambiente al azar; al terminar la lista de variantes elige otro distinto.
+        function shuffleAll() {
+            shuffleAuto = !shuffleAuto;
+            updateShuffleBtn();
+            if (shuffleAuto) pickRandomAmbient();
+        }
+        function updateShuffleBtn() {
+            const btn = document.querySelector('.focus-shuffle');
+            if (!btn) return;
+            btn.classList.toggle('active', shuffleAuto);
+            btn.innerHTML = shuffleAuto
+                ? '🔀 Aleatorio automático · activado'
+                : '🔀 Ambiente al azar · todas las categorías';
         }
         function stopAmbient() {
             ambToken++;                 // cancela cargas en vuelo
@@ -2117,8 +2147,10 @@
             blobCache.clear();
             ambPlaylist = []; ambPos = 0;
             currentAmbient = null;
+            shuffleAuto = false;
             setEmblem(null);
             markChips();
+            updateShuffleBtn();
         }
         // Rotación automática entre variantes: fundir justo antes de que termine
         // la pista; si igual llega al final, saltar en seco como respaldo.
