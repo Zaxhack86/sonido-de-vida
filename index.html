@@ -1683,7 +1683,13 @@
                 if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing';
                 // Iniciar pre-carga del próximo capítulo en cuanto este arranca
                 preloadNextChapter();
-                if (window.Focus) Focus.onNarration(true);
+                if (window.Focus) {
+                    Focus.onNarration(true);
+                    // Arrancar tracker de display si estamos en modo streaming + Enfoque
+                    if (focusNarration && audio.src && audio.src.includes('/stream/')) {
+                        Focus.startStreamTrack();
+                    }
+                }
             });
             el.addEventListener('pause', function() {
                 if (this !== audio) return;
@@ -1702,14 +1708,16 @@
                 if (!audio.duration) return;
                 document.getElementById('playerProgressFill').style.width = (audio.currentTime / audio.duration * 100) + '%';
                 document.getElementById('playerTime').textContent = formatTime(audio.currentTime);
-                // Transición preventiva 0.4s antes del final
-                if (!chapterTransitioning && effectiveMode() !== 'single') {
+                // Transición preventiva 0.4s antes del final (solo para capítulos individuales)
+                if (!chapterTransitioning && effectiveMode() !== 'single' && !audio.src?.includes('/stream/')) {
                     const remaining = audio.duration - audio.currentTime;
                     if (remaining > 0 && remaining < 0.4) {
                         chapterTransitioning = true;
                         handleChapterEnded();
                     }
                 }
+                // Tracker de capítulo en display para Modo Enfoque con streaming
+                if (focusNarration && window.Focus) Focus.tickStreamTrack(audio.currentTime);
             });
             el.addEventListener('canplay', function() {
                 if (this !== audio) return;
@@ -2285,8 +2293,13 @@
             applyVolumes();
             updateSpeedAvailability();
             onNarration(!audio.paused && !!audio.src);
+            // Si ya hay un stream corriendo al entrar al Modo Enfoque, arrancar tracker
+            if (!audio.paused && audio.src && audio.src.includes('/stream/')) {
+                startStreamTrack();
+            }
         }
         function exit() {
+            stActive = false; // detener tracker de display
             overlay.classList.remove('open');
             overlay.setAttribute('aria-hidden', 'true');
             document.body.style.overflow = '';
@@ -2347,7 +2360,67 @@
             }
         });
 
-        return { enter, exit, selectAmbient, setVoz, setMusica, setSpeed, setTimer, onNarration, syncVerse, refreshGate, openTeaser, closeTeaser, useSbllVoice, ambients };
+        // ── Tracker de display en streaming ─────────────────────────────
+        // Sigue el currentTime del stream para detectar límites de capítulo
+        // y actualizar el texto sin interrumpir el audio. Obtiene la duración
+        // de cada capítulo con preload='metadata' (solo unos KB por petición).
+        let stActive = false, stBusy = false;
+        let stBook = null, stChapter = null, stCStart = 0, stCDur = null;
+
+        function fetchChapterDur(book, ch) {
+            return new Promise(resolve => {
+                const a = new Audio();
+                a.preload = 'metadata';
+                a.src = audioUrl(book, ch, true);
+                const done = v => { try { a.src = ''; } catch(e){} resolve(v); };
+                a.addEventListener('loadedmetadata', () => done(isFinite(a.duration) && a.duration > 0 ? a.duration : null), { once: true });
+                a.addEventListener('error', () => done(null), { once: true });
+                setTimeout(() => done(null), 10000);
+            });
+        }
+
+        async function startStreamTrack() {
+            if (stBusy) return;
+            stActive = false; stBusy = true;
+            stBook = state.book; stChapter = state.chapter;
+            stCStart = audio.currentTime; stCDur = null;
+            const dur = await fetchChapterDur(stBook, stChapter);
+            if (stBook === state.book) { stCDur = dur; stActive = !!dur; }
+            stBusy = false;
+        }
+
+        async function tickStreamTrack(ct) {
+            if (!stActive || stBusy || stCDur == null) return;
+            if (ct - stCStart < stCDur - 0.5) return;
+
+            stBusy = true; stActive = false;
+
+            const bible = getActiveBible();
+            const total = bible[stBook]?.length || 0;
+            let nextBook = stBook, nextCh = stChapter + 1;
+            if (nextCh > total) {
+                if (effectiveMode() === 'full') {
+                    const ordered = BIBLE_ORDER.filter(b => Object.keys(bible).includes(b));
+                    const idx = ordered.indexOf(stBook);
+                    if (idx >= 0 && idx < ordered.length - 1) { nextBook = ordered[idx + 1]; nextCh = 1; }
+                    else { stBusy = false; return; }
+                } else { stBusy = false; return; }
+            }
+
+            loadChapter({ book: nextBook, chapter: nextCh, skipAudio: true, silent: true });
+
+            const nextStart = stCStart + stCDur;
+            stBook = nextBook; stChapter = nextCh;
+            stCStart = nextStart; stCDur = null;
+
+            const dur = await fetchChapterDur(nextBook, nextCh);
+            if (stBook === nextBook && stChapter === nextCh) {
+                stCDur = dur; stActive = !!dur;
+            }
+            stBusy = false;
+        }
+
+        return { enter, exit, selectAmbient, setVoz, setMusica, setSpeed, setTimer, onNarration, syncVerse, refreshGate, openTeaser, closeTeaser, useSbllVoice, startStreamTrack, tickStreamTrack, ambients };
     })();
     window.Focus = Focus;
     function formatTime(s) { return `${Math.floor(s/60)}:${Math.floor(s%60).toString().padStart(2,'0')}`; }
