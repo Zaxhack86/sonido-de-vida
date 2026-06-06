@@ -548,6 +548,58 @@
         .teaser-price strong{display:block;font-size:1.7rem;color:var(--gold-light);font-weight:700;line-height:1.1}
         .teaser-price small{display:block;margin-top:.35rem;font-size:.82rem;color:rgba(255,255,255,.7)}
         .teaser-cta{width:100%;margin-top:.6rem}
+
+        /* ════════ Explorar: escaparate de hubs ════════ */
+        .showcase-section{max-width:1100px;margin:0 auto;padding:2.5rem 1.2rem 1rem}
+        .showcase-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;perspective:1400px}
+        .hub-card{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;gap:1rem;padding:2.2rem 1.5rem 1.9rem;border-radius:24px;cursor:pointer;overflow:hidden;border:1px solid rgba(201,168,76,.22);background:linear-gradient(160deg,rgba(26,26,62,.55),rgba(13,13,26,.85));box-shadow:0 18px 50px rgba(0,0,0,.35);transition:transform .45s cubic-bezier(.2,.8,.2,1),box-shadow .45s,border-color .45s;transform-style:preserve-3d}
+        .hub-card::before{content:'';position:absolute;top:-40%;left:-40%;width:180%;height:180%;background:conic-gradient(from 0deg,transparent 0deg,var(--hub-accent,rgba(201,168,76,.22)) 60deg,transparent 140deg);opacity:0;transition:opacity .5s;animation:hubSpin 12s linear infinite;pointer-events:none}
+        .hub-card:hover{transform:translateY(-8px) rotateX(6deg) rotateY(-4deg);border-color:var(--hub-edge,rgba(201,168,76,.55));box-shadow:0 30px 70px rgba(0,0,0,.5)}
+        .hub-card:hover::before{opacity:.5}
+        .hub-card:active{transform:translateY(-3px) scale(.99)}
+        @keyframes hubSpin{to{transform:rotate(360deg)}}
+        .hub-emblem{position:relative;width:128px;height:128px;display:flex;align-items:center;justify-content:center;border-radius:50%;transform:translateZ(40px);--hub-glow:rgba(201,168,76,.26)}
+        .hub-emblem::before{content:'';position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 50% 45%,var(--hub-glow),transparent 70%);box-shadow:inset 0 0 42px 4px var(--hub-glow),0 0 40px var(--hub-glow);animation:emBreathe 6s ease-in-out infinite}
+        .hub-emblem::after{content:'';position:absolute;inset:12px;border-radius:50%;border:1px solid var(--hub-edge,rgba(201,168,76,.4));animation:emSpin 26s linear infinite}
+        .hub-emblem-ico{position:relative;z-index:1;font-size:3.2rem;line-height:1;filter:drop-shadow(0 6px 18px rgba(0,0,0,.45));animation:emFloat 6s ease-in-out infinite}
+        .hub-card h3{font-family:'Cinzel',serif;color:#fff;font-size:1.35rem;margin:0;letter-spacing:.01em}
+        .hub-card p{font-family:'Lora',serif;color:rgba(255,255,255,.62);font-size:.95rem;line-height:1.5;margin:0;max-width:30ch}
+        .hub-card .hub-go{margin-top:.3rem;display:inline-flex;align-items:center;gap:.45rem;font-family:'Inter',sans-serif;font-size:.82rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--gold-light)}
+        .hub-card .hub-go svg{width:15px;height:15px;transition:transform .35s}
+        .hub-card:hover .hub-go svg{transform:translateX(4px)}
+        .hub-badge{position:absolute;top:1rem;right:1rem;z-index:2;font-family:'Inter',sans-serif;font-size:.66rem;font-weight:700;letter-spacing:.06em;padding:.22rem .6rem;border-radius:50px;background:rgba(201,168,76,.18);color:var(--gold-light);border:1px solid rgba(201,168,76,.3)}
+        .hub-card.hub-podcast{--hub-accent:rgba(232,182,90,.3);--hub-edge:rgba(232,182,90,.6);--hub-glow:rgba(232,182,90,.28)}
+        .hub-card.hub-enfoque{--hub-accent:rgba(124,180,142,.28);--hub-edge:rgba(150,205,168,.55);--hub-glow:rgba(124,180,142,.26)}
+        @media(prefers-reduced-motion:reduce){.hub-card::before,.hub-emblem::before,.hub-emblem::after,.hub-emblem-ico{animation:none}.hub-card:hover{transform:translateY(-6px)}}
+
+        /* ════════ Hub Podcast de Vida (overlay) ════════ */
+        .podcast-overlay{position:fixed;inset:0;z-index:4000;display:none;flex-direction:column;align-items:center;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:calc(env(safe-area-inset-top) + 1.2rem) 1.2rem calc(env(safe-area-inset-bottom) + 6rem);background:radial-gradient(120% 110% at 50% 0%,#17141d 0%,#0c0a13 55%,#050409 100%);opacity:0;transition:opacity .5s ease}
+        .podcast-overlay.open{display:flex;opacity:1}
+        .podcast-overlay .pod-bg{position:absolute;inset:0;background:radial-gradient(55% 45% at 50% 22%,rgba(232,182,90,.10),transparent 70%);pointer-events:none}
+        .pod-stage{position:relative;z-index:1;width:100%;max-width:680px;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:1.1rem}
+        .pod-eyebrow{font-family:'Cinzel',serif;color:var(--gold-light);font-size:.95rem;letter-spacing:.14em;text-transform:uppercase;opacity:.85;margin-top:.5rem}
+        /* Emblema 3D: ondas de sonido concéntricas que se expanden + micro flotante */
+        .pod-emblem{position:relative;width:172px;height:172px;display:flex;align-items:center;justify-content:center;margin:.3rem 0 .2rem}
+        .pod-emblem .pod-wave{position:absolute;inset:0;margin:auto;width:100%;height:100%;border-radius:50%;border:1.5px solid rgba(232,182,90,.5);opacity:0;animation:podWave 3.6s ease-out infinite}
+        .pod-emblem .pod-wave:nth-child(2){animation-delay:1.2s}
+        .pod-emblem .pod-wave:nth-child(3){animation-delay:2.4s}
+        .pod-core{position:relative;z-index:1;width:96px;height:96px;border-radius:50%;background:linear-gradient(145deg,var(--gold),var(--gold-dark));display:flex;align-items:center;justify-content:center;font-size:2.7rem;box-shadow:0 14px 40px rgba(232,182,90,.4),inset 0 2px 10px rgba(255,255,255,.3);animation:emFloat 5.5s ease-in-out infinite}
+        @keyframes podWave{0%{transform:scale(.5);opacity:0}25%{opacity:.7}100%{transform:scale(1.25);opacity:0}}
+        .pod-title{font-family:'Cinzel',serif;color:#fff;font-size:2rem;margin:0;text-align:center;line-height:1.1}
+        .pod-sub{font-family:'Lora',serif;font-style:italic;color:rgba(255,255,255,.6);font-size:1.02rem;text-align:center;max-width:42ch;margin:0}
+        .pod-list{width:100%;max-width:620px;margin:1.6rem auto 0;display:flex;flex-direction:column;gap:.85rem}
+        .pod-ep{display:flex;align-items:center;gap:1rem;padding:1rem 1.1rem;border-radius:18px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);transition:border-color .3s,background .3s,transform .3s;cursor:pointer}
+        .pod-ep:hover{border-color:rgba(232,182,90,.4);background:rgba(232,182,90,.06);transform:translateY(-2px)}
+        .pod-ep-play{flex:none;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-dark));display:flex;align-items:center;justify-content:center;color:#0d0d1a;font-size:1.1rem}
+        .pod-ep-body{flex:1;min-width:0;text-align:left}
+        .pod-ep-title{font-family:'Inter',sans-serif;font-weight:600;color:#fff;font-size:.98rem;margin:0 0 .2rem}
+        .pod-ep-meta{font-family:'Inter',sans-serif;font-size:.8rem;color:rgba(255,255,255,.5);display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+        .pod-ep-pdf{display:inline-flex;align-items:center;gap:.3rem;color:var(--gold-light);font-weight:600}
+        .pod-empty{width:100%;max-width:520px;margin:2rem auto 0;text-align:center;padding:2.4rem 1.4rem;border-radius:22px;border:1px dashed rgba(232,182,90,.3);background:rgba(232,182,90,.04)}
+        .pod-empty .pod-empty-ico{font-size:2.6rem;display:block;margin-bottom:.7rem;animation:emFloat 5s ease-in-out infinite}
+        .pod-empty h4{font-family:'Cinzel',serif;color:var(--gold-light);font-size:1.2rem;margin:0 0 .5rem}
+        .pod-empty p{font-family:'Lora',serif;color:rgba(255,255,255,.6);font-size:.95rem;line-height:1.6;margin:0 auto;max-width:36ch}
+        @media(prefers-reduced-motion:reduce){.pod-emblem .pod-wave,.pod-core,.pod-empty-ico{animation:none}}
     </style>
 </head>
 <body data-tab-active="inicio">
@@ -614,7 +666,33 @@
     </section>
     ════════ fin Devocional de Hoy (parked) ════════ -->
 
-    <section class="features" id="features" data-tab="explorar">
+    <section class="showcase-section" data-tab="explorar">
+        <div class="section-header reveal"><h2>Explorar</h2><p>Cada experiencia tiene su propio espacio. Elige por dónde entrar a la Palabra.</p></div>
+        <div class="showcase-grid">
+            <div class="hub-card reveal" role="button" tabindex="0" onclick="location.href='/devocionales'" onkeydown="if(event.key==='Enter')location.href='/devocionales'">
+                <div class="hub-emblem"><span class="hub-emblem-ico">📖</span></div>
+                <h3>Devocionales</h3>
+                <p>Reflexiones profundas sobre la Palabra, con raíces hebreas y griegas, para tu vida diaria.</p>
+                <span class="hub-go">Abrir <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span>
+            </div>
+            <div class="hub-card hub-podcast reveal" role="button" tabindex="0" onclick="Podcast.open()" onkeydown="if(event.key==='Enter')Podcast.open()">
+                <span class="hub-badge">Nuevo</span>
+                <div class="hub-emblem"><span class="hub-emblem-ico">🎙️</span></div>
+                <h3>Podcast de Vida</h3>
+                <p>Enseñanzas en audio para crecer en la fe, con un resumen en PDF para llevarte la Palabra.</p>
+                <span class="hub-go">Abrir <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span>
+            </div>
+            <div class="hub-card hub-enfoque reveal" role="button" tabindex="0" onclick="Focus.enter()" onkeydown="if(event.key==='Enter')Focus.enter()">
+                <span class="hub-badge">✨ Premium</span>
+                <div class="hub-emblem"><span class="hub-emblem-ico">🌿</span></div>
+                <h3>Modo Enfoque</h3>
+                <p>Música y ambiente bajo la narración para orar, meditar y reposar en quietud.</p>
+                <span class="hub-go">Abrir <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span>
+            </div>
+        </div>
+    </section>
+
+    <section class="features" id="features" data-tab="inicio">
         <div class="section-header reveal"><h2>¿Por qué Sonido de Vida?</h2><p>Conecta con la Palabra de Dios de manera simple y accesible</p></div>
         <div class="features-grid">
             <div class="feature-card reveal"><div class="feature-icon">🎧</div><h3>Audio por Capítulo</h3><p>Cada capítulo narrado con claridad y reverencia en español latinoamericano. Disponible en dos versiones: RVA 1909 y SBLL 2026.</p></div>
@@ -696,7 +774,7 @@
         </div>
     </section>
 
-    <section class="devocionales-section" id="devocionales" data-tab="explorar">
+    <section class="devocionales-section" id="devocionales" data-tab="inicio">
         <div class="section-header reveal">
             <h2>Devocionales Bíblicos</h2>
             <p>Reflexiones profundas sobre la Palabra de Dios para tu vida diaria</p>
@@ -729,7 +807,7 @@
         </div>
     </section>
 
-    <section class="account-promo" id="cuenta" data-tab="explorar">
+    <section class="account-promo" id="cuenta" data-tab="inicio">
         <div class="account-promo-inner reveal">
             <div class="hero-badge" style="margin-bottom:1.5rem">✦ Cuenta gratuita</div>
             <h2>Crea tu cuenta gratis</h2>
@@ -1078,6 +1156,27 @@
                     <button data-min="30" onclick="Focus.setTimer(30,this)">30m</button>
                     <button data-min="60" onclick="Focus.setTimer(60,this)">60m</button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ════════ Hub Podcast de Vida (overlay a pantalla completa) ════════ -->
+    <div class="podcast-overlay" id="podcastOverlay" aria-hidden="true" role="dialog" aria-label="Podcast de Vida">
+        <div class="pod-bg"></div>
+        <button class="focus-close" onclick="Podcast.close()" aria-label="Cerrar Podcast de Vida">✕</button>
+        <div class="pod-stage">
+            <span class="pod-eyebrow">Podcast de Vida</span>
+            <div class="pod-emblem">
+                <span class="pod-wave"></span><span class="pod-wave"></span><span class="pod-wave"></span>
+                <span class="pod-core">🎙️</span>
+            </div>
+            <h2 class="pod-title">Enseñanzas en audio</h2>
+            <p class="pod-sub">Mensajes para crecer en la fe, con un resumen en PDF para llevarte la Palabra a donde vayas.</p>
+            <div class="pod-list" id="podcastList"></div>
+            <div class="pod-empty" id="podcastEmpty">
+                <span class="pod-empty-ico">🎧</span>
+                <h4>Muy pronto</h4>
+                <p>Estamos preparando las primeras enseñanzas en audio. Vuelve pronto: están en camino.</p>
             </div>
         </div>
     </div>
@@ -2600,6 +2699,84 @@
         const b = document.getElementById('mobileMenuBtn'); if (b) b.classList.remove('active');
         const l = document.getElementById('navLinks'); if (l) l.classList.remove('open');
     }
+
+    // ════════════════════════════════════════════════════════════════
+    // Hub Podcast de Vida: enseñanzas en audio + resumen PDF (premium).
+    // Los audios/PDF se sirven por el portero premium (/api/content/:id).
+    // Para publicar un episodio: subir el audio a R2, registrarlo en
+    // content_items (D1) y añadir aquí su { contentId } (y pdfId si hay PDF).
+    // Mientras EPISODES esté vacío, el hub muestra el estado "Muy pronto".
+    // ════════════════════════════════════════════════════════════════
+    const Podcast = (function () {
+        const overlay = document.getElementById('podcastOverlay');
+        const listEl  = document.getElementById('podcastList');
+        const emptyEl = document.getElementById('podcastEmpty');
+
+        // Catálogo de episodios. Vacío hasta subir contenido a Cloudflare R2.
+        const EPISODES = [
+            // { title:'El poder de la fe', meta:'Romanos · 18 min', contentId:100, pdfId:101 },
+        ];
+
+        function render() {
+            if (!EPISODES.length) {
+                listEl.innerHTML = '';
+                listEl.style.display = 'none';
+                emptyEl.style.display = 'block';
+                return;
+            }
+            emptyEl.style.display = 'none';
+            listEl.style.display = 'flex';
+            listEl.innerHTML = '';
+            EPISODES.forEach((ep, i) => {
+                const card = document.createElement('div');
+                card.className = 'pod-ep';
+                card.onclick = () => play(i);
+                card.innerHTML =
+                    '<div class="pod-ep-play">▶</div>' +
+                    '<div class="pod-ep-body">' +
+                        '<p class="pod-ep-title"></p>' +
+                        '<div class="pod-ep-meta"><span class="pod-ep-when"></span>' +
+                        (ep.pdfId ? '<span class="pod-ep-pdf">📄 Resumen PDF</span>' : '') +
+                        '</div>' +
+                    '</div>';
+                card.querySelector('.pod-ep-title').textContent = ep.title || 'Episodio';
+                card.querySelector('.pod-ep-when').textContent = ep.meta || '';
+                listEl.appendChild(card);
+            });
+        }
+
+        async function play(i) {
+            const ep = EPISODES[i];
+            if (!ep || !ep.contentId) return;
+            try {
+                const url = await SDV_Auth.loadContentBlob(ep.contentId);
+                const a = document.getElementById('mainAudio');
+                a.src = url;
+                a.play().catch(() => {});
+                showPlayerBar();
+                const t = document.getElementById('playerRef');
+                if (t) t.textContent = ep.title || 'Podcast de Vida';
+                const s = document.getElementById('playerSub');
+                if (s) s.textContent = 'Podcast de Vida';
+            } catch (e) {
+                alert('Este episodio es para miembros. Inicia sesión o hazte Premium para escucharlo.');
+            }
+        }
+
+        function open() {
+            render();
+            overlay.classList.add('open');
+            overlay.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+        }
+        function close() {
+            overlay.classList.remove('open');
+            overlay.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+        }
+        return { open, close, play };
+    })();
+    window.Podcast = Podcast;
 
     /* ════════ Router de pestañas (app-shell) ════════ */
     const TABS = ['inicio','explorar','biblia','buscar','yo'];
