@@ -2300,12 +2300,15 @@
 
             const wasPlaying = !audio.paused && !!audio.src;
             const isStream  = wasPlaying && audio.src.includes('/stream/');
+            const isFullStream = isStream && audio.src.includes('modo=full');
 
-            if (wasPlaying && !isStream && state.book) {
-                // Audio corriendo como capítulo individual → cambiar a streaming ahora.
-                // enter() viene de un gesto del usuario → audio.play() está permitido en iOS.
-                // Se reinicia desde el inicio del capítulo actual, pero a cambio
-                // el stream continúa solo hasta el final del libro sin cortes.
+            if (wasPlaying && !isFullStream && state.book) {
+                // Cualquier reproducción que NO sea ya un stream 'full' (capítulo
+                // individual, o stream 'continuar' de un solo libro) se reabre como
+                // stream full: effectiveMode()==='full' en Enfoque, así la voz fluye
+                // de un libro al siguiente sin detenerse hasta Apocalipsis.
+                // enter() viene de un gesto del usuario → audio.play() permitido en iOS.
+                // Se reinicia desde el inicio del capítulo actual.
                 if (!playbackMode) { playbackMode = 'continue'; updateNavModeIndicator(); }
                 audio.src = audioUrl(state.book, state.chapter);
                 audio.play().catch(() => {});

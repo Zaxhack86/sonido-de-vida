@@ -1,5 +1,5 @@
-const CACHE_STATIC = 'sdv-static-v30';
-const CACHE_AUDIO  = 'sdv-audio-v1';
+const CACHE_STATIC = 'sdv-static-v31';
+const CACHE_AUDIO  = 'sdv-audio-v2';
 
 const STATIC_ASSETS = ['/', '/index.html', '/bible.js', '/manifest.json'];
 
@@ -25,6 +25,16 @@ self.addEventListener('fetch', e => {
     // (Antes 'workers.dev' atrapaba también la API y devolvía respuestas GET
     //  cacheadas para los POST → guardar parecía OK pero nunca llegaba al server.)
     if (url.hostname.startsWith('sonido-de-vida-audio.')) {
+        // Los streams continuos (/stream/...) y CUALQUIER petición con Range no
+        // se cachean ni se interceptan: son respuestas dinámicas sin
+        // Content-Length/Accept-Ranges. Servirlas desde caché rompe los range
+        // requests que el navegador necesita para la reproducción en segundo
+        // plano (pantalla bloqueada) y, al ignorar el query, confundía
+        // modo=full con modo=continuar (la voz se paraba al acabar un libro).
+        // Dejándolas pasar a la red, el navegador maneja los rangos nativamente.
+        if (url.pathname.startsWith('/stream/') || e.request.headers.has('range')) {
+            return;
+        }
         e.respondWith(handleAudio(e.request));
         return;
     }
