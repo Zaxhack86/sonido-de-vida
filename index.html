@@ -1269,10 +1269,13 @@
     let playbackSpeed = 1;       // velocidad de la voz (Modo Enfoque); cambiar src la resetea, se reaplica al reproducir
     let preloadedFor = null;     // {book, chapter} ya cargado en audioPreload
 
-    // Modo de reproducción efectivo: en Modo Enfoque siempre avanza al menos
-    // como 'continue' aunque el usuario no haya elegido modo de reproducción.
+    // Modo de reproducción efectivo.
+    // En Modo Enfoque siempre usamos 'full': el stream cubre todos los libros
+    // desde el capítulo actual hasta el Apocalipsis en una sola conexión HTTP.
+    // Así el evento 'ended' solo ocurre al terminar toda la Biblia — nunca al
+    // cambiar de libro — y la pantalla bloqueada no interrumpe la sesión de audio.
     function effectiveMode() {
-        if (focusNarration) return playbackMode === 'full' ? 'full' : 'continue';
+        if (focusNarration) return 'full';
         return playbackMode || 'single';
     }
 
