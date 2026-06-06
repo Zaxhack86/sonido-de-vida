@@ -1265,9 +1265,6 @@
     audioA.parentNode.insertBefore(audioB, audioA.nextSibling);
     let audio = audioA;          // elemento activo (reproduce)
     let audioPreload = audioB;   // elemento en stand-by (precarga el próximo)
-    // En Modo Enfoque la narración va capítulo-a-capítulo (no stream concatenado)
-    // para que el texto pueda avanzar al cambiar de capítulo. La continuidad sin
-    // silencios la da la precarga A/B (preloadNextChapter + swapAudioElements).
     let focusNarration = false;
     let playbackSpeed = 1;       // velocidad de la voz (Modo Enfoque); cambiar src la resetea, se reaplica al reproducir
     let preloadedFor = null;     // {book, chapter} ya cargado en audioPreload
@@ -2288,8 +2285,6 @@
             // Usuario gratis (o sin cuenta): no entra al modo; ve el teaser de venta.
             if (!premiumReady()) { openTeaser(); return; }
             focusNarration = true;
-            // El Modo Enfoque ahora también usa streaming (igual que el modo normal),
-            // por lo que no es necesario reiniciar el audio. El stream sigue corriendo.
             renderAmbients();
             syncVerse();
             setEmblem(currentAmbient ? ambients.find(a => a.id === currentAmbient) : null);
@@ -2299,10 +2294,23 @@
             document.getElementById('playerFocusBtn')?.classList.add('active');
             applyVolumes();
             updateSpeedAvailability();
-            onNarration(!audio.paused && !!audio.src);
-            // Si ya hay un stream corriendo al entrar al Modo Enfoque, arrancar tracker
-            if (!audio.paused && audio.src && audio.src.includes('/stream/')) {
+
+            const wasPlaying = !audio.paused && !!audio.src;
+            const isStream  = wasPlaying && audio.src.includes('/stream/');
+
+            if (wasPlaying && !isStream && state.book) {
+                // Audio corriendo como capítulo individual → cambiar a streaming ahora.
+                // enter() viene de un gesto del usuario → audio.play() está permitido en iOS.
+                // Se reinicia desde el inicio del capítulo actual, pero a cambio
+                // el stream continúa solo hasta el final del libro sin cortes.
+                if (!playbackMode) { playbackMode = 'continue'; updateNavModeIndicator(); }
+                audio.src = audioUrl(state.book, state.chapter);
+                audio.play().catch(() => {});
+                onNarration(true);
                 startStreamTrack();
+            } else {
+                onNarration(wasPlaying);
+                if (isStream) startStreamTrack();
             }
         }
         function exit() {
