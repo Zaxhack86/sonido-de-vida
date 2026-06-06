@@ -692,7 +692,7 @@
         </div>
     </section>
 
-    <section class="features" id="features" data-tab="inicio">
+    <section class="features" id="features" data-tab="explorar">
         <div class="section-header reveal"><h2>¿Por qué Sonido de Vida?</h2><p>Conecta con la Palabra de Dios de manera simple y accesible</p></div>
         <div class="features-grid">
             <div class="feature-card reveal"><div class="feature-icon">🎧</div><h3>Audio por Capítulo</h3><p>Cada capítulo narrado con claridad y reverencia en español latinoamericano. Disponible en dos versiones: RVA 1909 y SBLL 2026.</p></div>
@@ -774,6 +774,7 @@
         </div>
     </section>
 
+    <!-- Devocionales teaser — ahora vive como hub en Explorar (/devocionales). PARKED 2026-06-05
     <section class="devocionales-section" id="devocionales" data-tab="inicio">
         <div class="section-header reveal">
             <h2>Devocionales Bíblicos</h2>
@@ -806,8 +807,9 @@
             <a href="/devocionales" class="btn-primary">📖 Ver Todos los Devocionales</a>
         </div>
     </section>
+    -->
 
-    <section class="account-promo" id="cuenta" data-tab="inicio">
+    <section class="account-promo" id="cuenta" data-tab="yo">
         <div class="account-promo-inner reveal">
             <div class="hero-badge" style="margin-bottom:1.5rem">✦ Cuenta gratuita</div>
             <h2>Crea tu cuenta gratis</h2>
@@ -822,6 +824,7 @@
         </div>
     </section>
 
+    <!-- CTA redundante con el hero. PARKED 2026-06-05
     <section class="cta-section" data-tab="inicio">
         <div class="cta-content reveal">
             <h2>La Palabra de Dios es para todos</h2>
@@ -829,8 +832,9 @@
             <a href="#listen" class="btn-primary">✨ Comenzar a Escuchar</a>
         </div>
     </section>
+    -->
 
-    <section class="search-section" data-tab="buscar">
+    <section class="search-section" data-tab="inicio">
         <div class="section-header"><h2>Buscar en la Biblia</h2><p>Escribe una palabra o frase y encuentra el versículo</p></div>
         <div class="search-box-wrap">
             <div class="search-input-row">
@@ -903,7 +907,6 @@
         <button class="bn-item active" data-bn="inicio" onclick="showTab('inicio')" role="tab"><span class="bn-ico">🏠</span><span class="bn-label">Inicio</span></button>
         <button class="bn-item" data-bn="explorar" onclick="showTab('explorar')" role="tab"><span class="bn-ico">🧭</span><span class="bn-label">Explorar</span></button>
         <button class="bn-item" data-bn="biblia" onclick="showTab('biblia')" role="tab"><span class="bn-ico">📖</span><span class="bn-label">Biblia</span></button>
-        <button class="bn-item" data-bn="buscar" onclick="showTab('buscar')" role="tab"><span class="bn-ico">🔍</span><span class="bn-label">Buscar</span></button>
         <button class="bn-item" data-bn="yo" onclick="showTab('yo')" role="tab"><span class="bn-ico">👤</span><span class="bn-label">Yo</span></button>
     </nav>
 
@@ -2779,7 +2782,7 @@
     window.Podcast = Podcast;
 
     /* ════════ Router de pestañas (app-shell) ════════ */
-    const TABS = ['inicio','explorar','biblia','buscar','yo'];
+    const TABS = ['inicio','explorar','biblia','yo'];
     function showTab(name, opts) {
         if (!TABS.includes(name)) name = 'inicio';
         document.body.setAttribute('data-tab-active', name);
