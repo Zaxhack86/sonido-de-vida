@@ -1625,7 +1625,14 @@
     function togglePlay() {
         if (!state.book) return showToast('Primero selecciona un capítulo');
 
-        // Primera reproducción: preguntar al usuario qué modo prefiere
+        // En Modo Enfoque nunca mostrar el modal (está tapado por el overlay z-4000).
+        // Siempre reproducción continua: el usuario quiere orar/meditar sin interrupciones.
+        if (focusNarration && !playbackMode) {
+            playbackMode = 'continue';
+            updateNavModeIndicator();
+        }
+
+        // Primera reproducción fuera del Modo Enfoque: preguntar qué modo prefiere
         if (!playbackMode && (!audio.src || audio.ended || audio.paused) && audio.currentTime === 0) {
             pendingPlayAction = () => {
                 if (!audio.src || audio.ended) startPlaying();
