@@ -1,4 +1,4 @@
-const CACHE_STATIC = 'sdv-static-v27';
+const CACHE_STATIC = 'sdv-static-v28';
 const CACHE_AUDIO  = 'sdv-audio-v1';
 
 const STATIC_ASSETS = ['/', '/index.html', '/bible.js', '/manifest.json'];
@@ -35,7 +35,7 @@ self.addEventListener('fetch', e => {
     }
 
     if (STATIC_ASSETS.includes(url.pathname)) {
-        e.respondWith(staleWhileRevalidate(e.request, CACHE_STATIC));
+        e.respondWith(networkFirst(e.request, CACHE_STATIC));
         return;
     }
 });
@@ -68,6 +68,20 @@ async function staleWhileRevalidate(request, cacheName) {
     const cached = await cache.match(request);
     const networkFetch = fetch(request).then(r => { if (r.ok) cache.put(request, r.clone()); return r; });
     return cached || networkFetch;
+}
+
+async function networkFirst(request, cacheName) {
+    try {
+        const response = await fetch(request);
+        if (response.ok) {
+            const cache = await caches.open(cacheName);
+            cache.put(request, response.clone());
+        }
+        return response;
+    } catch {
+        const cache = await caches.open(cacheName);
+        return (await cache.match(request)) || new Response('Sin conexión', { status: 503 });
+    }
 }
 
 self.addEventListener('message', e => {
