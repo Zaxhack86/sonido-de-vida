@@ -1586,15 +1586,17 @@
         }
     }
 
-    function audioUrl(book, chapter) {
+    function audioUrl(book, chapter, single = false) {
         const key = BOOK_KEY[book] || book.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/\s+/g,'-');
         const prefix = translationMode === 'sbll' ? 'sbll/' : '';
-        // Stream continuo del servidor: para modos "continuar" y "full", el Worker
-        // concatena varios MP3 en una sola respuesta. Esto evita el evento 'ended'
-        // entre capítulos y permite reproducción confiable con pantalla bloqueada.
-        // En modo "single" usamos la URL individual de siempre.
-        if ((playbackMode === 'continue' || playbackMode === 'full') && !focusNarration) {
-            const m = playbackMode === 'full' ? 'full' : 'continuar';
+        // Stream continuo del servidor: concatena todos los MP3 desde este capítulo
+        // en una sola respuesta HTTP. Esto evita el evento 'ended' entre capítulos,
+        // lo que es esencial para reproducción confiable con pantalla bloqueada en
+        // iOS/Android. Se usa tanto en modo normal como en Modo Enfoque (effectiveMode).
+        // single=true fuerza URL de capítulo individual (p.ej. descarga).
+        const eMode = effectiveMode();
+        if (!single && (eMode === 'continue' || eMode === 'full')) {
+            const m = eMode === 'full' ? 'full' : 'continuar';
             return `${AUDIO_BASE}/stream/${prefix}${key}/${chapter}?modo=${m}`;
         }
         return `${AUDIO_BASE}/${prefix}${key}/${chapter}`;
@@ -1645,6 +1647,8 @@
         const eMode = effectiveMode();
         if (eMode === 'single') return;
         if (!state.book) return;
+        // Con streaming el servidor ya concatena los capítulos: no precargar
+        if (audio.src && audio.src.includes('/stream/')) return;
         const next = getNextChapterInfo(eMode);
         if (!next) { preloadedFor = null; return; }
         if (preloadedFor && preloadedFor.book === next.book && preloadedFor.chapter === next.chapter) return;
@@ -1729,6 +1733,16 @@
         if (mode === 'single') {
             if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'none';
             hidePlayerBar();
+            return;
+        }
+        // Cuando se usa streaming, el evento 'ended' significa que el libro (o
+        // toda la Biblia en modo 'full') terminó — no avanzar capítulos: el stream
+        // ya los incluyó todos. En Modo Enfoque la música ambiente sigue sonando.
+        if (audio.src && audio.src.includes('/stream/')) {
+            if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'none';
+            const msg = mode === 'full' ? '🎉 ¡Has terminado toda la Biblia!' : '🎉 ¡Has terminado el libro completo!';
+            showToast(msg);
+            if (!focusNarration) hidePlayerBar();
             return;
         }
         const next = getNextChapterInfo(mode);
@@ -2259,10 +2273,8 @@
             // Usuario gratis (o sin cuenta): no entra al modo; ve el teaser de venta.
             if (!premiumReady()) { openTeaser(); return; }
             focusNarration = true;
-            // Si veníamos de un stream concatenado, reiniciar la narración en modo
-            // capítulo-a-capítulo dentro del Modo Enfoque.
-            const wasStreaming = !!(audio.src && audio.src.includes('/stream/'));
-            const wasPlaying = !audio.paused && !!audio.src;
+            // El Modo Enfoque ahora también usa streaming (igual que el modo normal),
+            // por lo que no es necesario reiniciar el audio. El stream sigue corriendo.
             renderAmbients();
             syncVerse();
             setEmblem(currentAmbient ? ambients.find(a => a.id === currentAmbient) : null);
@@ -2272,7 +2284,6 @@
             document.getElementById('playerFocusBtn')?.classList.add('active');
             applyVolumes();
             updateSpeedAvailability();
-            if (wasStreaming && wasPlaying) startPlaying();
             onNarration(!audio.paused && !!audio.src);
         }
         function exit() {
@@ -2356,7 +2367,7 @@
         btn.disabled = true; btn.innerHTML = '<span class="loading-spinner"></span> Descargando...';
         try {
             // 1) Bajar el archivo primero (si falla la red, no se gasta descarga).
-            const res = await fetch(audioUrl(state.book, state.chapter));
+            const res = await fetch(audioUrl(state.book, state.chapter, true));
             if (!res.ok) throw new Error(`Error ${res.status}`);
             const blob = await res.blob();
 
@@ -2384,7 +2395,7 @@
             //    cachea bajo la ruta que lee el service worker, y se registra en la
             //    biblioteca "Mis descargas".
             try {
-                const path = new URL(audioUrl(state.book, state.chapter)).pathname;
+                const path = new URL(audioUrl(state.book, state.chapter, true)).pathname;
                 const cache = await caches.open(OFFLINE_CACHE);
                 await cache.put(new Request(path, { method: 'GET' }), new Response(blob));
                 recordOffline({ book: state.book, chapter: state.chapter, size: blob.size, ts: Date.now() });
@@ -2881,7 +2892,7 @@
         saveOfflineList(list);
         try {
             const cache = await caches.open(OFFLINE_CACHE);
-            const path = new URL(audioUrl(book, chapter)).pathname;
+            const path = new URL(audioUrl(book, chapter, true)).pathname;
             await cache.delete(new Request(path, { method: 'GET' }));
         } catch (e) {}
         if (window.SDV_Auth && SDV_Auth.user && SDV_Auth.removeLibrary) {
@@ -2898,7 +2909,7 @@
     async function downloadToDevice(book, chapter) {
         showToast('⬇️ Guardando en este equipo…');
         try {
-            const url = audioUrl(book, chapter);
+            const url = audioUrl(book, chapter, true);
             const path = new URL(url).pathname;
             const cache = await caches.open(OFFLINE_CACHE);
             let res = await cache.match(new Request(path, { method: 'GET' }));
