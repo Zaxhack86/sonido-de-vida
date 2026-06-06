@@ -1272,6 +1272,13 @@
     let playbackSpeed = 1;       // velocidad de la voz (Modo Enfoque); cambiar src la resetea, se reaplica al reproducir
     let preloadedFor = null;     // {book, chapter} ya cargado en audioPreload
 
+    // Modo de reproducción efectivo: en Modo Enfoque siempre avanza al menos
+    // como 'continue' aunque el usuario no haya elegido modo de reproducción.
+    function effectiveMode() {
+        if (focusNarration) return playbackMode === 'full' ? 'full' : 'continue';
+        return playbackMode || 'single';
+    }
+
     // ════════════════════════════════════════════════════════════════
     // Modos de reproducción
     // ════════════════════════════════════════════════════════════════
@@ -1635,9 +1642,10 @@
 
     // Pre-carga el siguiente capítulo en el elemento <audio> en stand-by.
     function preloadNextChapter() {
-        if (!playbackMode || playbackMode === 'single') return;
+        const eMode = effectiveMode();
+        if (eMode === 'single') return;
         if (!state.book) return;
-        const next = getNextChapterInfo(playbackMode);
+        const next = getNextChapterInfo(eMode);
         if (!next) { preloadedFor = null; return; }
         if (preloadedFor && preloadedFor.book === next.book && preloadedFor.chapter === next.chapter) return;
         const url = audioUrl(next.book, next.chapter);
@@ -1691,7 +1699,7 @@
                 document.getElementById('playerProgressFill').style.width = (audio.currentTime / audio.duration * 100) + '%';
                 document.getElementById('playerTime').textContent = formatTime(audio.currentTime);
                 // Transición preventiva 0.4s antes del final
-                if (!chapterTransitioning && playbackMode && playbackMode !== 'single') {
+                if (!chapterTransitioning && effectiveMode() !== 'single') {
                     const remaining = audio.duration - audio.currentTime;
                     if (remaining > 0 && remaining < 0.4) {
                         chapterTransitioning = true;
@@ -1717,11 +1725,7 @@
     // Lógica de auto-avance
     // ════════════════════════════════════════════════════════════════
     function handleChapterEnded() {
-        // En Modo Enfoque siempre avanzar al menos como 'continue' aunque el
-        // usuario no haya elegido modo de reproducción (o haya elegido 'single').
-        const mode = focusNarration
-            ? (playbackMode === 'full' ? 'full' : 'continue')
-            : (playbackMode || 'single');
+        const mode = effectiveMode();
         if (mode === 'single') {
             if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'none';
             hidePlayerBar();
@@ -1759,14 +1763,16 @@
             try { audio.currentTime = 0; } catch(e) {}
             const p = audio.play();
             if (p) p.catch(e => {
-                if (e.name === 'AbortError') audio.play().catch(() => {});
+                if (e.name !== 'AbortError') return;
+                audio.play().catch(() => {});
             });
         } else {
             // Fallback: precarga no lista — cargar src en el activo
             audio.src = audioUrl(next.book, next.chapter);
             const p = audio.play();
             if (p) p.catch(e => {
-                if (e.name === 'AbortError') audio.play().catch(() => {});
+                if (e.name !== 'AbortError') return;
+                audio.play().catch(() => {});
             });
         }
         // Actualizar DOM y estado (sin tocar el audio)
