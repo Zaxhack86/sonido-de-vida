@@ -2000,6 +2000,7 @@
         let ambPlaylist = [], ambPos = 0, ambToken = 0;
         let crossing = false;
         let shuffleAuto = false;
+        let _pauseTimer = null;   // debounce: ignora micro-pauses del stream entre libros
         const blobCache = new Map();   // contentId -> objectURL
         const CROSSFADE_MS = 1400;
 
@@ -2175,6 +2176,7 @@
         }
         function stopAmbient() {
             ambToken++;                 // cancela cargas en vuelo
+            if (_pauseTimer) { clearTimeout(_pauseTimer); _pauseTimer = null; }
             crossing = false; rotating = false;
             [ambientEl, ambientElB].forEach(el => { try { el.pause(); el.removeAttribute('src'); el.load(); } catch (e) {} });
             ambCur = ambientEl; ambNext = ambientElB;
@@ -2280,8 +2282,18 @@
             // pausa el ambiente; si vuelve, vuelve. Solo dentro del Modo Enfoque.
             if (!overlay.classList.contains('open')) return;
             if (!currentAmbient || !ambCur.src) return;
-            if (playing) ambCur.play().catch(() => {});
-            else { try { ambientEl.pause(); ambientElB.pause(); } catch (e) {} }
+            if (playing) {
+                // Cancelar cualquier pause pendiente (era un micro-pause del stream, no el usuario)
+                if (_pauseTimer) { clearTimeout(_pauseTimer); _pauseTimer = null; }
+                ambCur.play().catch(() => {});
+            } else {
+                // Debounce 600ms: los micro-pauses del stream al pasar entre libros
+                // duran < 100ms; una pausa real del usuario dura mucho más.
+                _pauseTimer = setTimeout(() => {
+                    _pauseTimer = null;
+                    try { ambientEl.pause(); ambientElB.pause(); } catch (e) {}
+                }, 600);
+            }
         }
 
         function enter() {
@@ -2297,6 +2309,13 @@
             document.getElementById('playerFocusBtn')?.classList.add('active');
             applyVolumes();
             updateSpeedAvailability();
+
+            // Auto-arrancar música ambiente aleatoria si no hay ninguna activa
+            if (!currentAmbient) {
+                shuffleAuto = true;
+                updateShuffleBtn();
+                pickRandomAmbient();
+            }
 
             const wasPlaying = !audio.paused && !!audio.src;
             const isStream  = wasPlaying && audio.src.includes('/stream/');
