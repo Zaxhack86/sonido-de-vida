@@ -2369,77 +2369,89 @@
             if (!currentAmbient) { shuffleAuto = true; updateShuffleBtn(); pickRandomAmbient(); }
         }
 
-        // ── Modo Meditación ────────────────────────────────────────────────────
-        let meditPos   = { book: null, ch: 0, vi: 0 };
+        // ── Modo Meditación — versículos curados de aliento ────────────────────
+        // Solo versículos positivos y completos: se leen bien sin contexto.
+        const MEDIT_VERSES = [
+            { ref:'Filipenses 4:13',      text:'Todo lo puedo en Cristo que me fortalece.' },
+            { ref:'Isaías 41:10',         text:'No temas, porque yo estoy contigo; no desmayes, porque yo soy tu Dios que te esfuerzo; siempre te ayudaré, siempre te sustentaré con la diestra de mi justicia.' },
+            { ref:'Isaías 40:31',         text:'Los que esperan en Jehová tendrán nuevas fuerzas; levantarán alas como las águilas; correrán, y no se cansarán; caminarán, y no se fatigarán.' },
+            { ref:'Salmos 23:1',          text:'Jehová es mi pastor; nada me faltará.' },
+            { ref:'Jeremías 29:11',       text:'Porque yo sé los pensamientos que tengo acerca de vosotros, dice Jehová, pensamientos de paz, y no de mal, para daros el fin que esperáis.' },
+            { ref:'Romanos 8:28',         text:'A los que aman a Dios, todas las cosas les ayudan a bien, esto es, a los que conforme a su propósito son llamados.' },
+            { ref:'Juan 14:27',           text:'La paz os dejo, mi paz os doy; yo no os la doy como el mundo la da. No se turbe vuestro corazón, ni tenga miedo.' },
+            { ref:'Salmos 46:1',          text:'Dios es nuestro amparo y fortaleza, nuestro pronto auxilio en las tribulaciones.' },
+            { ref:'Mateo 11:28-29',       text:'Venid a mí todos los que estáis trabajados y cargados, y yo os haré descansar. Llevad mi yugo sobre vosotros, y aprended de mí, que soy manso y humilde de corazón; y hallaréis descanso para vuestras almas.' },
+            { ref:'1 Pedro 5:7',          text:'Echando toda vuestra ansiedad sobre él, porque él tiene cuidado de vosotros.' },
+            { ref:'Salmos 27:1',          text:'Jehová es mi luz y mi salvación; ¿a quién temeré? Jehová es la fortaleza de mi vida; ¿de quién me he de atemorizar?' },
+            { ref:'Filipenses 4:6-7',     text:'Por nada estéis afanosos, sino sean conocidas vuestras peticiones delante de Dios en toda oración y ruego, con acción de gracias. Y la paz de Dios, que sobrepasa todo entendimiento, guardará vuestros corazones y vuestros pensamientos en Cristo Jesús.' },
+            { ref:'Lamentaciones 3:22-23',text:'Por la misericordia de Jehová no hemos sido consumidos, porque nunca decayeron sus misericordias. Nuevas son cada mañana; grande es tu fidelidad.' },
+            { ref:'Josué 1:9',            text:'Mira que te mando que te esfuerces y seas valiente; no temas ni desmayes, porque Jehová tu Dios estará contigo en dondequiera que vayas.' },
+            { ref:'Proverbios 3:5-6',     text:'Fíate de Jehová de todo tu corazón, y no te apoyes en tu propia prudencia. Reconócelo en todos tus caminos, y él enderezará tus veredas.' },
+            { ref:'Salmos 34:18',         text:'Cercano está Jehová a los quebrantados de corazón; y salva a los contritos de espíritu.' },
+            { ref:'2 Timoteo 1:7',        text:'Porque no nos ha dado Dios espíritu de cobardía, sino de poder, de amor y de dominio propio.' },
+            { ref:'Salmos 91:1-2',        text:'El que habita al abrigo del Altísimo morará bajo la sombra del Omnipotente. Diré yo a Jehová: Esperanza mía, y castillo mío; mi Dios, en quien confiaré.' },
+            { ref:'Isaías 43:1',          text:'No temas, porque yo te redimí; te puse nombre, mío eres tú.' },
+            { ref:'Salmos 121:1-2',       text:'Alzaré mis ojos a los montes; ¿de dónde vendrá mi socorro? Mi socorro viene de Jehová, que hizo los cielos y la tierra.' },
+            { ref:'Romanos 8:38-39',      text:'Nada nos podrá separar del amor de Dios, que es en Cristo Jesús Señor nuestro.' },
+            { ref:'Apocalipsis 21:4',     text:'Enjugará Dios toda lágrima de los ojos de ellos; y ya no habrá muerte, ni habrá más llanto, ni clamor, ni dolor.' },
+            { ref:'Salmos 139:14',        text:'Te alabaré; porque formidables, maravillosas son tus obras; estoy maravillado, y mi alma lo sabe muy bien.' },
+            { ref:'Juan 3:16',            text:'Porque de tal manera amó Dios al mundo, que ha dado a su Hijo unigénito, para que todo aquel que en él cree, no se pierda, mas tenga vida eterna.' },
+            { ref:'Salmos 103:12',        text:'Cuanto está lejos el oriente del occidente, hizo alejar de nosotros nuestras rebeliones.' },
+            { ref:'Isaías 26:3',          text:'Tú guardarás en completa paz a aquel cuyo pensamiento en ti persevera; porque en ti ha confiado.' },
+            { ref:'Efesios 2:10',         text:'Somos hechura suya, creados en Cristo Jesús para buenas obras, las cuales Dios preparó de antemano para que anduviésemos en ellas.' },
+            { ref:'Filipenses 4:19',      text:'Mi Dios, pues, suplirá todo lo que os falta conforme a sus riquezas en gloria en Cristo Jesús.' },
+            { ref:'Salmos 55:22',         text:'Echa sobre Jehová tu carga, y él te sustentará; no dejará para siempre caído al justo.' },
+            { ref:'1 Juan 4:18',          text:'El perfecto amor echa fuera el temor; porque el temor lleva en sí castigo. De donde el que teme, no ha sido perfeccionado en el amor.' },
+            { ref:'Salmos 30:5',          text:'Por la noche durará el lloro, y a la mañana vendrá la alegría.' },
+            { ref:'Salmos 16:11',         text:'Me mostrarás la senda de la vida; en tu presencia hay plenitud de gozo; delicias a tu diestra para siempre.' },
+            { ref:'Nahúm 1:7',            text:'Jehová es bueno, fortaleza en el día de la angustia; y conoce a los que en él confían.' },
+            { ref:'Salmos 62:5',          text:'Alma mía, en Dios solamente reposa, porque de él es mi esperanza.' },
+            { ref:'Gálatas 6:9',          text:'No nos cansemos, pues, de hacer bien; porque a su tiempo segaremos, si no desmayamos.' },
+            { ref:'Hebreos 11:1',         text:'La fe es la certeza de lo que se espera, la convicción de lo que no se ve.' },
+            { ref:'Salmos 73:26',         text:'Mi carne y mi corazón desfallecen; mas la roca de mi corazón y mi porción es Dios para siempre.' },
+            { ref:'Apocalipsis 3:20',     text:'He aquí, yo estoy a la puerta y llamo; si alguno oye mi voz y abre la puerta, entraré a él, y cenaré con él, y él conmigo.' },
+            { ref:'Proverbios 16:3',      text:'Encomienda a Jehová tus obras, y tus pensamientos serán afirmados.' },
+            { ref:'Zacarías 4:6',         text:'No con ejército, ni con fuerza, sino con mi Espíritu, ha dicho Jehová de los ejércitos.' },
+            { ref:'Salmos 37:4',          text:'Deléitate asimismo en Jehová, y él te concederá las peticiones de tu corazón.' },
+            { ref:'Juan 16:33',           text:'En el mundo tendréis aflicción; pero confiad, yo he vencido al mundo.' },
+            { ref:'Romanos 15:13',        text:'El Dios de esperanza os llene de todo gozo y paz en el creer, para que abundéis en esperanza por el poder del Espíritu Santo.' },
+            { ref:'Salmos 3:5',           text:'Yo me acosté y dormí, y desperté, porque Jehová me sustentaba.' },
+            { ref:'Efesios 3:20',         text:'A Aquel que es poderoso para hacer todas las cosas mucho más abundantemente de lo que pedimos o entendemos, según el poder que actúa en nosotros, a él sea gloria.' },
+            { ref:'Habacuc 3:19',         text:'Jehová el Señor es mi fortaleza, el cual hace mis pies como de ciervas, y en mis alturas me hace andar.' },
+            { ref:'Salmos 31:24',         text:'Esforzaos todos vosotros los que esperáis en Jehová, y tome aliento vuestro corazón.' },
+            { ref:'Isaías 55:11',         text:'Así será mi palabra que sale de mi boca; no volverá a mí vacía, sino que hará lo que yo quiero, y será prosperada en aquello para que la envié.' },
+            { ref:'Salmos 34:8',          text:'Gustad, y ved que es bueno Jehová; dichoso el hombre que confía en él.' },
+            { ref:'2 Crónicas 20:15',     text:'No temáis ni os amedrentéis delante de esta gran multitud, porque no es vuestra la guerra, sino de Dios.' },
+            { ref:'Salmos 145:18',        text:'Cercano está Jehová a todos los que le invocan, a todos los que le invocan de veras.' },
+            { ref:'Isaías 43:2',          text:'Cuando pases por las aguas, yo estaré contigo; y si por los ríos, no te anegarán. Cuando pases por el fuego, no te quemarás, ni la llama arderá en ti.' },
+        ];
+
+        let meditIdx   = 0;
         let meditTimer = null;
         const MEDIT_MS = 25000;
 
-        function _orderedBooks() {
-            const bible = getActiveBible();
-            return BIBLE_ORDER.filter(b => bible[b] && bible[b].length > 0);
-        }
-        function _randomPos() {
-            const books = _orderedBooks();
-            const bible = getActiveBible();
-            const book  = books[Math.floor(Math.random() * books.length)];
-            const ch    = Math.floor(Math.random() * bible[book].length);
-            const vi    = Math.floor(Math.random() * bible[book][ch].length);
-            return { book, ch, vi };
-        }
-        function meditShow(pos) {
-            const bible = getActiveBible();
-            const text  = bible[pos.book]?.[pos.ch]?.[pos.vi];
-            if (!text) return;
-            meditPos = pos;
+        function meditShow(idx) {
+            const v = MEDIT_VERSES[idx];
+            if (!v) return;
+            meditIdx = idx;
             const ref = document.getElementById('focusRef');
-            if (ref) ref.textContent = `${pos.book}  ${pos.ch + 1}:${pos.vi + 1}`;
+            if (ref) ref.textContent = v.ref;
             const body = document.getElementById('focusVerseBody');
             if (!body) return;
             body.classList.add('fading');
-            setTimeout(() => { body.textContent = text; body.classList.remove('fading'); }, 400);
+            setTimeout(() => { body.textContent = v.text; body.classList.remove('fading'); }, 400);
         }
         function _meditResetTimer() {
             if (meditTimer) clearTimeout(meditTimer);
-            meditTimer = setTimeout(() => { _meditAdvance(); _meditResetTimer(); }, MEDIT_MS);
+            meditTimer = setTimeout(() => { meditNext(); }, MEDIT_MS);
         }
-        function _meditAdvance() {
-            const bible = getActiveBible();
-            const books = _orderedBooks();
-            let { book, ch, vi } = meditPos;
-            vi++;
-            if (!bible[book]?.[ch]?.[vi]) {
-                vi = 0; ch++;
-                if (!bible[book]?.[ch]) {
-                    ch = 0;
-                    book = books[(books.indexOf(book) + 1) % books.length] || books[0];
-                }
-            }
-            meditShow({ book, ch, vi });
-        }
-        function _meditRetreat() {
-            const bible = getActiveBible();
-            const books = _orderedBooks();
-            let { book, ch, vi } = meditPos;
-            vi--;
-            if (vi < 0) {
-                ch--;
-                if (ch < 0) {
-                    book = books[(books.indexOf(book) - 1 + books.length) % books.length] || books[0];
-                    ch = bible[book].length - 1;
-                }
-                vi = (bible[book]?.[ch]?.length || 1) - 1;
-            }
-            meditShow({ book, ch, vi });
-        }
-        function meditNext()    { _meditAdvance();  _meditResetTimer(); }
-        function meditPrev()    { _meditRetreat();  _meditResetTimer(); }
-        function meditShuffle() { meditShow(_randomPos()); _meditResetTimer(); }
+        function meditNext()    { meditShow((meditIdx + 1) % MEDIT_VERSES.length); _meditResetTimer(); }
+        function meditPrev()    { meditShow((meditIdx - 1 + MEDIT_VERSES.length) % MEDIT_VERSES.length); _meditResetTimer(); }
+        function meditShuffle() { meditShow(Math.floor(Math.random() * MEDIT_VERSES.length)); _meditResetTimer(); }
 
         function _startMeditation() {
-            const pos = (state.book && state.chapter)
-                ? { book: state.book, ch: state.chapter - 1, vi: 0 }
-                : _randomPos();
-            meditShow(pos);
+            // Empezar en un versículo aleatorio para que cada sesión se sienta fresca
+            meditShow(Math.floor(Math.random() * MEDIT_VERSES.length));
             _meditResetTimer();
         }
         function _stopMeditation() {
@@ -2457,6 +2469,14 @@
         function enterVoz() {
             closeSelector();
             if (!premiumReady()) { openTeaser(); return; }
+
+            // Sin capítulo seleccionado no hay nada que narrar → llevar a Biblia
+            if (!state.book) {
+                showToast('📖 Primero elige un capítulo en la pestaña Biblia');
+                showTab('biblia');
+                return;
+            }
+
             _openOverlay('voz');
             focusNarration = true;
             updateSpeedAvailability();
@@ -2465,15 +2485,17 @@
             const isStream     = wasPlaying && audio.src.includes('/stream/');
             const isFullStream = isStream && audio.src.includes('modo=full');
 
-            if (wasPlaying && !isFullStream && state.book) {
+            if (isFullStream) {
+                // Ya está en stream full → no interrumpir, solo adjuntar música
+                onNarration(true);
+                startStreamTrack();
+            } else {
+                // Capítulo cargado (playing o paused) → (re)arrancar como stream full
                 if (!playbackMode) { playbackMode = 'continue'; updateNavModeIndicator(); }
                 audio.src = audioUrl(state.book, state.chapter);
                 audio.play().catch(() => {});
                 onNarration(true);
                 startStreamTrack();
-            } else {
-                onNarration(wasPlaying);
-                if (isStream) startStreamTrack();
             }
         }
 
