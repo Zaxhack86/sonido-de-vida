@@ -710,8 +710,8 @@
                 <div class="translation-toggle-wrap">
                     <span class="translation-toggle-label">Traducción</span>
                     <div class="translation-toggle" id="translationToggle">
-                        <span class="tt-option active" id="tt-rva" onclick="setTranslation('rva')">🎤 RVA 1909</span>
-                        <span class="tt-option" id="tt-sbll" onclick="setTranslation('sbll')">🎧 SBLL 2026</span>
+                        <span class="tt-option" id="tt-rva" onclick="setTranslation('rva')">🎤 RVA 1909</span>
+                        <span class="tt-option active" id="tt-sbll" onclick="setTranslation('sbll')">🎧 SBLL 2026</span>
                     </div>
                 </div>
                 <div class="listen-selectors">
@@ -1199,7 +1199,7 @@
     const AUDIO_BASE = 'https://sonido-de-vida-audio.sonidodevida.workers.dev';
 
     // ── Traducción activa: 'rva' (RVA 1909) | 'sbll' (SBLL 2026) ──
-    let translationMode = 'rva';
+    let translationMode = 'sbll';
 
     function getActiveBible() {
         return (translationMode === 'sbll' && window.BIBLE_SBLL) ? window.BIBLE_SBLL : window.BIBLE;
@@ -1960,12 +1960,8 @@
             { id:'piano-instrumental', cat:'piano', label:'Piano Instrumental', emoji:'🎹', ids:[4,14] },
             { id:'piano-naturaleza', cat:'piano', label:'Piano y Naturaleza', emoji:'🌿', ids:[18,17] },
             { id:'lluvia', cat:'asmr', label:'Lluvia', emoji:'🌧️', ids:[5,25] },
-            { id:'olas', cat:'asmr', label:'Olas del Mar', emoji:'🌊', ids:[6,26] },
-            { id:'tormenta', cat:'asmr', label:'Tormenta', emoji:'⛈️', ids:[7,24,21] },
-            { id:'viento', cat:'asmr', label:'Pradera y Viento', emoji:'🍃', ids:[8,19,31] },
-            { id:'ciudad', cat:'asmr', label:'Ciudad en Calma', emoji:'🏙️', ids:[20,23] },
-            { id:'parque', cat:'asmr', label:'Parque', emoji:'🌳', ids:[27,28] },
-            { id:'playa-campo', cat:'asmr', label:'Playa y Campo', emoji:'🏖️', ids:[29,22,30] },
+            { id:'mar', cat:'asmr', label:'Mar', emoji:'🌊', ids:[6,26] },
+            { id:'naturaleza', cat:'asmr', label:'Naturaleza', emoji:'🌿', ids:[8,19,31,27,28,29,22,30] },
             { id:'calma', cat:'ambiente', label:'Paz y Quietud', emoji:'🕊️', ids:[37,36,9] },
             { id:'paz-abraza', cat:'ambiente', label:'Paz que Abraza', emoji:'🤍', ids:[11,59] },
             { id:'paz-suspiros', cat:'ambiente', label:'Aliento de Paz', emoji:'🌬️', ids:[62,61,60] },
