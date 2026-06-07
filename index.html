@@ -534,6 +534,26 @@
         .focus-speed-hint.show{display:block}
         .focus-speed-hint button{background:none;border:1px solid rgba(201,168,76,.45);color:var(--gold-light);border-radius:50px;padding:.18rem .65rem;font-size:.72rem;cursor:pointer;font-family:inherit;margin-left:.35rem;white-space:nowrap}
         .focus-speed-hint.pulse{animation:hintPulse .5s ease}
+
+        /* ── Selector de modo (Meditación / Con voz) ── */
+        .focus-mode-options{display:flex;flex-direction:column;gap:.85rem;margin-top:1.2rem}
+        .focus-mode-opt{display:flex;align-items:center;gap:1.1rem;padding:1.1rem 1.3rem;border-radius:18px;border:1px solid rgba(201,168,76,.28);background:rgba(201,168,76,.06);color:#fff;cursor:pointer;text-align:left;transition:all .25s;font-family:'Inter',sans-serif;width:100%}
+        .focus-mode-opt:hover{border-color:rgba(201,168,76,.6);background:rgba(201,168,76,.14)}
+        .focus-mode-opt .fmo-icon{font-size:2.2rem;flex-shrink:0;line-height:1}
+        .focus-mode-opt .fmo-text strong{display:block;font-size:1rem;color:var(--gold-light);margin-bottom:.15rem}
+        .focus-mode-opt .fmo-text small{font-size:.83rem;color:rgba(255,255,255,.55);font-family:'Lora',serif;font-style:italic;line-height:1.4}
+
+        /* ── Pantalla de versículos (modo Meditación) ── */
+        .focus-verse-wrap{width:100%;max-width:520px;display:flex;flex-direction:column;align-items:center;gap:1rem}
+        .focus-verse-body{font-family:'Lora',serif;font-style:italic;color:rgba(255,255,255,.9);font-size:1.22rem;line-height:1.8;text-align:center;margin:0;max-width:44ch;transition:opacity .4s ease}
+        .focus-verse-body.fading{opacity:0}
+        .focus-verse-nav{display:flex;align-items:center;gap:.6rem}
+        .focus-verse-nav button{background:none;border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.65);border-radius:50px;padding:.4rem 1rem;font-size:.88rem;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s}
+        .focus-verse-nav button:hover{border-color:rgba(201,168,76,.5);color:var(--gold-light)}
+
+        /* ── Show / hide por modo ── */
+        .focus-overlay[data-mode="meditar"] .voz-only{display:none!important}
+        .focus-overlay:not([data-mode="meditar"]) .meditar-only{display:none!important}
         @keyframes hintPulse{0%,100%{opacity:.55}50%{opacity:1}}
         .focus-premium-badge{display:inline-block;margin-left:.4rem;font-size:.7rem;padding:.1rem .5rem;border-radius:50px;background:rgba(201,168,76,.18);color:var(--gold-light);font-weight:600}
         .focus-ambients{max-height:46vh;overflow-y:auto;padding-right:.3rem}
@@ -936,7 +956,7 @@
             <button class="player-nav-btn" id="playerNextBtn" onclick="goNextChapter()" title="Capítulo siguiente" aria-label="Siguiente">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4" fill="currentColor"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
             </button>
-            <button class="player-focus-btn" id="playerFocusBtn" onclick="Focus.enter()" title="Modo Enfoque" aria-label="Modo Enfoque">
+            <button class="player-focus-btn" id="playerFocusBtn" onclick="Focus.enterVoz()" title="Modo Enfoque · Con voz" aria-label="Modo Enfoque">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
                 <span class="pf-label">Enfoque</span>
             </button>
@@ -995,6 +1015,25 @@
                 <button class="share-btn ghost" onclick="shareApp('copy')">🔗 Copiar enlace</button>
             </div>
             <div class="modal-footer" style="margin-top:1.1rem"><label style="cursor:pointer" onclick="closeShareModal()">Cerrar</label></div>
+        </div>
+    </div>
+
+    <!-- Modal: selector de modo del Modo Enfoque (Meditación / Con voz). -->
+    <div class="modal-overlay" id="focusModeSelector" aria-hidden="true" onclick="if(event.target===this)Focus.closeSelector()">
+        <div class="modal-card" role="dialog" aria-label="Elige cómo entrar al Modo Enfoque">
+            <button class="modal-close" onclick="Focus.closeSelector()" aria-label="Cerrar">&times;</button>
+            <div class="modal-title">Modo Enfoque</div>
+            <p style="font-family:'Lora',serif;font-style:italic;color:rgba(255,255,255,.6);font-size:.93rem;text-align:center;margin:.3rem 0 0">¿Cómo quieres entrar?</p>
+            <div class="focus-mode-options">
+                <button class="focus-mode-opt" onclick="Focus.enterMeditar()">
+                    <span class="fmo-icon">🌿</span>
+                    <span class="fmo-text"><strong>Meditación</strong><small>Música + versículos que rotan solos. Sin voz.</small></span>
+                </button>
+                <button class="focus-mode-opt" onclick="Focus.enterVoz()">
+                    <span class="fmo-icon">🎧</span>
+                    <span class="fmo-text"><strong>Con voz</strong><small>Música + narración de la Biblia. Escoge un capítulo en Biblia y pulsa aquí.</small></span>
+                </button>
+            </div>
         </div>
     </div>
 
@@ -1130,16 +1169,29 @@
                 <div class="focus-emblem-icon" id="focusEmblemIcon">🕊️</div>
             </div>
             <div class="focus-emblem-caption" id="focusEmblemCaption">Elige un ambiente y reposa en la Palabra</div>
-            <button class="focus-play" id="focusPlayBtn" onclick="togglePlay()" aria-label="Reproducir o pausar la narración">
+
+            <!-- Pantalla de versículos — solo en modo Meditación -->
+            <div class="focus-verse-wrap meditar-only" id="focusVerseWrap">
+                <p class="focus-verse-body" id="focusVerseBody"></p>
+                <div class="focus-verse-nav">
+                    <button onclick="Focus.meditPrev()">‹ Anterior</button>
+                    <button onclick="Focus.meditShuffle()">🎲</button>
+                    <button onclick="Focus.meditNext()">Siguiente ›</button>
+                </div>
+            </div>
+
+            <!-- Botón play/pausa narración — solo en modo Con voz -->
+            <button class="focus-play voz-only" id="focusPlayBtn" onclick="togglePlay()" aria-label="Reproducir o pausar la narración">
                 <svg id="focusPlayIcon" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
                 <svg id="focusPauseIcon" viewBox="0 0 24 24" style="display:none"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
             </button>
+
             <div class="focus-ambients" id="focusAmbients"></div>
             <div class="focus-mixer">
-                <label><span>🎙️ Voz</span><input type="range" id="volVoz" min="0" max="100" value="100" oninput="Focus.setVoz(this.value)"></label>
+                <label class="voz-only"><span>🎙️ Voz</span><input type="range" id="volVoz" min="0" max="100" value="100" oninput="Focus.setVoz(this.value)"></label>
                 <label><span>🎵 Música</span><input type="range" id="volMusica" min="0" max="100" value="55" oninput="Focus.setMusica(this.value)"></label>
             </div>
-            <div class="focus-timer">
+            <div class="focus-timer voz-only">
                 <span>🐢 Velocidad de la voz</span>
                 <div class="focus-timer-opts" id="focusSpeedOpts">
                     <button data-rate="0.8" onclick="Focus.setSpeed(0.8,this)">0.8×</button>
@@ -2273,17 +2325,15 @@
         function onNarration(playing) {
             document.getElementById('focusPlayIcon').style.display  = playing ? 'none'  : 'block';
             document.getElementById('focusPauseIcon').style.display = playing ? 'block' : 'none';
-            // La música de fondo sigue a la voz: si se pausa la narración, se
-            // pausa el ambiente; si vuelve, vuelve. Solo dentro del Modo Enfoque.
             if (!overlay.classList.contains('open')) return;
             if (!currentAmbient || !ambCur.src) return;
             if (playing) {
-                // Cancelar cualquier pause pendiente (era un micro-pause del stream, no el usuario)
                 if (_pauseTimer) { clearTimeout(_pauseTimer); _pauseTimer = null; }
                 ambCur.play().catch(() => {});
             } else {
-                // Debounce 600ms: los micro-pauses del stream al pasar entre libros
-                // duran < 100ms; una pausa real del usuario dura mucho más.
+                // En meditación la música corre independiente de la narración.
+                // En modo voz: debounce 600ms para ignorar micro-pauses del stream.
+                if (focusSubMode !== 'voz') return;
                 _pauseTimer = setTimeout(() => {
                     _pauseTimer = null;
                     try { ambientEl.pause(); ambientElB.pause(); } catch (e) {}
@@ -2291,10 +2341,23 @@
             }
         }
 
-        function enter() {
-            // Usuario gratis (o sin cuenta): no entra al modo; ve el teaser de venta.
-            if (!premiumReady()) { openTeaser(); return; }
-            focusNarration = true;
+        // ── Submodo activo: null | 'meditar' | 'voz' ──────────────────────────
+        let focusSubMode = null;
+
+        // ── Selector de modo ───────────────────────────────────────────────────
+        function openSelector() {
+            const m = document.getElementById('focusModeSelector');
+            if (m) { m.classList.add('visible'); m.setAttribute('aria-hidden', 'false'); }
+        }
+        function closeSelector() {
+            const m = document.getElementById('focusModeSelector');
+            if (m) { m.classList.remove('visible'); m.setAttribute('aria-hidden', 'true'); }
+        }
+
+        // ── Apertura del overlay (común a los dos modos) ───────────────────────
+        function _openOverlay(mode) {
+            overlay.dataset.mode = mode;
+            focusSubMode = mode;
             renderAmbients();
             syncVerse();
             setEmblem(currentAmbient ? ambients.find(a => a.id === currentAmbient) : null);
@@ -2303,26 +2366,106 @@
             document.body.style.overflow = 'hidden';
             document.getElementById('playerFocusBtn')?.classList.add('active');
             applyVolumes();
+            if (!currentAmbient) { shuffleAuto = true; updateShuffleBtn(); pickRandomAmbient(); }
+        }
+
+        // ── Modo Meditación ────────────────────────────────────────────────────
+        let meditPos   = { book: null, ch: 0, vi: 0 };
+        let meditTimer = null;
+        const MEDIT_MS = 25000;
+
+        function _orderedBooks() {
+            const bible = getActiveBible();
+            return BIBLE_ORDER.filter(b => bible[b] && bible[b].length > 0);
+        }
+        function _randomPos() {
+            const books = _orderedBooks();
+            const bible = getActiveBible();
+            const book  = books[Math.floor(Math.random() * books.length)];
+            const ch    = Math.floor(Math.random() * bible[book].length);
+            const vi    = Math.floor(Math.random() * bible[book][ch].length);
+            return { book, ch, vi };
+        }
+        function meditShow(pos) {
+            const bible = getActiveBible();
+            const text  = bible[pos.book]?.[pos.ch]?.[pos.vi];
+            if (!text) return;
+            meditPos = pos;
+            const ref = document.getElementById('focusRef');
+            if (ref) ref.textContent = `${pos.book}  ${pos.ch + 1}:${pos.vi + 1}`;
+            const body = document.getElementById('focusVerseBody');
+            if (!body) return;
+            body.classList.add('fading');
+            setTimeout(() => { body.textContent = text; body.classList.remove('fading'); }, 400);
+        }
+        function _meditResetTimer() {
+            if (meditTimer) clearTimeout(meditTimer);
+            meditTimer = setTimeout(() => { _meditAdvance(); _meditResetTimer(); }, MEDIT_MS);
+        }
+        function _meditAdvance() {
+            const bible = getActiveBible();
+            const books = _orderedBooks();
+            let { book, ch, vi } = meditPos;
+            vi++;
+            if (!bible[book]?.[ch]?.[vi]) {
+                vi = 0; ch++;
+                if (!bible[book]?.[ch]) {
+                    ch = 0;
+                    book = books[(books.indexOf(book) + 1) % books.length] || books[0];
+                }
+            }
+            meditShow({ book, ch, vi });
+        }
+        function _meditRetreat() {
+            const bible = getActiveBible();
+            const books = _orderedBooks();
+            let { book, ch, vi } = meditPos;
+            vi--;
+            if (vi < 0) {
+                ch--;
+                if (ch < 0) {
+                    book = books[(books.indexOf(book) - 1 + books.length) % books.length] || books[0];
+                    ch = bible[book].length - 1;
+                }
+                vi = (bible[book]?.[ch]?.length || 1) - 1;
+            }
+            meditShow({ book, ch, vi });
+        }
+        function meditNext()    { _meditAdvance();  _meditResetTimer(); }
+        function meditPrev()    { _meditRetreat();  _meditResetTimer(); }
+        function meditShuffle() { meditShow(_randomPos()); _meditResetTimer(); }
+
+        function _startMeditation() {
+            const pos = (state.book && state.chapter)
+                ? { book: state.book, ch: state.chapter - 1, vi: 0 }
+                : _randomPos();
+            meditShow(pos);
+            _meditResetTimer();
+        }
+        function _stopMeditation() {
+            if (meditTimer) { clearTimeout(meditTimer); meditTimer = null; }
+        }
+
+        function enterMeditar() {
+            closeSelector();
+            if (!premiumReady()) { openTeaser(); return; }
+            _openOverlay('meditar');
+            _startMeditation();
+        }
+
+        // ── Modo Con voz ───────────────────────────────────────────────────────
+        function enterVoz() {
+            closeSelector();
+            if (!premiumReady()) { openTeaser(); return; }
+            _openOverlay('voz');
+            focusNarration = true;
             updateSpeedAvailability();
 
-            // Auto-arrancar música ambiente aleatoria si no hay ninguna activa
-            if (!currentAmbient) {
-                shuffleAuto = true;
-                updateShuffleBtn();
-                pickRandomAmbient();
-            }
-
-            const wasPlaying = !audio.paused && !!audio.src;
-            const isStream  = wasPlaying && audio.src.includes('/stream/');
+            const wasPlaying   = !audio.paused && !!audio.src;
+            const isStream     = wasPlaying && audio.src.includes('/stream/');
             const isFullStream = isStream && audio.src.includes('modo=full');
 
             if (wasPlaying && !isFullStream && state.book) {
-                // Cualquier reproducción que NO sea ya un stream 'full' (capítulo
-                // individual, o stream 'continuar' de un solo libro) se reabre como
-                // stream full: effectiveMode()==='full' en Enfoque, así la voz fluye
-                // de un libro al siguiente sin detenerse hasta Apocalipsis.
-                // enter() viene de un gesto del usuario → audio.play() permitido en iOS.
-                // Se reinicia desde el inicio del capítulo actual.
                 if (!playbackMode) { playbackMode = 'continue'; updateNavModeIndicator(); }
                 audio.src = audioUrl(state.book, state.chapter);
                 audio.play().catch(() => {});
@@ -2333,19 +2476,30 @@
                 if (isStream) startStreamTrack();
             }
         }
+
+        // ── Entrada desde hub Explorar: muestra el selector ────────────────────
+        function enter() {
+            if (!premiumReady()) { openTeaser(); return; }
+            openSelector();
+        }
+
+        // ── Salida ─────────────────────────────────────────────────────────────
         function exit() {
-            stActive = false; // detener tracker de display
+            stActive = false;
             overlay.classList.remove('open');
             overlay.setAttribute('aria-hidden', 'true');
+            overlay.removeAttribute('data-mode');
             document.body.style.overflow = '';
-            focusNarration = false;
-            // Al salir, detener TODO (voz + música): así no queda la narración
-            // sonando "por detrás" obligando a pausarla aparte en el modo normal.
-            try { audio.pause(); } catch (e) {}
+            _stopMeditation();
+            if (focusSubMode === 'voz') {
+                focusNarration = false;
+                try { audio.pause(); } catch (e) {}
+            }
+            focusSubMode = null;
             stopAmbient();
             if (timerId) { clearTimeout(timerId); timerId = null; }
-            vozVol = 1; audioA.volume = 1; audioB.volume = 1;   // restaurar volumen normal
-            setSpeed(1, document.querySelector('#focusSpeedOpts button[data-rate="1"]')); // voz a velocidad normal al salir
+            vozVol = 1; audioA.volume = 1; audioB.volume = 1;
+            setSpeed(1, document.querySelector('#focusSpeedOpts button[data-rate="1"]'));
             document.getElementById('playerFocusBtn')?.classList.remove('active');
         }
 
@@ -2455,7 +2609,7 @@
             stBusy = false;
         }
 
-        return { enter, exit, selectAmbient, setVoz, setMusica, setSpeed, setTimer, onNarration, syncVerse, refreshGate, openTeaser, closeTeaser, useSbllVoice, startStreamTrack, tickStreamTrack, ambients };
+        return { enter, exit, enterVoz, enterMeditar, selectAmbient, setVoz, setMusica, setSpeed, setTimer, onNarration, syncVerse, refreshGate, openTeaser, closeTeaser, closeSelector, useSbllVoice, startStreamTrack, tickStreamTrack, ambients, meditNext, meditPrev, meditShuffle };
     })();
     window.Focus = Focus;
     function formatTime(s) { return `${Math.floor(s/60)}:${Math.floor(s%60).toString().padStart(2,'0')}`; }
