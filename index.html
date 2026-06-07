@@ -689,10 +689,11 @@
     <section class="showcase-section" data-tab="explorar">
         <div class="section-header reveal"><h2>Explorar</h2><p>Cada experiencia tiene su propio espacio. Elige por dónde entrar a la Palabra.</p></div>
         <div class="showcase-grid">
-            <div class="hub-card reveal" role="button" tabindex="0" onclick="location.href='/devocionales'" onkeydown="if(event.key==='Enter')location.href='/devocionales'">
-                <div class="hub-emblem"><span class="hub-emblem-ico">📖</span></div>
-                <h3>Devocionales</h3>
-                <p>Reflexiones profundas sobre la Palabra, con raíces hebreas y griegas, para tu vida diaria.</p>
+            <div class="hub-card hub-enfoque reveal" role="button" tabindex="0" onclick="Focus.enter()" onkeydown="if(event.key==='Enter')Focus.enter()">
+                <span class="hub-badge">✨ Premium</span>
+                <div class="hub-emblem"><span class="hub-emblem-ico">🌿</span></div>
+                <h3>Modo Enfoque</h3>
+                <p>Música y ambiente bajo la narración para orar, meditar y reposar en quietud.</p>
                 <span class="hub-go">Abrir <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span>
             </div>
             <div class="hub-card hub-podcast reveal" role="button" tabindex="0" onclick="Podcast.open()" onkeydown="if(event.key==='Enter')Podcast.open()">
@@ -702,11 +703,10 @@
                 <p>Enseñanzas en audio para crecer en la fe, con un resumen en PDF para llevarte la Palabra.</p>
                 <span class="hub-go">Abrir <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span>
             </div>
-            <div class="hub-card hub-enfoque reveal" role="button" tabindex="0" onclick="Focus.enter()" onkeydown="if(event.key==='Enter')Focus.enter()">
-                <span class="hub-badge">✨ Premium</span>
-                <div class="hub-emblem"><span class="hub-emblem-ico">🌿</span></div>
-                <h3>Modo Enfoque</h3>
-                <p>Música y ambiente bajo la narración para orar, meditar y reposar en quietud.</p>
+            <div class="hub-card reveal" role="button" tabindex="0" onclick="location.href='/devocionales'" onkeydown="if(event.key==='Enter')location.href='/devocionales'">
+                <div class="hub-emblem"><span class="hub-emblem-ico">📖</span></div>
+                <h3>Devocionales</h3>
+                <p>Reflexiones profundas sobre la Palabra, con raíces hebreas y griegas, para tu vida diaria.</p>
                 <span class="hub-go">Abrir <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span>
             </div>
         </div>
