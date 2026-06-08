@@ -615,14 +615,13 @@
         .pod-ep-title{font-family:'Inter',sans-serif;font-weight:600;color:#fff;font-size:.98rem;margin:0 0 .2rem}
         .pod-ep-meta{font-family:'Inter',sans-serif;font-size:.8rem;color:rgba(255,255,255,.5);display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
         .pod-ep-pdf{display:inline-flex;align-items:center;gap:.3rem;color:var(--gold-light);font-weight:600}
-        /* Tarjeta de episodio estilo Dwell: portada + escuchar/leer */
-        .pod-card{width:100%;border-radius:22px;overflow:hidden;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);transition:transform .3s,border-color .3s;display:flex;flex-direction:column}
-        .pod-card:hover{transform:translateY(-3px);border-color:rgba(232,182,90,.4)}
-        .pod-cover{position:relative;aspect-ratio:16/10;display:flex;flex-direction:column;justify-content:flex-end;padding:1.4rem;background:var(--cover,linear-gradient(150deg,#16233f,#0a1326 60%,#05070f));overflow:hidden}
-        .pod-cover::before{content:"";position:absolute;inset:0;background:radial-gradient(120% 80% at 82% 8%,rgba(232,182,90,.30),transparent 55%);pointer-events:none}
-        .pod-cover::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 30%,rgba(0,0,0,.5));pointer-events:none}
-        .pod-cover-ref{position:relative;z-index:1;font-family:'Inter',sans-serif;font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-light);font-weight:700;margin-bottom:.5rem;opacity:.92}
-        .pod-cover-title{position:relative;z-index:1;font-family:'Cinzel',serif;color:#fff;font-size:1.55rem;line-height:1.12;margin:0;text-shadow:0 2px 20px rgba(0,0,0,.55)}
+        /* Tarjeta de episodio estilo Dwell: miniatura vertical + info */
+        .pod-card{width:100%;display:flex;gap:1rem;align-items:stretch;padding:.8rem;border-radius:20px;overflow:hidden;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);cursor:pointer;transition:transform .3s,border-color .3s,background .3s}
+        .pod-card:hover{transform:translateY(-2px);border-color:rgba(232,182,90,.4);background:rgba(232,182,90,.05)}
+        .pod-thumb{flex:none;width:96px;aspect-ratio:3/4;border-radius:12px;background:var(--cover,linear-gradient(150deg,#16233f,#0a1326 60%,#05070f));background-size:cover;background-position:center;box-shadow:0 8px 22px rgba(0,0,0,.45)}
+        .pod-info{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;text-align:left;gap:.4rem}
+        .pod-info-ref{font-family:'Inter',sans-serif;font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-light);font-weight:700}
+        .pod-info-title{font-family:'Cinzel',serif;color:#fff;font-size:1.18rem;line-height:1.2;margin:0}
         .pod-actions{display:flex;gap:.7rem;padding:.9rem}
         .pod-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:.45rem;padding:.9rem;border-radius:14px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:#fff;font-family:'Inter',sans-serif;font-weight:600;font-size:.92rem;cursor:pointer;transition:background .25s,border-color .25s,filter .25s}
         .pod-btn:hover{background:rgba(232,182,90,.12);border-color:rgba(232,182,90,.45)}
@@ -667,9 +666,9 @@
         .pp-read{color:var(--gold-light)}
         /* La tarjeta del hub ahora abre el episodio (no reproduce en línea) */
         .pod-card{cursor:pointer}
-        .pod-card-foot{display:flex;align-items:center;gap:.6rem;padding:.85rem 1rem;font-family:'Inter',sans-serif;font-weight:600;font-size:.9rem;color:rgba(255,255,255,.8)}
-        .pod-card-foot .pcf-play{flex:none;width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#0d0d1a;display:flex;align-items:center;justify-content:center;font-size:.8rem}
-        .pod-card-foot .pcf-chevron{margin-left:auto;color:rgba(255,255,255,.4)}
+        .pod-card-foot{display:flex;align-items:center;gap:.55rem;font-family:'Inter',sans-serif;font-weight:600;font-size:.85rem;color:rgba(255,255,255,.65);margin-top:.15rem}
+        .pod-card-foot .pcf-play{flex:none;width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#0d0d1a;display:flex;align-items:center;justify-content:center;font-size:.72rem}
+        .pod-card-foot .pcf-chevron{margin-left:auto;color:var(--gold-light);font-size:1.2rem}
     </style>
 </head>
 <body data-tab-active="inicio">
@@ -3142,7 +3141,7 @@
         // portada (PNG/JPG de Canva); si falta, se usa el degradado `cover`.
         const EPISODES = [
             { title:'En el Principio era el Verbo', ref:'Juan 1',
-              contentId:67, pdfId:68, image:null,
+              contentId:67, pdfId:68, image:'/covers/juan-1.jpg',
               cover:'linear-gradient(150deg,#1b2c50,#0a1326 58%,#05070f)' },
         ];
 
@@ -3173,21 +3172,22 @@
                 const card = document.createElement('div');
                 card.className = 'pod-card';
                 card.onclick = () => openEpisode(i);
-                const coverStyle = ep.image
+                const thumbStyle = ep.image
                     ? 'background-image:url(' + ep.image + ')'
                     : '--cover:' + (ep.cover || '');
                 card.innerHTML =
-                    '<div class="pod-cover' + (ep.image ? ' has-img' : '') + '" style="' + coverStyle + '">' +
-                        '<span class="pod-cover-ref"></span>' +
-                        '<h3 class="pod-cover-title"></h3>' +
-                    '</div>' +
-                    '<div class="pod-card-foot">' +
-                        '<span class="pcf-play">▶</span>' +
-                        '<span>Escuchar' + (ep.pdfId ? ' o leer' : '') + '</span>' +
-                        '<span class="pcf-chevron">›</span>' +
+                    '<div class="pod-thumb" style="' + thumbStyle + '"></div>' +
+                    '<div class="pod-info">' +
+                        '<span class="pod-info-ref"></span>' +
+                        '<h3 class="pod-info-title"></h3>' +
+                        '<div class="pod-card-foot">' +
+                            '<span class="pcf-play">▶</span>' +
+                            '<span>Escuchar' + (ep.pdfId ? ' o leer' : '') + '</span>' +
+                            '<span class="pcf-chevron">›</span>' +
+                        '</div>' +
                     '</div>';
-                card.querySelector('.pod-cover-ref').textContent = (ep.ref || '').toUpperCase();
-                card.querySelector('.pod-cover-title').textContent = ep.title || 'Episodio';
+                card.querySelector('.pod-info-ref').textContent = (ep.ref || '').toUpperCase();
+                card.querySelector('.pod-info-title').textContent = ep.title || 'Episodio';
                 listEl.appendChild(card);
             });
         }
@@ -3296,14 +3296,19 @@
         function setSession(ep) {
             if (!('mediaSession' in navigator)) return;
             try {
+                // La portada (incrustada con el título) aparece en la pantalla
+                // bloqueada — el efecto "Dwell". Si no hay imagen, iconos genéricos.
+                const art = ep.image
+                    ? [{ src: ep.image, sizes: '896x1280', type: 'image/jpeg' }]
+                    : [
+                        { src: '/icon-192.png', sizes: '192x192', type: 'image/png' },
+                        { src: '/icon-512.png', sizes: '512x512', type: 'image/png' },
+                      ];
                 navigator.mediaSession.metadata = new MediaMetadata({
                     title: ep.title || 'Podcast de Vida',
                     artist: 'Sonido de Vida',
                     album: ep.ref ? 'Podcast de Vida · ' + ep.ref : 'Podcast de Vida',
-                    artwork: [
-                        { src: '/icon-192.png', sizes: '192x192', type: 'image/png' },
-                        { src: '/icon-512.png', sizes: '512x512', type: 'image/png' },
-                    ],
+                    artwork: art,
                 });
                 navigator.mediaSession.setActionHandler('play',         () => pAudio.play());
                 navigator.mediaSession.setActionHandler('pause',        () => pAudio.pause());
