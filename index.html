@@ -3435,7 +3435,7 @@
                     { libro: '1 Pedro',    cap: 5,  hint: 'Echad vuestra ansiedad sobre él' },
                     { libro: 'Mateo',      cap: 6,  hint: 'No os afanéis por el mañana' },
                 ],
-                cover: 'linear-gradient(160deg,#1a0f4a 0%,#0d1a3e 55%,#0a0d1a 100%)',
+                cover: '/covers/col-ansiedad.jpg',
             },
             {
                 id: 'descanso',
@@ -3450,7 +3450,7 @@
                     { libro: 'Salmos', cap: 127, hint: 'A su amado dará el sueño' },
                     { libro: 'Salmos', cap: 3,   hint: 'Yo me acosté y dormí' },
                 ],
-                cover: 'linear-gradient(160deg,#05091e 0%,#0a0e28 50%,#040610 100%)',
+                cover: '/covers/col-descanso.jpg',
             },
             {
                 id: 'consuelo',
@@ -3464,7 +3464,7 @@
                     { libro: 'Apocalipsis', cap: 21,  hint: 'Enjugará toda lágrima' },
                     { libro: 'Salmos',      cap: 147, hint: 'Sana a los quebrantados de corazón' },
                 ],
-                cover: 'linear-gradient(160deg,#081a10 0%,#061410 55%,#030a07 100%)',
+                cover: '/covers/col-consuelo.jpg',
             },
         ];
 
@@ -3483,8 +3483,11 @@
                 const card = document.createElement('div');
                 card.className = 'pj-col';
                 card.onclick = function () { openCollection(i); };
+                const coverStyle = col.cover.startsWith('/')
+                    ? 'background-image:url(' + col.cover + ');background-size:cover;background-position:center'
+                    : '--col-bg:' + col.cover;
                 card.innerHTML =
-                    '<div class="pj-col-cover" style="--col-bg:' + col.cover + '">' +
+                    '<div class="pj-col-cover" style="' + coverStyle + '">' +
                         '<span class="pj-col-cover-txt"></span>' +
                     '</div>' +
                     '<div class="pj-col-info">' +
@@ -3505,7 +3508,11 @@
 
         function openCollection(i) {
             const col = COLLECTIONS[i];
-            coverEl.style.cssText = '--dcol-bg:' + col.cover;
+            if (col.cover.startsWith('/')) {
+                coverEl.style.cssText = 'background-image:url(' + col.cover + ');background-size:cover;background-position:center';
+            } else {
+                coverEl.style.cssText = '--dcol-bg:' + col.cover;
+            }
             nameEl.textContent  = col.titulo;
             subEl.textContent   = col.subtitulo;
             countEl.textContent = col.tracks.length + ' pasajes';
