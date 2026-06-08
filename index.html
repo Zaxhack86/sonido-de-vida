@@ -634,6 +634,42 @@
         .pod-empty h4{font-family:'Cinzel',serif;color:var(--gold-light);font-size:1.2rem;margin:0 0 .5rem}
         .pod-empty p{font-family:'Lora',serif;color:rgba(255,255,255,.6);font-size:.95rem;line-height:1.6;margin:0 auto;max-width:36ch}
         @media(prefers-reduced-motion:reduce){.pod-emblem .pod-wave,.pod-core,.pod-empty-ico{animation:none}}
+        /* ════════ Reproductor de episodio (full screen) ════════ */
+        .podcast-player{position:fixed;inset:0;z-index:4200;display:none;flex-direction:column;align-items:center;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:calc(env(safe-area-inset-top) + 1.2rem) 1.2rem calc(env(safe-area-inset-bottom) + 2.4rem);background:radial-gradient(120% 110% at 50% 0%,#17141d 0%,#0c0a13 55%,#050409 100%);opacity:0;transition:opacity .4s ease}
+        .podcast-player.open{display:flex;opacity:1}
+        .podcast-player .pp-bg{position:absolute;inset:0;background:radial-gradient(60% 40% at 50% 12%,rgba(232,182,90,.12),transparent 70%);pointer-events:none}
+        .pp-stage{position:relative;z-index:1;width:100%;max-width:460px;margin:auto;display:flex;flex-direction:column;align-items:center;gap:1rem}
+        .pp-cover{position:relative;width:min(78vw,300px);aspect-ratio:3/4;border-radius:18px;display:flex;flex-direction:column;justify-content:flex-end;padding:1.2rem;overflow:hidden;background:var(--cover,linear-gradient(150deg,#1b2c50,#0a1326 58%,#05070f));background-size:cover;background-position:center;box-shadow:0 24px 60px rgba(0,0,0,.55);margin-top:.4rem}
+        .pp-cover.has-img{justify-content:flex-end}
+        .pp-cover.has-img .pp-cover-ref,.pp-cover.has-img .pp-cover-title{display:none}
+        .pp-cover::before{content:"";position:absolute;inset:0;background:radial-gradient(120% 80% at 82% 8%,rgba(232,182,90,.28),transparent 55%);pointer-events:none}
+        .pp-cover.has-img::before{display:none}
+        .pp-cover::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 35%,rgba(0,0,0,.5));pointer-events:none}
+        .pp-cover.has-img::after{display:none}
+        .pp-cover-ref{position:relative;z-index:1;font-family:'Inter',sans-serif;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-light);font-weight:700;margin-bottom:.4rem;opacity:.92}
+        .pp-cover-title{position:relative;z-index:1;font-family:'Cinzel',serif;color:#fff;font-size:1.35rem;line-height:1.12;margin:0;text-shadow:0 2px 18px rgba(0,0,0,.55)}
+        .pp-eyebrow{font-family:'Cinzel',serif;color:var(--gold-light);font-size:.78rem;letter-spacing:.16em;text-transform:uppercase;opacity:.8;margin-top:.3rem}
+        .pp-title{font-family:'Cinzel',serif;color:#fff;font-size:1.4rem;line-height:1.15;text-align:center;margin:0;max-width:24ch}
+        .pp-seek{width:100%;height:8px;border-radius:50px;background:rgba(255,255,255,.12);cursor:pointer;overflow:hidden;margin-top:.5rem}
+        .pp-seek-fill{height:100%;width:0;border-radius:50px;background:linear-gradient(90deg,var(--gold),var(--gold-light));transition:width .15s linear}
+        .pp-times{width:100%;display:flex;justify-content:space-between;font-family:'Inter',sans-serif;font-size:.78rem;color:rgba(255,255,255,.55)}
+        .pp-controls{display:flex;align-items:center;justify-content:center;gap:1.6rem;margin-top:.4rem}
+        .pp-skip{position:relative;background:none;border:none;color:rgba(255,255,255,.8);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:.3rem;transition:color .2s}
+        .pp-skip:hover{color:var(--gold-light)}
+        .pp-skip svg{width:30px;height:30px}
+        .pp-skip span{position:absolute;font-size:.52rem;font-weight:700;font-family:'Inter',sans-serif;top:54%;left:50%;transform:translate(-50%,-50%)}
+        .pp-play{width:74px;height:74px;border-radius:50%;border:none;background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#0d0d1a;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 12px 34px rgba(232,182,90,.4);transition:transform .2s,filter .2s}
+        .pp-play:hover{transform:scale(1.05);filter:brightness(1.05)}
+        .pp-play svg{width:30px;height:30px;fill:#0d0d1a}
+        .pp-extra{display:flex;align-items:center;gap:.7rem;margin-top:.7rem;flex-wrap:wrap;justify-content:center}
+        .pp-chip{font-family:'Inter',sans-serif;font-weight:600;font-size:.86rem;color:#fff;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:50px;padding:.6rem 1.1rem;cursor:pointer;transition:background .2s,border-color .2s}
+        .pp-chip:hover{background:rgba(232,182,90,.12);border-color:rgba(232,182,90,.45)}
+        .pp-read{color:var(--gold-light)}
+        /* La tarjeta del hub ahora abre el episodio (no reproduce en línea) */
+        .pod-card{cursor:pointer}
+        .pod-card-foot{display:flex;align-items:center;gap:.6rem;padding:.85rem 1rem;font-family:'Inter',sans-serif;font-weight:600;font-size:.9rem;color:rgba(255,255,255,.8)}
+        .pod-card-foot .pcf-play{flex:none;width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#0d0d1a;display:flex;align-items:center;justify-content:center;font-size:.8rem}
+        .pod-card-foot .pcf-chevron{margin-left:auto;color:rgba(255,255,255,.4)}
     </style>
 </head>
 <body data-tab-active="inicio">
@@ -1169,6 +1205,8 @@
     </div>
 
     <audio id="mainAudio" preload="none"></audio>
+    <!-- Audio dedicado del Podcast de Vida: independiente del motor de la Biblia -->
+    <audio id="podcastAudio" preload="none"></audio>
 
     <!-- ════ Modo Enfoque (premium): capa de música ambiente + UI inmersiva ════ -->
     <audio id="ambientAudio" loop preload="none" playsinline></audio>
@@ -1244,6 +1282,42 @@
                 <span class="pod-empty-ico">🎧</span>
                 <h4>Muy pronto</h4>
                 <p>Estamos preparando las primeras enseñanzas en audio. Vuelve pronto: están en camino.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ════════ Reproductor de episodio (pantalla completa, independiente) ════════ -->
+    <div class="podcast-player" id="podcastPlayer" aria-hidden="true" role="dialog" aria-label="Reproductor de episodio">
+        <div class="pp-bg" id="ppBg"></div>
+        <button class="focus-close" onclick="Podcast.closePlayer()" aria-label="Volver">✕</button>
+        <div class="pp-stage">
+            <div class="pp-cover" id="ppCover">
+                <span class="pp-cover-ref" id="ppCoverRef"></span>
+                <h3 class="pp-cover-title" id="ppCoverTitle"></h3>
+            </div>
+            <span class="pp-eyebrow" id="ppEyebrow">Podcast de Vida</span>
+            <h2 class="pp-title" id="ppTitle"></h2>
+            <div class="pp-seek" id="ppSeek" onclick="Podcast.seek(event)">
+                <div class="pp-seek-fill" id="ppSeekFill"></div>
+            </div>
+            <div class="pp-times"><span id="ppCur">0:00</span><span id="ppDur">--:--</span></div>
+            <div class="pp-controls">
+                <button class="pp-skip" onclick="Podcast.skip(-15)" aria-label="Retroceder 15 segundos">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="11 17 6 12 11 7"/><polyline points="18 17 13 12 18 7"/></svg>
+                    <span>15</span>
+                </button>
+                <button class="pp-play" id="ppPlay" onclick="Podcast.toggle()" aria-label="Reproducir o pausar">
+                    <svg id="ppPlayIcon" viewBox="0 0 24 24"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+                    <svg id="ppPauseIcon" viewBox="0 0 24 24" style="display:none"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+                </button>
+                <button class="pp-skip" onclick="Podcast.skip(15)" aria-label="Adelantar 15 segundos">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="13 17 18 12 13 7"/><polyline points="6 17 11 12 6 7"/></svg>
+                    <span>15</span>
+                </button>
+            </div>
+            <div class="pp-extra">
+                <button class="pp-chip" id="ppSpeed" onclick="Podcast.cycleSpeed()">1×</button>
+                <button class="pp-chip pp-read" id="ppRead" onclick="Podcast.readCurrent()">📖 Leer la meditación</button>
             </div>
         </div>
     </div>
@@ -1746,6 +1820,8 @@
         // que no provengan del elemento activo (`this !== audio`).
         [audioA, audioB].forEach(el => {
             el.addEventListener('play', function() {
+                // Si arranca la Biblia, callar el podcast (un solo audio a la vez)
+                try { document.getElementById('podcastAudio').pause(); } catch (e) {}
                 if (this !== audio) return;
                 this.playbackRate = playbackSpeed;   // src nuevo resetea playbackRate → reaplicar
                 chapterTransitioning = false;
@@ -3062,17 +3138,31 @@
         const emptyEl = document.getElementById('podcastEmpty');
 
         // Catálogo de episodios. Cada uno: audio (contentId) + lectura PDF (pdfId),
-        // ambos servidos por el portero premium (/api/content/:id). `cover` es el
-        // degradado de portada (estilo Dwell); `ref` la cita en mayúsculas.
+        // servidos por el portero premium (/api/content/:id). `image` = URL de la
+        // portada (PNG/JPG de Canva); si falta, se usa el degradado `cover`.
         const EPISODES = [
-            { title:'En el Principio era el Verbo', ref:'Juan 1', meta:'Resumen en audio · lectura',
-              contentId:67, pdfId:68, cover:'linear-gradient(150deg,#1b2c50,#0a1326 58%,#05070f)' },
+            { title:'En el Principio era el Verbo', ref:'Juan 1',
+              contentId:67, pdfId:68, image:null,
+              cover:'linear-gradient(150deg,#1b2c50,#0a1326 58%,#05070f)' },
         ];
+
+        // ── Reproductor de episodio independiente (audio propio) ──────────────
+        const pAudio   = document.getElementById('podcastAudio');
+        const player   = document.getElementById('podcastPlayer');
+        const SPEEDS   = [1, 1.25, 1.5, 2, 0.75];
+        let curIdx     = -1;   // episodio que se está viendo
+        let loadedIdx  = -1;   // episodio ya cargado en pAudio (evita recargar)
+        let curSpeed   = 1;
+
+        function fmt(s) {
+            if (!isFinite(s) || s < 0) s = 0;
+            const m = Math.floor(s / 60), ss = Math.floor(s % 60);
+            return m + ':' + String(ss).padStart(2, '0');
+        }
 
         function render() {
             if (!EPISODES.length) {
-                listEl.innerHTML = '';
-                listEl.style.display = 'none';
+                listEl.innerHTML = ''; listEl.style.display = 'none';
                 emptyEl.style.display = 'block';
                 return;
             }
@@ -3082,66 +3172,156 @@
             EPISODES.forEach((ep, i) => {
                 const card = document.createElement('div');
                 card.className = 'pod-card';
+                card.onclick = () => openEpisode(i);
+                const coverStyle = ep.image
+                    ? 'background-image:url(' + ep.image + ')'
+                    : '--cover:' + (ep.cover || '');
                 card.innerHTML =
-                    '<div class="pod-cover" style="--cover:' + (ep.cover || '') + '">' +
+                    '<div class="pod-cover' + (ep.image ? ' has-img' : '') + '" style="' + coverStyle + '">' +
                         '<span class="pod-cover-ref"></span>' +
                         '<h3 class="pod-cover-title"></h3>' +
                     '</div>' +
-                    '<div class="pod-actions">' +
-                        '<button class="pod-btn primary" type="button">▶ Escuchar</button>' +
-                        (ep.pdfId ? '<button class="pod-btn" type="button">📖 Leer</button>' : '') +
+                    '<div class="pod-card-foot">' +
+                        '<span class="pcf-play">▶</span>' +
+                        '<span>Escuchar' + (ep.pdfId ? ' o leer' : '') + '</span>' +
+                        '<span class="pcf-chevron">›</span>' +
                     '</div>';
                 card.querySelector('.pod-cover-ref').textContent = (ep.ref || '').toUpperCase();
                 card.querySelector('.pod-cover-title').textContent = ep.title || 'Episodio';
-                card.querySelector('.pod-btn.primary').onclick = () => play(i);
-                const readBtn = card.querySelectorAll('.pod-btn')[1];
-                if (readBtn) readBtn.onclick = () => read(i);
                 listEl.appendChild(card);
             });
         }
 
-        async function play(i) {
+        // Pinta la pantalla del episodio (cover, títulos) sin tocar el audio.
+        function paintPlayer(ep) {
+            const cover = document.getElementById('ppCover');
+            if (ep.image) {
+                cover.classList.add('has-img');
+                cover.style.backgroundImage = 'url(' + ep.image + ')';
+                cover.style.removeProperty('--cover');
+            } else {
+                cover.classList.remove('has-img');
+                cover.style.backgroundImage = '';
+                cover.style.setProperty('--cover', ep.cover || '');
+            }
+            document.getElementById('ppCoverRef').textContent = (ep.ref || '').toUpperCase();
+            document.getElementById('ppCoverTitle').textContent = ep.title || 'Episodio';
+            document.getElementById('ppTitle').textContent = ep.title || 'Episodio';
+            document.getElementById('ppEyebrow').textContent = ep.ref ? 'Podcast de Vida · ' + ep.ref : 'Podcast de Vida';
+            document.getElementById('ppRead').style.display = ep.pdfId ? '' : 'none';
+        }
+
+        async function openEpisode(i) {
             const ep = EPISODES[i];
-            if (!ep || !ep.contentId) return;
+            if (!ep) return;
+            curIdx = i;
+            // Pausar la Biblia para no solapar dos audios a la vez
+            try { document.getElementById('mainAudio').pause(); } catch (e) {}
+            try { document.getElementById('mainAudioB').pause(); } catch (e) {}
+            paintPlayer(ep);
+            player.classList.add('open');
+            player.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+
+            // Mismo episodio ya cargado → reanudar (no recargar ni reiniciar)
+            if (loadedIdx === i && pAudio.src) {
+                pAudio.playbackRate = curSpeed;
+                pAudio.play().catch(() => {});
+                setSession(ep);
+                return;
+            }
+            // Episodio nuevo → resetear UI y cargar
+            document.getElementById('ppSeekFill').style.width = '0%';
+            document.getElementById('ppCur').textContent = '0:00';
+            document.getElementById('ppDur').textContent = '--:--';
+            updatePlayIcon(false);
+            if (!ep.contentId) return;
             try {
                 const url = await SDV_Auth.loadContentBlob(ep.contentId);
-                const a = document.getElementById('mainAudio');
-                a.src = url;
-                a.play().catch(() => {});
-                showPlayerBar();
-                const t = document.getElementById('playerRef');
-                if (t) t.textContent = ep.title || 'Podcast de Vida';
-                const s = document.getElementById('playerSub');
-                if (s) s.textContent = (ep.ref ? ep.ref + ' · ' : '') + 'Podcast de Vida';
-                // Portada/título en la pantalla bloqueada (estilo Dwell)
-                if ('mediaSession' in navigator) {
-                    try {
-                        navigator.mediaSession.metadata = new MediaMetadata({
-                            title: ep.title || 'Podcast de Vida',
-                            artist: 'Sonido de Vida',
-                            album: ep.ref ? 'Podcast de Vida · ' + ep.ref : 'Podcast de Vida',
-                        });
-                    } catch (e) {}
-                }
+                if (curIdx !== i) return;   // el usuario cambió mientras cargaba
+                pAudio.src = url;
+                loadedIdx = i;
+                pAudio.playbackRate = curSpeed;
+                pAudio.play().catch(() => {});
+                setSession(ep);
             } catch (e) {
                 alert('Este episodio es para miembros. Inicia sesión o hazte Premium para escucharlo.');
             }
         }
 
-        // Abre la lectura (PDF) del episodio. Abrimos la pestaña ANTES del await
-        // para no perder el gesto del usuario (evita el bloqueo de pop-ups).
-        async function read(i) {
-            const ep = EPISODES[i];
+        function closePlayer() {
+            try { pAudio.pause(); } catch (e) {}
+            player.classList.remove('open');
+            player.setAttribute('aria-hidden', 'true');
+            // Si el hub (lista) sigue abierto, mantener el scroll bloqueado
+            if (!overlay.classList.contains('open')) document.body.style.overflow = '';
+        }
+
+        function toggle() {
+            if (!pAudio.src) { if (curIdx >= 0) openEpisode(curIdx); return; }
+            if (pAudio.paused) pAudio.play().catch(() => {}); else pAudio.pause();
+        }
+        function skip(sec) {
+            if (!pAudio.duration) return;
+            pAudio.currentTime = Math.min(pAudio.duration, Math.max(0, pAudio.currentTime + sec));
+        }
+        function seek(e) {
+            if (!pAudio.duration) return;
+            const r = e.currentTarget.getBoundingClientRect();
+            pAudio.currentTime = ((e.clientX - r.left) / r.width) * pAudio.duration;
+        }
+        function cycleSpeed() {
+            curSpeed = SPEEDS[(SPEEDS.indexOf(curSpeed) + 1) % SPEEDS.length];
+            pAudio.playbackRate = curSpeed;
+            document.getElementById('ppSpeed').textContent = curSpeed + '×';
+        }
+        // Abre la pestaña ANTES del await para no perder el gesto (anti pop-up).
+        function readCurrent() {
+            const ep = EPISODES[curIdx];
             if (!ep || !ep.pdfId) return;
             const w = window.open('', '_blank');
-            try {
-                const url = await SDV_Auth.loadContentBlob(ep.pdfId);
+            SDV_Auth.loadContentBlob(ep.pdfId).then(url => {
                 if (w) w.location = url; else window.location.href = url;
-            } catch (e) {
+            }).catch(() => {
                 if (w) w.close();
                 alert('Esta lectura es para miembros. Inicia sesión o hazte Premium para leerla.');
-            }
+            });
         }
+
+        function updatePlayIcon(playing) {
+            document.getElementById('ppPlayIcon').style.display  = playing ? 'none' : '';
+            document.getElementById('ppPauseIcon').style.display = playing ? '' : 'none';
+        }
+
+        function setSession(ep) {
+            if (!('mediaSession' in navigator)) return;
+            try {
+                navigator.mediaSession.metadata = new MediaMetadata({
+                    title: ep.title || 'Podcast de Vida',
+                    artist: 'Sonido de Vida',
+                    album: ep.ref ? 'Podcast de Vida · ' + ep.ref : 'Podcast de Vida',
+                    artwork: [
+                        { src: '/icon-192.png', sizes: '192x192', type: 'image/png' },
+                        { src: '/icon-512.png', sizes: '512x512', type: 'image/png' },
+                    ],
+                });
+                navigator.mediaSession.setActionHandler('play',         () => pAudio.play());
+                navigator.mediaSession.setActionHandler('pause',        () => pAudio.pause());
+                navigator.mediaSession.setActionHandler('seekbackward', () => skip(-15));
+                navigator.mediaSession.setActionHandler('seekforward',  () => skip(15));
+            } catch (e) {}
+        }
+
+        // Eventos del audio del podcast (independientes del motor bíblico)
+        pAudio.addEventListener('play',  () => { updatePlayIcon(true);  if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing'; });
+        pAudio.addEventListener('pause', () => { updatePlayIcon(false); if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused'; });
+        pAudio.addEventListener('ended', () => updatePlayIcon(false));
+        pAudio.addEventListener('loadedmetadata', () => { document.getElementById('ppDur').textContent = fmt(pAudio.duration); });
+        pAudio.addEventListener('timeupdate', () => {
+            if (!pAudio.duration) return;
+            document.getElementById('ppSeekFill').style.width = (pAudio.currentTime / pAudio.duration * 100) + '%';
+            document.getElementById('ppCur').textContent = fmt(pAudio.currentTime);
+        });
 
         function open() {
             render();
@@ -3152,9 +3332,9 @@
         function close() {
             overlay.classList.remove('open');
             overlay.setAttribute('aria-hidden', 'true');
-            document.body.style.overflow = '';
+            if (!player.classList.contains('open')) document.body.style.overflow = '';
         }
-        return { open, close, play, read };
+        return { open, close, openEpisode, closePlayer, toggle, skip, seek, cycleSpeed, readCurrent };
     })();
     window.Podcast = Podcast;
 
