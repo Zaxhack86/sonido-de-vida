@@ -669,50 +669,73 @@
         .pod-card-foot{display:flex;align-items:center;gap:.55rem;font-family:'Inter',sans-serif;font-weight:600;font-size:.85rem;color:rgba(255,255,255,.65);margin-top:.15rem}
         .pod-card-foot .pcf-play{flex:none;width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#0d0d1a;display:flex;align-items:center;justify-content:center;font-size:.72rem}
         .pod-card-foot .pcf-chevron{margin-left:auto;color:var(--gold-light);font-size:1.2rem}
-        /* ════════ Hub Pasajes de Vida (overlay) ════════ */
+        /* ════════ Pasajes de Vida — navegación app ════════ */
         .hub-card.hub-pasajes{--hub-accent:rgba(120,100,220,.28);--hub-edge:rgba(160,140,240,.55);--hub-glow:rgba(120,100,220,.26)}
-        .pasajes-overlay{position:fixed;inset:0;z-index:4000;display:none;flex-direction:column;align-items:center;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:calc(env(safe-area-inset-top) + 1.2rem) 1.2rem calc(env(safe-area-inset-bottom) + 6rem);background:radial-gradient(120% 110% at 50% 0%,#0f0a1e 0%,#09061a 55%,#040309 100%);opacity:0;transition:opacity .5s ease}
-        .pasajes-overlay.open{display:flex;opacity:1}
-        .pasajes-overlay .pj-bg{position:absolute;inset:0;background:radial-gradient(55% 45% at 50% 22%,rgba(120,100,220,.12),transparent 70%);pointer-events:none}
-        .pj-stage{position:relative;z-index:1;width:100%;max-width:680px;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:1.1rem}
-        .pj-eyebrow{font-family:'Cinzel',serif;color:var(--gold-light);font-size:.95rem;letter-spacing:.14em;text-transform:uppercase;opacity:.85;margin-top:.5rem}
-        .pj-emblem{width:110px;height:110px;display:flex;align-items:center;justify-content:center;margin:.3rem 0 .1rem}
-        .pj-emblem-ico{font-size:3rem;animation:emFloat 6s ease-in-out infinite}
-        .pj-title{font-family:'Cinzel',serif;color:#fff;font-size:1.9rem;margin:0;text-align:center;line-height:1.1}
-        .pj-sub{font-family:'Lora',serif;font-style:italic;color:rgba(255,255,255,.6);font-size:.98rem;text-align:center;max-width:42ch;margin:0}
-        .pj-list{width:100%;max-width:620px;margin:1.4rem auto 0;display:flex;flex-direction:column;gap:1rem}
-        .pj-list.hidden{display:none}
-        .pj-col{display:flex;gap:1rem;align-items:stretch;padding:.85rem;border-radius:20px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);cursor:pointer;transition:transform .3s,border-color .3s,background .3s}
-        .pj-col:hover{transform:translateY(-2px);border-color:rgba(130,110,230,.45);background:rgba(120,100,220,.08)}
-        .pj-col-cover{flex:none;width:88px;aspect-ratio:3/4;border-radius:12px;background:var(--col-bg,linear-gradient(150deg,#1b0a4a,#0d0520));background-size:cover;background-position:center;box-shadow:0 8px 22px rgba(0,0,0,.45);display:flex;flex-direction:column;justify-content:flex-end;padding:.5rem .45rem;position:relative;overflow:hidden}
-        .pj-col-cover::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 38%,rgba(0,0,0,.6));pointer-events:none}
-        .pj-col-cover-txt{font-family:'Cinzel',serif;font-size:.5rem;font-weight:700;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.8);letter-spacing:.04em;line-height:1.25;text-align:center;position:relative;z-index:1}
-        .pj-col-info{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;text-align:left;gap:.35rem}
-        .pj-col-label{font-family:'Inter',sans-serif;font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-light);font-weight:700}
-        .pj-col-name{font-family:'Cinzel',serif;color:#fff;font-size:1.12rem;line-height:1.2;margin:0}
-        .pj-col-desc{font-family:'Lora',serif;font-style:italic;color:rgba(255,255,255,.55);font-size:.85rem;line-height:1.4;margin:0}
-        .pj-col-foot{display:flex;align-items:center;gap:.5rem;font-family:'Inter',sans-serif;font-size:.82rem;color:rgba(255,255,255,.45);margin-top:.15rem}
-        .pj-col-foot-chev{margin-left:auto;color:rgba(255,255,255,.35);font-size:1.2rem}
-        .pj-detail{display:none;flex-direction:column;align-items:center;width:100%;gap:1.1rem}
-        .pj-detail.visible{display:flex}
-        .pj-back{display:inline-flex;align-items:center;gap:.45rem;background:none;border:1px solid rgba(255,255,255,.14);border-radius:50px;padding:.45rem 1rem .45rem .75rem;color:rgba(255,255,255,.7);font-family:'Inter',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer;transition:color .2s,border-color .2s;align-self:flex-start;margin-bottom:.2rem}
-        .pj-back:hover{color:var(--gold-light);border-color:rgba(201,168,76,.4)}
-        .pj-back svg{width:15px;height:15px}
-        .pj-header{display:flex;flex-direction:column;align-items:center;gap:.7rem;width:100%}
-        .pj-detail-cover{width:min(60vw,200px);aspect-ratio:3/4;border-radius:18px;background:var(--dcol-bg,linear-gradient(160deg,#1a0f4a,#050310));background-size:cover;background-position:center;box-shadow:0 20px 50px rgba(0,0,0,.5)}
-        .pj-detail-name{font-family:'Cinzel',serif;color:#fff;font-size:1.55rem;text-align:center;margin:0;line-height:1.15}
-        .pj-detail-sub{font-family:'Lora',serif;font-style:italic;color:rgba(255,255,255,.55);font-size:.9rem;text-align:center;margin:0;max-width:36ch}
-        .pj-detail-count{font-family:'Inter',sans-serif;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-light);font-weight:700;opacity:.85}
-        .pj-tracks{width:100%;max-width:600px;margin:.2rem auto 0;display:flex;flex-direction:column;gap:.65rem}
-        .pj-track{display:flex;align-items:center;gap:.85rem;padding:.85rem 1rem;border-radius:16px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.03);cursor:pointer;transition:border-color .25s,background .25s,transform .25s}
-        .pj-track:hover{border-color:rgba(130,110,230,.45);background:rgba(120,100,220,.09);transform:translateX(4px)}
-        .pj-track-num{flex:none;width:24px;font-family:'Cinzel',serif;font-size:.78rem;color:var(--gold-light);opacity:.65;text-align:center}
-        .pj-track-body{flex:1;min-width:0;text-align:left}
-        .pj-track-ref{font-family:'Inter',sans-serif;font-weight:600;font-size:.95rem;color:#fff;margin:0 0 .1rem}
-        .pj-track-hint{font-family:'Lora',serif;font-style:italic;font-size:.78rem;color:rgba(255,255,255,.42);margin:0}
-        .pj-track-play{flex:none;width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,rgba(120,100,220,.75),rgba(75,55,170,.75));display:flex;align-items:center;justify-content:center;font-size:.8rem;transition:transform .2s,filter .2s}
-        .pj-track:hover .pj-track-play{transform:scale(1.1);filter:brightness(1.18)}
-        @media(prefers-reduced-motion:reduce){.pj-emblem-ico{animation:none}.pj-track:hover{transform:none}}
+        .pasajes-overlay{position:fixed;inset:0;z-index:4000;display:none;overflow:hidden;background:#080514;opacity:0;transition:opacity .4s ease}
+        .pasajes-overlay.open{display:block;opacity:1}
+        .pj-nav{position:absolute;top:0;left:0;right:0;z-index:20;display:flex;align-items:center;gap:.3rem;padding:calc(env(safe-area-inset-top) + .7rem) 1rem .7rem;background:linear-gradient(180deg,rgba(8,5,20,.95) 0%,rgba(8,5,20,.65) 85%,transparent 100%);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);min-height:calc(env(safe-area-inset-top) + 3rem)}
+        .pj-nav-back{display:flex;align-items:center;gap:.22rem;background:none;border:none;padding:.4rem .5rem;color:var(--gold-light);font-family:'Inter',sans-serif;font-size:.9rem;font-weight:600;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .25s,color .2s;white-space:nowrap;min-width:68px}
+        .pj-nav-back.visible{opacity:1;pointer-events:auto}
+        .pj-nav-back:hover{color:#fff}
+        .pj-nav-back svg{width:17px;height:17px;flex:none}
+        .pj-nav-title{flex:1;text-align:center;font-family:'Cinzel',serif;font-size:.93rem;letter-spacing:.05em;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .pj-nav-close{display:flex;align-items:center;justify-content:center;min-width:30px;width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.1);border:none;color:rgba(255,255,255,.8);font-size:.93rem;cursor:pointer;transition:background .2s}
+        .pj-nav-close:hover{background:rgba(255,255,255,.2)}
+        .pj-screen{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-top:calc(env(safe-area-inset-top) + 3rem);padding-bottom:calc(env(safe-area-inset-bottom) + 5.6rem);transform:translateX(100%);transition:transform .34s cubic-bezier(.4,0,.2,1);will-change:transform}
+        .pj-screen.active{transform:translateX(0)}
+        .pj-screen.behind{transform:translateX(-28%)}
+        .pj-screen.slide-out{transform:translateX(105%)}
+        .pj-cols-header{padding:1.1rem 1.4rem .5rem;text-align:center}
+        .pj-cols-eyebrow{display:block;font-family:'Cinzel',serif;color:var(--gold-light);font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;opacity:.7;margin-bottom:.4rem}
+        .pj-cols-headline{font-family:'Cinzel',serif;color:#fff;font-size:1.5rem;margin:0 0 .35rem;line-height:1.15}
+        .pj-cols-sub{font-family:'Lora',serif;font-style:italic;color:rgba(255,255,255,.48);font-size:.88rem;margin:0}
+        .pj-cols-grid{display:grid;grid-template-columns:1fr 1fr;gap:.85rem;padding:.75rem 1.1rem 0;max-width:480px;margin:0 auto}
+        .pj-col-card{position:relative;border-radius:15px;overflow:hidden;aspect-ratio:3/4;cursor:pointer;box-shadow:0 10px 26px rgba(0,0,0,.5);transition:transform .26s cubic-bezier(.2,.8,.2,1),box-shadow .26s}
+        .pj-col-card:hover{transform:scale(1.03);box-shadow:0 16px 38px rgba(0,0,0,.65)}
+        .pj-col-card:active{transform:scale(.96)}
+        .pj-col-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+        .pj-col-overlay{position:absolute;inset:0;background:linear-gradient(180deg,transparent 38%,rgba(0,0,0,.8) 100%)}
+        .pj-col-info{position:absolute;bottom:0;left:0;right:0;padding:.65rem .75rem}
+        .pj-col-name{font-family:'Cinzel',serif;color:#fff;font-size:.85rem;line-height:1.2;margin:0 0 .16rem;text-shadow:0 1px 5px rgba(0,0,0,.7)}
+        .pj-col-count{font-family:'Inter',sans-serif;font-size:.66rem;font-weight:600;color:var(--gold-light);letter-spacing:.07em}
+        .pj-trk-hero{display:flex;flex-direction:column;align-items:center;gap:.7rem;padding:1rem 1.4rem 1.3rem}
+        .pj-trk-cover{width:min(50vw,170px);aspect-ratio:3/4;border-radius:13px;object-fit:cover;box-shadow:0 13px 36px rgba(0,0,0,.6)}
+        .pj-trk-name{font-family:'Cinzel',serif;color:#fff;font-size:1.3rem;text-align:center;margin:0;line-height:1.2}
+        .pj-trk-sub{font-family:'Lora',serif;font-style:italic;color:rgba(255,255,255,.48);font-size:.86rem;text-align:center;margin:0;max-width:32ch}
+        .pj-trk-list{padding:.2rem 1rem .5rem;max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:.48rem}
+        .pj-trk-row{display:flex;align-items:center;gap:.8rem;padding:.78rem .9rem;border-radius:12px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.03);cursor:pointer;transition:background .2s,border-color .2s}
+        .pj-trk-row:hover:not(.playing){background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12)}
+        .pj-trk-row.playing{border-color:rgba(150,130,240,.5);background:rgba(120,100,220,.13)}
+        .pj-trk-n{flex:none;width:20px;text-align:center;font-family:'Cinzel',serif;font-size:.7rem;color:var(--gold-light);opacity:.5}
+        .pj-trk-row.playing .pj-trk-n{display:none}
+        .pj-trk-bars{flex:none;width:20px;display:none;align-items:center;justify-content:center}
+        .pj-trk-row.playing .pj-trk-bars{display:flex}
+        .pj-bars{display:flex;align-items:flex-end;gap:2px;height:14px}
+        .pj-bars b{display:block;width:3px;border-radius:2px;background:var(--gold-light);animation:pjBar 1.1s ease-in-out infinite}
+        .pj-bars b:nth-child(2){animation-delay:.18s}
+        .pj-bars b:nth-child(3){animation-delay:.36s}
+        @keyframes pjBar{0%,100%{height:3px}50%{height:12px}}
+        .pj-bars.paused b{animation-play-state:paused;height:5px}
+        .pj-trk-body{flex:1;min-width:0}
+        .pj-trk-ref{font-family:'Inter',sans-serif;font-weight:600;font-size:.9rem;color:#fff;margin:0 0 .1rem}
+        .pj-trk-hint{font-family:'Lora',serif;font-style:italic;font-size:.74rem;color:rgba(255,255,255,.38);margin:0}
+        .pj-player{position:absolute;bottom:0;left:0;right:0;z-index:15;display:none;padding-bottom:env(safe-area-inset-bottom);background:linear-gradient(0deg,rgba(5,3,14,.98) 0%,rgba(5,3,14,.85) 80%,transparent 100%);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+        .pj-player.show{display:block}
+        .pj-player-prog{width:100%;height:3px;background:rgba(255,255,255,.1);cursor:pointer}
+        .pj-player-fill{height:100%;width:0;background:linear-gradient(90deg,var(--gold-dark),var(--gold-light));transition:width .15s linear}
+        .pj-player-row{display:flex;align-items:center;gap:.8rem;padding:.7rem 1.1rem .55rem}
+        .pj-player-thumb{flex:none;width:40px;height:40px;border-radius:7px;object-fit:cover;box-shadow:0 3px 10px rgba(0,0,0,.5)}
+        .pj-player-meta{flex:1;min-width:0}
+        .pj-player-ref{font-family:'Inter',sans-serif;font-weight:600;font-size:.86rem;color:#fff;margin:0 0 .08rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .pj-player-hint{font-family:'Lora',serif;font-style:italic;font-size:.72rem;color:rgba(255,255,255,.46);margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .pj-player-btns{display:flex;align-items:center;gap:.4rem}
+        .pj-btn-skip{width:34px;height:34px;border-radius:50%;background:none;border:none;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.6);cursor:pointer;transition:color .2s}
+        .pj-btn-skip:hover{color:var(--gold-light)}
+        .pj-btn-skip svg{width:19px;height:19px}
+        .pj-btn-play{width:42px;height:42px;border-radius:50%;border:none;background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#0d0d1a;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 5px 16px rgba(201,168,76,.35);transition:transform .18s,filter .18s}
+        .pj-btn-play:hover{transform:scale(1.06);filter:brightness(1.06)}
+        .pj-btn-play svg{width:15px;height:15px;fill:#0d0d1a}
+        @media(prefers-reduced-motion:reduce){.pj-col-card:hover{transform:none}.pj-bars b{animation:none;height:6px}}
     </style>
 </head>
 <body data-tab-active="inicio">
@@ -1371,30 +1394,61 @@
         </div>
     </div>
 
-    <!-- ════════ Pasajes de Vida overlay ════════ -->
+    <!-- ════════ Pasajes de Vida ════════ -->
     <div class="pasajes-overlay" id="pasajesOverlay" aria-hidden="true" role="dialog" aria-label="Pasajes de Vida">
-        <div class="pj-bg"></div>
-        <button class="focus-close" onclick="Pasajes.close()" aria-label="Cerrar Pasajes de Vida">✕</button>
-        <div class="pj-stage">
-            <span class="pj-eyebrow">Pasajes de Vida</span>
-            <div class="pj-emblem"><span class="pj-emblem-ico">📜</span></div>
-            <h2 class="pj-title">Pasajes de Vida</h2>
-            <p class="pj-sub">Capítulos curados por tema, para los momentos que más los necesitas.</p>
-            <div class="pj-list" id="pjList"></div>
-            <div class="pj-detail" id="pjDetail">
-                <button class="pj-back" onclick="Pasajes.back()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-                    Colecciones
-                </button>
-                <div class="pj-header">
-                    <div class="pj-detail-cover" id="pjDetailCover"></div>
-                    <h3 class="pj-detail-name" id="pjDetailName"></h3>
-                    <p class="pj-detail-sub" id="pjDetailSub"></p>
-                    <span class="pj-detail-count" id="pjDetailCount"></span>
+        <!-- Barra de navegación -->
+        <div class="pj-nav">
+            <button class="pj-nav-back" id="pjNavBack" onclick="Pasajes.back()" aria-label="Atrás">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                Atrás
+            </button>
+            <span class="pj-nav-title" id="pjNavTitle">Pasajes de Vida</span>
+            <button class="pj-nav-close" onclick="Pasajes.close()" aria-label="Cerrar">✕</button>
+        </div>
+        <!-- Pantalla 1: grid de colecciones -->
+        <div class="pj-screen active" id="pjScreenCols">
+            <div class="pj-cols-header">
+                <span class="pj-cols-eyebrow">Pasajes de Vida</span>
+                <h2 class="pj-cols-headline">Escucha con propósito</h2>
+                <p class="pj-cols-sub">Capítulos curados para los momentos que más los necesitas.</p>
+            </div>
+            <div class="pj-cols-grid" id="pjColsGrid"></div>
+        </div>
+        <!-- Pantalla 2: lista de pistas -->
+        <div class="pj-screen" id="pjScreenTrks">
+            <div class="pj-trk-hero">
+                <img class="pj-trk-cover" id="pjTrkCover" src="" alt="">
+                <h3 class="pj-trk-name" id="pjTrkName"></h3>
+                <p class="pj-trk-sub" id="pjTrkSub"></p>
+            </div>
+            <div class="pj-trk-list" id="pjTrkList"></div>
+        </div>
+        <!-- Player pegado al fondo -->
+        <div class="pj-player" id="pjPlayerBar">
+            <div class="pj-player-prog" id="pjPlayerProg" onclick="Pasajes.seek(event)">
+                <div class="pj-player-fill" id="pjPlayerFill"></div>
+            </div>
+            <div class="pj-player-row">
+                <img class="pj-player-thumb" id="pjPlayerThumb" src="" alt="">
+                <div class="pj-player-meta">
+                    <p class="pj-player-ref" id="pjPlayerRef"></p>
+                    <p class="pj-player-hint" id="pjPlayerHint"></p>
                 </div>
-                <div class="pj-tracks" id="pjTracks"></div>
+                <div class="pj-player-btns">
+                    <button class="pj-btn-skip" onclick="Pasajes.prev()" aria-label="Anterior">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg>
+                    </button>
+                    <button class="pj-btn-play" id="pjBtnPlay" onclick="Pasajes.toggle()" aria-label="Reproducir / Pausar">
+                        <svg id="pjPlayIco" viewBox="0 0 24 24"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+                        <svg id="pjPauseIco" viewBox="0 0 24 24" style="display:none"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+                    </button>
+                    <button class="pj-btn-skip" onclick="Pasajes.next()" aria-label="Siguiente">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+                    </button>
+                </div>
             </div>
         </div>
+        <audio id="pasajesAudio"></audio>
     </div>
 
     <script src="/bible.js"></script>
@@ -3420,12 +3474,12 @@
     window.Podcast = Podcast;
 
     /* ════════ Pasajes de Vida (colecciones curadas) ════════ */
+    /* ════════ Pasajes de Vida (colecciones curadas) ════════ */
     const Pasajes = (function () {
         const COLLECTIONS = [
             {
-                id: 'ansiedad',
-                titulo: 'Para la Ansiedad',
-                subtitulo: 'Ancla tu corazón en su paz',
+                id: 'ansiedad', titulo: 'Para la Ansiedad', subtitulo: 'Ancla tu corazón en su paz',
+                cover: '/covers/col-ansiedad.jpg',
                 tracks: [
                     { libro: 'Filipenses', cap: 4,  hint: 'Todo lo puedo en Cristo' },
                     { libro: 'Juan',       cap: 14, hint: 'No se turbe vuestro corazón' },
@@ -3435,12 +3489,10 @@
                     { libro: '1 Pedro',    cap: 5,  hint: 'Echad vuestra ansiedad sobre él' },
                     { libro: 'Mateo',      cap: 6,  hint: 'No os afanéis por el mañana' },
                 ],
-                cover: '/covers/col-ansiedad.jpg',
             },
             {
-                id: 'descanso',
-                titulo: 'Dormir',
-                subtitulo: 'Reposa bajo la sombra del Altísimo',
+                id: 'descanso', titulo: 'Para Dormir', subtitulo: 'Reposa bajo la sombra del Altísimo',
+                cover: '/covers/col-descanso.jpg',
                 tracks: [
                     { libro: 'Salmos', cap: 91,  hint: 'Al abrigo del Altísimo' },
                     { libro: 'Salmos', cap: 23,  hint: 'Me hará descansar' },
@@ -3450,12 +3502,10 @@
                     { libro: 'Salmos', cap: 127, hint: 'A su amado dará el sueño' },
                     { libro: 'Salmos', cap: 3,   hint: 'Yo me acosté y dormí' },
                 ],
-                cover: '/covers/col-descanso.jpg',
             },
             {
-                id: 'consuelo',
-                titulo: 'Consuelo en el Dolor',
-                subtitulo: 'Cerca del Dios que sana el corazón',
+                id: 'consuelo', titulo: 'Consuelo en el Dolor', subtitulo: 'Cerca del Dios que sana el corazón',
+                cover: '/covers/col-consuelo.jpg',
                 tracks: [
                     { libro: 'Salmos',      cap: 34,  hint: 'Cerca de los quebrantados' },
                     { libro: 'Salmos',      cap: 42,  hint: '¿Por qué te abates, alma mía?' },
@@ -3464,94 +3514,161 @@
                     { libro: 'Apocalipsis', cap: 21,  hint: 'Enjugará toda lágrima' },
                     { libro: 'Salmos',      cap: 147, hint: 'Sana a los quebrantados de corazón' },
                 ],
-                cover: '/covers/col-consuelo.jpg',
             },
         ];
 
-        const overlay  = document.getElementById('pasajesOverlay');
-        const listEl   = document.getElementById('pjList');
-        const detailEl = document.getElementById('pjDetail');
-        const coverEl  = document.getElementById('pjDetailCover');
-        const nameEl   = document.getElementById('pjDetailName');
-        const subEl    = document.getElementById('pjDetailSub');
-        const countEl  = document.getElementById('pjDetailCount');
-        const tracksEl = document.getElementById('pjTracks');
+        const overlay    = document.getElementById('pasajesOverlay');
+        const navBack    = document.getElementById('pjNavBack');
+        const navTitle   = document.getElementById('pjNavTitle');
+        const scCols     = document.getElementById('pjScreenCols');
+        const scTrks     = document.getElementById('pjScreenTrks');
+        const colsGrid   = document.getElementById('pjColsGrid');
+        const trkCover   = document.getElementById('pjTrkCover');
+        const trkName    = document.getElementById('pjTrkName');
+        const trkSub     = document.getElementById('pjTrkSub');
+        const trkList    = document.getElementById('pjTrkList');
+        const playerBar  = document.getElementById('pjPlayerBar');
+        const playerFill = document.getElementById('pjPlayerFill');
+        const playerRef  = document.getElementById('pjPlayerRef');
+        const playerHint = document.getElementById('pjPlayerHint');
+        const playerThumb = document.getElementById('pjPlayerThumb');
+        const playIco    = document.getElementById('pjPlayIco');
+        const pauseIco   = document.getElementById('pjPauseIco');
+        const pAudio     = document.getElementById('pasajesAudio');
 
-        function renderList() {
-            listEl.innerHTML = '';
+        let activeCol   = -1;
+        let activeTrack = -1;
+        let isPlaying   = false;
+
+        // ── Grid de colecciones ──────────────────────────────────────────────
+        function renderCols() {
+            colsGrid.innerHTML = '';
             COLLECTIONS.forEach(function (col, i) {
                 const card = document.createElement('div');
-                card.className = 'pj-col';
-                card.onclick = function () { openCollection(i); };
-                const coverStyle = col.cover.startsWith('/')
-                    ? 'background-image:url(' + col.cover + ');background-size:cover;background-position:center'
-                    : '--col-bg:' + col.cover;
-                card.innerHTML =
-                    '<div class="pj-col-cover" style="' + coverStyle + '">' +
-                        '<span class="pj-col-cover-txt"></span>' +
-                    '</div>' +
-                    '<div class="pj-col-info">' +
-                        '<span class="pj-col-label">Colección · ' + col.tracks.length + ' pasajes</span>' +
-                        '<h3 class="pj-col-name"></h3>' +
-                        '<p class="pj-col-desc"></p>' +
-                        '<div class="pj-col-foot">' +
-                            '<span>▶ Escuchar</span>' +
-                            '<span class="pj-col-foot-chev">›</span>' +
-                        '</div>' +
-                    '</div>';
-                card.querySelector('.pj-col-cover-txt').textContent = col.titulo;
-                card.querySelector('.pj-col-name').textContent = col.titulo;
-                card.querySelector('.pj-col-desc').textContent = col.subtitulo;
-                listEl.appendChild(card);
+                card.className = 'pj-col-card';
+                card.onclick = function () { openCol(i); };
+                const img = document.createElement('img');
+                img.className = 'pj-col-img'; img.src = col.cover; img.alt = col.titulo; img.loading = 'lazy';
+                const ov = document.createElement('div'); ov.className = 'pj-col-overlay';
+                const info = document.createElement('div'); info.className = 'pj-col-info';
+                const np = document.createElement('p'); np.className = 'pj-col-name'; np.textContent = col.titulo;
+                const cp = document.createElement('p'); cp.className = 'pj-col-count'; cp.textContent = col.tracks.length + ' pasajes';
+                info.appendChild(np); info.appendChild(cp);
+                card.appendChild(img); card.appendChild(ov); card.appendChild(info);
+                colsGrid.appendChild(card);
             });
         }
 
-        function openCollection(i) {
+        // ── Abrir colección (push pantalla 2) ────────────────────────────────
+        function openCol(i) {
+            activeCol = i;
             const col = COLLECTIONS[i];
-            if (col.cover.startsWith('/')) {
-                coverEl.style.cssText = 'background-image:url(' + col.cover + ');background-size:cover;background-position:center';
-            } else {
-                coverEl.style.cssText = '--dcol-bg:' + col.cover;
-            }
-            nameEl.textContent  = col.titulo;
-            subEl.textContent   = col.subtitulo;
-            countEl.textContent = col.tracks.length + ' pasajes';
-            tracksEl.innerHTML  = '';
+            trkCover.src = col.cover; trkCover.alt = col.titulo;
+            trkName.textContent = col.titulo;
+            trkSub.textContent  = col.subtitulo;
+            renderTrkList(col);
+            scCols.classList.remove('active'); scCols.classList.add('behind');
+            scTrks.classList.add('active'); scTrks.scrollTop = 0;
+            navBack.classList.add('visible');
+            navTitle.textContent = col.titulo;
+        }
+
+        // ── Lista de pistas ──────────────────────────────────────────────────
+        function renderTrkList(col) {
+            trkList.innerHTML = '';
             col.tracks.forEach(function (t, j) {
+                const isActive = (j === activeTrack && activeCol === COLLECTIONS.indexOf(col));
                 const row = document.createElement('div');
-                row.className = 'pj-track';
-                row.onclick = function () { playTrack(t.libro, t.cap); };
+                row.className = 'pj-trk-row' + (isActive ? ' playing' : '');
+                row.id = 'pjRow' + j;
+                row.onclick = function () { playTrack(j); };
                 row.innerHTML =
-                    '<span class="pj-track-num">' + (j + 1) + '</span>' +
-                    '<div class="pj-track-body">' +
-                        '<p class="pj-track-ref"></p>' +
-                        '<p class="pj-track-hint"></p>' +
-                    '</div>' +
-                    '<span class="pj-track-play">▶</span>';
-                row.querySelector('.pj-track-ref').textContent  = t.libro + ' ' + t.cap;
-                row.querySelector('.pj-track-hint').textContent = t.hint;
-                tracksEl.appendChild(row);
+                    '<span class="pj-trk-n">' + (j + 1) + '</span>' +
+                    '<span class="pj-trk-bars"><div class="pj-bars' + (isActive && isPlaying ? '' : ' paused') + '"><b></b><b></b><b></b></div></span>' +
+                    '<div class="pj-trk-body"><p class="pj-trk-ref"></p><p class="pj-trk-hint"></p></div>';
+                row.querySelector('.pj-trk-ref').textContent  = t.libro + ' ' + t.cap;
+                row.querySelector('.pj-trk-hint').textContent = t.hint;
+                trkList.appendChild(row);
             });
-            listEl.classList.add('hidden');
-            detailEl.classList.add('visible');
-            overlay.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
+        // ── Reproducción ─────────────────────────────────────────────────────
+        function playTrack(j) {
+            const col = COLLECTIONS[activeCol];
+            if (!col) return;
+            activeTrack = j;
+            const t = col.tracks[j];
+            document.querySelectorAll('.pj-trk-row').forEach(function (r, idx) {
+                r.classList.toggle('playing', idx === j);
+                var bars = r.querySelector('.pj-bars');
+                if (bars) bars.classList.toggle('paused', idx !== j);
+            });
+            playerRef.textContent   = t.libro + ' ' + t.cap;
+            playerHint.textContent  = t.hint;
+            playerThumb.src         = col.cover;
+            playerBar.classList.add('show');
+            pAudio.src = audioUrl(t.libro, t.cap, true);
+            pAudio.play().catch(function () {});
+        }
+
+        function setPlaying(v) {
+            isPlaying = v;
+            playIco.style.display  = v ? 'none' : '';
+            pauseIco.style.display = v ? ''     : 'none';
+            document.querySelectorAll('.pj-bars').forEach(function (b) {
+                b.classList.toggle('paused', !v);
+            });
+        }
+
+        function toggle() {
+            if (pAudio.paused) { pAudio.play().catch(function () {}); }
+            else               { pAudio.pause(); }
+        }
+
+        function prev() {
+            const col = COLLECTIONS[activeCol];
+            if (!col) return;
+            playTrack(activeTrack > 0 ? activeTrack - 1 : col.tracks.length - 1);
+        }
+
+        function next() {
+            const col = COLLECTIONS[activeCol];
+            if (!col) return;
+            playTrack(activeTrack < col.tracks.length - 1 ? activeTrack + 1 : 0);
+        }
+
+        function seek(e) {
+            if (!isFinite(pAudio.duration)) return;
+            var r = e.currentTarget.getBoundingClientRect();
+            pAudio.currentTime = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)) * pAudio.duration;
+        }
+
+        pAudio.addEventListener('play',       function () { setPlaying(true); });
+        pAudio.addEventListener('pause',      function () { setPlaying(false); });
+        pAudio.addEventListener('ended',      function () { next(); });
+        pAudio.addEventListener('timeupdate', function () {
+            if (pAudio.duration) playerFill.style.width = (pAudio.currentTime / pAudio.duration * 100) + '%';
+        });
+
+        // ── Navegación ───────────────────────────────────────────────────────
         function back() {
-            detailEl.classList.remove('visible');
-            listEl.classList.remove('hidden');
-            overlay.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function playTrack(libro, cap) {
-            close();
-            loadChapter({ book: libro, chapter: cap, autoplay: true });
-            showTab('biblia');
+            if (scTrks.classList.contains('active')) {
+                scTrks.classList.remove('active'); scTrks.classList.add('slide-out');
+                scCols.classList.remove('behind'); scCols.classList.add('active');
+                navBack.classList.remove('visible');
+                navTitle.textContent = 'Pasajes de Vida';
+                setTimeout(function () { scTrks.classList.remove('slide-out'); }, 380);
+            } else {
+                close();
+            }
         }
 
         function open() {
-            back();
-            renderList();
+            renderCols();
+            scTrks.classList.remove('active', 'slide-out');
+            scCols.classList.remove('behind'); scCols.classList.add('active');
+            navBack.classList.remove('visible');
+            navTitle.textContent = 'Pasajes de Vida';
             overlay.setAttribute('aria-hidden', 'false');
             overlay.classList.add('open');
             document.body.style.overflow = 'hidden';
@@ -3561,9 +3678,10 @@
             overlay.classList.remove('open');
             overlay.setAttribute('aria-hidden', 'true');
             document.body.style.overflow = '';
+            pAudio.pause();
         }
 
-        return { open, close, back, playTrack };
+        return { open, close, back, toggle, prev, next, seek };
     })();
 
     window.Pasajes = Pasajes;
