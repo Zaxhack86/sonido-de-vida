@@ -615,6 +615,20 @@
         .pod-ep-title{font-family:'Inter',sans-serif;font-weight:600;color:#fff;font-size:.98rem;margin:0 0 .2rem}
         .pod-ep-meta{font-family:'Inter',sans-serif;font-size:.8rem;color:rgba(255,255,255,.5);display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
         .pod-ep-pdf{display:inline-flex;align-items:center;gap:.3rem;color:var(--gold-light);font-weight:600}
+        /* Tarjeta de episodio estilo Dwell: portada + escuchar/leer */
+        .pod-card{width:100%;border-radius:22px;overflow:hidden;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);transition:transform .3s,border-color .3s;display:flex;flex-direction:column}
+        .pod-card:hover{transform:translateY(-3px);border-color:rgba(232,182,90,.4)}
+        .pod-cover{position:relative;aspect-ratio:16/10;display:flex;flex-direction:column;justify-content:flex-end;padding:1.4rem;background:var(--cover,linear-gradient(150deg,#16233f,#0a1326 60%,#05070f));overflow:hidden}
+        .pod-cover::before{content:"";position:absolute;inset:0;background:radial-gradient(120% 80% at 82% 8%,rgba(232,182,90,.30),transparent 55%);pointer-events:none}
+        .pod-cover::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 30%,rgba(0,0,0,.5));pointer-events:none}
+        .pod-cover-ref{position:relative;z-index:1;font-family:'Inter',sans-serif;font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-light);font-weight:700;margin-bottom:.5rem;opacity:.92}
+        .pod-cover-title{position:relative;z-index:1;font-family:'Cinzel',serif;color:#fff;font-size:1.55rem;line-height:1.12;margin:0;text-shadow:0 2px 20px rgba(0,0,0,.55)}
+        .pod-actions{display:flex;gap:.7rem;padding:.9rem}
+        .pod-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:.45rem;padding:.9rem;border-radius:14px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:#fff;font-family:'Inter',sans-serif;font-weight:600;font-size:.92rem;cursor:pointer;transition:background .25s,border-color .25s,filter .25s}
+        .pod-btn:hover{background:rgba(232,182,90,.12);border-color:rgba(232,182,90,.45)}
+        .pod-btn.primary{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#0d0d1a;border-color:transparent}
+        .pod-btn.primary:hover{filter:brightness(1.06)}
+        .pod-btn[disabled]{opacity:.4;pointer-events:none}
         .pod-empty{width:100%;max-width:520px;margin:2rem auto 0;text-align:center;padding:2.4rem 1.4rem;border-radius:22px;border:1px dashed rgba(232,182,90,.3);background:rgba(232,182,90,.04)}
         .pod-empty .pod-empty-ico{font-size:2.6rem;display:block;margin-bottom:.7rem;animation:emFloat 5s ease-in-out infinite}
         .pod-empty h4{font-family:'Cinzel',serif;color:var(--gold-light);font-size:1.2rem;margin:0 0 .5rem}
@@ -3047,9 +3061,12 @@
         const listEl  = document.getElementById('podcastList');
         const emptyEl = document.getElementById('podcastEmpty');
 
-        // Catálogo de episodios. Vacío hasta subir contenido a Cloudflare R2.
+        // Catálogo de episodios. Cada uno: audio (contentId) + lectura PDF (pdfId),
+        // ambos servidos por el portero premium (/api/content/:id). `cover` es el
+        // degradado de portada (estilo Dwell); `ref` la cita en mayúsculas.
         const EPISODES = [
-            // { title:'El poder de la fe', meta:'Romanos · 18 min', contentId:100, pdfId:101 },
+            { title:'En el Principio era el Verbo', ref:'Juan 1', meta:'Resumen en audio · lectura',
+              contentId:67, pdfId:68, cover:'linear-gradient(150deg,#1b2c50,#0a1326 58%,#05070f)' },
         ];
 
         function render() {
@@ -3064,18 +3081,21 @@
             listEl.innerHTML = '';
             EPISODES.forEach((ep, i) => {
                 const card = document.createElement('div');
-                card.className = 'pod-ep';
-                card.onclick = () => play(i);
+                card.className = 'pod-card';
                 card.innerHTML =
-                    '<div class="pod-ep-play">▶</div>' +
-                    '<div class="pod-ep-body">' +
-                        '<p class="pod-ep-title"></p>' +
-                        '<div class="pod-ep-meta"><span class="pod-ep-when"></span>' +
-                        (ep.pdfId ? '<span class="pod-ep-pdf">📄 Resumen PDF</span>' : '') +
-                        '</div>' +
+                    '<div class="pod-cover" style="--cover:' + (ep.cover || '') + '">' +
+                        '<span class="pod-cover-ref"></span>' +
+                        '<h3 class="pod-cover-title"></h3>' +
+                    '</div>' +
+                    '<div class="pod-actions">' +
+                        '<button class="pod-btn primary" type="button">▶ Escuchar</button>' +
+                        (ep.pdfId ? '<button class="pod-btn" type="button">📖 Leer</button>' : '') +
                     '</div>';
-                card.querySelector('.pod-ep-title').textContent = ep.title || 'Episodio';
-                card.querySelector('.pod-ep-when').textContent = ep.meta || '';
+                card.querySelector('.pod-cover-ref').textContent = (ep.ref || '').toUpperCase();
+                card.querySelector('.pod-cover-title').textContent = ep.title || 'Episodio';
+                card.querySelector('.pod-btn.primary').onclick = () => play(i);
+                const readBtn = card.querySelectorAll('.pod-btn')[1];
+                if (readBtn) readBtn.onclick = () => read(i);
                 listEl.appendChild(card);
             });
         }
@@ -3092,9 +3112,34 @@
                 const t = document.getElementById('playerRef');
                 if (t) t.textContent = ep.title || 'Podcast de Vida';
                 const s = document.getElementById('playerSub');
-                if (s) s.textContent = 'Podcast de Vida';
+                if (s) s.textContent = (ep.ref ? ep.ref + ' · ' : '') + 'Podcast de Vida';
+                // Portada/título en la pantalla bloqueada (estilo Dwell)
+                if ('mediaSession' in navigator) {
+                    try {
+                        navigator.mediaSession.metadata = new MediaMetadata({
+                            title: ep.title || 'Podcast de Vida',
+                            artist: 'Sonido de Vida',
+                            album: ep.ref ? 'Podcast de Vida · ' + ep.ref : 'Podcast de Vida',
+                        });
+                    } catch (e) {}
+                }
             } catch (e) {
                 alert('Este episodio es para miembros. Inicia sesión o hazte Premium para escucharlo.');
+            }
+        }
+
+        // Abre la lectura (PDF) del episodio. Abrimos la pestaña ANTES del await
+        // para no perder el gesto del usuario (evita el bloqueo de pop-ups).
+        async function read(i) {
+            const ep = EPISODES[i];
+            if (!ep || !ep.pdfId) return;
+            const w = window.open('', '_blank');
+            try {
+                const url = await SDV_Auth.loadContentBlob(ep.pdfId);
+                if (w) w.location = url; else window.location.href = url;
+            } catch (e) {
+                if (w) w.close();
+                alert('Esta lectura es para miembros. Inicia sesión o hazte Premium para leerla.');
             }
         }
 
@@ -3109,7 +3154,7 @@
             overlay.setAttribute('aria-hidden', 'true');
             document.body.style.overflow = '';
         }
-        return { open, close, play };
+        return { open, close, play, read };
     })();
     window.Podcast = Podcast;
 
