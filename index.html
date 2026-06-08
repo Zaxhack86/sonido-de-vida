@@ -669,6 +669,50 @@
         .pod-card-foot{display:flex;align-items:center;gap:.55rem;font-family:'Inter',sans-serif;font-weight:600;font-size:.85rem;color:rgba(255,255,255,.65);margin-top:.15rem}
         .pod-card-foot .pcf-play{flex:none;width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#0d0d1a;display:flex;align-items:center;justify-content:center;font-size:.72rem}
         .pod-card-foot .pcf-chevron{margin-left:auto;color:var(--gold-light);font-size:1.2rem}
+        /* ════════ Hub Pasajes de Vida (overlay) ════════ */
+        .hub-card.hub-pasajes{--hub-accent:rgba(120,100,220,.28);--hub-edge:rgba(160,140,240,.55);--hub-glow:rgba(120,100,220,.26)}
+        .pasajes-overlay{position:fixed;inset:0;z-index:4000;display:none;flex-direction:column;align-items:center;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:calc(env(safe-area-inset-top) + 1.2rem) 1.2rem calc(env(safe-area-inset-bottom) + 6rem);background:radial-gradient(120% 110% at 50% 0%,#0f0a1e 0%,#09061a 55%,#040309 100%);opacity:0;transition:opacity .5s ease}
+        .pasajes-overlay.open{display:flex;opacity:1}
+        .pasajes-overlay .pj-bg{position:absolute;inset:0;background:radial-gradient(55% 45% at 50% 22%,rgba(120,100,220,.12),transparent 70%);pointer-events:none}
+        .pj-stage{position:relative;z-index:1;width:100%;max-width:680px;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:1.1rem}
+        .pj-eyebrow{font-family:'Cinzel',serif;color:var(--gold-light);font-size:.95rem;letter-spacing:.14em;text-transform:uppercase;opacity:.85;margin-top:.5rem}
+        .pj-emblem{width:110px;height:110px;display:flex;align-items:center;justify-content:center;margin:.3rem 0 .1rem}
+        .pj-emblem-ico{font-size:3rem;animation:emFloat 6s ease-in-out infinite}
+        .pj-title{font-family:'Cinzel',serif;color:#fff;font-size:1.9rem;margin:0;text-align:center;line-height:1.1}
+        .pj-sub{font-family:'Lora',serif;font-style:italic;color:rgba(255,255,255,.6);font-size:.98rem;text-align:center;max-width:42ch;margin:0}
+        .pj-list{width:100%;max-width:620px;margin:1.4rem auto 0;display:flex;flex-direction:column;gap:1rem}
+        .pj-list.hidden{display:none}
+        .pj-col{display:flex;gap:1rem;align-items:stretch;padding:.85rem;border-radius:20px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);cursor:pointer;transition:transform .3s,border-color .3s,background .3s}
+        .pj-col:hover{transform:translateY(-2px);border-color:rgba(130,110,230,.45);background:rgba(120,100,220,.08)}
+        .pj-col-cover{flex:none;width:88px;aspect-ratio:3/4;border-radius:12px;background:var(--col-bg,linear-gradient(150deg,#1b0a4a,#0d0520));background-size:cover;background-position:center;box-shadow:0 8px 22px rgba(0,0,0,.45);display:flex;flex-direction:column;justify-content:flex-end;padding:.5rem .45rem;position:relative;overflow:hidden}
+        .pj-col-cover::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 38%,rgba(0,0,0,.6));pointer-events:none}
+        .pj-col-cover-txt{font-family:'Cinzel',serif;font-size:.5rem;font-weight:700;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.8);letter-spacing:.04em;line-height:1.25;text-align:center;position:relative;z-index:1}
+        .pj-col-info{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;text-align:left;gap:.35rem}
+        .pj-col-label{font-family:'Inter',sans-serif;font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-light);font-weight:700}
+        .pj-col-name{font-family:'Cinzel',serif;color:#fff;font-size:1.12rem;line-height:1.2;margin:0}
+        .pj-col-desc{font-family:'Lora',serif;font-style:italic;color:rgba(255,255,255,.55);font-size:.85rem;line-height:1.4;margin:0}
+        .pj-col-foot{display:flex;align-items:center;gap:.5rem;font-family:'Inter',sans-serif;font-size:.82rem;color:rgba(255,255,255,.45);margin-top:.15rem}
+        .pj-col-foot-chev{margin-left:auto;color:rgba(255,255,255,.35);font-size:1.2rem}
+        .pj-detail{display:none;flex-direction:column;align-items:center;width:100%;gap:1.1rem}
+        .pj-detail.visible{display:flex}
+        .pj-back{display:inline-flex;align-items:center;gap:.45rem;background:none;border:1px solid rgba(255,255,255,.14);border-radius:50px;padding:.45rem 1rem .45rem .75rem;color:rgba(255,255,255,.7);font-family:'Inter',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer;transition:color .2s,border-color .2s;align-self:flex-start;margin-bottom:.2rem}
+        .pj-back:hover{color:var(--gold-light);border-color:rgba(201,168,76,.4)}
+        .pj-back svg{width:15px;height:15px}
+        .pj-header{display:flex;flex-direction:column;align-items:center;gap:.7rem;width:100%}
+        .pj-detail-cover{width:min(60vw,200px);aspect-ratio:3/4;border-radius:18px;background:var(--dcol-bg,linear-gradient(160deg,#1a0f4a,#050310));background-size:cover;background-position:center;box-shadow:0 20px 50px rgba(0,0,0,.5)}
+        .pj-detail-name{font-family:'Cinzel',serif;color:#fff;font-size:1.55rem;text-align:center;margin:0;line-height:1.15}
+        .pj-detail-sub{font-family:'Lora',serif;font-style:italic;color:rgba(255,255,255,.55);font-size:.9rem;text-align:center;margin:0;max-width:36ch}
+        .pj-detail-count{font-family:'Inter',sans-serif;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-light);font-weight:700;opacity:.85}
+        .pj-tracks{width:100%;max-width:600px;margin:.2rem auto 0;display:flex;flex-direction:column;gap:.65rem}
+        .pj-track{display:flex;align-items:center;gap:.85rem;padding:.85rem 1rem;border-radius:16px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.03);cursor:pointer;transition:border-color .25s,background .25s,transform .25s}
+        .pj-track:hover{border-color:rgba(130,110,230,.45);background:rgba(120,100,220,.09);transform:translateX(4px)}
+        .pj-track-num{flex:none;width:24px;font-family:'Cinzel',serif;font-size:.78rem;color:var(--gold-light);opacity:.65;text-align:center}
+        .pj-track-body{flex:1;min-width:0;text-align:left}
+        .pj-track-ref{font-family:'Inter',sans-serif;font-weight:600;font-size:.95rem;color:#fff;margin:0 0 .1rem}
+        .pj-track-hint{font-family:'Lora',serif;font-style:italic;font-size:.78rem;color:rgba(255,255,255,.42);margin:0}
+        .pj-track-play{flex:none;width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,rgba(120,100,220,.75),rgba(75,55,170,.75));display:flex;align-items:center;justify-content:center;font-size:.8rem;transition:transform .2s,filter .2s}
+        .pj-track:hover .pj-track-play{transform:scale(1.1);filter:brightness(1.18)}
+        @media(prefers-reduced-motion:reduce){.pj-emblem-ico{animation:none}.pj-track:hover{transform:none}}
     </style>
 </head>
 <body data-tab-active="inicio">
@@ -756,6 +800,12 @@
                 <h3>Devocionales</h3>
                 <p>Reflexiones profundas sobre la Palabra, con raíces hebreas y griegas, para tu vida diaria.</p>
                 <span class="hub-go">Abrir <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span>
+            </div>
+            <div class="hub-card hub-pasajes reveal" role="button" tabindex="0" onclick="Pasajes.open()" onkeydown="if(event.key==='Enter')Pasajes.open()">
+                <div class="hub-emblem"><span class="hub-emblem-ico">🎵</span></div>
+                <h3>Pasajes de Vida</h3>
+                <p>Colecciones de capítulos curados por tema: ansiedad, descanso, consuelo y más.</p>
+                <span class="hub-go">Explorar <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span>
             </div>
         </div>
     </section>
@@ -1317,6 +1367,32 @@
             <div class="pp-extra">
                 <button class="pp-chip" id="ppSpeed" onclick="Podcast.cycleSpeed()">1×</button>
                 <button class="pp-chip pp-read" id="ppRead" onclick="Podcast.readCurrent()">📖 Leer la meditación</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ════════ Pasajes de Vida overlay ════════ -->
+    <div class="pasajes-overlay" id="pasajesOverlay" aria-hidden="true" role="dialog" aria-label="Pasajes de Vida">
+        <div class="pj-bg"></div>
+        <button class="focus-close" onclick="Pasajes.close()" aria-label="Cerrar Pasajes de Vida">✕</button>
+        <div class="pj-stage">
+            <span class="pj-eyebrow">Pasajes de Vida</span>
+            <div class="pj-emblem"><span class="pj-emblem-ico">📜</span></div>
+            <h2 class="pj-title">Pasajes de Vida</h2>
+            <p class="pj-sub">Capítulos curados por tema, para los momentos que más los necesitas.</p>
+            <div class="pj-list" id="pjList"></div>
+            <div class="pj-detail" id="pjDetail">
+                <button class="pj-back" onclick="Pasajes.back()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                    Colecciones
+                </button>
+                <div class="pj-header">
+                    <div class="pj-detail-cover" id="pjDetailCover"></div>
+                    <h3 class="pj-detail-name" id="pjDetailName"></h3>
+                    <p class="pj-detail-sub" id="pjDetailSub"></p>
+                    <span class="pj-detail-count" id="pjDetailCount"></span>
+                </div>
+                <div class="pj-tracks" id="pjTracks"></div>
             </div>
         </div>
     </div>
@@ -3342,6 +3418,148 @@
         return { open, close, openEpisode, closePlayer, toggle, skip, seek, cycleSpeed, readCurrent };
     })();
     window.Podcast = Podcast;
+
+    /* ════════ Pasajes de Vida (colecciones curadas) ════════ */
+    const Pasajes = (function () {
+        const COLLECTIONS = [
+            {
+                id: 'ansiedad',
+                titulo: 'Para la Ansiedad',
+                subtitulo: 'Ancla tu corazón en su paz',
+                tracks: [
+                    { libro: 'Filipenses', cap: 4,  hint: 'Todo lo puedo en Cristo' },
+                    { libro: 'Juan',       cap: 14, hint: 'No se turbe vuestro corazón' },
+                    { libro: 'Salmos',     cap: 23, hint: 'El Señor es mi pastor' },
+                    { libro: 'Salmos',     cap: 46, hint: 'Dios es nuestro refugio' },
+                    { libro: 'Isaias',     cap: 41, hint: 'No temas, yo estoy contigo' },
+                    { libro: '1 Pedro',    cap: 5,  hint: 'Echad vuestra ansiedad sobre él' },
+                    { libro: 'Mateo',      cap: 6,  hint: 'No os afanéis por el mañana' },
+                ],
+                cover: 'linear-gradient(160deg,#1a0f4a 0%,#0d1a3e 55%,#0a0d1a 100%)',
+            },
+            {
+                id: 'descanso',
+                titulo: 'Para Dormir',
+                subtitulo: 'Reposa bajo la sombra del Altísimo',
+                tracks: [
+                    { libro: 'Salmos', cap: 91,  hint: 'Al abrigo del Altísimo' },
+                    { libro: 'Salmos', cap: 23,  hint: 'Me hará descansar' },
+                    { libro: 'Mateo',  cap: 11,  hint: 'Venid a mí y descansad' },
+                    { libro: 'Salmos', cap: 4,   hint: 'En paz me acostaré' },
+                    { libro: 'Salmos', cap: 131, hint: 'Como un niño destetado' },
+                    { libro: 'Salmos', cap: 127, hint: 'A su amado dará el sueño' },
+                    { libro: 'Salmos', cap: 3,   hint: 'Yo me acosté y dormí' },
+                ],
+                cover: 'linear-gradient(160deg,#05091e 0%,#0a0e28 50%,#040610 100%)',
+            },
+            {
+                id: 'consuelo',
+                titulo: 'Consuelo en el Dolor',
+                subtitulo: 'Cerca del Dios que sana el corazón',
+                tracks: [
+                    { libro: 'Salmos',      cap: 34,  hint: 'Cerca de los quebrantados' },
+                    { libro: 'Salmos',      cap: 42,  hint: '¿Por qué te abates, alma mía?' },
+                    { libro: '2 Corintios', cap: 1,   hint: 'El Padre de toda consolación' },
+                    { libro: 'Mateo',       cap: 5,   hint: 'Bienaventurados los que lloran' },
+                    { libro: 'Apocalipsis', cap: 21,  hint: 'Enjugará toda lágrima' },
+                    { libro: 'Salmos',      cap: 147, hint: 'Sana a los quebrantados de corazón' },
+                ],
+                cover: 'linear-gradient(160deg,#081a10 0%,#061410 55%,#030a07 100%)',
+            },
+        ];
+
+        const overlay  = document.getElementById('pasajesOverlay');
+        const listEl   = document.getElementById('pjList');
+        const detailEl = document.getElementById('pjDetail');
+        const coverEl  = document.getElementById('pjDetailCover');
+        const nameEl   = document.getElementById('pjDetailName');
+        const subEl    = document.getElementById('pjDetailSub');
+        const countEl  = document.getElementById('pjDetailCount');
+        const tracksEl = document.getElementById('pjTracks');
+
+        function renderList() {
+            listEl.innerHTML = '';
+            COLLECTIONS.forEach(function (col, i) {
+                const card = document.createElement('div');
+                card.className = 'pj-col';
+                card.onclick = function () { openCollection(i); };
+                card.innerHTML =
+                    '<div class="pj-col-cover" style="--col-bg:' + col.cover + '">' +
+                        '<span class="pj-col-cover-txt"></span>' +
+                    '</div>' +
+                    '<div class="pj-col-info">' +
+                        '<span class="pj-col-label">Colección · ' + col.tracks.length + ' pasajes</span>' +
+                        '<h3 class="pj-col-name"></h3>' +
+                        '<p class="pj-col-desc"></p>' +
+                        '<div class="pj-col-foot">' +
+                            '<span>▶ Escuchar</span>' +
+                            '<span class="pj-col-foot-chev">›</span>' +
+                        '</div>' +
+                    '</div>';
+                card.querySelector('.pj-col-cover-txt').textContent = col.titulo;
+                card.querySelector('.pj-col-name').textContent = col.titulo;
+                card.querySelector('.pj-col-desc').textContent = col.subtitulo;
+                listEl.appendChild(card);
+            });
+        }
+
+        function openCollection(i) {
+            const col = COLLECTIONS[i];
+            coverEl.style.cssText = '--dcol-bg:' + col.cover;
+            nameEl.textContent  = col.titulo;
+            subEl.textContent   = col.subtitulo;
+            countEl.textContent = col.tracks.length + ' pasajes';
+            tracksEl.innerHTML  = '';
+            col.tracks.forEach(function (t, j) {
+                const row = document.createElement('div');
+                row.className = 'pj-track';
+                row.onclick = function () { playTrack(t.libro, t.cap); };
+                row.innerHTML =
+                    '<span class="pj-track-num">' + (j + 1) + '</span>' +
+                    '<div class="pj-track-body">' +
+                        '<p class="pj-track-ref"></p>' +
+                        '<p class="pj-track-hint"></p>' +
+                    '</div>' +
+                    '<span class="pj-track-play">▶</span>';
+                row.querySelector('.pj-track-ref').textContent  = t.libro + ' ' + t.cap;
+                row.querySelector('.pj-track-hint').textContent = t.hint;
+                tracksEl.appendChild(row);
+            });
+            listEl.classList.add('hidden');
+            detailEl.classList.add('visible');
+            overlay.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function back() {
+            detailEl.classList.remove('visible');
+            listEl.classList.remove('hidden');
+            overlay.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function playTrack(libro, cap) {
+            close();
+            loadChapter({ book: libro, chapter: cap, autoplay: true });
+            showTab('biblia');
+        }
+
+        function open() {
+            back();
+            renderList();
+            overlay.setAttribute('aria-hidden', 'false');
+            overlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function close() {
+            overlay.classList.remove('open');
+            overlay.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+        }
+
+        return { open, close, back, playTrack };
+    })();
+
+    window.Pasajes = Pasajes;
 
     /* ════════ Router de pestañas (app-shell) ════════ */
     const TABS = ['inicio','explorar','biblia','buscar','yo'];
