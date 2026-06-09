@@ -261,7 +261,7 @@
         .install-banner strong{color:var(--gold-light);display:block;margin-bottom:.2rem}
         .btn-install{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:var(--dark);padding:.5rem .9rem;border:none;border-radius:8px;font-size:.8rem;font-weight:600;cursor:pointer;white-space:nowrap}
         .btn-install-close{background:none;border:none;color:rgba(255,255,255,.3);cursor:pointer;font-size:1.1rem;flex-shrink:0}
-        .toast{position:fixed;bottom:5rem;left:50%;transform:translateX(-50%) translateY(100px);background:var(--deep-blue);color:white;padding:.9rem 1.8rem;border-radius:12px;font-size:.88rem;z-index:2000;opacity:0;transition:all .4s;border:1px solid rgba(201,168,76,.2);pointer-events:none;white-space:nowrap;max-width:90vw;text-align:center}
+        .toast{position:fixed;bottom:5rem;left:50%;transform:translateX(-50%) translateY(100px);background:var(--deep-blue);color:white;padding:.9rem 1.8rem;border-radius:12px;font-size:.88rem;z-index:5000;opacity:0;transition:all .4s;border:1px solid rgba(201,168,76,.2);pointer-events:none;white-space:nowrap;max-width:90vw;text-align:center}
         .toast.visible{opacity:1;transform:translateX(-50%) translateY(0)}
         footer{background:var(--dark);padding:4rem 2rem 2rem;color:rgba(255,255,255,.5)}
         .footer-content{max-width:1200px;margin:0 auto;text-align:center}
@@ -633,6 +633,36 @@
         .pod-empty h4{font-family:'Cinzel',serif;color:var(--gold-light);font-size:1.2rem;margin:0 0 .5rem}
         .pod-empty p{font-family:'Lora',serif;color:rgba(255,255,255,.6);font-size:.95rem;line-height:1.6;margin:0 auto;max-width:36ch}
         @media(prefers-reduced-motion:reduce){.pod-emblem .pod-wave,.pod-core,.pod-empty-ico{animation:none}}
+        /* ─── Hub estilo Dwell: destacado + secciones con riel horizontal ─── */
+        .podcast-overlay .pod-stage{max-width:780px;align-items:stretch}
+        .podcast-overlay .pod-eyebrow,.podcast-overlay .pod-emblem,.podcast-overlay .pod-title,.podcast-overlay .pod-sub{align-self:center}
+        .pod-list{max-width:100%;margin-top:1.2rem;gap:0}
+        .pod-featured{display:flex;gap:1.1rem;align-items:stretch;padding:1rem;border-radius:22px;border:1px solid rgba(232,182,90,.22);background:linear-gradient(135deg,rgba(232,182,90,.10),rgba(255,255,255,.03));cursor:pointer;transition:transform .3s,border-color .3s;margin:.2rem 0 1.7rem}
+        .pod-featured:hover{transform:translateY(-2px);border-color:rgba(232,182,90,.5)}
+        .pf-cover{flex:none;width:120px;aspect-ratio:3/4;border-radius:14px;background:var(--cover);background-size:cover;background-position:center;box-shadow:0 10px 28px rgba(0,0,0,.5)}
+        .pf-body{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;text-align:left;gap:.45rem}
+        .pf-badge{align-self:flex-start;font-family:'Inter',sans-serif;font-size:.62rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:#0d0d1a;background:linear-gradient(135deg,var(--gold),var(--gold-dark));padding:.28rem .6rem;border-radius:50px}
+        .pf-ref{font-family:'Inter',sans-serif;font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-light);font-weight:700}
+        .pf-title{font-family:'Cinzel',serif;color:#fff;font-size:1.4rem;line-height:1.12;margin:0}
+        .pf-foot{display:flex;align-items:center;gap:.55rem;margin-top:.2rem;font-family:'Inter',sans-serif;font-size:.82rem;color:rgba(255,255,255,.6)}
+        .pf-play{flex:none;width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#0d0d1a;display:flex;align-items:center;justify-content:center;font-size:.85rem}
+        .pod-section{width:100%;margin-bottom:1.8rem}
+        .pod-section-head{margin:0 0 .9rem;text-align:left}
+        .pod-section-head h3{font-family:'Cinzel',serif;color:#fff;font-size:1.18rem;margin:0;line-height:1.2}
+        .pod-section-sub{font-family:'Lora',serif;font-style:italic;color:rgba(255,255,255,.5);font-size:.84rem;display:block;margin-top:.2rem}
+        .pod-rail{display:flex;gap:.9rem;overflow-x:auto;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity;padding:.2rem .2rem 1rem;margin:0 -.2rem;scrollbar-width:none}
+        .pod-rail::-webkit-scrollbar{display:none}
+        .pod-rail-card{flex:none;width:152px;scroll-snap-align:start;cursor:pointer;text-align:left;transition:transform .25s}
+        .pod-rail-card:hover{transform:translateY(-3px)}
+        .prc-cover{position:relative;width:152px;aspect-ratio:3/4;border-radius:16px;background:var(--cover);background-size:cover;background-position:center;box-shadow:0 10px 26px rgba(0,0,0,.5);overflow:hidden}
+        .prc-cover::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 48%,rgba(0,0,0,.55));pointer-events:none}
+        .prc-badge{position:absolute;top:.5rem;right:.5rem;z-index:1;font-family:'Inter',sans-serif;font-size:.66rem;font-weight:700;color:#fff;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);padding:.2rem .5rem;border-radius:50px}
+        .prc-play{position:absolute;left:.5rem;bottom:.5rem;z-index:1;width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#0d0d1a;display:flex;align-items:center;justify-content:center;font-size:.78rem;box-shadow:0 4px 12px rgba(0,0,0,.45);opacity:0;transform:translateY(5px);transition:opacity .25s,transform .25s}
+        .pod-rail-card:hover .prc-play{opacity:1;transform:translateY(0)}
+        .prc-ref{font-family:'Inter',sans-serif;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-light);font-weight:700;margin:.55rem 0 .12rem}
+        .prc-title{font-family:'Cinzel',serif;color:#fff;font-size:.92rem;line-height:1.22;margin:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+        @media(hover:none){.prc-play{opacity:1;transform:none}}
+        @media(max-width:430px){.pod-rail-card,.prc-cover{width:138px}}
         /* ════════ Reproductor de episodio (full screen) ════════ */
         .podcast-player{position:fixed;inset:0;z-index:4200;display:none;flex-direction:column;align-items:center;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:calc(env(safe-area-inset-top) + 1.2rem) 1.2rem calc(env(safe-area-inset-bottom) + 2.4rem);background:radial-gradient(120% 110% at 50% 0%,#17141d 0%,#0c0a13 55%,#050409 100%);opacity:0;transition:opacity .4s ease}
         .podcast-player.open{display:flex;opacity:1}
@@ -1348,7 +1378,7 @@
                 <span class="pod-core">🎙️</span>
             </div>
             <h2 class="pod-title">Enseñanzas en audio</h2>
-            <p class="pod-sub">Mensajes para crecer en la fe, con un resumen en PDF para llevarte la Palabra a donde vayas.</p>
+            <p class="pod-sub">Cada semana, una enseñanza para escuchar y crecer en la fe. La Palabra, contada de una forma que engancha.</p>
             <div class="pod-list" id="podcastList"></div>
             <div class="pod-empty" id="podcastEmpty">
                 <span class="pod-empty-ico">🎧</span>
@@ -3275,6 +3305,26 @@
         // sin PDF (solo audio). Para publicar: subir audio a R2 privado,
         // registrar en content_items (D1) y añadir aquí { title, ref, contentId }.
         const EPISODES = [
+            { title:'En el principio era el Verbo',            ref:'Juan 1',       dur:'7 min', contentId:null, cover:'linear-gradient(150deg,#1b2c50,#0a1326 58%,#05070f)' },
+            { title:'Lo que David sabía de las ovejas',        ref:'Salmo 23',     dur:'7 min', contentId:null, cover:'linear-gradient(150deg,#1f3d2e,#10241b 58%,#060f0a)' },
+            { title:'La palabra que Jesús casi inventó',       ref:'Mateo 6',      dur:'7 min', contentId:null, cover:'linear-gradient(150deg,#3a2a18,#1d160c 58%,#0a0805)' },
+            { title:'Laodicea y el agua tibia',                ref:'Apocalipsis 3',dur:'7 min', contentId:null, cover:'linear-gradient(150deg,#173f47,#0c2329 58%,#051013)' },
+            { title:'El padre que corrió',                     ref:'Lucas 15',     dur:'8 min', contentId:null, cover:'linear-gradient(150deg,#5a2f1c,#2c1610 58%,#0f0805)' },
+            { title:'Jonás no se trata del pez',               ref:'Jonás',        dur:'8 min', contentId:null, cover:'linear-gradient(150deg,#16323f,#0b1c25 58%,#050d11)' },
+            { title:'El camino de sangre',                     ref:'Lucas 10',     dur:'9 min', contentId:null, cover:'linear-gradient(150deg,#4a3a1e,#241c10 58%,#0d0a05)' },
+            { title:'El secreto escrito en una cárcel',        ref:'Filipenses 4', dur:'8 min', contentId:null, cover:'linear-gradient(150deg,#2a2540,#161325 58%,#080610)' },
+            { title:'Esperar es trenzar',                      ref:'Isaías 40',    dur:'8 min', contentId:null, cover:'linear-gradient(150deg,#1d3550,#0f2030 58%,#060d14)' },
+            { title:'La cita de las doce del mediodía',        ref:'Juan 4',       dur:'10 min',contentId:null, cover:'linear-gradient(150deg,#3f2d1a,#231a0f 58%,#0d0905)' },
+        ];
+        // Índice del episodio destacado (tarjeta grande arriba).
+        const FEATURED = 0;
+        // Secciones apiladas estilo Dwell. Cada `items` lista índices de EPISODES
+        // (pueden repetirse entre secciones, como en Dwell).
+        const SECTIONS = [
+            { title:'Recién llegados',           sub:'Las primeras enseñanzas en audio',                 items:[0,1,2,3,4,5,6,7,8,9] },
+            { title:'Historias de Jesús',        sub:'Parábolas que esconden más de lo que parece',      items:[4,6,9] },
+            { title:'Para encontrar paz',        sub:'Cuando el alma necesita descanso',                 items:[1,7,8,2] },
+            { title:'Revelaciones que sorprenden', sub:'Detalles del texto original que lo cambian todo', items:[3,0,5,2] },
         ];
 
         // ── Reproductor de episodio independiente (audio propio) ──────────────
@@ -3291,6 +3341,39 @@
             return m + ':' + String(ss).padStart(2, '0');
         }
 
+        function esc(s) {
+            return String(s == null ? '' : s).replace(/[&<>"]/g,
+                c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]));
+        }
+        function coverStyle(ep) {
+            return ep.image
+                ? 'background-image:url(' + ep.image + ')'
+                : '--cover:' + (ep.cover || 'linear-gradient(150deg,#1b2c50,#0a1326 58%,#05070f)');
+        }
+        // Click en cualquier tarjeta. Si el episodio aún no tiene audio
+        // (contentId null) muestra "Próximamente" en vez de abrir vacío.
+        function epClick(i) {
+            const ep = EPISODES[i];
+            if (!ep) return;
+            if (!ep.contentId) {
+                if (window.showToast) showToast('🎧 Próximamente — estamos grabando este episodio');
+                return;
+            }
+            openEpisode(i);
+        }
+
+        function railCard(i) {
+            const ep = EPISODES[i];
+            return '<div class="pod-rail-card" data-ep="' + i + '">' +
+                '<div class="prc-cover" style="' + coverStyle(ep) + '">' +
+                    (ep.dur ? '<span class="prc-badge">' + esc(ep.dur) + '</span>' : '') +
+                    '<span class="prc-play">▶</span>' +
+                '</div>' +
+                '<div class="prc-ref">' + esc((ep.ref || '').toUpperCase()) + '</div>' +
+                '<h4 class="prc-title">' + esc(ep.title) + '</h4>' +
+            '</div>';
+        }
+
         function render() {
             if (!EPISODES.length) {
                 listEl.innerHTML = ''; listEl.style.display = 'none';
@@ -3299,28 +3382,36 @@
             }
             emptyEl.style.display = 'none';
             listEl.style.display = 'flex';
-            listEl.innerHTML = '';
-            EPISODES.forEach((ep, i) => {
-                const card = document.createElement('div');
-                card.className = 'pod-card';
-                card.onclick = () => openEpisode(i);
-                const thumbStyle = ep.image
-                    ? 'background-image:url(' + ep.image + ')'
-                    : '--cover:' + (ep.cover || '');
-                card.innerHTML =
-                    '<div class="pod-thumb" style="' + thumbStyle + '"></div>' +
-                    '<div class="pod-info">' +
-                        '<span class="pod-info-ref"></span>' +
-                        '<h3 class="pod-info-title"></h3>' +
-                        '<div class="pod-card-foot">' +
-                            '<span class="pcf-play">▶</span>' +
-                            '<span>Escuchar' + (ep.pdfId ? ' o leer' : '') + '</span>' +
-                            '<span class="pcf-chevron">›</span>' +
-                        '</div>' +
-                    '</div>';
-                card.querySelector('.pod-info-ref').textContent = (ep.ref || '').toUpperCase();
-                card.querySelector('.pod-info-title').textContent = ep.title || 'Episodio';
-                listEl.appendChild(card);
+            let html = '';
+
+            // Tarjeta destacada
+            const f = EPISODES[FEATURED];
+            if (f) {
+                html += '<div class="pod-featured" data-ep="' + FEATURED + '">' +
+                    '<div class="pf-cover" style="' + coverStyle(f) + '"></div>' +
+                    '<div class="pf-body">' +
+                        '<span class="pf-badge">Destacado</span>' +
+                        '<span class="pf-ref">' + esc((f.ref || '').toUpperCase()) + '</span>' +
+                        '<h3 class="pf-title">' + esc(f.title) + '</h3>' +
+                        '<div class="pf-foot"><span class="pf-play">▶</span><span>' +
+                            (f.dur ? esc(f.dur) + ' · ' : '') + 'Escuchar</span></div>' +
+                    '</div></div>';
+            }
+
+            // Secciones con riel horizontal
+            SECTIONS.forEach(sec => {
+                const cards = sec.items.filter(i => EPISODES[i]).map(railCard).join('');
+                if (!cards) return;
+                html += '<div class="pod-section">' +
+                    '<div class="pod-section-head"><div><h3>' + esc(sec.title) + '</h3>' +
+                        (sec.sub ? '<span class="pod-section-sub">' + esc(sec.sub) + '</span>' : '') +
+                    '</div></div>' +
+                    '<div class="pod-rail">' + cards + '</div></div>';
+            });
+
+            listEl.innerHTML = html;
+            listEl.querySelectorAll('[data-ep]').forEach(el => {
+                el.addEventListener('click', () => epClick(+el.getAttribute('data-ep')));
             });
         }
 
