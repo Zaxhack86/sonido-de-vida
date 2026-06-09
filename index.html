@@ -3779,6 +3779,73 @@
 
     window.Pasajes = Pasajes;
 
+    /* ════════ Botón "ATRÁS" del navegador / móvil ════════
+       La app es una sola página (SPA). Sin esto, el botón atrás del
+       teléfono o del navegador SALE de la página en vez de cerrar el
+       menú u overlay que está abierto. Solución: dejamos un "guardia"
+       en el historial; cada vez que el usuario pulsa atrás cerramos UNA
+       capa abierta (de la más interna a la más externa) y rearmamos el
+       guardia. Si no hay nada abierto y está en Inicio, pide confirmación
+       ("pulsa atrás de nuevo para salir"), el patrón típico de Android. */
+    (function () {
+        function topModal() {
+            var ms = document.querySelectorAll('.modal-overlay.visible');
+            return ms.length ? ms[ms.length - 1] : null;
+        }
+        // Cierra la capa superior abierta. Devuelve true si cerró algo.
+        function appBack() {
+            // 1. Menú móvil desplegable
+            var nav = document.getElementById('navLinks');
+            if (nav && nav.classList.contains('open')) { closeMenu(); return true; }
+            // 2. Modal / ventana emergente
+            var m = topModal();
+            if (m) { m.classList.remove('visible'); document.body.style.overflow = ''; return true; }
+            // 3. Reproductor de podcast (pantalla del episodio)
+            var pp = document.getElementById('podcastPlayer');
+            if (pp && pp.classList.contains('open') && window.Podcast) { Podcast.closePlayer(); return true; }
+            // 4. Hub de podcast
+            var po = document.getElementById('podcastOverlay');
+            if (po && po.classList.contains('open') && window.Podcast) { Podcast.close(); return true; }
+            // 5. Pasajes de Vida (si está en la pantalla interna, retrocede a la lista)
+            var pj = document.getElementById('pasajesOverlay');
+            if (pj && pj.classList.contains('open') && window.Pasajes) {
+                var deep = document.getElementById('pjScreenTrks');
+                if (deep && deep.classList.contains('active')) Pasajes.back();
+                else Pasajes.close();
+                return true;
+            }
+            // 6. Modo Enfoque
+            var fo = document.getElementById('focusOverlay');
+            if (fo && fo.classList.contains('open') && window.Focus) { Focus.exit(); return true; }
+            // 7. Pestaña distinta de Inicio → volver a Inicio
+            var tab = document.body.getAttribute('data-tab-active');
+            if (tab && tab !== 'inicio') { showTab('inicio'); return true; }
+            return false;
+        }
+
+        function arm() { try { history.pushState({ sdv: 'guard' }, ''); } catch (e) {} }
+
+        // Guardia inicial
+        try { history.replaceState({ sdv: 'home' }, ''); } catch (e) {}
+        arm();
+
+        var exitArmed = false, exitTimer = null;
+        window.addEventListener('popstate', function () {
+            if (appBack()) {
+                exitArmed = false;
+                arm();                       // rearma para el siguiente "atrás"
+                return;
+            }
+            // Nada abierto y estamos en Inicio
+            if (exitArmed) { try { history.back(); } catch (e) {} return; }  // segundo atrás → salir
+            exitArmed = true;
+            if (window.showToast) showToast('Pulsa atrás de nuevo para salir');
+            arm();
+            clearTimeout(exitTimer);
+            exitTimer = setTimeout(function () { exitArmed = false; }, 2500);
+        });
+    })();
+
     /* ════════ Router de pestañas (app-shell) ════════ */
     const TABS = ['inicio','explorar','biblia','buscar','yo'];
     function showTab(name, opts) {
