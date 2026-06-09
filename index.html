@@ -3269,10 +3269,12 @@
         // Catálogo de episodios. Cada uno: audio (contentId) + lectura PDF (pdfId),
         // servidos por el portero premium (/api/content/:id). `image` = URL de la
         // portada (PNG/JPG de Canva); si falta, se usa el degradado `cover`.
+        // Contenido reconstruido desde cero (2026-06-09). El episodio "Juan 1"
+        // anterior se retiró (era una prueba); los nuevos audios premium se
+        // graban con VozEdge a partir de /podcast-guiones/*.txt y se publican
+        // sin PDF (solo audio). Para publicar: subir audio a R2 privado,
+        // registrar en content_items (D1) y añadir aquí { title, ref, contentId }.
         const EPISODES = [
-            { title:'En el Principio era el Verbo', ref:'Juan 1',
-              contentId:67, pdfId:68, image:'/covers/juan-1.jpg',
-              cover:'linear-gradient(150deg,#1b2c50,#0a1326 58%,#05070f)' },
         ];
 
         // ── Reproductor de episodio independiente (audio propio) ──────────────
