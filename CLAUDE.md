@@ -102,6 +102,10 @@ const TABS = ['inicio','explorar','biblia','buscar','yo'];
 
 Nav inferior: 5 ítems (Inicio, Explorar, Biblia, Buscar, Yo).
 
+### Botón "atrás" (historial)
+Hay un interceptor de `popstate` (IIFE justo después de `window.Pasajes = Pasajes;`) que hace que el botón atrás del móvil/navegador **cierre una capa a la vez** en vez de salir de la página. Usa un "guardia" en el historial y la función `appBack()`, que cierra en orden: menú móvil → modal `.modal-overlay.visible` → reproductor podcast → hub podcast → Pasajes (pantalla interna o cierre) → Modo Enfoque (`#focusOverlay.open`) → pestaña ≠ inicio. En Inicio sin nada abierto pide "pulsa atrás de nuevo para salir".
+**Si agregas un overlay/modal nuevo a pantalla completa, añade su caso a `appBack()`** o el botón atrás lo ignorará.
+
 ---
 
 ## Procedimiento de despliegue
