@@ -1405,6 +1405,29 @@
         </div>
     </div>
 
+    <!-- ════════ Popup: Podcast de Vida es Premium ════════ -->
+    <div class="modal-overlay" id="podcastPremiumModal" aria-hidden="true" style="z-index:4500" onclick="if(event.target===this)Podcast.closePremium()">
+        <div class="modal-card" role="dialog" aria-labelledby="podPremTitle">
+            <button class="modal-close" onclick="Podcast.closePremium()" aria-label="Cerrar">&times;</button>
+            <div class="modal-icon">🎧</div>
+            <div class="modal-title" id="podPremTitle">Podcast de Vida <span class="focus-premium-badge">✨ Premium</span></div>
+            <div class="modal-subtitle">Enseñanzas que cobran vida — narradas con música de película. Guárdalo en tu cuenta y escúchalo cuando seas Premium.</div>
+            <ul class="teaser-list">
+                <li><span>🎬</span> Audio cinematográfico: voz cálida + música y ambientes</li>
+                <li><span>📖</span> Cada episodio nace de un pasaje, con su contexto</li>
+                <li><span>💾</span> Guárdalo en tus listas y escúchalo cuando quieras</li>
+                <li><span>✨</span> Nuevos episodios sumándose cada semana</li>
+            </ul>
+            <div class="teaser-price">
+                <span class="teaser-promo">🔥 Precio fundador · por tiempo limitado</span>
+                <strong>$4.99/mes</strong>
+                <small>Precio normal: $7.99/mes.</small>
+            </div>
+            <button class="share-btn gold" id="podPremCta" style="width:100%;font-size:1rem;padding:.9rem;margin-top:.2rem">✨ Quiero ser Premium</button>
+            <button class="share-btn ghost" id="podPremSecond" style="width:100%;margin-top:.6rem;display:none" onclick="Podcast.closePremium();if(window.SDV_Account)SDV_Account.open()">👤 Crear mi cuenta gratis</button>
+        </div>
+    </div>
+
     <!-- ════════ Fase 2: Overlay de una lista de reproducción ════════ -->
     <div class="list-overlay" id="playlistOverlay" aria-hidden="true" role="dialog" aria-label="Lista de reproducción">
         <div class="pj-nav">
@@ -1637,7 +1660,8 @@
             <div class="pp-extra">
                 <button class="pp-chip" id="ppSpeed" onclick="Podcast.cycleSpeed()">1×</button>
                 <button class="pp-chip" id="ppLike" onclick="Listas.toggleLikeCurrent()" aria-label="Me gusta">🤍 Me gusta</button>
-                <button class="pp-chip" id="ppAddList" onclick="Listas.openAddCurrent()">➕ Añadir a lista</button>
+                <button class="pp-chip" id="ppAddList" onclick="Listas.openAddCurrent()">➕ Guardar</button>
+                <button class="pp-chip" id="ppShare" onclick="Podcast.shareCurrent()" aria-label="Compartir episodio">🔗 Compartir</button>
                 <button class="pp-chip pp-read" id="ppRead" onclick="Podcast.readCurrent()">📖 Leer la meditación</button>
             </div>
         </div>
@@ -1971,6 +1995,8 @@
         renderDevoHoy();
         // Si entraron por un enlace de lista compartida (/?lista=ID), ábrela.
         if (window.Listas) Listas.checkSharedLink();
+        // Si entraron por un enlace de episodio compartido (/?ep=contentId).
+        if (window.Podcast) Podcast.checkSharedEpisode();
     });
 
     function registerSW() {
@@ -3655,7 +3681,17 @@
             document.getElementById('ppRead').style.display = ep.pdfId ? '' : 'none';
         }
 
-        async function openEpisode(i) {
+        // ¿El usuario tiene Premium activo? (todo el Podcast es premium).
+        function isPremiumUser() {
+            return !!(window.SDV_Auth && SDV_Auth.enabled && SDV_Auth.user && SDV_Auth.premium);
+        }
+
+        // Abre la pantalla del episodio (pinta + muestra el reproductor). NO
+        // reproduce: la reproducción la dispara `startPlayback` (botón ▶), que
+        // pasa por el portón premium. `opts.landing` = llegada por enlace
+        // compartido (/?ep=ID): se queda en la portada esperando el gesto.
+        async function openEpisode(i, opts) {
+            opts = opts || {};
             const ep = EPISODES[i];
             if (!ep) return;
             curIdx = i;
@@ -3670,17 +3706,28 @@
 
             // Mismo episodio ya cargado → reanudar (no recargar ni reiniciar)
             if (loadedIdx === i && pAudio.src) {
+                if (opts.landing) return;            // landing: no autoreproducir
                 pAudio.playbackRate = curSpeed;
                 pAudio.play().catch(() => {});
                 setSession(ep);
                 return;
             }
-            // Episodio nuevo → resetear UI y cargar
+            // Episodio nuevo → resetear UI
             document.getElementById('ppSeekFill').style.width = '0%';
             document.getElementById('ppCur').textContent = '0:00';
             document.getElementById('ppDur').textContent = '--:--';
             updatePlayIcon(false);
             if (!ep.contentId) return;
+            if (opts.landing) return;                // landing: espera el gesto ▶
+            startPlayback(i);
+        }
+
+        // Reproduce realmente el episodio. Portón premium: si no es Premium,
+        // muestra el popup (no intenta descargar el audio protegido).
+        async function startPlayback(i) {
+            const ep = EPISODES[i];
+            if (!ep || !ep.contentId) return;
+            if (!isPremiumUser()) { openPremium(); return; }
             try {
                 const url = await SDV_Auth.loadContentBlob(ep.contentId);
                 if (curIdx !== i) return;   // el usuario cambió mientras cargaba
@@ -3690,8 +3737,64 @@
                 pAudio.play().catch(() => {});
                 setSession(ep);
             } catch (e) {
-                alert('Este episodio es para miembros. Inicia sesión o hazte Premium para escucharlo.');
+                openPremium();              // 403 del portero → es premium
             }
+        }
+
+        // ── Compartir el episodio actual (enlace /?ep=contentId) ──────────
+        async function shareCurrent() {
+            const ep = EPISODES[curIdx];
+            if (!ep || !ep.contentId) return;
+            const url = APP_URL + '/?ep=' + ep.contentId;
+            const texto = '🎧 Escucha «' + ep.title + '» en el Podcast de Vida';
+            if (navigator.share) {
+                try { await navigator.share({ title: ep.title, text: texto, url: url }); return; }
+                catch (e) { if (e && e.name === 'AbortError') return; }
+            }
+            try { await navigator.clipboard.writeText(url); if (window.showToast) showToast('🔗 Enlace del episodio copiado'); }
+            catch (e) { window.prompt('Copia el enlace del episodio:', url); }
+        }
+
+        // ── Popup "Podcast es Premium" (al reproducir sin Premium) ────────
+        function openPremium() {
+            const m = document.getElementById('podcastPremiumModal');
+            if (!m) { if (window.showToast) showToast('🎧 El Podcast de Vida es Premium ✨'); return; }
+            const logged = !!(window.SDV_Auth && SDV_Auth.user);
+            const cta = document.getElementById('podPremCta');
+            const second = document.getElementById('podPremSecond');
+            if (cta) {
+                cta.textContent = '✨ Quiero ser Premium';
+                cta.onclick = () => {
+                    if (!logged) { closePremium(); if (window.SDV_Account) SDV_Account.open(); return; }
+                    closePremium();
+                    if (window.showToast) showToast('🙏 ¡Gracias! Te avisaremos en cuanto abra Premium.');
+                };
+            }
+            // Si no hay sesión, ofrece crear cuenta gratis (para poder guardar).
+            if (second) second.style.display = logged ? 'none' : '';
+            m.classList.add('visible');
+            m.setAttribute('aria-hidden', 'false');
+        }
+        function closePremium() {
+            const m = document.getElementById('podcastPremiumModal');
+            if (!m) return;
+            m.classList.remove('visible');
+            m.setAttribute('aria-hidden', 'true');
+        }
+
+        // Llegada por enlace compartido (/?ep=contentId): abre el hub del
+        // Podcast y deja el episodio en portada (sin reproducir). Reproducir y
+        // guardar siguen pasando por sus portones (premium / cuenta).
+        function checkSharedEpisode() {
+            try {
+                const raw = new URLSearchParams(window.location.search).get('ep');
+                if (!raw || !/^\d+$/.test(raw)) return;
+                const cid = parseInt(raw, 10);
+                const i = EPISODES.findIndex(function (e) { return e.contentId === cid; });
+                if (i < 0) return;
+                open();                              // hub detrás (atrás → Podcast)
+                openEpisode(i, { landing: true });   // portada del episodio
+            } catch (e) {}
         }
 
         function closePlayer() {
@@ -3703,7 +3806,7 @@
         }
 
         function toggle() {
-            if (!pAudio.src) { if (curIdx >= 0) openEpisode(curIdx); return; }
+            if (!pAudio.src) { if (curIdx >= 0) startPlayback(curIdx); return; }
             if (pAudio.paused) pAudio.play().catch(() => {}); else pAudio.pause();
         }
         function skip(sec) {
@@ -3786,6 +3889,7 @@
         }
         return {
             open, close, openEpisode, closePlayer, toggle, skip, seek, cycleSpeed, readCurrent,
+            shareCurrent, openPremium, closePremium, checkSharedEpisode,
             episodes: function () { return EPISODES; },
             playEpisode: function (i) { open(); epClick(i); },
             // Helpers para Listas (Fase 2): mapear por content_id y saber el actual.
