@@ -933,11 +933,11 @@
         /* Sello premium en la esquina de las tarjetas de podcast. */
         .ex-card-lock{position:absolute;top:.5rem;left:.5rem;z-index:2;font-family:'Inter',sans-serif;font-size:.58rem;font-weight:700;color:var(--gold-light);background:rgba(15,12,22,.66);border:1px solid rgba(232,182,90,.45);padding:.14rem .44rem;border-radius:999px;backdrop-filter:blur(4px)}
 
-        /* ─── Tarjeta de devocional: mismo molde 3/4, portada tipográfica ─── */
-        .ex-card-devo .ex-card-cover{background:var(--devo-grad,linear-gradient(155deg,#1a1a3e,#2d1b69 60%,#0d0d1a))}
-        .ex-card-devo .ex-card-cover::after{background:linear-gradient(180deg,rgba(13,13,26,.1) 0%,transparent 26%,rgba(8,5,14,.82))}
-        .ex-card-devo-quote{position:absolute;top:.28rem;left:.6rem;z-index:1;font-family:'Cinzel',serif;font-size:2rem;line-height:1;color:var(--gold-light);opacity:.45}
-        .ex-card-devo-verse{position:absolute;top:1.5rem;left:.85rem;right:.85rem;z-index:1;font-family:'Lora',serif;font-style:italic;font-size:.8rem;line-height:1.42;color:rgba(255,255,255,.92);display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+        /* ─── Tarjeta de devocional: portada al óleo (texto horneado), solo imagen ─── */
+        .ex-card-devo .ex-card-cover{background-size:cover;background-position:center}
+        .ex-card-devo .ex-card-cover::after{background:linear-gradient(180deg,transparent 55%,rgba(8,5,14,.45))}
+        .ex-card-read{position:absolute;bottom:.55rem;right:.6rem;z-index:2;font-family:'Inter',sans-serif;font-size:.62rem;font-weight:700;color:#15102a;background:rgba(255,255,255,.92);padding:.2rem .56rem;border-radius:999px;opacity:0;transform:translateY(4px);transition:opacity .2s,transform .2s}
+        .ex-card-devo:hover .ex-card-read{opacity:1;transform:translateY(0)}
 
         /* ─── Modo Enfoque: diapositivas tipo "captura de pantalla" (carrusel) ─── */
         .fx-rail{display:flex;gap:1rem;overflow-x:auto;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;padding:.3rem 1.2rem .6rem;scrollbar-width:none}
@@ -969,6 +969,9 @@
         .fx-bar{flex:1;height:4px;border-radius:99px;background:rgba(255,255,255,.16);overflow:hidden}
         .fx-bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--gold-dark),var(--gold-light))}
         .fx-moon{font-size:2.2rem;filter:drop-shadow(0 0 14px rgba(232,182,90,.4))}
+        .fx-styles{display:flex;flex-wrap:wrap;gap:.38rem;justify-content:center;margin:.2rem .05rem 0}
+        .fx-styles span{font-family:'Inter',sans-serif;font-size:.6rem;color:rgba(255,255,255,.9);padding:.3rem .54rem;border-radius:10px;background:rgba(255,255,255,.07);border:1px solid rgba(232,182,90,.22)}
+        .fx-styles span.on{background:rgba(232,182,90,.9);color:#15102a;border-color:transparent;font-weight:700}
         .fx-chips{display:flex;flex-wrap:wrap;gap:.35rem;justify-content:center;margin-top:1.05rem}
         .fx-chips span{font-family:'Inter',sans-serif;font-size:.6rem;color:rgba(255,255,255,.82);padding:.22rem .58rem;border-radius:999px;border:1px solid rgba(255,255,255,.22)}
         .fx-chips span.on{background:rgba(232,182,90,.9);color:#15102a;border-color:transparent;font-weight:700}
@@ -1035,6 +1038,15 @@
                         </div>
                     </div>
                     <div class="fx-caption"><h4>La Biblia narrada</h4><p>Mezcla voz y música a tu gusto</p></div>
+                </div>
+                <div class="fx-phone" role="button" tabindex="0" onclick="Focus.enter()" onkeydown="if(event.key==='Enter')Focus.enter()" aria-label="Abrir Modo Enfoque · Estilos de música">
+                    <div class="fx-screen" style="--fx-glow:#2d4a3e"><span class="fx-notch"></span><div class="fx-bg"></div>
+                        <div class="fx-content"><span class="fx-kicker">Elige tu estilo</span>
+                            <div class="fx-styles"><span class="on">🎹 Piano</span><span>🎻 Cuerdas</span><span>🌧️ Lluvia</span><span>🌊 Mar</span><span>🕊️ Paz</span><span>🌙 Noche</span><span>🌿 Naturaleza</span><span>☁️ Sus Alas</span></div>
+                            <p class="fx-line2">+20 ambientes para escoger</p>
+                        </div>
+                    </div>
+                    <div class="fx-caption"><h4>Tú eliges la música</h4><p>Piano, lluvia, mar, cuerdas…</p></div>
                 </div>
                 <div class="fx-phone" role="button" tabindex="0" onclick="Focus.enter()" onkeydown="if(event.key==='Enter')Focus.enter()" aria-label="Abrir Modo Enfoque · Temporizador">
                     <div class="fx-screen" style="--fx-glow:#2a2550"><span class="fx-notch"></span><div class="fx-bg"></div>
@@ -3794,38 +3806,37 @@
         function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]);}); }
         // Tarjeta uniforme: imagen 3/4 con la info ENCIMA (blanco sobre foto oscura
         // = legible sobre el fondo crema del tema). Mismo molde para episodios y colecciones.
+        // La portada del podcast ya trae ref + título horneados (estilo editorial),
+        // así que la tarjeta NO superpone texto: solo sello premium, duración y play.
         function cardEp(i, ep){
             return '<div class="ex-card" role="button" tabindex="0" data-ex="ep:'+i+'">'+
                 '<div class="ex-card-cover" style="background-image:url(\''+esc(ep.image||'')+'\')">'+
                     '<span class="ex-card-lock">✨ Premium</span>'+
                     (ep.dur?'<span class="ex-card-dur">'+esc(ep.dur)+'</span>':'')+
                     '<span class="ex-card-play">▶</span>'+
-                    '<div class="ex-card-meta"><p class="ex-card-ref">'+esc((ep.ref||'').toUpperCase())+'</p>'+
-                    '<p class="ex-card-title">'+esc(ep.title)+'</p></div>'+
                 '</div></div>';
         }
         // Devocionales destacados para el riel de Explorar. Portada tipográfica
         // (degradado de marca, igual que la página /devocionales) → uniforme con
         // el resto de tarjetas sin depender de fotos. Enlaza a /devocional/{slug}.
         const DEVOS = [
-            { slug:'salmos-23',      ref:'Salmos 23',      title:'El Señor es mi pastor',        verse:'El Señor es mi pastor; nada me faltará.',                        grad:'linear-gradient(155deg,#1f3d2e,#10241b 60%,#060f0a)' },
-            { slug:'isaias-40-31',   ref:'Isaías 40:31',   title:'Nuevas fuerzas',               verse:'Los que esperan a Jehová tendrán nuevas fuerzas; levantarán alas como las águilas.', grad:'linear-gradient(155deg,#1d3550,#0f2030 60%,#060d14)' },
-            { slug:'jeremias-29-11', ref:'Jeremías 29:11', title:'Pensamientos de paz',          verse:'Yo sé los pensamientos que tengo acerca de vosotros: pensamientos de paz y no de mal.', grad:'linear-gradient(155deg,#2a2540,#161325 60%,#080610)' },
-            { slug:'filipenses-4-13',ref:'Filipenses 4:13',title:'Todo lo puedo en Cristo',      verse:'Todo lo puedo en Cristo que me fortalece.',                       grad:'linear-gradient(155deg,#3a2a18,#1d160c 60%,#0a0805)' },
-            { slug:'salmos-91',      ref:'Salmos 91',      title:'Al abrigo del Altísimo',       verse:'El que habita al abrigo del Altísimo morará bajo la sombra del Omnipotente.', grad:'linear-gradient(155deg,#173f47,#0c2329 60%,#051013)' },
-            { slug:'romanos-8-28',   ref:'Romanos 8:28',   title:'Todo ayuda a bien',            verse:'A los que aman a Dios, todas las cosas les ayudan a bien.',        grad:'linear-gradient(155deg,#5a2f1c,#2c1610 60%,#0f0805)' },
-            { slug:'proverbios-3-5', ref:'Proverbios 3:5', title:'Confía con todo el corazón',   verse:'Confía en Jehová con todo tu corazón, y no te apoyes en tu propio entendimiento.', grad:'linear-gradient(155deg,#1b2c50,#0a1326 60%,#05070f)' },
-            { slug:'juan-3-16',      ref:'Juan 3:16',      title:'De tal manera amó Dios',       verse:'De tal manera amó Dios al mundo, que ha dado a su Hijo unigénito.', grad:'linear-gradient(155deg,#3f2d1a,#231a0f 60%,#0d0905)' },
-            { slug:'mateo-6-33',     ref:'Mateo 6:33',     title:'Busca primero el reino',       verse:'Buscad primeramente el reino de Dios y su justicia, y todas estas cosas os serán añadidas.', grad:'linear-gradient(155deg,#16323f,#0b1c25 60%,#050d11)' },
-            { slug:'genesis-1-1',    ref:'Génesis 1:1',    title:'En el principio',              verse:'En el principio creó Dios los cielos y la tierra.',               grad:'linear-gradient(155deg,#1a1a3e,#2d1b69 60%,#0d0d1a)' },
+            { slug:'salmos-23',      title:'El Señor es mi pastor',      grad:'linear-gradient(155deg,#1f3d2e,#10241b 60%,#060f0a)' },
+            { slug:'isaias-40-31',   title:'Nuevas fuerzas',             grad:'linear-gradient(155deg,#1d3550,#0f2030 60%,#060d14)' },
+            { slug:'jeremias-29-11', title:'Pensamientos de paz',        grad:'linear-gradient(155deg,#2a2540,#161325 60%,#080610)' },
+            { slug:'filipenses-4-13',title:'Todo lo puedo en Cristo',    grad:'linear-gradient(155deg,#3a2a18,#1d160c 60%,#0a0805)' },
+            { slug:'salmos-91',      title:'Al abrigo del Altísimo',     grad:'linear-gradient(155deg,#173f47,#0c2329 60%,#051013)' },
+            { slug:'romanos-8-28',   title:'Todo ayuda a bien',          grad:'linear-gradient(155deg,#5a2f1c,#2c1610 60%,#0f0805)' },
+            { slug:'proverbios-3-5', title:'Confía con todo el corazón', grad:'linear-gradient(155deg,#1b2c50,#0a1326 60%,#05070f)' },
+            { slug:'juan-3-16',      title:'De tal manera amó Dios',     grad:'linear-gradient(155deg,#3f2d1a,#231a0f 60%,#0d0905)' },
+            { slug:'mateo-6-33',     title:'Busca primero el reino',     grad:'linear-gradient(155deg,#16323f,#0b1c25 60%,#050d11)' },
+            { slug:'genesis-1-1',    title:'En el principio',            grad:'linear-gradient(155deg,#1a1a3e,#2d1b69 60%,#0d0d1a)' },
         ];
+        // Portada al óleo con texto editorial horneado (covers/devo-{slug}.jpg, pipeline
+        // Vertex). El degradado va de respaldo mientras carga / si falta la imagen.
         function cardDevo(d){
             return '<a class="ex-card ex-card-devo" href="/devocional/'+esc(d.slug)+'" aria-label="Devocional: '+esc(d.title)+'">'+
-                '<div class="ex-card-cover" style="--devo-grad:'+d.grad+'">'+
-                    '<span class="ex-card-devo-quote">“</span>'+
-                    '<p class="ex-card-devo-verse">'+esc(d.verse)+'</p>'+
-                    '<div class="ex-card-meta"><p class="ex-card-ref">'+esc(d.ref.toUpperCase())+'</p>'+
-                    '<p class="ex-card-title">'+esc(d.title)+'</p></div>'+
+                '<div class="ex-card-cover" style="background-image:url(\'covers/devo-'+esc(d.slug)+'.jpg\'),'+d.grad+'">'+
+                    '<span class="ex-card-read">Leer ›</span>'+
                 '</div></a>';
         }
         function cardCol(i, col){
