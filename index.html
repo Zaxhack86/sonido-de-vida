@@ -3921,13 +3921,18 @@
     const Musica = (function () {
         // free:true  → la pista se sirve por URL pública (gancho, sin login).
         // free:false → premium: se sirve por el portero /api/content/:id.
+        // Categorías = las actividades de MÚSICA FUNCIONAL más buscadas (datos de
+        // streaming 2025): estudiar, ejercicio, enfoque/productividad y dormir son
+        // el top; "empezar el día" y "calma" completan. Free = los 3 imanes de
+        // mayor búsqueda (gancho); Premium = los rituales diarios "pegajosos".
+        // Para cambiar el acceso de cualquiera: voltear su `free`.
         const PLAYLISTS = [
-            { id:'energia',   nombre:'Energía',       sub:'Para moverte y entrenar',   icon:'🏃', free:true,  cover:'linear-gradient(150deg,#5a2f1c,#2c1610 58%,#0f0805)', tracks:[] },
-            { id:'concentra', nombre:'Concentración', sub:'Para estudiar y enfocarte',  icon:'🎧', free:true,  cover:'linear-gradient(150deg,#1d3550,#0f2030 58%,#060d14)', tracks:[] },
-            { id:'oracion',   nombre:'Oración',       sub:'Instrumental para orar',     icon:'🙏', free:false, cover:'linear-gradient(150deg,#2a2540,#161325 58%,#080610)', tracks:[] },
-            { id:'dormir',    nombre:'Dormir',        sub:'Suave para descansar',       icon:'😴', free:false, cover:'linear-gradient(150deg,#16323f,#0b1c25 58%,#050d11)', tracks:[] },
-            { id:'calma',     nombre:'Calma',         sub:'Para respirar y reposar',    icon:'☕', free:false, cover:'linear-gradient(150deg,#1f3d2e,#10241b 58%,#060f0a)', tracks:[] },
-            { id:'camino',    nombre:'En el camino',  sub:'Para manejar o viajar',      icon:'🚗', free:false, cover:'linear-gradient(150deg,#3a2a18,#1d160c 58%,#0a0805)', tracks:[] },
+            { id:'ejercicio', nombre:'Ejercicio',      sub:'Energía para entrenar',         icon:'🏋️', free:true,  cover:'linear-gradient(150deg,#5a2f1c,#2c1610 58%,#0f0805)', tracks:[] },
+            { id:'estudiar',  nombre:'Estudiar',       sub:'Concentración sin distracción', icon:'📚', free:true,  cover:'linear-gradient(150deg,#1d3550,#0f2030 58%,#060d14)', tracks:[] },
+            { id:'enfoque',   nombre:'Enfoque',        sub:'Para trabajar y producir',      icon:'💻', free:true,  cover:'linear-gradient(150deg,#173f47,#0c2329 58%,#051013)', tracks:[] },
+            { id:'manana',    nombre:'Empezar el día', sub:'Despierta con calma',           icon:'☀️', free:false, cover:'linear-gradient(150deg,#5a4a1e,#2c2410 58%,#0f0c05)', tracks:[] },
+            { id:'dormir',    nombre:'Dormir',         sub:'Para descansar de verdad',      icon:'😴', free:false, cover:'linear-gradient(150deg,#16323f,#0b1c25 58%,#050d11)', tracks:[] },
+            { id:'calma',     nombre:'Calma',          sub:'Respira y suelta el estrés',    icon:'🧘', free:false, cover:'linear-gradient(150deg,#1f3d2e,#10241b 58%,#060f0a)', tracks:[] },
         ];
 
         function openPlaylist(i) {
