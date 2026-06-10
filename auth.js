@@ -80,6 +80,28 @@
     SDV.consumeDownload  = () => api('/api/downloads', { method: 'POST' });
     SDV.shareBonus       = () => api('/api/downloads/bonus', { method: 'POST' });
 
+    // Listas de reproducción del Podcast (Fase 2): "me gusta" + playlists con
+    // enlace público. Los episodios se referencian por content_id.
+    SDV.likes          = () => api('/api/likes', { method: 'GET' });
+    SDV.like           = (contentId) => api('/api/likes', { method: 'POST', body: JSON.stringify({ content_id: contentId }) });
+    SDV.unlike         = (contentId) => api('/api/likes/' + contentId, { method: 'DELETE' });
+
+    SDV.playlists      = () => api('/api/playlists', { method: 'GET' });
+    SDV.createPlaylist = (nombre, contentId) => api('/api/playlists', { method: 'POST', body: JSON.stringify({ nombre, content_id: contentId }) });
+    SDV.getPlaylist    = (id) => api('/api/playlists/' + id, { method: 'GET' });
+    SDV.deletePlaylist = (id) => api('/api/playlists/' + id, { method: 'DELETE' });
+    SDV.renamePlaylist = (id, nombre) => api('/api/playlists/' + id + '/rename', { method: 'POST', body: JSON.stringify({ nombre }) });
+    SDV.setPlaylistPublic = (id, publica) => api('/api/playlists/' + id + '/public', { method: 'POST', body: JSON.stringify({ publica: !!publica }) });
+    SDV.addToPlaylist  = (id, contentId) => api('/api/playlists/' + id + '/items', { method: 'POST', body: JSON.stringify({ content_id: contentId }) });
+    SDV.removeFromPlaylist = (id, contentId) => api('/api/playlists/' + id + '/items/' + contentId, { method: 'DELETE' });
+
+    // Vista pública de una lista compartida (SIN sesión): no usa token.
+    SDV.publicPlaylist = async (id) => {
+        const res = await fetch(API_BASE + '/api/public/playlist/' + id);
+        const data = await res.json().catch(() => ({}));
+        return { ok: res.ok, status: res.status, data };
+    };
+
     // Contenido premium (Modo Enfoque, etc.): descarga el archivo desde el
     // portero /api/content/:id usando el token y devuelve un objectURL para
     // <audio>. El binario nunca queda en una URL pública: el Worker solo lo

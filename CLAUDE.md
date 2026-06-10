@@ -16,7 +16,7 @@ Stack: HTML/CSS/JS puro (sin framework) + Cloudflare Workers + Cloudflare R2 + C
 | Archivo | Qué es |
 |---|---|
 | `index.html` | **Toda la app**. SPA de ~2 000 líneas. Contiene HTML, CSS en `<style>` y JS en `<script>`. |
-| `sw.js` | Service Worker. Versión actual: `sdv-static-v37`. Hay que subirla en cada cambio a `index.html`. |
+| `sw.js` | Service Worker. Versión actual: `sdv-static-v48`. Hay que subirla en cada cambio a `index.html`. |
 | `bible.js` | Datos de la Biblia RVA 1909 (versículos texto). |
 | `bible_sbll.js` | Datos de la Biblia SBLL 2026 (versículos texto). |
 | `worker_updated.js` | Cloudflare Worker de audio (se despliega en `sonido-de-vida-audio.*`). |
@@ -156,6 +156,29 @@ npx wrangler@3 d1 execute sonido-de-vida-db --remote --command "SQL;"
 - Precios fundador: $4.99/mes → sube a $7.99 cuando haya suficientes suscriptores.
 
 ---
+
+## Listas de reproducción del Podcast (Fase 2)
+
+"Me gusta" + listas compartibles de episodios. Un episodio se referencia por su
+`content_id` (= `content_items.id` = `EPISODES[].contentId` en el frontend, 69-78).
+
+- **Tablas D1**: `user_liked_episodes`, `user_playlists` (el `id` es un token
+  aleatorio que sirve de enlace público), `user_playlist_items`. Ver `backend/schema.sql`.
+- **Endpoints** (`api-worker.js`): `GET/POST /api/likes`, `DELETE /api/likes/:cid`;
+  `GET/POST /api/playlists`, `GET/DELETE /api/playlists/:id`,
+  `POST /api/playlists/:id/{rename,public}`, `POST /api/playlists/:id/items`,
+  `DELETE /api/playlists/:id/items/:cid`; y el **público sin token**
+  `GET /api/public/playlist/:id` (solo si `publica = 1`).
+- **Frontend**: módulo `window.Listas` en `index.html` (chips ❤️/➕ en el
+  reproductor, sección "Mis listas" en la pestaña Yo, overlay `#playlistOverlay`).
+  Helpers de red en `auth.js` (`SDV.like`, `SDV.createPlaylist`, `SDV.publicPlaylist`…).
+- **Enlace compartido**: `https://sonidodevida.com/?lista=<id>`. Al cargar,
+  `Listas.checkSharedLink()` abre la lista en modo solo-lectura. Reproducir sigue
+  requiriendo cuenta + premium (el portero `/api/content/:id` no cambia).
+- ⚠️ **Gotcha del router**: los handlers lanzan `{ status }`; el `try/catch` del
+  Worker **solo** atrapa promesas *esperadas*. Por eso las rutas de listas usan
+  `return await handler(...)` (un `return handler(...)` sin `await` deja escapar el
+  throw → 500). Si añades rutas que puedan lanzar, usa `return await`.
 
 ## Proyecto relacionado
 

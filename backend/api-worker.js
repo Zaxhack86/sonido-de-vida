@@ -303,6 +303,192 @@ async function grantShareBonus(env, request, uid) {
     return json(env, request, { ok: true, ...(await readDownloadState(env, uid, premium)) });
 }
 
+// ── Fase 2: Listas de reproducción del Podcast ───────────────────────
+// Likes (favoritos) + playlists con enlace público. Los episodios se
+// referencian por content_id (el mismo entero de content_items / EPISODES).
+const MAX_PLAYLISTS   = 30;    // listas por usuario (anti-abuso)
+const MAX_ITEMS       = 200;   // episodios por lista
+const PLAYLIST_ID_LEN = 12;    // token aleatorio = enlace público
+
+// id no adivinable (base62) para usar como clave y enlace público.
+function newPlaylistId() {
+    const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const bytes = crypto.getRandomValues(new Uint8Array(PLAYLIST_ID_LEN));
+    let s = '';
+    for (let i = 0; i < PLAYLIST_ID_LEN; i++) s += alphabet[bytes[i] % alphabet.length];
+    return s;
+}
+
+function cid(v) {
+    const n = parseInt(v, 10);
+    return Number.isInteger(n) && n > 0 ? n : null;
+}
+
+// — Likes —
+async function getLikes(env, request, uid) {
+    const { results } = await env.DB
+        .prepare('SELECT content_id FROM user_liked_episodes WHERE uid = ? ORDER BY creado_en DESC')
+        .bind(uid).all();
+    return json(env, request, { content_ids: (results || []).map((r) => r.content_id) });
+}
+
+async function addLike(request, env, uid) {
+    let body; try { body = await request.json(); } catch { throw { status: 400, msg: 'JSON inválido' }; }
+    const c = cid(body.content_id);
+    if (!c) throw { status: 400, msg: 'content_id inválido' };
+    await env.DB
+        .prepare('INSERT OR IGNORE INTO user_liked_episodes (uid, content_id) VALUES (?, ?)')
+        .bind(uid, c).run();
+    return json(env, request, { ok: true, liked: true }, 201);
+}
+
+async function removeLike(env, request, uid, idStr) {
+    const c = cid(idStr);
+    if (!c) throw { status: 400, msg: 'content_id inválido' };
+    await env.DB
+        .prepare('DELETE FROM user_liked_episodes WHERE uid = ? AND content_id = ?')
+        .bind(uid, c).run();
+    return json(env, request, { ok: true, liked: false });
+}
+
+// — Playlists (dueño) —
+// Devuelve los content_ids de un grupo de listas en un solo query.
+async function itemsForPlaylists(env, ids) {
+    const map = {};
+    ids.forEach((id) => { map[id] = []; });
+    if (!ids.length) return map;
+    const placeholders = ids.map(() => '?').join(',');
+    const { results } = await env.DB
+        .prepare(`SELECT playlist_id, content_id FROM user_playlist_items WHERE playlist_id IN (${placeholders}) ORDER BY orden ASC`)
+        .bind(...ids).all();
+    (results || []).forEach((r) => { (map[r.playlist_id] = map[r.playlist_id] || []).push(r.content_id); });
+    return map;
+}
+
+async function getPlaylists(env, request, uid) {
+    const { results } = await env.DB
+        .prepare('SELECT id, nombre, publica, actualizado_en FROM user_playlists WHERE uid = ? ORDER BY actualizado_en DESC')
+        .bind(uid).all();
+    const lists = results || [];
+    const items = await itemsForPlaylists(env, lists.map((l) => l.id));
+    return json(env, request, {
+        playlists: lists.map((l) => ({
+            id: l.id, nombre: l.nombre, publica: !!l.publica,
+            actualizado_en: l.actualizado_en, content_ids: items[l.id] || [],
+        })),
+    });
+}
+
+async function createPlaylist(request, env, uid) {
+    let body; try { body = await request.json(); } catch { throw { status: 400, msg: 'JSON inválido' }; }
+    const nombre = String(body.nombre || '').trim().slice(0, 80);
+    if (!nombre) throw { status: 400, msg: 'Falta el nombre de la lista' };
+
+    const row = await env.DB.prepare('SELECT COUNT(*) AS n FROM user_playlists WHERE uid = ?').bind(uid).first();
+    if (row && row.n >= MAX_PLAYLISTS) {
+        return json(env, request, { error: 'limite_listas', limite: MAX_PLAYLISTS }, 402);
+    }
+
+    const id = newPlaylistId();
+    await env.DB
+        .prepare('INSERT INTO user_playlists (id, uid, nombre) VALUES (?, ?, ?)')
+        .bind(id, uid, nombre).run();
+
+    // Si el cliente mandó un content_id inicial, lo añadimos (crear-y-añadir).
+    const first = cid(body.content_id);
+    if (first) {
+        await env.DB
+            .prepare('INSERT OR IGNORE INTO user_playlist_items (playlist_id, content_id, orden) VALUES (?, ?, 0)')
+            .bind(id, first).run();
+    }
+    return json(env, request, { ok: true, id, nombre, content_ids: first ? [first] : [] }, 201);
+}
+
+// Confirma que la lista pertenece al usuario; lanza 404 si no.
+async function ownedPlaylist(env, uid, id) {
+    const pl = await env.DB
+        .prepare('SELECT id, nombre, publica FROM user_playlists WHERE id = ? AND uid = ?')
+        .bind(id, uid).first();
+    if (!pl) throw { status: 404, msg: 'Lista no encontrada' };
+    return pl;
+}
+
+async function getPlaylist(env, request, uid, id) {
+    const pl = await ownedPlaylist(env, uid, id);
+    const items = await itemsForPlaylists(env, [id]);
+    return json(env, request, { id: pl.id, nombre: pl.nombre, publica: !!pl.publica, content_ids: items[id] || [] });
+}
+
+async function deletePlaylist(env, request, uid, id) {
+    await ownedPlaylist(env, uid, id);
+    await env.DB.prepare('DELETE FROM user_playlist_items WHERE playlist_id = ?').bind(id).run();
+    await env.DB.prepare('DELETE FROM user_playlists WHERE id = ? AND uid = ?').bind(id, uid).run();
+    return json(env, request, { ok: true });
+}
+
+async function renamePlaylist(request, env, uid, id) {
+    let body; try { body = await request.json(); } catch { throw { status: 400, msg: 'JSON inválido' }; }
+    const nombre = String(body.nombre || '').trim().slice(0, 80);
+    if (!nombre) throw { status: 400, msg: 'Falta el nombre' };
+    await ownedPlaylist(env, uid, id);
+    await env.DB
+        .prepare("UPDATE user_playlists SET nombre = ?, actualizado_en = datetime('now') WHERE id = ? AND uid = ?")
+        .bind(nombre, id, uid).run();
+    return json(env, request, { ok: true, nombre });
+}
+
+async function setPlaylistPublic(request, env, uid, id) {
+    let body; try { body = await request.json(); } catch { throw { status: 400, msg: 'JSON inválido' }; }
+    const publica = body.publica ? 1 : 0;
+    await ownedPlaylist(env, uid, id);
+    await env.DB
+        .prepare("UPDATE user_playlists SET publica = ?, actualizado_en = datetime('now') WHERE id = ? AND uid = ?")
+        .bind(publica, id, uid).run();
+    return json(env, request, { ok: true, publica: !!publica });
+}
+
+async function addPlaylistItem(request, env, uid, id) {
+    let body; try { body = await request.json(); } catch { throw { status: 400, msg: 'JSON inválido' }; }
+    const c = cid(body.content_id);
+    if (!c) throw { status: 400, msg: 'content_id inválido' };
+    await ownedPlaylist(env, uid, id);
+
+    const count = await env.DB.prepare('SELECT COUNT(*) AS n FROM user_playlist_items WHERE playlist_id = ?').bind(id).first();
+    if (count && count.n >= MAX_ITEMS) {
+        return json(env, request, { error: 'limite_items', limite: MAX_ITEMS }, 402);
+    }
+    const mx = await env.DB.prepare('SELECT COALESCE(MAX(orden), -1) AS m FROM user_playlist_items WHERE playlist_id = ?').bind(id).first();
+    const orden = (mx ? mx.m : -1) + 1;
+    await env.DB
+        .prepare('INSERT OR IGNORE INTO user_playlist_items (playlist_id, content_id, orden) VALUES (?, ?, ?)')
+        .bind(id, c, orden).run();
+    await env.DB.prepare("UPDATE user_playlists SET actualizado_en = datetime('now') WHERE id = ?").bind(id).run();
+    return json(env, request, { ok: true }, 201);
+}
+
+async function removePlaylistItem(env, request, uid, id, cidStr) {
+    const c = cid(cidStr);
+    if (!c) throw { status: 400, msg: 'content_id inválido' };
+    await ownedPlaylist(env, uid, id);
+    await env.DB
+        .prepare('DELETE FROM user_playlist_items WHERE playlist_id = ? AND content_id = ?')
+        .bind(id, c).run();
+    await env.DB.prepare("UPDATE user_playlists SET actualizado_en = datetime('now') WHERE id = ?").bind(id).run();
+    return json(env, request, { ok: true });
+}
+
+// — Vista pública (SIN token) — solo si la lista es publica = 1.
+// No revela el uid del dueño; solo el nombre y los content_ids (el frontend
+// resuelve título/portada de cada episodio contra su catálogo local EPISODES).
+async function getPublicPlaylist(env, request, id) {
+    const pl = await env.DB
+        .prepare('SELECT id, nombre, publica FROM user_playlists WHERE id = ?')
+        .bind(id).first();
+    if (!pl || !pl.publica) throw { status: 404, msg: 'Lista no encontrada o privada' };
+    const items = await itemsForPlaylists(env, [id]);
+    return json(env, request, { id: pl.id, nombre: pl.nombre, content_ids: items[id] || [] });
+}
+
 // ── Portero de contenido premium ─────────────────────────────────────
 // Sirve un archivo desde un bucket R2 PRIVADO solo si el usuario es premium.
 // Activación: añade el binding R2 `CONTENT` en wrangler-api.toml y registra
@@ -492,6 +678,13 @@ export default {
             if (path === '/api/magic-link' && request.method === 'POST') {
                 return handleMagicLink(request, env);
             }
+            // Endpoint público (sin token): ver una lista compartida (solo si es pública).
+            const pub = path.match(/^\/api\/public\/playlist\/([A-Za-z0-9]+)$/);
+            if (pub && request.method === 'GET') {
+                // await: los handlers lanzan { status } y el try/catch solo atrapa
+                // promesas esperadas, no las simplemente retornadas.
+                return await getPublicPlaylist(env, request, pub[1]);
+            }
 
             const user = await requireUser(request, env);
 
@@ -529,6 +722,51 @@ export default {
             }
             if (path === '/api/library' && request.method === 'DELETE') {
                 return removeLibrary(request, env, user.uid);
+            }
+
+            // Likes (favoritos de episodios del podcast). Se usa `return await`
+            // a propósito: estos handlers lanzan { status } y el try/catch solo
+            // atrapa promesas esperadas, no las simplemente retornadas.
+            if (path === '/api/likes' && request.method === 'GET') {
+                return await getLikes(env, request, user.uid);
+            }
+            if (path === '/api/likes' && request.method === 'POST') {
+                return await addLike(request, env, user.uid);
+            }
+            const unlike = path.match(/^\/api\/likes\/(\d+)$/);
+            if (unlike && request.method === 'DELETE') {
+                return await removeLike(env, request, user.uid, unlike[1]);
+            }
+
+            // Listas de reproducción (dueño)
+            if (path === '/api/playlists' && request.method === 'GET') {
+                return await getPlaylists(env, request, user.uid);
+            }
+            if (path === '/api/playlists' && request.method === 'POST') {
+                return await createPlaylist(request, env, user.uid);
+            }
+            const plItem = path.match(/^\/api\/playlists\/([A-Za-z0-9]+)\/items\/(\d+)$/);
+            if (plItem && request.method === 'DELETE') {
+                return await removePlaylistItem(env, request, user.uid, plItem[1], plItem[2]);
+            }
+            const plItems = path.match(/^\/api\/playlists\/([A-Za-z0-9]+)\/items$/);
+            if (plItems && request.method === 'POST') {
+                return await addPlaylistItem(request, env, user.uid, plItems[1]);
+            }
+            const plRename = path.match(/^\/api\/playlists\/([A-Za-z0-9]+)\/rename$/);
+            if (plRename && request.method === 'POST') {
+                return await renamePlaylist(request, env, user.uid, plRename[1]);
+            }
+            const plPublic = path.match(/^\/api\/playlists\/([A-Za-z0-9]+)\/public$/);
+            if (plPublic && request.method === 'POST') {
+                return await setPlaylistPublic(request, env, user.uid, plPublic[1]);
+            }
+            const plOne = path.match(/^\/api\/playlists\/([A-Za-z0-9]+)$/);
+            if (plOne && request.method === 'GET') {
+                return await getPlaylist(env, request, user.uid, plOne[1]);
+            }
+            if (plOne && request.method === 'DELETE') {
+                return await deletePlaylist(env, request, user.uid, plOne[1]);
             }
 
             // Portero de contenido premium

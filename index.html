@@ -766,6 +766,65 @@
         .pj-btn-play:hover{transform:scale(1.06);filter:brightness(1.06)}
         .pj-btn-play svg{width:15px;height:15px;fill:#0d0d1a}
         @media(prefers-reduced-motion:reduce){.pj-col-card:hover{transform:none}.pj-bars b{animation:none;height:6px}}
+
+        /* ════════ Fase 2: Listas de reproducción (me gusta + playlists) ════════ */
+        .pp-chip.liked{color:#ff7a9c;border-color:rgba(255,122,156,.5);background:rgba(255,122,156,.12)}
+        /* Overlay de lista (reusa el lenguaje de Pasajes) */
+        .list-overlay{position:fixed;inset:0;z-index:4100;display:none;overflow-y:auto;-webkit-overflow-scrolling:touch;background:#080514;opacity:0;transition:opacity .35s ease}
+        .list-overlay.open{display:block;opacity:1}
+        .list-overlay .pj-nav{position:fixed}
+        .ls-body{padding-top:calc(env(safe-area-inset-top) + 3rem);padding-bottom:calc(env(safe-area-inset-bottom) + 5.6rem);max-width:600px;margin:0 auto}
+        .ls-hero{text-align:center;padding:1.3rem 1.4rem .6rem}
+        .ls-hero-badge{display:inline-block;font-family:'Inter',sans-serif;font-weight:700;font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-light);background:rgba(232,182,90,.12);border:1px solid rgba(232,182,90,.3);padding:.26rem .7rem;border-radius:50px;margin-bottom:.7rem}
+        .ls-hero-art{width:130px;height:130px;border-radius:18px;margin:0 auto .9rem;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;overflow:hidden;box-shadow:0 14px 38px rgba(0,0,0,.6);background:#15102a}
+        .ls-hero-art span{background-size:cover;background-position:center}
+        .ls-hero-art.solo{grid-template-columns:1fr;grid-template-rows:1fr}
+        .ls-hero h2{font-family:'Cinzel',serif;color:#fff;font-size:1.5rem;margin:0 0 .3rem;line-height:1.15}
+        .ls-hero-meta{font-family:'Inter',sans-serif;font-size:.78rem;font-weight:600;color:rgba(255,255,255,.5);letter-spacing:.04em}
+        .ls-pub-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#7bd88f;margin-right:.3rem;vertical-align:middle}
+        .ls-actions{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;padding:.4rem 1rem 1rem}
+        .ls-act{font-family:'Inter',sans-serif;font-weight:600;font-size:.82rem;color:#fff;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:50px;padding:.55rem 1rem;cursor:pointer;transition:background .2s,border-color .2s}
+        .ls-act:hover{background:rgba(232,182,90,.12);border-color:rgba(232,182,90,.45)}
+        .ls-act.gold{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#0d0d1a;border:none}
+        .ls-act.danger{color:#ff8a8a;border-color:rgba(255,138,138,.35)}
+        .ls-list{padding:.2rem 1rem 1rem;display:flex;flex-direction:column;gap:.5rem}
+        .ls-row{display:flex;align-items:center;gap:.8rem;padding:.6rem .7rem;border-radius:12px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.03);cursor:pointer;transition:background .2s,border-color .2s}
+        .ls-row:hover{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12)}
+        .ls-row-cover{flex:none;width:54px;height:54px;border-radius:9px;background-size:cover;background-position:center;background-color:#1a1430;position:relative;box-shadow:0 4px 12px rgba(0,0,0,.45)}
+        .ls-row-cover .ls-play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:.85rem;opacity:0;background:rgba(0,0,0,.4);border-radius:9px;transition:opacity .2s}
+        .ls-row:hover .ls-row-cover .ls-play{opacity:1}
+        .ls-row-body{flex:1;min-width:0}
+        .ls-row-ref{font-family:'Inter',sans-serif;font-weight:700;font-size:.64rem;letter-spacing:.08em;color:var(--gold-light);text-transform:uppercase;margin:0 0 .12rem}
+        .ls-row-title{font-family:'Inter',sans-serif;font-weight:600;font-size:.92rem;color:#fff;margin:0;line-height:1.25}
+        .ls-row-rm{flex:none;background:none;border:none;color:rgba(255,255,255,.3);font-size:1.1rem;cursor:pointer;padding:.3rem;transition:color .2s}
+        .ls-row-rm:hover{color:#ff8a8a}
+        .ls-empty{text-align:center;color:rgba(255,255,255,.5);font-family:'Lora',serif;font-style:italic;font-size:.92rem;padding:2.5rem 1.4rem}
+        .ls-cta{text-align:center;padding:1.4rem 1.4rem 0}
+        .ls-cta p{font-family:'Lora',serif;color:rgba(255,255,255,.6);font-size:.9rem;margin:0 0 .9rem}
+        /* Sección "Mis listas" en la pestaña Yo */
+        .yo-listas{margin-bottom:1.1rem}
+        .yo-listas-head{display:flex;align-items:center;justify-content:space-between;margin:0 0 .6rem;padding:0 .2rem}
+        .yo-listas-head h3{font-family:'Cinzel',serif;color:#fff;font-size:1.05rem;margin:0}
+        .yo-listas-new{background:none;border:1px solid rgba(232,182,90,.4);color:var(--gold-light);font-family:'Inter',sans-serif;font-weight:600;font-size:.78rem;border-radius:50px;padding:.32rem .8rem;cursor:pointer;transition:background .2s}
+        .yo-listas-new:hover{background:rgba(232,182,90,.12)}
+        .yo-list-card{display:flex;align-items:center;gap:.8rem;padding:.6rem .75rem;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);cursor:pointer;margin-bottom:.5rem;transition:background .2s,border-color .2s}
+        .yo-list-card:hover{background:rgba(255,255,255,.07);border-color:rgba(232,182,90,.3)}
+        .yo-list-ico{flex:none;width:46px;height:46px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;background:linear-gradient(135deg,rgba(232,182,90,.22),rgba(120,100,220,.18))}
+        .yo-list-ico.likes{background:linear-gradient(135deg,rgba(255,122,156,.25),rgba(120,100,220,.18))}
+        .yo-list-meta{flex:1;min-width:0}
+        .yo-list-name{font-family:'Inter',sans-serif;font-weight:600;font-size:.95rem;color:#fff;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .yo-list-sub{font-family:'Inter',sans-serif;font-size:.76rem;color:rgba(255,255,255,.5);margin:.1rem 0 0}
+        .yo-list-arrow{flex:none;color:var(--gold-light);font-size:1.3rem}
+        /* Modal "añadir a lista" */
+        .alm-lists{display:flex;flex-direction:column;gap:.45rem;margin:.6rem 0 .2rem;max-height:46vh;overflow-y:auto}
+        .alm-row{display:flex;align-items:center;gap:.7rem;padding:.6rem .7rem;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);cursor:pointer;text-align:left;transition:background .2s}
+        .alm-row:hover{background:rgba(255,255,255,.08)}
+        .alm-row-name{flex:1;font-family:'Inter',sans-serif;font-weight:600;font-size:.92rem;color:#fff}
+        .alm-row-state{flex:none;font-size:1.05rem;color:var(--gold-light)}
+        .alm-new{display:flex;gap:.5rem;margin-top:.7rem}
+        .alm-new input{flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:10px;color:#fff;font-size:.92rem;padding:.6rem .8rem;font-family:'Inter',sans-serif}
+        .alm-new input::placeholder{color:rgba(255,255,255,.4)}
+        .alm-new button{flex:none;background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#0d0d1a;border:none;border-radius:10px;font-weight:700;padding:0 1rem;cursor:pointer}
     </style>
 </head>
 <body data-tab-active="inicio">
@@ -1059,6 +1118,8 @@
                 </div>
             </div>
 
+            <div class="yo-listas" id="yoListasWrap" style="display:none"></div>
+
             <ul class="yo-menu">
                 <li onclick="resumeListening()"><span class="yo-ico">📖</span> Seguir escuchando <span class="yo-arrow">›</span></li>
                 <li onclick="SDV_Account.open();return false;"><span class="yo-ico">🔖</span> Mis versículos <span class="yo-arrow">›</span></li>
@@ -1231,6 +1292,33 @@
             <div class="teaser-price">
                 <span class="teaser-promo">✨ Muy pronto</span>
                 <strong>Próximamente</strong>
+            </div>
+        </div>
+    </div>
+
+    <!-- ════════ Fase 2: Overlay de una lista de reproducción ════════ -->
+    <div class="list-overlay" id="playlistOverlay" aria-hidden="true" role="dialog" aria-label="Lista de reproducción">
+        <div class="pj-nav">
+            <button class="pj-nav-back visible" onclick="Listas.closeOverlay()" aria-label="Atrás">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                Atrás
+            </button>
+            <span class="pj-nav-title" id="lsNavTitle">Lista</span>
+            <button class="pj-nav-close" onclick="Listas.closeOverlay()" aria-label="Cerrar">✕</button>
+        </div>
+        <div class="ls-body" id="lsBody"></div>
+    </div>
+
+    <!-- Modal: añadir el episodio actual a una lista -->
+    <div class="modal-overlay" id="addListModal" style="z-index:4300" onclick="if(event.target===this)Listas.closeAdd()">
+        <div class="modal-card">
+            <button class="modal-close" onclick="Listas.closeAdd()" aria-label="Cerrar">&times;</button>
+            <div class="modal-title">Añadir a una lista</div>
+            <div class="modal-subtitle" id="almSubtitle" style="margin-bottom:.3rem">Elige una lista o crea una nueva.</div>
+            <div class="alm-lists" id="almLists"></div>
+            <div class="alm-new">
+                <input type="text" id="almNewName" maxlength="80" placeholder="Nueva lista…" onkeydown="if(event.key==='Enter')Listas.createFromAdd()">
+                <button onclick="Listas.createFromAdd()">Crear</button>
             </div>
         </div>
     </div>
@@ -1439,6 +1527,8 @@
             </div>
             <div class="pp-extra">
                 <button class="pp-chip" id="ppSpeed" onclick="Podcast.cycleSpeed()">1×</button>
+                <button class="pp-chip" id="ppLike" onclick="Listas.toggleLikeCurrent()" aria-label="Me gusta">🤍 Me gusta</button>
+                <button class="pp-chip" id="ppAddList" onclick="Listas.openAddCurrent()">➕ Añadir a lista</button>
                 <button class="pp-chip pp-read" id="ppRead" onclick="Podcast.readCurrent()">📖 Leer la meditación</button>
             </div>
         </div>
@@ -1770,6 +1860,8 @@
         updateNavModeIndicator();
         updateDownloadBtn();
         renderDevoHoy();
+        // Si entraron por un enlace de lista compartida (/?lista=ID), ábrela.
+        if (window.Listas) Listas.checkSharedLink();
     });
 
     function registerSW() {
@@ -3462,6 +3554,7 @@
             try { document.getElementById('mainAudio').pause(); } catch (e) {}
             try { document.getElementById('mainAudioB').pause(); } catch (e) {}
             paintPlayer(ep);
+            if (window.Listas) Listas.reflectLike(ep.contentId);
             player.classList.add('open');
             player.setAttribute('aria-hidden', 'false');
             document.body.style.overflow = 'hidden';
@@ -3586,6 +3679,13 @@
             open, close, openEpisode, closePlayer, toggle, skip, seek, cycleSpeed, readCurrent,
             episodes: function () { return EPISODES; },
             playEpisode: function (i) { open(); epClick(i); },
+            // Helpers para Listas (Fase 2): mapear por content_id y saber el actual.
+            currentContentId: function () { return EPISODES[curIdx] ? EPISODES[curIdx].contentId : null; },
+            indexByContentId: function (c) { return EPISODES.findIndex(function (e) { return e.contentId === c; }); },
+            episodeByContentId: function (c) { return EPISODES.find(function (e) { return e.contentId === c; }) || null; },
+            // Abre el reproductor de un episodio por content_id, sin abrir el hub
+            // (lo usa la vista pública de una lista compartida).
+            playByContentId: function (c) { var i = EPISODES.findIndex(function (e) { return e.contentId === c; }); if (i >= 0) openEpisode(i); },
         };
     })();
     window.Podcast = Podcast;
@@ -3891,6 +3991,401 @@
 
     window.Pasajes = Pasajes;
 
+    /* ════════════════════════════════════════════════════════════════
+       Fase 2: Listas de reproducción del Podcast (me gusta + playlists)
+       Los episodios se referencian por content_id. Backend: /api/likes y
+       /api/playlists (auth.js → SDV_Auth). Una lista pública se comparte con
+       /?lista=<id> y se ve sin sesión (reproducir sigue requiriendo cuenta).
+       ════════════════════════════════════════════════════════════════ */
+    const Listas = (function () {
+        function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]); }); }
+        function toast(m) { if (window.showToast) showToast(m); }
+        function logged() { return !!(window.SDV_Auth && SDV_Auth.user); }
+        function needAccount() { if (window.SDV_Account) SDV_Account.open(); }
+
+        let likesSet = new Set();   // content_ids con "me gusta"
+        let lists    = [];          // cache de listas del usuario [{id,nombre,publica,content_ids}]
+        let addCid   = null;        // episodio en proceso de "añadir a lista"
+        let curList  = null;        // lista abierta en el overlay {id,nombre,content_ids,publica,owner,likes}
+
+        const overlay = function () { return document.getElementById('playlistOverlay'); };
+
+        // ── Carga inicial / refresco tras login ──────────────────────────
+        async function refresh() {
+            if (!logged()) { likesSet = new Set(); lists = []; renderYo(); return; }
+            try {
+                const [lk, pl] = await Promise.all([SDV_Auth.likes(), SDV_Auth.playlists()]);
+                if (lk && lk.ok) likesSet = new Set(lk.data.content_ids || []);
+                if (pl && pl.ok) lists = pl.data.playlists || [];
+            } catch (e) { /* red caída: deja la cache previa */ }
+            renderYo();
+            const cc = window.Podcast && Podcast.currentContentId && Podcast.currentContentId();
+            if (cc) reflectLike(cc);
+        }
+
+        // ── Me gusta ─────────────────────────────────────────────────────
+        function reflectLike(cid) {
+            const btn = document.getElementById('ppLike');
+            if (!btn) return;
+            const on = likesSet.has(cid);
+            btn.classList.toggle('liked', on);
+            btn.innerHTML = on ? '❤️ Te gusta' : '🤍 Me gusta';
+        }
+
+        async function toggleLikeCurrent() {
+            if (!logged()) return needAccount();
+            const cid = window.Podcast && Podcast.currentContentId();
+            if (!cid) return;
+            const on = likesSet.has(cid);
+            // Optimista: refleja ya y revierte si falla.
+            if (on) likesSet.delete(cid); else likesSet.add(cid);
+            reflectLike(cid);
+            try {
+                const r = on ? await SDV_Auth.unlike(cid) : await SDV_Auth.like(cid);
+                if (!(r && r.ok)) throw 0;
+                toast(on ? 'Quitado de Me gusta' : '❤️ Añadido a Me gusta');
+            } catch (e) {
+                if (on) likesSet.add(cid); else likesSet.delete(cid);
+                reflectLike(cid);
+                toast('No se pudo actualizar');
+            }
+            renderYo();
+            if (curList && curList.likes) renderOverlay();  // si está abierta la lista de favoritos
+        }
+
+        // ── Modal "añadir a lista" ───────────────────────────────────────
+        function openAddCurrent() {
+            if (!logged()) return needAccount();
+            addCid = window.Podcast && Podcast.currentContentId();
+            if (!addCid) return;
+            renderAddLists();
+            document.getElementById('addListModal').classList.add('visible');
+        }
+        function closeAdd() {
+            document.getElementById('addListModal').classList.remove('visible');
+            const inp = document.getElementById('almNewName'); if (inp) inp.value = '';
+        }
+        function renderAddLists() {
+            const box = document.getElementById('almLists');
+            if (!lists.length) {
+                box.innerHTML = '<p style="color:rgba(255,255,255,.55);font-size:.85rem;font-style:italic;margin:.4rem 0">Aún no tienes listas. Crea la primera abajo 👇</p>';
+                return;
+            }
+            box.innerHTML = lists.map(function (l) {
+                const has = (l.content_ids || []).indexOf(addCid) >= 0;
+                return '<button class="alm-row" data-id="' + esc(l.id) + '">' +
+                    '<span class="alm-row-name">' + esc(l.nombre) + '</span>' +
+                    '<span class="alm-row-state">' + (has ? '✓' : '＋') + '</span></button>';
+            }).join('');
+            box.querySelectorAll('.alm-row').forEach(function (el) {
+                el.addEventListener('click', function () { addToList(el.getAttribute('data-id')); });
+            });
+        }
+        async function addToList(id) {
+            const l = lists.find(function (x) { return x.id === id; });
+            if (!l) return;
+            const has = (l.content_ids || []).indexOf(addCid) >= 0;
+            try {
+                if (has) {
+                    const r = await SDV_Auth.removeFromPlaylist(id, addCid);
+                    if (r && r.ok) { l.content_ids = (l.content_ids || []).filter(function (c) { return c !== addCid; }); toast('Quitado de «' + l.nombre + '»'); }
+                } else {
+                    const r = await SDV_Auth.addToPlaylist(id, addCid);
+                    if (r && r.ok) { l.content_ids = (l.content_ids || []).concat([addCid]); toast('Añadido a «' + l.nombre + '»'); }
+                    else if (r && r.status === 402) toast('Esa lista llegó al máximo de episodios');
+                }
+            } catch (e) { toast('No se pudo actualizar la lista'); }
+            renderAddLists();
+            renderYo();
+            if (curList && curList.id === id) { curList.content_ids = l.content_ids; renderOverlay(); }
+        }
+        async function createFromAdd() {
+            const inp = document.getElementById('almNewName');
+            const nombre = (inp.value || '').trim();
+            if (!nombre) return toast('Escribe un nombre para la lista');
+            try {
+                const r = await SDV_Auth.createPlaylist(nombre, addCid);
+                if (r && r.ok) {
+                    lists.unshift({ id: r.data.id, nombre: nombre, publica: false, content_ids: r.data.content_ids || (addCid ? [addCid] : []) });
+                    toast('Lista «' + nombre + '» creada');
+                    inp.value = '';
+                    renderAddLists(); renderYo();
+                } else if (r && r.status === 402) {
+                    toast('Llegaste al máximo de listas');
+                } else { toast('No se pudo crear la lista'); }
+            } catch (e) { toast('No se pudo crear la lista'); }
+        }
+
+        // ── Sección "Mis listas" en la pestaña Yo ────────────────────────
+        function renderYo() {
+            const wrap = document.getElementById('yoListasWrap');
+            if (!wrap) return;
+            if (!logged()) { wrap.style.display = 'none'; wrap.innerHTML = ''; return; }
+            wrap.style.display = '';
+            let html = '<div class="yo-listas-head"><h3>🎵 Mis listas</h3>' +
+                '<button class="yo-listas-new" onclick="Listas.createNew()">+ Nueva</button></div>';
+            // Tarjeta de "Me gusta" (lista virtual)
+            const nLikes = likesSet.size;
+            html += '<div class="yo-list-card" onclick="Listas.openLikes()">' +
+                '<div class="yo-list-ico likes">❤️</div>' +
+                '<div class="yo-list-meta"><p class="yo-list-name">Me gusta</p>' +
+                '<p class="yo-list-sub">' + (nLikes ? nLikes + (nLikes === 1 ? ' episodio' : ' episodios') : 'Toca 🤍 en un episodio') + '</p></div>' +
+                '<span class="yo-list-arrow">›</span></div>';
+            // Listas del usuario
+            lists.forEach(function (l) {
+                const n = (l.content_ids || []).length;
+                html += '<div class="yo-list-card" onclick="Listas.openList(\'' + esc(l.id) + '\')">' +
+                    '<div class="yo-list-ico">' + (l.publica ? '🔗' : '🎶') + '</div>' +
+                    '<div class="yo-list-meta"><p class="yo-list-name">' + esc(l.nombre) + '</p>' +
+                    '<p class="yo-list-sub">' + n + (n === 1 ? ' episodio' : ' episodios') + (l.publica ? ' · compartida' : '') + '</p></div>' +
+                    '<span class="yo-list-arrow">›</span></div>';
+            });
+            wrap.innerHTML = html;
+        }
+
+        async function createNew() {
+            if (!logged()) return needAccount();
+            const nombre = (window.prompt('Nombre de la nueva lista:') || '').trim();
+            if (!nombre) return;
+            try {
+                const r = await SDV_Auth.createPlaylist(nombre);
+                if (r && r.ok) { lists.unshift({ id: r.data.id, nombre: nombre, publica: false, content_ids: [] }); renderYo(); toast('Lista «' + nombre + '» creada'); }
+                else if (r && r.status === 402) toast('Llegaste al máximo de listas');
+                else toast('No se pudo crear la lista');
+            } catch (e) { toast('No se pudo crear la lista'); }
+        }
+
+        // ── Overlay de una lista ─────────────────────────────────────────
+        function openLikes() {
+            curList = { id: null, nombre: 'Me gusta', content_ids: Array.from(likesSet), publica: false, owner: true, likes: true };
+            showOverlay();
+        }
+        async function openList(id) {
+            const cached = lists.find(function (x) { return x.id === id; });
+            curList = { id: id, nombre: cached ? cached.nombre : 'Lista', content_ids: cached ? (cached.content_ids || []) : [], publica: cached ? cached.publica : false, owner: true, likes: false };
+            showOverlay();
+            // Refresca desde el servidor (orden/estado público al día).
+            try {
+                const r = await SDV_Auth.getPlaylist(id);
+                if (r && r.ok && curList && curList.id === id) {
+                    curList.nombre = r.data.nombre; curList.content_ids = r.data.content_ids || []; curList.publica = !!r.data.publica;
+                    if (cached) { cached.nombre = curList.nombre; cached.content_ids = curList.content_ids; cached.publica = curList.publica; }
+                    renderOverlay();
+                }
+            } catch (e) {}
+        }
+        // Vista pública (sin sesión) de una lista compartida.
+        async function openPublic(id) {
+            curList = { id: id, nombre: 'Lista', content_ids: [], publica: true, owner: false, likes: false };
+            showOverlay();
+            renderOverlay('<p class="ls-empty">Cargando lista…</p>');
+            try {
+                const r = await SDV_Auth.publicPlaylist(id);
+                if (r && r.ok && curList && curList.id === id) {
+                    curList.nombre = r.data.nombre; curList.content_ids = r.data.content_ids || [];
+                    renderOverlay();
+                } else {
+                    renderOverlay('<p class="ls-empty">Esta lista no existe o ya no es pública.</p>');
+                }
+            } catch (e) {
+                renderOverlay('<p class="ls-empty">No se pudo cargar la lista.</p>');
+            }
+        }
+        function showOverlay() {
+            renderOverlay();
+            const ov = overlay();
+            ov.classList.add('open');
+            ov.setAttribute('aria-hidden', 'false');
+            ov.scrollTop = 0;
+            document.body.style.overflow = 'hidden';
+        }
+        function closeOverlay() {
+            const ov = overlay();
+            ov.classList.remove('open');
+            ov.setAttribute('aria-hidden', 'true');
+            curList = null;
+            // Si quedó el reproductor de episodio abierto, mantener bloqueo de scroll.
+            const pp = document.getElementById('podcastPlayer');
+            if (!(pp && pp.classList.contains('open'))) document.body.style.overflow = '';
+        }
+
+        function renderOverlay(bodyOverride) {
+            if (!curList) return;
+            document.getElementById('lsNavTitle').textContent = curList.nombre || 'Lista';
+            const body = document.getElementById('lsBody');
+            const eps = (curList.content_ids || []).map(function (c) { return window.Podcast ? Podcast.episodeByContentId(c) : null; }).filter(Boolean);
+
+            // Carátula compuesta (hasta 4 portadas).
+            const covers = eps.map(function (e) { return e.image; }).filter(Boolean).slice(0, 4);
+            let art = '';
+            if (covers.length) {
+                art = '<div class="ls-hero-art' + (covers.length === 1 ? ' solo' : '') + '">' +
+                    (covers.length === 1 ? covers : [covers[0], covers[1] || covers[0], covers[2] || covers[0], covers[3] || covers[1] || covers[0]])
+                        .map(function (u) { return '<span style="background-image:url(\'' + esc(u) + '\')"></span>'; }).join('') + '</div>';
+            } else {
+                art = '<div class="ls-hero-art solo"><span style="background:linear-gradient(135deg,#2a2540,#161325)"></span></div>';
+            }
+
+            const n = eps.length;
+            const badge = curList.likes ? '❤️ Tus favoritos' : (curList.owner ? 'Tu lista' : 'Lista compartida');
+            const meta = (curList.publica && !curList.likes ? '<span class="ls-pub-dot"></span>Compartida · ' : '') + n + (n === 1 ? ' episodio' : ' episodios');
+
+            let html = '<div class="ls-hero">' +
+                '<span class="ls-hero-badge">' + badge + '</span>' +
+                art +
+                '<h2>' + esc(curList.nombre) + '</h2>' +
+                '<div class="ls-hero-meta">' + meta + '</div></div>';
+
+            // Acciones
+            html += '<div class="ls-actions">';
+            if (n) html += '<button class="ls-act gold" onclick="Listas.playFirst()">▶ Reproducir</button>';
+            if (curList.owner && !curList.likes) {
+                html += '<button class="ls-act" onclick="Listas.share()">🔗 Compartir</button>';
+                html += '<button class="ls-act" onclick="Listas.renameCur()">✏️ Renombrar</button>';
+                html += '<button class="ls-act danger" onclick="Listas.deleteCur()">🗑️ Eliminar</button>';
+            } else if (!curList.owner) {
+                html += '<button class="ls-act" onclick="Listas.share()">🔗 Compartir</button>';
+            }
+            html += '</div>';
+
+            if (bodyOverride) { body.innerHTML = html + bodyOverride; return; }
+
+            if (!n) {
+                body.innerHTML = html + '<p class="ls-empty">' + (curList.likes
+                    ? 'Aún no marcas episodios con 🤍. Toca el corazón en cualquier episodio del Podcast.'
+                    : (curList.owner ? 'Esta lista está vacía. Abre un episodio y pulsa «➕ Añadir a lista».' : 'Esta lista no tiene episodios.')) + '</p>';
+                attachRows();
+                return;
+            }
+
+            html += '<div class="ls-list">';
+            eps.forEach(function (e) {
+                html += '<div class="ls-row" data-cid="' + e.contentId + '">' +
+                    '<div class="ls-row-cover" style="background-image:url(\'' + esc(e.image || '') + '\')"><span class="ls-play">▶</span></div>' +
+                    '<div class="ls-row-body"><p class="ls-row-ref">' + esc((e.ref || '').toUpperCase()) + '</p>' +
+                    '<p class="ls-row-title">' + esc(e.title) + '</p></div>' +
+                    ((curList.owner) ? '<button class="ls-row-rm" data-rm="' + e.contentId + '" aria-label="Quitar">✕</button>' : '') +
+                    '</div>';
+            });
+            html += '</div>';
+
+            // CTA para visitantes de un enlace público (sin sesión).
+            if (!curList.owner && !logged()) {
+                html += '<div class="ls-cta"><p>Crea tu cuenta gratis para guardar tus propias listas y escuchar el Podcast de Vida.</p>' +
+                    '<button class="ls-act gold" onclick="SDV_Account.open()">✦ Crear mi cuenta gratis</button></div>';
+            }
+
+            body.innerHTML = html;
+            attachRows();
+        }
+        function attachRows() {
+            const body = document.getElementById('lsBody');
+            body.querySelectorAll('.ls-row').forEach(function (row) {
+                row.addEventListener('click', function (ev) {
+                    if (ev.target.closest('[data-rm]')) return;
+                    playItem(parseInt(row.getAttribute('data-cid'), 10));
+                });
+            });
+            body.querySelectorAll('[data-rm]').forEach(function (b) {
+                b.addEventListener('click', function (ev) { ev.stopPropagation(); removeItem(parseInt(b.getAttribute('data-rm'), 10)); });
+            });
+        }
+
+        function playItem(cid) {
+            if (!window.Podcast) return;
+            // El reproductor (z 4200) se abre por encima del overlay de lista.
+            Podcast.playByContentId(cid);
+        }
+        function playFirst() {
+            const first = (curList && curList.content_ids || []).find(function (c) { return window.Podcast && Podcast.episodeByContentId(c); });
+            if (first != null) playItem(first);
+        }
+
+        async function removeItem(cid) {
+            if (!curList || !curList.owner) return;
+            if (curList.likes) {
+                likesSet.delete(cid);
+                curList.content_ids = Array.from(likesSet);
+                renderOverlay(); renderYo();
+                try { await SDV_Auth.unlike(cid); } catch (e) {}
+                const cc = window.Podcast && Podcast.currentContentId(); if (cc) reflectLike(cc);
+                return;
+            }
+            curList.content_ids = (curList.content_ids || []).filter(function (c) { return c !== cid; });
+            renderOverlay();
+            const cached = lists.find(function (x) { return x.id === curList.id; });
+            if (cached) cached.content_ids = curList.content_ids;
+            renderYo();
+            try { await SDV_Auth.removeFromPlaylist(curList.id, cid); } catch (e) { toast('No se pudo quitar'); }
+        }
+
+        async function renameCur() {
+            if (!curList || !curList.owner || curList.likes) return;
+            const nombre = (window.prompt('Nuevo nombre de la lista:', curList.nombre) || '').trim();
+            if (!nombre || nombre === curList.nombre) return;
+            curList.nombre = nombre; renderOverlay();
+            const cached = lists.find(function (x) { return x.id === curList.id; });
+            if (cached) cached.nombre = nombre;
+            renderYo();
+            try { await SDV_Auth.renamePlaylist(curList.id, nombre); } catch (e) { toast('No se pudo renombrar'); }
+        }
+
+        async function deleteCur() {
+            if (!curList || !curList.owner || curList.likes) return;
+            if (!confirm('¿Eliminar la lista «' + curList.nombre + '»? Esto no borra los episodios, solo la lista.')) return;
+            const id = curList.id;
+            try { await SDV_Auth.deletePlaylist(id); } catch (e) { toast('No se pudo eliminar'); return; }
+            lists = lists.filter(function (x) { return x.id !== id; });
+            toast('Lista eliminada');
+            closeOverlay(); renderYo();
+        }
+
+        async function share() {
+            if (!curList) return;
+            const id = curList.id;
+            // Activar enlace público si soy el dueño y aún es privada.
+            if (curList.owner && !curList.publica) {
+                try {
+                    const r = await SDV_Auth.setPlaylistPublic(id, true);
+                    if (r && r.ok) {
+                        curList.publica = true;
+                        const cached = lists.find(function (x) { return x.id === id; });
+                        if (cached) cached.publica = true;
+                        renderOverlay(); renderYo();
+                    } else { toast('No se pudo activar el enlace'); return; }
+                } catch (e) { toast('No se pudo activar el enlace'); return; }
+            }
+            const url = APP_URL + '/?lista=' + id;
+            const texto = '🎧 Escucha mi lista «' + curList.nombre + '» en Sonido de Vida';
+            if (navigator.share) {
+                try { await navigator.share({ title: curList.nombre, text: texto, url: url }); return; }
+                catch (e) { if (e && e.name === 'AbortError') return; }
+            }
+            try { await navigator.clipboard.writeText(url); toast('🔗 Enlace copiado al portapapeles'); }
+            catch (e) { window.prompt('Copia el enlace de tu lista:', url); }
+        }
+
+        // Al cargar la página: si la URL trae ?lista=<id>, abre la vista pública.
+        function checkSharedLink() {
+            try {
+                const id = new URLSearchParams(window.location.search).get('lista');
+                if (id && /^[A-Za-z0-9]+$/.test(id)) {
+                    openPublic(id);
+                    // Deja el parámetro en la URL para que el enlace siga siendo compartible.
+                }
+            } catch (e) {}
+        }
+
+        return {
+            refresh, reflectLike, toggleLikeCurrent,
+            openAddCurrent, closeAdd, createFromAdd, addToList,
+            renderYo, createNew, openLikes, openList, openPublic,
+            closeOverlay, playFirst, renameCur, deleteCur, share, checkSharedLink,
+            isOverlayOpen: function () { var o = overlay(); return o && o.classList.contains('open'); },
+        };
+    })();
+    window.Listas = Listas;
+
     /* ════════ Botón "ATRÁS" del navegador / móvil ════════
        La app es una sola página (SPA). Sin esto, el botón atrás del
        teléfono o del navegador SALE de la página en vez de cerrar el
@@ -3915,6 +4410,8 @@
             // 3. Reproductor de podcast (pantalla del episodio)
             var pp = document.getElementById('podcastPlayer');
             if (pp && pp.classList.contains('open') && window.Podcast) { Podcast.closePlayer(); return true; }
+            // 3b. Overlay de una lista de reproducción (Fase 2)
+            if (window.Listas && Listas.isOverlayOpen()) { Listas.closeOverlay(); return true; }
             // 4. Hub de podcast
             var po = document.getElementById('podcastOverlay');
             if (po && po.classList.contains('open') && window.Podcast) { Podcast.close(); return true; }
@@ -4314,6 +4811,8 @@
             if (user && window.syncLibraryFromCloud) window.syncLibraryFromCloud();
             // Reflejar premium en la entrada del Modo Enfoque.
             if (window.Focus) Focus.refreshGate();
+            // Cargar/limpiar likes y listas de reproducción (Fase 2).
+            if (window.Listas) Listas.refresh();
         }
 
         // Esperar a que auth.js esté listo. Si Firebase no está configurado, no mostramos nada.
