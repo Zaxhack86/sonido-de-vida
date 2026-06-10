@@ -16,7 +16,7 @@ Stack: HTML/CSS/JS puro (sin framework) + Cloudflare Workers + Cloudflare R2 + C
 | Archivo | Qué es |
 |---|---|
 | `index.html` | **Toda la app**. SPA de ~2 000 líneas. Contiene HTML, CSS en `<style>` y JS en `<script>`. |
-| `sw.js` | Service Worker. Versión actual: `sdv-static-v48`. Hay que subirla en cada cambio a `index.html`. |
+| `sw.js` | Service Worker. Versión actual: `sdv-static-v49`. Hay que subirla en cada cambio a `index.html`. |
 | `bible.js` | Datos de la Biblia RVA 1909 (versículos texto). |
 | `bible_sbll.js` | Datos de la Biblia SBLL 2026 (versículos texto). |
 | `worker_updated.js` | Cloudflare Worker de audio (se despliega en `sonido-de-vida-audio.*`). |

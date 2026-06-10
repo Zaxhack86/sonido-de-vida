@@ -711,7 +711,7 @@
         .pj-nav-title{flex:1;text-align:center;font-family:'Cinzel',serif;font-size:.93rem;letter-spacing:.05em;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
         .pj-nav-close{display:flex;align-items:center;justify-content:center;min-width:30px;width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.1);border:none;color:rgba(255,255,255,.8);font-size:.93rem;cursor:pointer;transition:background .2s}
         .pj-nav-close:hover{background:rgba(255,255,255,.2)}
-        .pj-screen{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-top:calc(env(safe-area-inset-top) + 3rem);padding-bottom:calc(env(safe-area-inset-bottom) + 5.6rem);transform:translateX(100%);transition:transform .34s cubic-bezier(.4,0,.2,1);will-change:transform}
+        .pj-screen{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-top:calc(env(safe-area-inset-top) + 3rem);padding-bottom:calc(env(safe-area-inset-bottom) + 5.6rem);transform:translateX(100%);transition:transform .34s cubic-bezier(.4,0,.2,1);will-change:transform;background:#080514}
         .pj-screen.active{transform:translateX(0)}
         .pj-screen.behind{transform:translateX(-28%)}
         .pj-screen.slide-out{transform:translateX(105%)}
@@ -891,64 +891,76 @@
     ════════ fin Devocional de Hoy (parked) ════════ -->
 
     <style>
-        .explore-section{max-width:1100px;margin:0 auto;padding:1.2rem 1.2rem 2rem}
-        .dest-grid{display:grid;grid-template-columns:1fr 1fr;gap:.85rem;margin:1.2rem 0 2.2rem}
-        .dest-tile{position:relative;aspect-ratio:1/1;border-radius:18px;overflow:hidden;background-size:cover;background-position:center;cursor:pointer;box-shadow:0 10px 28px rgba(0,0,0,.45);transition:transform .25s ease,box-shadow .25s ease;-webkit-tap-highlight-color:transparent}
-        .dest-tile::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.04) 35%,rgba(0,0,0,.8));pointer-events:none}
-        .dest-tile:hover{transform:translateY(-4px);box-shadow:0 16px 38px rgba(0,0,0,.55)}
-        .dest-tile:active{transform:scale(.985)}
-        .dest-body{position:absolute;left:0;right:0;bottom:0;z-index:1;padding:.95rem 1rem}
-        .dest-kicker{display:inline-block;font-family:'Inter',sans-serif;font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-light,#ecd096);font-weight:700;margin-bottom:.22rem}
-        .dest-body h3{font-family:'Cinzel',serif;color:#fff;font-size:1.12rem;line-height:1.1;margin:0 0 .18rem;text-shadow:0 2px 12px rgba(0,0,0,.6)}
-        .dest-body p{font-family:'Inter',sans-serif;color:rgba(255,255,255,.82);font-size:.74rem;margin:0;line-height:1.25}
-        .dest-badge{position:absolute;top:.7rem;right:.7rem;z-index:2;font-family:'Inter',sans-serif;font-size:.6rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:.28rem .55rem;border-radius:999px;background:rgba(232,182,90,.92);color:#1a1206;box-shadow:0 4px 12px rgba(0,0,0,.35)}
-        .dest-badge.premium{background:rgba(15,12,22,.8);color:var(--gold-light,#ecd096);border:1px solid rgba(232,182,90,.5)}
-        .ex-rail-block{margin:0 0 1.8rem}
-        .ex-rail-head{display:flex;align-items:flex-end;justify-content:space-between;margin:0 0 .8rem;gap:.6rem}
-        .ex-rail-head h3{font-family:'Cinzel',serif;color:#fff;font-size:1.15rem;margin:0}
-        .ex-rail-head span{display:block;font-family:'Inter',sans-serif;font-size:.76rem;color:rgba(255,255,255,.55);margin-top:.12rem}
-        .ex-seeall{background:none;border:none;color:var(--gold-light,#ecd096);font-family:'Inter',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;padding:.2rem .1rem;white-space:nowrap}
-        .ex-rail{display:flex;gap:.85rem;overflow-x:auto;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;padding:.2rem .1rem 1rem;scrollbar-width:none}
+        /* Explorar — feed de descubrimiento por escalones (estilo Dwell, tema claro) */
+        .explore-section{max-width:1100px;margin:0 auto;padding:calc(env(safe-area-inset-top) + 1.4rem) 0 2.5rem}
+        .explore-section .section-header{padding:0 1.2rem;margin-bottom:.4rem}
+        /* Oculta el navbar superior flotante en Explorar (NO el nav inferior):
+           el feed es inmersivo y la marca "Sonido de Vida" estorba aquí. */
+        body[data-tab-active="explorar"] #navbar{display:none}
+        .ex-tier{margin:1.7rem 0 0}
+        .ex-tier-head{display:flex;align-items:flex-end;justify-content:space-between;gap:.6rem;padding:0 1.2rem;margin:0 0 .85rem}
+        .ex-th-titles{min-width:0}
+        .ex-th-titles h3{font-family:'Cinzel',serif;color:var(--text-dark);font-size:1.22rem;margin:0;line-height:1.15}
+        .ex-th-sub{display:block;font-family:'Inter',sans-serif;font-size:.78rem;color:var(--text-light);margin-top:.16rem}
+        .ex-seeall{flex:none;background:none;border:none;color:var(--gold-dark);font-family:'Inter',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;padding:.2rem .1rem;white-space:nowrap}
+        /* Riel horizontal: deslizable + auto-scroll suave (JS). Misma tarjeta para todo. */
+        .ex-rail{display:flex;gap:.8rem;overflow-x:auto;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;padding:.15rem 1.2rem .5rem;scrollbar-width:none}
         .ex-rail::-webkit-scrollbar{display:none}
-        .ex-card{flex:none;width:140px;scroll-snap-align:start;cursor:pointer;-webkit-tap-highlight-color:transparent}
-        .ex-card-cover{position:relative;width:140px;aspect-ratio:3/4;border-radius:14px;background-size:cover;background-position:center;box-shadow:0 8px 22px rgba(0,0,0,.45);overflow:hidden;transition:transform .2s ease}
-        .ex-card:hover .ex-card-cover{transform:translateY(-3px)}
-        .ex-card-cover::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(0,0,0,.45));pointer-events:none}
-        .ex-card-dur{position:absolute;top:.5rem;right:.5rem;z-index:1;font-family:'Inter',sans-serif;font-size:.62rem;font-weight:600;color:#fff;background:rgba(0,0,0,.5);padding:.18rem .45rem;border-radius:999px}
-        .ex-card-ref{font-family:'Inter',sans-serif;font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-light,#ecd096);font-weight:700;margin:.55rem 0 .15rem}
-        .ex-card-title{font-family:'Lora',serif;color:#f4f0e8;font-size:.86rem;line-height:1.22;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-        @media(min-width:620px){.dest-grid{grid-template-columns:repeat(4,1fr)}.ex-card,.ex-card-cover{width:156px}}
+        .ex-card{flex:none;width:150px;scroll-snap-align:start;cursor:pointer;-webkit-tap-highlight-color:transparent}
+        .ex-card-cover{position:relative;width:150px;aspect-ratio:3/4;border-radius:15px;overflow:hidden;background-size:cover;background-position:center;background-color:#1a1430;box-shadow:0 9px 24px rgba(0,0,0,.28);transition:transform .2s ease,box-shadow .2s ease}
+        .ex-card:hover .ex-card-cover{transform:translateY(-3px);box-shadow:0 14px 32px rgba(0,0,0,.38)}
+        .ex-card:active .ex-card-cover{transform:scale(.97)}
+        .ex-card-cover::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 38%,rgba(8,5,14,.86));pointer-events:none}
+        .ex-card-dur{position:absolute;top:.5rem;right:.5rem;z-index:2;font-family:'Inter',sans-serif;font-size:.64rem;font-weight:600;color:#fff;background:rgba(0,0,0,.5);padding:.18rem .5rem;border-radius:999px;backdrop-filter:blur(4px)}
+        .ex-card-play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(.85);z-index:2;width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.94);color:#15102a;display:flex;align-items:center;justify-content:center;font-size:.95rem;opacity:0;transition:opacity .2s,transform .2s;box-shadow:0 4px 14px rgba(0,0,0,.4)}
+        .ex-card:hover .ex-card-play{opacity:1;transform:translate(-50%,-50%) scale(1)}
+        .ex-card-meta{position:absolute;left:0;right:0;bottom:0;z-index:1;padding:.6rem .68rem;text-align:left}
+        .ex-card-ref{font-family:'Inter',sans-serif;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-light);font-weight:700;margin:0 0 .15rem}
+        .ex-card-title{font-family:'Cinzel',serif;color:#fff;font-size:.86rem;line-height:1.2;margin:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;text-shadow:0 1px 6px rgba(0,0,0,.65)}
+        /* Banner de entrada (Devocionales / Modo Enfoque): una sola imagen, mismo lenguaje */
+        .ex-banner{position:relative;display:block;margin:0 1.2rem;border-radius:18px;overflow:hidden;aspect-ratio:16/9;background-size:cover;background-position:center;background-color:#1a1430;cursor:pointer;box-shadow:0 10px 28px rgba(0,0,0,.3);-webkit-tap-highlight-color:transparent;text-decoration:none;transition:transform .2s ease,box-shadow .2s ease}
+        .ex-banner:hover{transform:translateY(-3px);box-shadow:0 16px 36px rgba(0,0,0,.4)}
+        .ex-banner:active{transform:scale(.99)}
+        .ex-banner::after{content:"";position:absolute;inset:0;background:linear-gradient(105deg,rgba(8,5,14,.82) 0%,rgba(8,5,14,.32) 58%,transparent 88%);pointer-events:none}
+        .ex-banner-body{position:absolute;left:0;bottom:0;z-index:1;padding:1.05rem 1.2rem;max-width:80%}
+        .ex-banner-kicker{display:inline-block;font-family:'Inter',sans-serif;font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-light);font-weight:700;margin-bottom:.3rem}
+        .ex-banner-body h3{font-family:'Cinzel',serif;color:#fff;font-size:1.32rem;margin:0 0 .22rem;line-height:1.1;text-shadow:0 2px 10px rgba(0,0,0,.6)}
+        .ex-banner-body p{font-family:'Inter',sans-serif;color:rgba(255,255,255,.86);font-size:.8rem;margin:0;line-height:1.32}
+        .ex-banner-badge{position:absolute;top:.8rem;right:.8rem;z-index:2;font-family:'Inter',sans-serif;font-size:.6rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:.3rem .62rem;border-radius:999px;background:rgba(15,12,22,.82);color:var(--gold-light);border:1px solid rgba(232,182,90,.5);backdrop-filter:blur(4px)}
+        .ex-banner-go{position:absolute;right:1rem;bottom:1rem;z-index:2;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.94);color:#15102a;display:flex;align-items:center;justify-content:center;font-size:1.2rem;box-shadow:0 4px 14px rgba(0,0,0,.4)}
+        @media(min-width:620px){.ex-card,.ex-card-cover{width:172px}.ex-banner{aspect-ratio:21/9}}
+        @media(prefers-reduced-motion:reduce){.ex-card-cover,.ex-banner{transition:none}}
     </style>
 
-    <!-- ════════ Explorar — entrada principal, estilo pictórico ════════ -->
+    <!-- ════════ Explorar — feed por escalones, estilo Dwell ════════ -->
     <section class="explore-section" data-tab="explorar">
-        <div class="section-header reveal"><h2>Explorar</h2><p>Elige por dónde entrar a la Palabra. Cada experiencia, su propio espacio.</p></div>
+        <div class="section-header reveal"><h2>Explorar</h2><p>Desliza y descubre. Cada experiencia, su propio espacio.</p></div>
 
-        <div class="dest-grid reveal">
-            <div class="dest-tile" style="background-image:url('/covers/dest-podcast.jpg')" role="button" tabindex="0" onclick="Podcast.open()" onkeydown="if(event.key==='Enter')Podcast.open()">
-                <span class="dest-badge">Nuevo</span>
-                <div class="dest-body"><span class="dest-kicker">Audio</span><h3>Podcast de Vida</h3><p>Enseñanzas que cobran vida</p></div>
-            </div>
-            <div class="dest-tile" style="background-image:url('/covers/dest-pasajes.jpg')" role="button" tabindex="0" onclick="Pasajes.open()" onkeydown="if(event.key==='Enter')Pasajes.open()">
-                <div class="dest-body"><span class="dest-kicker">Colecciones</span><h3>Pasajes de Vida</h3><p>Capítulos curados por tema</p></div>
-            </div>
-            <div class="dest-tile" style="background-image:url('/covers/dest-devocional.jpg')" role="button" tabindex="0" onclick="location.href='/devocionales'" onkeydown="if(event.key==='Enter')location.href='/devocionales'">
-                <div class="dest-body"><span class="dest-kicker">Lectura</span><h3>Devocionales</h3><p>Reflexiones con raíz bíblica</p></div>
-            </div>
-            <div class="dest-tile" style="background-image:url('/covers/dest-enfoque.jpg')" role="button" tabindex="0" onclick="Focus.enter()" onkeydown="if(event.key==='Enter')Focus.enter()">
-                <span class="dest-badge premium">✨ Premium</span>
-                <div class="dest-body"><span class="dest-kicker">Meditar</span><h3>Modo Enfoque</h3><p>Música y voz para reposar</p></div>
-            </div>
+        <div class="ex-tier reveal">
+            <div class="ex-tier-head"><div class="ex-th-titles"><h3>Podcast de Vida</h3><span class="ex-th-sub">Enseñanzas que cobran vida</span></div><button class="ex-seeall" onclick="Podcast.open()">Ver todo ›</button></div>
+            <div class="ex-rail" id="exRailPodcast" data-auto></div>
         </div>
 
-        <div class="ex-rail-block reveal">
-            <div class="ex-rail-head"><div><h3>Podcast de Vida</h3><span>Enseñanzas en audio</span></div><button class="ex-seeall" onclick="Podcast.open()">Ver todo</button></div>
-            <div class="ex-rail" id="exRailPodcast"></div>
+        <div class="ex-tier reveal">
+            <div class="ex-tier-head"><div class="ex-th-titles"><h3>Pasajes de Vida</h3><span class="ex-th-sub">Capítulos curados por tema</span></div><button class="ex-seeall" onclick="Pasajes.open()">Ver todo ›</button></div>
+            <div class="ex-rail" id="exRailPasajes" data-auto></div>
         </div>
 
-        <div class="ex-rail-block reveal">
-            <div class="ex-rail-head"><div><h3>Pasajes de Vida</h3><span>Capítulos por tema</span></div><button class="ex-seeall" onclick="Pasajes.open()">Ver todo</button></div>
-            <div class="ex-rail" id="exRailPasajes"></div>
+        <div class="ex-tier reveal">
+            <div class="ex-tier-head"><div class="ex-th-titles"><h3>Devocionales</h3><span class="ex-th-sub">Reflexiones con raíz bíblica</span></div><button class="ex-seeall" onclick="location.href='/devocionales'">Ver todo ›</button></div>
+            <a class="ex-banner" style="background-image:url('/covers/dest-devocional.jpg')" href="/devocionales" aria-label="Abrir devocionales">
+                <div class="ex-banner-body"><span class="ex-banner-kicker">Lectura · cada mañana</span><h3>Una palabra para hoy</h3><p>Reflexiones cortas con raíz en el texto original.</p></div>
+                <span class="ex-banner-go">›</span>
+            </a>
+        </div>
+
+        <div class="ex-tier reveal">
+            <div class="ex-tier-head"><div class="ex-th-titles"><h3>Modo Enfoque</h3><span class="ex-th-sub">Música y voz para reposar</span></div></div>
+            <div class="ex-banner" role="button" tabindex="0" style="background-image:url('/covers/dest-enfoque.jpg')" onclick="Focus.enter()" onkeydown="if(event.key==='Enter')Focus.enter()" aria-label="Abrir Modo Enfoque">
+                <span class="ex-banner-badge">✨ Premium</span>
+                <div class="ex-banner-body"><span class="ex-banner-kicker">Meditar</span><h3>Reposa en la Palabra</h3><p>Música y ambientes suaves bajo la narración.</p></div>
+                <span class="ex-banner-go">›</span>
+            </div>
         </div>
     </section>
 
@@ -3690,21 +3702,27 @@
     })();
     window.Podcast = Podcast;
 
-    /* ════════ Explorar: carruseles que reusan Podcast + Pasajes ════════ */
+    /* ════════ Explorar: feed por escalones (reusa Podcast + Pasajes) ════════ */
     const Explore = (function () {
         function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]);}); }
+        // Tarjeta uniforme: imagen 3/4 con la info ENCIMA (blanco sobre foto oscura
+        // = legible sobre el fondo crema del tema). Mismo molde para episodios y colecciones.
         function cardEp(i, ep){
             return '<div class="ex-card" role="button" tabindex="0" data-ex="ep:'+i+'">'+
                 '<div class="ex-card-cover" style="background-image:url(\''+esc(ep.image||'')+'\')">'+
-                    (ep.dur?'<span class="ex-card-dur">'+esc(ep.dur)+'</span>':'')+'</div>'+
-                '<div class="ex-card-ref">'+esc((ep.ref||'').toUpperCase())+'</div>'+
-                '<div class="ex-card-title">'+esc(ep.title)+'</div></div>';
+                    (ep.dur?'<span class="ex-card-dur">'+esc(ep.dur)+'</span>':'')+
+                    '<span class="ex-card-play">▶</span>'+
+                    '<div class="ex-card-meta"><p class="ex-card-ref">'+esc((ep.ref||'').toUpperCase())+'</p>'+
+                    '<p class="ex-card-title">'+esc(ep.title)+'</p></div>'+
+                '</div></div>';
         }
         function cardCol(i, col){
             return '<div class="ex-card" role="button" tabindex="0" data-ex="col:'+i+'">'+
-                '<div class="ex-card-cover" style="background-image:url(\''+esc(col.cover)+'\')"></div>'+
-                '<div class="ex-card-ref">'+col.tracks.length+' PASAJES</div>'+
-                '<div class="ex-card-title">'+esc(col.titulo)+'</div></div>';
+                '<div class="ex-card-cover" style="background-image:url(\''+esc(col.cover)+'\')">'+
+                    '<span class="ex-card-play">▶</span>'+
+                    '<div class="ex-card-meta"><p class="ex-card-ref">'+col.tracks.length+' pasajes</p>'+
+                    '<p class="ex-card-title">'+esc(col.titulo)+'</p></div>'+
+                '</div></div>';
         }
         function render(){
             var rp=document.getElementById('exRailPodcast');
@@ -3721,6 +3739,33 @@
                     else if(p[0]==='col' && window.Pasajes) Pasajes.openAt(i); };
                 el.addEventListener('click', go);
                 el.addEventListener('keydown', function(e){ if(e.key==='Enter') go(); });
+            });
+            setupAutoScroll();
+        }
+        // Auto-scroll suave (ping-pong) que da "vida" a los rieles sin impedir el
+        // deslizamiento manual: se pausa al tocar/pasar el ratón y al salir de la
+        // pestaña. Respeta prefers-reduced-motion.
+        function setupAutoScroll(){
+            if (window.matchMedia && matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+            document.querySelectorAll('.ex-rail[data-auto]').forEach(function(rail){
+                if (rail._autoInit) return; rail._autoInit = true;
+                var dir = 1, paused = false, idle = null;
+                function pause(){ paused = true; clearTimeout(idle); idle = setTimeout(function(){ paused = false; }, 2600); }
+                ['pointerdown','touchstart','wheel','mouseenter'].forEach(function(ev){ rail.addEventListener(ev, pause, {passive:true}); });
+                function step(){
+                    var onTab = document.body.getAttribute('data-tab-active') === 'explorar';
+                    if (!paused && onTab && !document.hidden){
+                        var max = rail.scrollWidth - rail.clientWidth;
+                        if (max > 4){
+                            rail.scrollLeft += dir * 0.35;
+                            if (rail.scrollLeft >= max - 0.5) dir = -1;
+                            else if (rail.scrollLeft <= 0.5) dir = 1;
+                        }
+                    }
+                    rail._raf = requestAnimationFrame(step);
+                }
+                cancelAnimationFrame(rail._raf || 0);
+                rail._raf = requestAnimationFrame(step);
             });
         }
         return { render };
