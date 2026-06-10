@@ -3528,16 +3528,16 @@
         // sin PDF (solo audio). Para publicar: subir audio a R2 privado,
         // registrar en content_items (D1) y añadir aquí { title, ref, contentId }.
         const EPISODES = [
-            { title:'En el principio era el Verbo',            ref:'Juan 1',       dur:'7 min', contentId:69, image:'covers/01-juan-1.jpg?v=2',          cover:'linear-gradient(150deg,#1b2c50,#0a1326 58%,#05070f)' },
-            { title:'Lo que David sabía de las ovejas',        ref:'Salmo 23',     dur:'7 min', contentId:70, image:'covers/02-salmo-23.jpg?v=2',        cover:'linear-gradient(150deg,#1f3d2e,#10241b 58%,#060f0a)' },
-            { title:'La palabra que Jesús casi inventó',       ref:'Mateo 6',      dur:'7 min', contentId:71, image:'covers/03-padre-nuestro.jpg?v=2',   cover:'linear-gradient(150deg,#3a2a18,#1d160c 58%,#0a0805)' },
-            { title:'Laodicea y el agua tibia',                ref:'Apocalipsis 3',dur:'7 min', contentId:72, image:'covers/04-laodicea.jpg?v=2',        cover:'linear-gradient(150deg,#173f47,#0c2329 58%,#051013)' },
-            { title:'El padre que corrió',                     ref:'Lucas 15',     dur:'8 min', contentId:73, image:'covers/05-hijo-prodigo.jpg?v=2',    cover:'linear-gradient(150deg,#5a2f1c,#2c1610 58%,#0f0805)' },
-            { title:'Jonás no se trata del pez',               ref:'Jonás',        dur:'8 min', contentId:74, image:'covers/06-jonas.jpg?v=2',           cover:'linear-gradient(150deg,#16323f,#0b1c25 58%,#050d11)' },
-            { title:'El camino de sangre',                     ref:'Lucas 10',     dur:'9 min', contentId:75, image:'covers/07-buen-samaritano.jpg?v=2', cover:'linear-gradient(150deg,#4a3a1e,#241c10 58%,#0d0a05)' },
-            { title:'El secreto escrito en una cárcel',        ref:'Filipenses 4', dur:'8 min', contentId:76, image:'covers/08-filipenses-4.jpg?v=2',    cover:'linear-gradient(150deg,#2a2540,#161325 58%,#080610)' },
-            { title:'Esperar es trenzar',                      ref:'Isaías 40',    dur:'8 min', contentId:77, image:'covers/09-isaias-40.jpg?v=2',       cover:'linear-gradient(150deg,#1d3550,#0f2030 58%,#060d14)' },
-            { title:'La cita de las doce del mediodía',        ref:'Juan 4',       dur:'10 min',contentId:78, image:'covers/10-mujer-pozo.jpg?v=2',      cover:'linear-gradient(150deg,#3f2d1a,#231a0f 58%,#0d0905)' },
+            { title:'En el principio era el Verbo',            ref:'Juan 1',       dur:'7 min', contentId:69, image:'covers/01-juan-1.jpg?v=3',          cover:'linear-gradient(150deg,#1b2c50,#0a1326 58%,#05070f)' },
+            { title:'Lo que David sabía de las ovejas',        ref:'Salmo 23',     dur:'7 min', contentId:70, image:'covers/02-salmo-23.jpg?v=3',        cover:'linear-gradient(150deg,#1f3d2e,#10241b 58%,#060f0a)' },
+            { title:'La palabra que Jesús casi inventó',       ref:'Mateo 6',      dur:'7 min', contentId:71, image:'covers/03-padre-nuestro.jpg?v=3',   cover:'linear-gradient(150deg,#3a2a18,#1d160c 58%,#0a0805)' },
+            { title:'Laodicea y el agua tibia',                ref:'Apocalipsis 3',dur:'7 min', contentId:72, image:'covers/04-laodicea.jpg?v=3',        cover:'linear-gradient(150deg,#173f47,#0c2329 58%,#051013)' },
+            { title:'El padre que corrió',                     ref:'Lucas 15',     dur:'8 min', contentId:73, image:'covers/05-hijo-prodigo.jpg?v=3',    cover:'linear-gradient(150deg,#5a2f1c,#2c1610 58%,#0f0805)' },
+            { title:'Jonás no se trata del pez',               ref:'Jonás',        dur:'8 min', contentId:74, image:'covers/06-jonas.jpg?v=3',           cover:'linear-gradient(150deg,#16323f,#0b1c25 58%,#050d11)' },
+            { title:'El camino de sangre',                     ref:'Lucas 10',     dur:'9 min', contentId:75, image:'covers/07-buen-samaritano.jpg?v=3', cover:'linear-gradient(150deg,#4a3a1e,#241c10 58%,#0d0a05)' },
+            { title:'El secreto escrito en una cárcel',        ref:'Filipenses 4', dur:'8 min', contentId:76, image:'covers/08-filipenses-4.jpg?v=3',    cover:'linear-gradient(150deg,#2a2540,#161325 58%,#080610)' },
+            { title:'Esperar es trenzar',                      ref:'Isaías 40',    dur:'8 min', contentId:77, image:'covers/09-isaias-40.jpg?v=3',       cover:'linear-gradient(150deg,#1d3550,#0f2030 58%,#060d14)' },
+            { title:'La cita de las doce del mediodía',        ref:'Juan 4',       dur:'10 min',contentId:78, image:'covers/10-mujer-pozo.jpg?v=3',      cover:'linear-gradient(150deg,#3f2d1a,#231a0f 58%,#0d0905)' },
         ];
         // Índice del episodio destacado (tarjeta grande arriba).
         const FEATURED = 0;
@@ -3835,7 +3835,7 @@
         // Vertex). El degradado va de respaldo mientras carga / si falta la imagen.
         function cardDevo(d){
             return '<a class="ex-card ex-card-devo" href="/devocional/'+esc(d.slug)+'" aria-label="Devocional: '+esc(d.title)+'">'+
-                '<div class="ex-card-cover" style="background-image:url(\'covers/devo-'+esc(d.slug)+'.jpg\'),'+d.grad+'">'+
+                '<div class="ex-card-cover" style="background-image:url(\'covers/devo-'+esc(d.slug)+'.jpg?v=2\'),'+d.grad+'">'+
                     '<span class="ex-card-read">Leer ›</span>'+
                 '</div></a>';
         }

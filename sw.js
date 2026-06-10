@@ -1,4 +1,4 @@
-const CACHE_STATIC = 'sdv-static-v51';
+const CACHE_STATIC = 'sdv-static-v52';
 const CACHE_AUDIO  = 'sdv-audio-v2';
 
 const STATIC_ASSETS = ['/', '/index.html', '/bible.js', '/manifest.json'];
