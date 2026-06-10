@@ -831,45 +831,65 @@
     </section>
     ════════ fin Devocional de Hoy (parked) ════════ -->
 
-    <section class="showcase-section" data-tab="explorar">
-        <div class="section-header reveal"><h2>Explorar</h2><p>Cada experiencia tiene su propio espacio. Elige por dónde entrar a la Palabra.</p></div>
-        <div class="showcase-grid">
-            <div class="hub-card hub-enfoque reveal" role="button" tabindex="0" onclick="Focus.enter()" onkeydown="if(event.key==='Enter')Focus.enter()">
-                <span class="hub-badge">✨ Premium</span>
-                <div class="hub-emblem"><span class="hub-emblem-ico">🌿</span></div>
-                <h3>Modo Enfoque</h3>
-                <p>Música y ambiente bajo la narración para orar, meditar y reposar en quietud.</p>
-                <span class="hub-go">Abrir <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span>
+    <style>
+        .explore-section{max-width:1100px;margin:0 auto;padding:1.2rem 1.2rem 2rem}
+        .dest-grid{display:grid;grid-template-columns:1fr 1fr;gap:.85rem;margin:1.2rem 0 2.2rem}
+        .dest-tile{position:relative;aspect-ratio:1/1;border-radius:18px;overflow:hidden;background-size:cover;background-position:center;cursor:pointer;box-shadow:0 10px 28px rgba(0,0,0,.45);transition:transform .25s ease,box-shadow .25s ease;-webkit-tap-highlight-color:transparent}
+        .dest-tile::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.04) 35%,rgba(0,0,0,.8));pointer-events:none}
+        .dest-tile:hover{transform:translateY(-4px);box-shadow:0 16px 38px rgba(0,0,0,.55)}
+        .dest-tile:active{transform:scale(.985)}
+        .dest-body{position:absolute;left:0;right:0;bottom:0;z-index:1;padding:.95rem 1rem}
+        .dest-kicker{display:inline-block;font-family:'Inter',sans-serif;font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-light,#ecd096);font-weight:700;margin-bottom:.22rem}
+        .dest-body h3{font-family:'Cinzel',serif;color:#fff;font-size:1.12rem;line-height:1.1;margin:0 0 .18rem;text-shadow:0 2px 12px rgba(0,0,0,.6)}
+        .dest-body p{font-family:'Inter',sans-serif;color:rgba(255,255,255,.82);font-size:.74rem;margin:0;line-height:1.25}
+        .dest-badge{position:absolute;top:.7rem;right:.7rem;z-index:2;font-family:'Inter',sans-serif;font-size:.6rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:.28rem .55rem;border-radius:999px;background:rgba(232,182,90,.92);color:#1a1206;box-shadow:0 4px 12px rgba(0,0,0,.35)}
+        .dest-badge.premium{background:rgba(15,12,22,.8);color:var(--gold-light,#ecd096);border:1px solid rgba(232,182,90,.5)}
+        .ex-rail-block{margin:0 0 1.8rem}
+        .ex-rail-head{display:flex;align-items:flex-end;justify-content:space-between;margin:0 0 .8rem;gap:.6rem}
+        .ex-rail-head h3{font-family:'Cinzel',serif;color:#fff;font-size:1.15rem;margin:0}
+        .ex-rail-head span{display:block;font-family:'Inter',sans-serif;font-size:.76rem;color:rgba(255,255,255,.55);margin-top:.12rem}
+        .ex-seeall{background:none;border:none;color:var(--gold-light,#ecd096);font-family:'Inter',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;padding:.2rem .1rem;white-space:nowrap}
+        .ex-rail{display:flex;gap:.85rem;overflow-x:auto;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;padding:.2rem .1rem 1rem;scrollbar-width:none}
+        .ex-rail::-webkit-scrollbar{display:none}
+        .ex-card{flex:none;width:140px;scroll-snap-align:start;cursor:pointer;-webkit-tap-highlight-color:transparent}
+        .ex-card-cover{position:relative;width:140px;aspect-ratio:3/4;border-radius:14px;background-size:cover;background-position:center;box-shadow:0 8px 22px rgba(0,0,0,.45);overflow:hidden;transition:transform .2s ease}
+        .ex-card:hover .ex-card-cover{transform:translateY(-3px)}
+        .ex-card-cover::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(0,0,0,.45));pointer-events:none}
+        .ex-card-dur{position:absolute;top:.5rem;right:.5rem;z-index:1;font-family:'Inter',sans-serif;font-size:.62rem;font-weight:600;color:#fff;background:rgba(0,0,0,.5);padding:.18rem .45rem;border-radius:999px}
+        .ex-card-ref{font-family:'Inter',sans-serif;font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-light,#ecd096);font-weight:700;margin:.55rem 0 .15rem}
+        .ex-card-title{font-family:'Lora',serif;color:#f4f0e8;font-size:.86rem;line-height:1.22;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+        @media(min-width:620px){.dest-grid{grid-template-columns:repeat(4,1fr)}.ex-card,.ex-card-cover{width:156px}}
+    </style>
+
+    <!-- ════════ Explorar — entrada principal, estilo pictórico ════════ -->
+    <section class="explore-section" data-tab="explorar">
+        <div class="section-header reveal"><h2>Explorar</h2><p>Elige por dónde entrar a la Palabra. Cada experiencia, su propio espacio.</p></div>
+
+        <div class="dest-grid reveal">
+            <div class="dest-tile" style="background-image:url('/covers/dest-podcast.jpg')" role="button" tabindex="0" onclick="Podcast.open()" onkeydown="if(event.key==='Enter')Podcast.open()">
+                <span class="dest-badge">Nuevo</span>
+                <div class="dest-body"><span class="dest-kicker">Audio</span><h3>Podcast de Vida</h3><p>Enseñanzas que cobran vida</p></div>
             </div>
-            <div class="hub-card hub-podcast reveal" role="button" tabindex="0" onclick="Podcast.open()" onkeydown="if(event.key==='Enter')Podcast.open()">
-                <span class="hub-badge">Nuevo</span>
-                <div class="hub-emblem"><span class="hub-emblem-ico">🎙️</span></div>
-                <h3>Podcast de Vida</h3>
-                <p>Enseñanzas en audio para crecer en la fe, con un resumen en PDF para llevarte la Palabra.</p>
-                <span class="hub-go">Abrir <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span>
+            <div class="dest-tile" style="background-image:url('/covers/dest-pasajes.jpg')" role="button" tabindex="0" onclick="Pasajes.open()" onkeydown="if(event.key==='Enter')Pasajes.open()">
+                <div class="dest-body"><span class="dest-kicker">Colecciones</span><h3>Pasajes de Vida</h3><p>Capítulos curados por tema</p></div>
             </div>
-            <div class="hub-card reveal" role="button" tabindex="0" onclick="location.href='/devocionales'" onkeydown="if(event.key==='Enter')location.href='/devocionales'">
-                <div class="hub-emblem"><span class="hub-emblem-ico">📖</span></div>
-                <h3>Devocionales</h3>
-                <p>Reflexiones profundas sobre la Palabra, con raíces hebreas y griegas, para tu vida diaria.</p>
-                <span class="hub-go">Abrir <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span>
+            <div class="dest-tile" style="background-image:url('/covers/dest-devocional.jpg')" role="button" tabindex="0" onclick="location.href='/devocionales'" onkeydown="if(event.key==='Enter')location.href='/devocionales'">
+                <div class="dest-body"><span class="dest-kicker">Lectura</span><h3>Devocionales</h3><p>Reflexiones con raíz bíblica</p></div>
             </div>
-            <div class="hub-card hub-pasajes reveal" role="button" tabindex="0" onclick="Pasajes.open()" onkeydown="if(event.key==='Enter')Pasajes.open()">
-                <div class="hub-emblem"><span class="hub-emblem-ico">🎵</span></div>
-                <h3>Pasajes de Vida</h3>
-                <p>Colecciones de capítulos curados por tema: ansiedad, descanso, consuelo y más.</p>
-                <span class="hub-go">Explorar <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span>
+            <div class="dest-tile" style="background-image:url('/covers/dest-enfoque.jpg')" role="button" tabindex="0" onclick="Focus.enter()" onkeydown="if(event.key==='Enter')Focus.enter()">
+                <span class="dest-badge premium">✨ Premium</span>
+                <div class="dest-body"><span class="dest-kicker">Meditar</span><h3>Modo Enfoque</h3><p>Música y voz para reposar</p></div>
             </div>
         </div>
-    </section>
 
-    <section class="features" id="features" data-tab="explorar">
-        <div class="section-header reveal"><h2>¿Por qué Sonido de Vida?</h2><p>Conecta con la Palabra de Dios de manera simple y accesible</p></div>
-        <div class="features-grid">
-            <div class="feature-card reveal"><div class="feature-icon">🎧</div><h3>Audio por Capítulo</h3><p>Cada capítulo narrado con claridad y reverencia en español latinoamericano. Disponible en dos versiones: RVA 1909 y SBLL 2026.</p></div>
-            <div class="feature-card reveal"><div class="feature-icon">📱</div><h3>Audio en 2do Plano</h3><p>Pon play y apaga la pantalla. El audio continúa en iOS y Android sin interrupciones.</p></div>
-            <div class="feature-card reveal"><div class="feature-icon">💾</div><h3>Descarga con tu cuenta</h3><p>Crea tu cuenta gratis y descarga capítulos en MP3 para escuchar sin conexión, con tu biblioteca siempre contigo.</p></div>
-            <div class="feature-card reveal"><div class="feature-icon">🎲</div><h3>Versículo Aleatorio</h3><p>Descubre un versículo inspirador al azar. Deja que Dios hable a tu corazón hoy.</p></div>
+        <div class="ex-rail-block reveal">
+            <div class="ex-rail-head"><div><h3>Podcast de Vida</h3><span>Enseñanzas en audio</span></div><button class="ex-seeall" onclick="Podcast.open()">Ver todo</button></div>
+            <div class="ex-rail" id="exRailPodcast"></div>
+        </div>
+
+        <div class="ex-rail-block reveal">
+            <div class="ex-rail-head"><div><h3>Pasajes de Vida</h3><span>Capítulos por tema</span></div><button class="ex-seeall" onclick="Pasajes.open()">Ver todo</button></div>
+            <div class="ex-rail" id="exRailPasajes"></div>
         </div>
     </section>
 
@@ -3562,9 +3582,52 @@
             overlay.setAttribute('aria-hidden', 'true');
             if (!player.classList.contains('open')) document.body.style.overflow = '';
         }
-        return { open, close, openEpisode, closePlayer, toggle, skip, seek, cycleSpeed, readCurrent };
+        return {
+            open, close, openEpisode, closePlayer, toggle, skip, seek, cycleSpeed, readCurrent,
+            episodes: function () { return EPISODES; },
+            playEpisode: function (i) { open(); epClick(i); },
+        };
     })();
     window.Podcast = Podcast;
+
+    /* ════════ Explorar: carruseles que reusan Podcast + Pasajes ════════ */
+    const Explore = (function () {
+        function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]);}); }
+        function cardEp(i, ep){
+            return '<div class="ex-card" role="button" tabindex="0" data-ex="ep:'+i+'">'+
+                '<div class="ex-card-cover" style="background-image:url(\''+esc(ep.image||'')+'\')">'+
+                    (ep.dur?'<span class="ex-card-dur">'+esc(ep.dur)+'</span>':'')+'</div>'+
+                '<div class="ex-card-ref">'+esc((ep.ref||'').toUpperCase())+'</div>'+
+                '<div class="ex-card-title">'+esc(ep.title)+'</div></div>';
+        }
+        function cardCol(i, col){
+            return '<div class="ex-card" role="button" tabindex="0" data-ex="col:'+i+'">'+
+                '<div class="ex-card-cover" style="background-image:url(\''+esc(col.cover)+'\')"></div>'+
+                '<div class="ex-card-ref">'+col.tracks.length+' PASAJES</div>'+
+                '<div class="ex-card-title">'+esc(col.titulo)+'</div></div>';
+        }
+        function render(){
+            var rp=document.getElementById('exRailPodcast');
+            var rc=document.getElementById('exRailPasajes');
+            if(rp && window.Podcast && Podcast.episodes){
+                rp.innerHTML = Podcast.episodes().map(function(ep,i){return cardEp(i,ep);}).join('');
+            }
+            if(rc && window.Pasajes && Pasajes.collections){
+                rc.innerHTML = Pasajes.collections().map(function(col,i){return cardCol(i,col);}).join('');
+            }
+            document.querySelectorAll('#exRailPodcast .ex-card, #exRailPasajes .ex-card').forEach(function(el){
+                var go=function(){ var p=el.getAttribute('data-ex').split(':'); var i=+p[1];
+                    if(p[0]==='ep' && window.Podcast) Podcast.playEpisode(i);
+                    else if(p[0]==='col' && window.Pasajes) Pasajes.openAt(i); };
+                el.addEventListener('click', go);
+                el.addEventListener('keydown', function(e){ if(e.key==='Enter') go(); });
+            });
+        }
+        return { render };
+    })();
+    window.Explore = Explore;
+    if(document.readyState!=='loading') Explore.render();
+    else document.addEventListener('DOMContentLoaded', Explore.render);
 
     /* ════════ Pasajes de Vida (colecciones curadas) ════════ */
     /* ════════ Pasajes de Vida (colecciones curadas) ════════ */
@@ -3608,6 +3671,51 @@
                     { libro: 'Salmos',      cap: 147, hint: 'Sana a los quebrantados de corazón' },
                 ],
             },
+            { id:'gratitud', titulo:'Para dar Gracias', subtitulo:'Cuenta de nuevo sus bendiciones', cover:'/covers/col-gratitud.jpg', tracks:[
+                { libro:'Salmos', cap:100, hint:'Servid a Jehová con alegría' },
+                { libro:'Salmos', cap:103, hint:'Bendice, alma mía, a Jehová' },
+                { libro:'Salmos', cap:136, hint:'Para siempre es su misericordia' },
+                { libro:'Salmos', cap:138, hint:'Te alabaré con todo mi corazón' },
+                { libro:'Filipenses', cap:4, hint:'Con acción de gracias' },
+                { libro:'Colosenses', cap:3, hint:'Y sed agradecidos' },
+                { libro:'1 Tesalonicenses', cap:5, hint:'Dad gracias en todo' },
+            ]},
+            { id:'esperanza', titulo:'Para la Esperanza', subtitulo:'Levanta los ojos al que viene', cover:'/covers/col-esperanza.jpg', tracks:[
+                { libro:'Isaias', cap:40, hint:'Tendrán nuevas fuerzas' },
+                { libro:'Romanos', cap:8, hint:'Nada nos separará de su amor' },
+                { libro:'Lamentaciones', cap:3, hint:'Nuevas son cada mañana' },
+                { libro:'Salmos', cap:42, hint:'Espera en Dios' },
+                { libro:'Jeremias', cap:29, hint:'Pensamientos de paz' },
+                { libro:'Hebreos', cap:11, hint:'La certeza de lo que se espera' },
+                { libro:'Apocalipsis', cap:21, hint:'Enjugará toda lágrima' },
+            ]},
+            { id:'confianza', titulo:'Para Confiar', subtitulo:'Descansa en sus manos', cover:'/covers/col-confianza.jpg', tracks:[
+                { libro:'Proverbios', cap:3, hint:'Fíate de Jehová de todo tu corazón' },
+                { libro:'Salmos', cap:27, hint:'Jehová es mi luz y mi salvación' },
+                { libro:'Salmos', cap:37, hint:'Encomienda a Jehová tu camino' },
+                { libro:'Salmos', cap:91, hint:'Al abrigo del Altísimo' },
+                { libro:'Isaias', cap:41, hint:'No temas, yo estoy contigo' },
+                { libro:'Josue', cap:1, hint:'Esfuérzate y sé valiente' },
+                { libro:'Mateo', cap:6, hint:'Buscad primeramente su reino' },
+            ]},
+            { id:'perdon', titulo:'Para el Perdón', subtitulo:'Lavado y restaurado', cover:'/covers/col-perdon.jpg', tracks:[
+                { libro:'Salmos', cap:32, hint:'Bienaventurado el perdonado' },
+                { libro:'Salmos', cap:51, hint:'Crea en mí un corazón limpio' },
+                { libro:'Salmos', cap:103, hint:'No conforme a nuestras iniquidades' },
+                { libro:'Isaias', cap:1, hint:'Como la nieve serán emblanquecidos' },
+                { libro:'Lucas', cap:15, hint:'Se había perdido, y es hallado' },
+                { libro:'Efesios', cap:1, hint:'El perdón de pecados' },
+                { libro:'1 Juan', cap:1, hint:'Fiel y justo para perdonar' },
+            ]},
+            { id:'amor', titulo:'El Amor de Dios', subtitulo:'Cuánto te ama el Padre', cover:'/covers/col-amor.jpg', tracks:[
+                { libro:'Juan', cap:3, hint:'De tal manera amó Dios' },
+                { libro:'Romanos', cap:8, hint:'Más que vencedores' },
+                { libro:'1 Juan', cap:4, hint:'Dios es amor' },
+                { libro:'Efesios', cap:3, hint:'El amor que excede todo conocimiento' },
+                { libro:'1 Corintios', cap:13, hint:'El amor es sufrido, es benigno' },
+                { libro:'Salmos', cap:136, hint:'Para siempre es su misericordia' },
+                { libro:'Lucas', cap:15, hint:'El padre que corrió' },
+            ]},
         ];
 
         const overlay    = document.getElementById('pasajesOverlay');
@@ -3774,7 +3882,11 @@
             pAudio.pause();
         }
 
-        return { open, close, back, toggle, prev, next, seek };
+        return {
+            open, close, back, toggle, prev, next, seek,
+            collections: function () { return COLLECTIONS; },
+            openAt: function (i) { open(); openCol(i); },
+        };
     })();
 
     window.Pasajes = Pasajes;
