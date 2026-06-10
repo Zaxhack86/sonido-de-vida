@@ -933,10 +933,8 @@
         /* Sello premium en la esquina de las tarjetas de podcast. */
         .ex-card-lock{position:absolute;top:.5rem;left:.5rem;z-index:2;font-family:'Inter',sans-serif;font-size:.58rem;font-weight:700;color:var(--gold-light);background:rgba(15,12,22,.66);border:1px solid rgba(232,182,90,.45);padding:.14rem .44rem;border-radius:999px;backdrop-filter:blur(4px)}
 
-        /* ─── Tarjeta de devocional: portada al óleo (texto horneado), solo imagen ─── */
-        .ex-card-devo .ex-card-cover{background-size:cover;background-position:center}
-        .ex-card-devo .ex-card-cover::after{background:linear-gradient(180deg,transparent 55%,rgba(8,5,14,.45))}
-        .ex-card-read{position:absolute;bottom:.55rem;right:.6rem;z-index:2;font-family:'Inter',sans-serif;font-size:.62rem;font-weight:700;color:#15102a;background:rgba(255,255,255,.92);padding:.2rem .56rem;border-radius:999px;opacity:0;transform:translateY(4px);transition:opacity .2s,transform .2s}
+        /* ─── Tarjeta de devocional: portada al óleo limpia + título HTML (como Pasajes) ─── */
+        .ex-card-read{position:absolute;top:.5rem;right:.5rem;z-index:2;font-family:'Inter',sans-serif;font-size:.62rem;font-weight:700;color:#15102a;background:rgba(255,255,255,.92);padding:.2rem .56rem;border-radius:999px;opacity:0;transform:translateY(-4px);transition:opacity .2s,transform .2s}
         .ex-card-devo:hover .ex-card-read{opacity:1;transform:translateY(0)}
 
         /* ─── Modo Enfoque: diapositivas tipo "captura de pantalla" (carrusel) ─── */
@@ -1258,7 +1256,7 @@
         <div class="footer-content">
             <div class="footer-logo">✝ Sonido de Vida</div>
             <p class="footer-text">"Lámpara es a mis pies tu palabra, y lumbrera a mi camino." — Salmo 119:105</p>
-            <div class="footer-links"><a href="#features">Características</a><a href="#listen">Escuchar</a><a href="#random">Aleatorio</a><a href="/devocionales">Devocionales</a><a href="#" onclick="openShareModal();return false;">Compartir / QR</a><a href="/terminos_condiciones">Términos y Condiciones</a><a href="/privacidad">Política de Privacidad</a><a href="https://donate.stripe.com/28E6oG2C29yneiJ5k33F600" target="_blank" rel="noopener" style="color:var(--gold-light)">♡ Donar</a></div>
+            <div class="footer-links"><a href="#" onclick="showTab('explorar');return false;">Explorar</a><a href="#" onclick="showTab('biblia');return false;">Escuchar</a><a href="/devocionales">Devocionales</a><a href="#" onclick="openShareModal();return false;">Compartir / QR</a><a href="/terminos_condiciones">Términos y Condiciones</a><a href="/privacidad">Política de Privacidad</a><a href="https://donate.stripe.com/28E6oG2C29yneiJ5k33F600" target="_blank" rel="noopener" style="color:var(--gold-light)">♡ Donar</a></div>
             <div class="footer-divider"></div>
             <p class="footer-bottom">© 2026 Sonido de Vida · sonidodevida.com · La Palabra de Dios, libre para todos.</p>
         </div>
@@ -3528,16 +3526,16 @@
         // sin PDF (solo audio). Para publicar: subir audio a R2 privado,
         // registrar en content_items (D1) y añadir aquí { title, ref, contentId }.
         const EPISODES = [
-            { title:'En el principio era el Verbo',            ref:'Juan 1',       dur:'7 min', contentId:69, image:'covers/01-juan-1.jpg?v=3',          cover:'linear-gradient(150deg,#1b2c50,#0a1326 58%,#05070f)' },
-            { title:'Lo que David sabía de las ovejas',        ref:'Salmo 23',     dur:'7 min', contentId:70, image:'covers/02-salmo-23.jpg?v=3',        cover:'linear-gradient(150deg,#1f3d2e,#10241b 58%,#060f0a)' },
-            { title:'La palabra que Jesús casi inventó',       ref:'Mateo 6',      dur:'7 min', contentId:71, image:'covers/03-padre-nuestro.jpg?v=3',   cover:'linear-gradient(150deg,#3a2a18,#1d160c 58%,#0a0805)' },
-            { title:'Laodicea y el agua tibia',                ref:'Apocalipsis 3',dur:'7 min', contentId:72, image:'covers/04-laodicea.jpg?v=3',        cover:'linear-gradient(150deg,#173f47,#0c2329 58%,#051013)' },
-            { title:'El padre que corrió',                     ref:'Lucas 15',     dur:'8 min', contentId:73, image:'covers/05-hijo-prodigo.jpg?v=3',    cover:'linear-gradient(150deg,#5a2f1c,#2c1610 58%,#0f0805)' },
-            { title:'Jonás no se trata del pez',               ref:'Jonás',        dur:'8 min', contentId:74, image:'covers/06-jonas.jpg?v=3',           cover:'linear-gradient(150deg,#16323f,#0b1c25 58%,#050d11)' },
-            { title:'El camino de sangre',                     ref:'Lucas 10',     dur:'9 min', contentId:75, image:'covers/07-buen-samaritano.jpg?v=3', cover:'linear-gradient(150deg,#4a3a1e,#241c10 58%,#0d0a05)' },
-            { title:'El secreto escrito en una cárcel',        ref:'Filipenses 4', dur:'8 min', contentId:76, image:'covers/08-filipenses-4.jpg?v=3',    cover:'linear-gradient(150deg,#2a2540,#161325 58%,#080610)' },
-            { title:'Esperar es trenzar',                      ref:'Isaías 40',    dur:'8 min', contentId:77, image:'covers/09-isaias-40.jpg?v=3',       cover:'linear-gradient(150deg,#1d3550,#0f2030 58%,#060d14)' },
-            { title:'La cita de las doce del mediodía',        ref:'Juan 4',       dur:'10 min',contentId:78, image:'covers/10-mujer-pozo.jpg?v=3',      cover:'linear-gradient(150deg,#3f2d1a,#231a0f 58%,#0d0905)' },
+            { title:'En el principio era el Verbo',            ref:'Juan 1',       dur:'7 min', contentId:69, image:'covers/01-juan-1.jpg?v=4',          cover:'linear-gradient(150deg,#1b2c50,#0a1326 58%,#05070f)' },
+            { title:'Lo que David sabía de las ovejas',        ref:'Salmo 23',     dur:'7 min', contentId:70, image:'covers/02-salmo-23.jpg?v=4',        cover:'linear-gradient(150deg,#1f3d2e,#10241b 58%,#060f0a)' },
+            { title:'La palabra que Jesús casi inventó',       ref:'Mateo 6',      dur:'7 min', contentId:71, image:'covers/03-padre-nuestro.jpg?v=4',   cover:'linear-gradient(150deg,#3a2a18,#1d160c 58%,#0a0805)' },
+            { title:'Laodicea y el agua tibia',                ref:'Apocalipsis 3',dur:'7 min', contentId:72, image:'covers/04-laodicea.jpg?v=4',        cover:'linear-gradient(150deg,#173f47,#0c2329 58%,#051013)' },
+            { title:'El padre que corrió',                     ref:'Lucas 15',     dur:'8 min', contentId:73, image:'covers/05-hijo-prodigo.jpg?v=4',    cover:'linear-gradient(150deg,#5a2f1c,#2c1610 58%,#0f0805)' },
+            { title:'Jonás no se trata del pez',               ref:'Jonás',        dur:'8 min', contentId:74, image:'covers/06-jonas.jpg?v=4',           cover:'linear-gradient(150deg,#16323f,#0b1c25 58%,#050d11)' },
+            { title:'El camino de sangre',                     ref:'Lucas 10',     dur:'9 min', contentId:75, image:'covers/07-buen-samaritano.jpg?v=4', cover:'linear-gradient(150deg,#4a3a1e,#241c10 58%,#0d0a05)' },
+            { title:'El secreto escrito en una cárcel',        ref:'Filipenses 4', dur:'8 min', contentId:76, image:'covers/08-filipenses-4.jpg?v=4',    cover:'linear-gradient(150deg,#2a2540,#161325 58%,#080610)' },
+            { title:'Esperar es trenzar',                      ref:'Isaías 40',    dur:'8 min', contentId:77, image:'covers/09-isaias-40.jpg?v=4',       cover:'linear-gradient(150deg,#1d3550,#0f2030 58%,#060d14)' },
+            { title:'La cita de las doce del mediodía',        ref:'Juan 4',       dur:'10 min',contentId:78, image:'covers/10-mujer-pozo.jpg?v=4',      cover:'linear-gradient(150deg,#3f2d1a,#231a0f 58%,#0d0905)' },
         ];
         // Índice del episodio destacado (tarjeta grande arriba).
         const FEATURED = 0;
@@ -3806,37 +3804,41 @@
         function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]);}); }
         // Tarjeta uniforme: imagen 3/4 con la info ENCIMA (blanco sobre foto oscura
         // = legible sobre el fondo crema del tema). Mismo molde para episodios y colecciones.
-        // La portada del podcast ya trae ref + título horneados (estilo editorial),
-        // así que la tarjeta NO superpone texto: solo sello premium, duración y play.
+        // Portada limpia (sin texto horneado) + título HTML blanco encima, igual que
+        // Pasajes: el blanco sobre la foto oscura se lee siempre, sin esfuerzo.
         function cardEp(i, ep){
             return '<div class="ex-card" role="button" tabindex="0" data-ex="ep:'+i+'">'+
                 '<div class="ex-card-cover" style="background-image:url(\''+esc(ep.image||'')+'\')">'+
                     '<span class="ex-card-lock">✨ Premium</span>'+
                     (ep.dur?'<span class="ex-card-dur">'+esc(ep.dur)+'</span>':'')+
                     '<span class="ex-card-play">▶</span>'+
+                    '<div class="ex-card-meta"><p class="ex-card-ref">'+esc((ep.ref||'').toUpperCase())+'</p>'+
+                    '<p class="ex-card-title">'+esc(ep.title)+'</p></div>'+
                 '</div></div>';
         }
         // Devocionales destacados para el riel de Explorar. Portada tipográfica
         // (degradado de marca, igual que la página /devocionales) → uniforme con
         // el resto de tarjetas sin depender de fotos. Enlaza a /devocional/{slug}.
         const DEVOS = [
-            { slug:'salmos-23',      title:'El Señor es mi pastor',      grad:'linear-gradient(155deg,#1f3d2e,#10241b 60%,#060f0a)' },
-            { slug:'isaias-40-31',   title:'Nuevas fuerzas',             grad:'linear-gradient(155deg,#1d3550,#0f2030 60%,#060d14)' },
-            { slug:'jeremias-29-11', title:'Pensamientos de paz',        grad:'linear-gradient(155deg,#2a2540,#161325 60%,#080610)' },
-            { slug:'filipenses-4-13',title:'Todo lo puedo en Cristo',    grad:'linear-gradient(155deg,#3a2a18,#1d160c 60%,#0a0805)' },
-            { slug:'salmos-91',      title:'Al abrigo del Altísimo',     grad:'linear-gradient(155deg,#173f47,#0c2329 60%,#051013)' },
-            { slug:'romanos-8-28',   title:'Todo ayuda a bien',          grad:'linear-gradient(155deg,#5a2f1c,#2c1610 60%,#0f0805)' },
-            { slug:'proverbios-3-5', title:'Confía con todo el corazón', grad:'linear-gradient(155deg,#1b2c50,#0a1326 60%,#05070f)' },
-            { slug:'juan-3-16',      title:'De tal manera amó Dios',     grad:'linear-gradient(155deg,#3f2d1a,#231a0f 60%,#0d0905)' },
-            { slug:'mateo-6-33',     title:'Busca primero el reino',     grad:'linear-gradient(155deg,#16323f,#0b1c25 60%,#050d11)' },
-            { slug:'genesis-1-1',    title:'En el principio',            grad:'linear-gradient(155deg,#1a1a3e,#2d1b69 60%,#0d0d1a)' },
+            { slug:'salmos-23',      ref:'Salmos 23',      title:'El Señor es mi pastor',      grad:'linear-gradient(155deg,#1f3d2e,#10241b 60%,#060f0a)' },
+            { slug:'isaias-40-31',   ref:'Isaías 40:31',   title:'Nuevas fuerzas',             grad:'linear-gradient(155deg,#1d3550,#0f2030 60%,#060d14)' },
+            { slug:'jeremias-29-11', ref:'Jeremías 29:11', title:'Pensamientos de paz',        grad:'linear-gradient(155deg,#2a2540,#161325 60%,#080610)' },
+            { slug:'filipenses-4-13',ref:'Filipenses 4:13',title:'Todo lo puedo en Cristo',    grad:'linear-gradient(155deg,#3a2a18,#1d160c 60%,#0a0805)' },
+            { slug:'salmos-91',      ref:'Salmos 91',      title:'Al abrigo del Altísimo',     grad:'linear-gradient(155deg,#173f47,#0c2329 60%,#051013)' },
+            { slug:'romanos-8-28',   ref:'Romanos 8:28',   title:'Todo ayuda a bien',          grad:'linear-gradient(155deg,#5a2f1c,#2c1610 60%,#0f0805)' },
+            { slug:'proverbios-3-5', ref:'Proverbios 3:5', title:'Confía con todo el corazón', grad:'linear-gradient(155deg,#1b2c50,#0a1326 60%,#05070f)' },
+            { slug:'juan-3-16',      ref:'Juan 3:16',      title:'De tal manera amó Dios',     grad:'linear-gradient(155deg,#3f2d1a,#231a0f 60%,#0d0905)' },
+            { slug:'mateo-6-33',     ref:'Mateo 6:33',     title:'Busca primero el reino',     grad:'linear-gradient(155deg,#16323f,#0b1c25 60%,#050d11)' },
+            { slug:'genesis-1-1',    ref:'Génesis 1:1',    title:'En el principio',            grad:'linear-gradient(155deg,#1a1a3e,#2d1b69 60%,#0d0d1a)' },
         ];
-        // Portada al óleo con texto editorial horneado (covers/devo-{slug}.jpg, pipeline
-        // Vertex). El degradado va de respaldo mientras carga / si falta la imagen.
+        // Portada al óleo limpia (covers/devo-{slug}.jpg) + ref y título HTML blanco
+        // encima, igual que Pasajes. El degradado va de respaldo mientras carga.
         function cardDevo(d){
             return '<a class="ex-card ex-card-devo" href="/devocional/'+esc(d.slug)+'" aria-label="Devocional: '+esc(d.title)+'">'+
-                '<div class="ex-card-cover" style="background-image:url(\'covers/devo-'+esc(d.slug)+'.jpg?v=2\'),'+d.grad+'">'+
+                '<div class="ex-card-cover" style="background-image:url(\'covers/devo-'+esc(d.slug)+'.jpg?v=3\'),'+d.grad+'">'+
                     '<span class="ex-card-read">Leer ›</span>'+
+                    '<div class="ex-card-meta"><p class="ex-card-ref">'+esc((d.ref||'').toUpperCase())+'</p>'+
+                    '<p class="ex-card-title">'+esc(d.title)+'</p></div>'+
                 '</div></a>';
         }
         function cardCol(i, col){
