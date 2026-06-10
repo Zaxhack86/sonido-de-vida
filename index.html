@@ -999,6 +999,11 @@
         </div>
 
         <div class="ex-tier reveal">
+            <div class="ex-tier-head"><div class="ex-th-titles"><h3>Música para tu día</h3><span class="ex-th-sub">Puro sonido para cada momento · sin voz</span></div></div>
+            <div class="ex-rail" id="exRailMusica" data-auto></div>
+        </div>
+
+        <div class="ex-tier reveal">
             <div class="ex-tier-head"><div class="ex-th-titles"><h3>Devocionales</h3><span class="ex-th-sub">Reflexiones con raíz bíblica</span></div><button class="ex-seeall" onclick="location.href='/devocionales'">Ver todo ›</button></div>
             <div class="ex-rail" id="exRailDevos" data-auto></div>
         </div>
@@ -3903,6 +3908,48 @@
     })();
     window.Podcast = Podcast;
 
+    /* ════════ Música para tu día (puro sonido por actividad, SIN voz) ════════
+       Playlists instrumentales pensadas para acompañar momentos (ejercicio,
+       concentración, oración, dormir…). Mixto: unas gratis (gancho) y otras
+       premium (reúsan el popup premium del Podcast). FASE 1: andamiaje + estado
+       "Próximamente" (igual que arrancó el Podcast). FASE 2 (cuando haya MP3):
+       reproductor con bucle + mezcla suave + fade-out de sueño + portón premium.
+       Para activar una playlist: subir las pistas a R2 y poner sus URLs/contentId
+       en `tracks` (gratis → URL pública del worker de audio; premium → contentId
+       del portero /api/content/:id). Mientras `tracks` esté vacío, sale "Próximamente".
+       ═══════════════════════════════════════════════════════════════════════ */
+    const Musica = (function () {
+        // free:true  → la pista se sirve por URL pública (gancho, sin login).
+        // free:false → premium: se sirve por el portero /api/content/:id.
+        const PLAYLISTS = [
+            { id:'energia',   nombre:'Energía',       sub:'Para moverte y entrenar',   icon:'🏃', free:true,  cover:'linear-gradient(150deg,#5a2f1c,#2c1610 58%,#0f0805)', tracks:[] },
+            { id:'concentra', nombre:'Concentración', sub:'Para estudiar y enfocarte',  icon:'🎧', free:true,  cover:'linear-gradient(150deg,#1d3550,#0f2030 58%,#060d14)', tracks:[] },
+            { id:'oracion',   nombre:'Oración',       sub:'Instrumental para orar',     icon:'🙏', free:false, cover:'linear-gradient(150deg,#2a2540,#161325 58%,#080610)', tracks:[] },
+            { id:'dormir',    nombre:'Dormir',        sub:'Suave para descansar',       icon:'😴', free:false, cover:'linear-gradient(150deg,#16323f,#0b1c25 58%,#050d11)', tracks:[] },
+            { id:'calma',     nombre:'Calma',         sub:'Para respirar y reposar',    icon:'☕', free:false, cover:'linear-gradient(150deg,#1f3d2e,#10241b 58%,#060f0a)', tracks:[] },
+            { id:'camino',    nombre:'En el camino',  sub:'Para manejar o viajar',      icon:'🚗', free:false, cover:'linear-gradient(150deg,#3a2a18,#1d160c 58%,#0a0805)', tracks:[] },
+        ];
+
+        function openPlaylist(i) {
+            const pl = PLAYLISTS[i];
+            if (!pl) return;
+            // FASE 1: sin pistas todavía → "Próximamente" (como el Podcast).
+            if (!pl.tracks || !pl.tracks.length) {
+                if (window.showToast) showToast('🎶 Próximamente — estamos preparando esta música');
+                return;
+            }
+            // FASE 2 (pendiente): abrir el reproductor de música.
+            // if (!pl.free && !(window.SDV_Auth && SDV_Auth.user && SDV_Auth.premium)) { Podcast.openPremium(); return; }
+            // … reproductor con bucle + fade-out de sueño …
+        }
+
+        return {
+            playlists: function () { return PLAYLISTS; },
+            openPlaylist,
+        };
+    })();
+    window.Musica = Musica;
+
     /* ════════ Explorar: feed por escalones (reusa Podcast + Pasajes) ════════ */
     const Explore = (function () {
         function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]);}); }
@@ -3953,6 +4000,18 @@
                     '<p class="ex-card-title">'+esc(col.titulo)+'</p></div>'+
                 '</div></div>';
         }
+        // Música por actividad (puro sonido). Portada por degradado (aún sin foto);
+        // badge Premium si no es gratis. El ▶ es 🎶 mientras no haya pistas.
+        function cardMix(i, pl){
+            var hasAudio = !!(pl.tracks && pl.tracks.length);
+            return '<div class="ex-card" role="button" tabindex="0" data-mix="'+i+'">'+
+                '<div class="ex-card-cover" style="background:'+esc(pl.cover)+'">'+
+                    (pl.free ? '' : '<span class="ex-card-lock">✨ Premium</span>')+
+                    '<span class="ex-card-play">'+(hasAudio?'▶':'🎶')+'</span>'+
+                    '<div class="ex-card-meta"><p class="ex-card-ref">'+esc(pl.icon+' '+(pl.free?'GRATIS':'PREMIUM'))+'</p>'+
+                    '<p class="ex-card-title">'+esc(pl.nombre)+'</p></div>'+
+                '</div></div>';
+        }
         function render(){
             var rp=document.getElementById('exRailPodcast');
             var rc=document.getElementById('exRailPasajes');
@@ -3964,10 +4023,19 @@
             }
             var rd=document.getElementById('exRailDevos');
             if(rd){ rd.innerHTML = DEVOS.map(cardDevo).join(''); }
+            var rm=document.getElementById('exRailMusica');
+            if(rm && window.Musica && Musica.playlists){
+                rm.innerHTML = Musica.playlists().map(function(pl,i){return cardMix(i,pl);}).join('');
+            }
             document.querySelectorAll('#exRailPodcast .ex-card, #exRailPasajes .ex-card').forEach(function(el){
                 var go=function(){ var p=el.getAttribute('data-ex').split(':'); var i=+p[1];
                     if(p[0]==='ep' && window.Podcast) Podcast.playEpisode(i);
                     else if(p[0]==='col' && window.Pasajes) Pasajes.openAt(i); };
+                el.addEventListener('click', go);
+                el.addEventListener('keydown', function(e){ if(e.key==='Enter') go(); });
+            });
+            document.querySelectorAll('#exRailMusica .ex-card').forEach(function(el){
+                var go=function(){ if(window.Musica) Musica.openPlaylist(+el.getAttribute('data-mix')); };
                 el.addEventListener('click', go);
                 el.addEventListener('keydown', function(e){ if(e.key==='Enter') go(); });
             });
