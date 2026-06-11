@@ -2541,6 +2541,12 @@
 
         let vozVol = 1, musicaVol = 0.55;
         let currentAmbient = null, timerId = null, loading = false;
+        // Fundido de sueño: multiplicador maestro (1 = normal, 0 = silencio) que
+        // baja en los últimos minutos del temporizador. Va dentro de musicTarget()
+        // y applyVolumes() para que los crossfades de rotación respeten el fundido
+        // en vez de pelearse con él. SLEEP_FADE_MS = duración del fundido final.
+        let sleepGain = 1, sleepFadeTimer = null, sleepFadeInt = null;
+        const SLEEP_FADE_MS = 180000;   // 3 min
         // Motor de ambiente: elemento activo + en espera, lista barajada de variantes,
         // caché de blobs (para no re-descargar al rotar) y guardas de fundido.
         let ambCur = ambientEl, ambNext = ambientElB;
@@ -2558,10 +2564,10 @@
         // "no hace nada" hasta el final. Curva de audio (taper) para que el
         // deslizador cambie el volumen de forma pareja en todo su recorrido.
         const taper = x => x * x;
-        const musicTarget = () => taper(musicaVol);
+        const musicTarget = () => taper(musicaVol) * sleepGain;
         let rotating = false;
         function applyVolumes() {
-            audioA.volume = taper(vozVol); audioB.volume = taper(vozVol);
+            audioA.volume = taper(vozVol) * sleepGain; audioB.volume = taper(vozVol) * sleepGain;
             if (!crossing) ambCur.volume = musicTarget();   // en pleno fundido se controla a mano
         }
         function shuffle(arr) {
@@ -2809,17 +2815,43 @@
             showToast('🎧 Voz SBLL 2026 activada · suena mejor en cámara lenta');
         }
 
+        // Cancela cualquier temporizador/fundido de sueño en curso y restaura el
+        // volumen pleno (sleepGain = 1). Idempotente: seguro llamarlo siempre.
+        function _cancelSleep() {
+            if (timerId)         { clearTimeout(timerId); timerId = null; }
+            if (sleepFadeTimer)  { clearTimeout(sleepFadeTimer); sleepFadeTimer = null; }
+            if (sleepFadeInt)    { clearInterval(sleepFadeInt); sleepFadeInt = null; }
+            sleepGain = 1; applyVolumes();
+        }
+
         function setTimer(min, btn) {
-            if (timerId) { clearTimeout(timerId); timerId = null; }
+            _cancelSleep();
             document.querySelectorAll('#focusTimerOpts button').forEach(b => b.classList.remove('active'));
             if (btn) btn.classList.add('active');
-            if (min > 0) {
-                timerId = setTimeout(() => {
-                    try { audio.pause(); } catch (e) {}
-                    stopAmbient();
-                    showToast('⏱️ Temporizador: descanso iniciado');
-                }, min * 60000);
-            }
+            if (min <= 0) return;
+            const total  = min * 60000;
+            const fadeMs = Math.min(SLEEP_FADE_MS, total * 0.5);   // no fundir más de la mitad
+            // Espera hasta los últimos `fadeMs` y entonces baja el sonido a 0 sin
+            // cortes. Usa setInterval con reloj real (como fade()): sigue corriendo
+            // con la pantalla bloqueada, así el fundido SIEMPRE termina.
+            timerId = setTimeout(() => {
+                timerId = null;
+                const t0 = performance.now();
+                sleepFadeInt = setInterval(() => {
+                    const k = Math.min(1, (performance.now() - t0) / fadeMs);
+                    sleepGain = 1 - k;
+                    applyVolumes();
+                    if (k >= 1) {
+                        clearInterval(sleepFadeInt); sleepFadeInt = null;
+                        try { audio.pause(); } catch (e) {}
+                        stopAmbient();
+                        sleepGain = 1;   // restaura para la próxima reproducción
+                        document.querySelectorAll('#focusTimerOpts button').forEach(b => b.classList.remove('active'));
+                        document.querySelector('#focusTimerOpts button[data-min="0"]')?.classList.add('active');
+                        showToast('😴 Buenas noches — la reproducción se detuvo suavemente');
+                    }
+                }, 200);
+            }, total - fadeMs);
         }
 
         function onNarration(playing) {
@@ -3019,7 +3051,7 @@
             }
             focusSubMode = null;
             stopAmbient();
-            if (timerId) { clearTimeout(timerId); timerId = null; }
+            _cancelSleep();
             vozVol = 1; audioA.volume = 1; audioB.volume = 1;
             setSpeed(1, document.querySelector('#focusSpeedOpts button[data-rate="1"]'));
             document.getElementById('playerFocusBtn')?.classList.remove('active');
