@@ -3749,7 +3749,10 @@
                 setSession(ep);
                 return;
             }
-            // Episodio nuevo → resetear UI
+            // Episodio nuevo → cortar el audio del anterior ANTES de cargar el
+            // nuevo (si no, el viejo sigue sonando durante el await de la red, y
+            // hasta detrás del popup premium) y resetear la UI.
+            try { pAudio.pause(); } catch (e) {}
             document.getElementById('ppSeekFill').style.width = '0%';
             document.getElementById('ppCur').textContent = '0:00';
             document.getElementById('ppDur').textContent = '--:--';
@@ -3765,6 +3768,8 @@
             const ep = EPISODES[i];
             if (!ep || !ep.contentId) return;
             if (!isPremiumUser()) { openPremium(); return; }
+            // Cortar el audio del episodio anterior antes de cargar el nuevo.
+            try { pAudio.pause(); } catch (e) {}
             try {
                 const url = await SDV_Auth.loadContentBlob(ep.contentId);
                 if (curIdx !== i) return;   // el usuario cambió mientras cargaba
@@ -3774,7 +3779,14 @@
                 pAudio.play().catch(() => {});
                 setSession(ep);
             } catch (e) {
-                openPremium();              // 403 del portero → es premium
+                // SOLO un 403 del portero significa "no eres premium". Cualquier
+                // otro fallo (red, 404, token refrescándose) NO debe mostrar el
+                // portón a quien SÍ es premium: sería el bug del popup fantasma.
+                if (/\b403\b/.test(String(e && e.message))) {
+                    openPremium();
+                } else if (window.showToast) {
+                    showToast('No se pudo cargar el episodio. Revisa tu conexión.');
+                }
             }
         }
 
@@ -4346,8 +4358,38 @@
             playerHint.textContent  = t.hint;
             playerThumb.src         = col.cover;
             playerBar.classList.add('show');
+            // No solapar con la Biblia ni con el Podcast.
+            try { document.getElementById('mainAudio').pause(); } catch (e) {}
+            try { document.getElementById('mainAudioB').pause(); } catch (e) {}
+            try { document.getElementById('podcastAudio').pause(); } catch (e) {}
             pAudio.src = audioUrl(t.libro, t.cap, true);
             pAudio.play().catch(function () {});
+            setSession(col, t);
+        }
+
+        // MediaSession: imprescindible para que la pantalla bloqueada muestre
+        // controles y, sobre todo, para que el navegador NO suspenda la página
+        // en segundo plano. Sin esto, el evento 'ended' no llega a disparar el
+        // play() de la siguiente pista y la lista "no pasa" con la pantalla
+        // apagada. Cada pasaje es un archivo suelto (capítulos no contiguos), así
+        // que no se puede usar el stream continuo de la Biblia: la sesión de
+        // medios es lo que mantiene viva la reproducción encadenada.
+        function setSession(col, t) {
+            if (!('mediaSession' in navigator)) return;
+            try {
+                navigator.mediaSession.metadata = new MediaMetadata({
+                    title:  t.libro + ' ' + t.cap,
+                    artist: 'Sonido de Vida · ' + col.titulo,
+                    album:  col.titulo,
+                    artwork: [{ src: col.cover, sizes: '512x512', type: 'image/jpeg' }],
+                });
+                navigator.mediaSession.setActionHandler('play',          function () { pAudio.play().catch(function(){}); });
+                navigator.mediaSession.setActionHandler('pause',         function () { pAudio.pause(); });
+                navigator.mediaSession.setActionHandler('previoustrack', function () { prev(); });
+                navigator.mediaSession.setActionHandler('nexttrack',     function () { next(); });
+                navigator.mediaSession.setActionHandler('seekbackward',  function () { pAudio.currentTime = Math.max(0, pAudio.currentTime - 15); });
+                navigator.mediaSession.setActionHandler('seekforward',   function () { pAudio.currentTime = Math.min(pAudio.duration || 0, pAudio.currentTime + 15); });
+            } catch (e) {}
         }
 
         function setPlaying(v) {
@@ -4382,8 +4424,8 @@
             pAudio.currentTime = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)) * pAudio.duration;
         }
 
-        pAudio.addEventListener('play',       function () { setPlaying(true); });
-        pAudio.addEventListener('pause',      function () { setPlaying(false); });
+        pAudio.addEventListener('play',       function () { setPlaying(true);  if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing'; });
+        pAudio.addEventListener('pause',      function () { setPlaying(false); if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused'; });
         pAudio.addEventListener('ended',      function () { next(); });
         pAudio.addEventListener('timeupdate', function () {
             if (pAudio.duration) playerFill.style.width = (pAudio.currentTime / pAudio.duration * 100) + '%';
