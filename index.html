@@ -4287,9 +4287,13 @@
         const pauseIco   = document.getElementById('pjPauseIco');
         const pAudio     = document.getElementById('pasajesAudio');
 
-        let activeCol   = -1;
-        let activeTrack = -1;
-        let isPlaying   = false;
+        let activeCol     = -1;
+        let activeTrack   = -1;
+        let isPlaying     = false;
+        let prefetchUrl   = null;   // URL de la siguiente pista ya precargada
+        let prefetchedFor = -1;     // índice de pista para el que ya se precargó
+
+        pAudio.preload = 'auto';    // bufferiza apenas se asigna el src
 
         // ── Grid de colecciones ──────────────────────────────────────────────
         function renderCols() {
@@ -4348,6 +4352,7 @@
             const col = COLLECTIONS[activeCol];
             if (!col) return;
             activeTrack = j;
+            prefetchedFor = -1;     // nueva pista → habilita precargar la siguiente
             const t = col.tracks[j];
             document.querySelectorAll('.pj-trk-row').forEach(function (r, idx) {
                 r.classList.toggle('playing', idx === j);
@@ -4392,6 +4397,22 @@
             } catch (e) {}
         }
 
+        // Precarga la siguiente pista en la caché del navegador. Así, cuando
+        // termina la actual (con la pantalla bloqueada), el play() del siguiente
+        // pasaje arranca desde caché SIN esperar a la red — que es justo lo que
+        // iOS suele cortar al tener la página en segundo plano. No reproduce: solo
+        // calienta la caché con un fetch del archivo del capítulo (es público).
+        function prefetchNext() {
+            const col = COLLECTIONS[activeCol];
+            if (!col) return;
+            const nj = activeTrack < col.tracks.length - 1 ? activeTrack + 1 : 0;
+            const t = col.tracks[nj];
+            const url = audioUrl(t.libro, t.cap, true);
+            if (url === prefetchUrl) return;   // ya precargada
+            prefetchUrl = url;
+            try { fetch(url).catch(function () {}); } catch (e) {}
+        }
+
         function setPlaying(v) {
             isPlaying = v;
             playIco.style.display  = v ? 'none' : '';
@@ -4429,6 +4450,12 @@
         pAudio.addEventListener('ended',      function () { next(); });
         pAudio.addEventListener('timeupdate', function () {
             if (pAudio.duration) playerFill.style.width = (pAudio.currentTime / pAudio.duration * 100) + '%';
+            // Una vez la pista actual lleva unos segundos sonando (ya bufferizada),
+            // precarga la siguiente para que el avance encadenado sea instantáneo.
+            if (prefetchedFor !== activeTrack && pAudio.currentTime > 5) {
+                prefetchedFor = activeTrack;
+                prefetchNext();
+            }
         });
 
         // ── Navegación ───────────────────────────────────────────────────────
