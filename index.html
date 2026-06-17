@@ -63,6 +63,7 @@
     <meta name="apple-mobile-web-app-title" content="Sonido de Vida">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Lora:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
     <style>
@@ -1727,7 +1728,7 @@
         <!-- Pantalla 2: lista de pistas -->
         <div class="pj-screen" id="pjScreenTrks">
             <div class="pj-trk-hero">
-                <img class="pj-trk-cover" id="pjTrkCover" src="" alt="">
+                <img class="pj-trk-cover" id="pjTrkCover" src="" alt="" loading="lazy" decoding="async">
                 <h3 class="pj-trk-name" id="pjTrkName"></h3>
                 <p class="pj-trk-sub" id="pjTrkSub"></p>
             </div>
@@ -1739,7 +1740,7 @@
                 <div class="pj-player-fill" id="pjPlayerFill"></div>
             </div>
             <div class="pj-player-row">
-                <img class="pj-player-thumb" id="pjPlayerThumb" src="" alt="">
+                <img class="pj-player-thumb" id="pjPlayerThumb" src="" alt="" loading="lazy" decoding="async">
                 <div class="pj-player-meta">
                     <p class="pj-player-ref" id="pjPlayerRef"></p>
                     <p class="pj-player-hint" id="pjPlayerHint"></p>
@@ -1761,12 +1762,16 @@
         <audio id="pasajesAudio"></audio>
     </div>
 
-    <script src="/bible.js"></script>
-    <script src="/bible_sbll.js"></script>
+    <!-- defer: estos scripts pesados (bible.js ~4MB, bible_sbll.js ~3.6MB) no bloquean
+         el parseo ni el primer pintado. Los scripts diferidos se ejecutan en orden
+         ANTES del evento DOMContentLoaded, así que window.BIBLE ya existe cuando el
+         handler de DOMContentLoaded lo necesita. Mejora PageSpeed (FCP/TTI). -->
+    <script defer src="/bible.js"></script>
+    <script defer src="/bible_sbll.js"></script>
     <!-- Cuenta de usuario (Firebase Auth). Inerte hasta poner config real en auth.js -->
-    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
-    <script src="/auth.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+    <script defer src="/auth.js"></script>
 
     <script>
     // ══════════════════════════════════════════════════════════════
@@ -4136,6 +4141,11 @@
         // (degradado de marca, igual que la página /devocionales) → uniforme con
         // el resto de tarjetas sin depender de fotos. Enlaza a /devocional/{slug}.
         const DEVOS = [
+            { slug:'lucas-15',       ref:'Lucas 15:20',    title:'El padre que corrió',        grad:'linear-gradient(155deg,#4a3a1a,#28200f 60%,#0f0c05)' },
+            { slug:'1-corintios-13', ref:'1 Corintios 13', title:'El amor que no sentimos',    grad:'linear-gradient(155deg,#46203a,#260f20 60%,#100610)' },
+            { slug:'josue-1-9',      ref:'Josué 1:9',      title:'Esfuérzate y sé valiente',   grad:'linear-gradient(155deg,#4a2418,#28140d 60%,#0f0705)' },
+            { slug:'mateo-11-28',    ref:'Mateo 11:28',    title:'Venid a mí, los cansados',   grad:'linear-gradient(155deg,#26331c,#141d0f 60%,#080d05)' },
+            { slug:'salmos-46-10',   ref:'Salmos 46:10',   title:'Estad quietos',              grad:'linear-gradient(155deg,#14384a,#0a2230 60%,#050f15)' },
             { slug:'hebreos-7',      ref:'Hebreos 7:3',    title:'Melquisedec, el más misterioso', grad:'linear-gradient(155deg,#3a2147,#201230 60%,#0c0612)' },
             { slug:'apocalipsis-3',  ref:'Apocalipsis 3',  title:'Ni frío ni caliente',        grad:'linear-gradient(155deg,#4a3320,#281a0f 60%,#0f0805)' },
             { slug:'juan-4',         ref:'Juan 4',         title:'La mujer junto al pozo',     grad:'linear-gradient(155deg,#15364a,#0b2030 60%,#050d14)' },
@@ -4145,6 +4155,7 @@
             { slug:'filipenses-4-13',ref:'Filipenses 4:13',title:'Todo lo puedo en Cristo',    grad:'linear-gradient(155deg,#3a2a18,#1d160c 60%,#0a0805)' },
             { slug:'salmos-91',      ref:'Salmos 91',      title:'Al abrigo del Altísimo',     grad:'linear-gradient(155deg,#173f47,#0c2329 60%,#051013)' },
             { slug:'romanos-8-28',   ref:'Romanos 8:28',   title:'Todo ayuda a bien',          grad:'linear-gradient(155deg,#5a2f1c,#2c1610 60%,#0f0805)' },
+            { slug:'romanos-8-1',    ref:'Romanos 8:1',    title:'Ninguna condenación',        grad:'linear-gradient(155deg,#3a1a1a,#241010 60%,#0d0505)' },
             { slug:'proverbios-3-5', ref:'Proverbios 3:5', title:'Confía con todo el corazón', grad:'linear-gradient(155deg,#1b2c50,#0a1326 60%,#05070f)' },
             { slug:'juan-3-16',      ref:'Juan 3:16',      title:'De tal manera amó Dios',     grad:'linear-gradient(155deg,#3f2d1a,#231a0f 60%,#0d0905)' },
             { slug:'mateo-6-33',     ref:'Mateo 6:33',     title:'Busca primero el reino',     grad:'linear-gradient(155deg,#16323f,#0b1c25 60%,#050d11)' },
