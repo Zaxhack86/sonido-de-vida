@@ -2721,9 +2721,20 @@
             { id:'meditacion', cat:'ambiente', label:'Reposo del Alma', emoji:'🕊️', ids:[52,51] },
             { id:'salmos-oceano', cat:'ambiente', label:'Salmos en Calma', emoji:'📜', ids:[12,32] },
             { id:'relajacion', cat:'ambiente', label:'Descanso', emoji:'🍃', ids:[63,64] },
+            { id:'salmos-reposo', cat:'salmos', label:'Salmos de Reposo', emoji:'📜', ids:[79,80,81,82] },
+            { id:'salmo-oracion', cat:'salmos', label:'Salmo en Oración', emoji:'🙏', ids:[83,84] },
+            { id:'salmo-luz', cat:'salmos', label:'Salmo de Luz', emoji:'✨', ids:[85,86] },
+            { id:'cancion-cuna', cat:'reposo', label:'Canción de Cuna', emoji:'🌙', ids:[87,88] },
+            { id:'flauta-serena', cat:'reposo', label:'Flauta Serena', emoji:'🎐', ids:[89,90] },
+            { id:'compas-agua', cat:'reposo', label:'Compás del Agua', emoji:'💧', ids:[91,92] },
+            { id:'incienso', cat:'reposo', label:'Incienso', emoji:'🕯️', ids:[93,94] },
+            { id:'incienso-sagrado', cat:'reposo', label:'Incienso Sagrado', emoji:'🪔', ids:[95,96] },
+            { id:'luz-oracion', cat:'reposo', label:'Luz de Oración', emoji:'💛', ids:[97,98] },
+            { id:'corazon-calma', cat:'reposo', label:'Corazón en Calma', emoji:'💗', ids:[99,100] },
+            { id:'corriente-seda', cat:'reposo', label:'Corriente de Seda', emoji:'🌊', ids:[101,102] },
         ];
-        const CAT_LABELS = { piano: '🎹 Piano', ambiente: '🙏 Adoración / Reposo' };
-        const CAT_ORDER  = ['piano', 'ambiente'];
+        const CAT_LABELS = { piano: '🎹 Piano', salmos: '📜 Salmos', reposo: '🕯️ Reposo Profundo', ambiente: '🙏 Adoración / Reposo' };
+        const CAT_ORDER  = ['piano', 'salmos', 'reposo', 'ambiente'];
 
         // Segundo elemento de audio para fundir entre variantes/ambientes sin silencio.
         const ambientElB = document.createElement('audio');
