@@ -5411,28 +5411,58 @@
     }
 
     /* ════════ Búsqueda en la Biblia ════════ */
+    // Quita tildes/acentos para comparación insensible: “fiate” == “fíate”, “jehova” == “Jehová”
+    function _sAccents(s) { return s.normalize('NFD').replace(/[̀-ͯ]/g, ''); }
+
     async function runSearch() {
         const input = document.getElementById('searchInput');
-        const box = document.getElementById('searchResults');
+        const box   = document.getElementById('searchResults');
         const q = (input.value || '').trim();
-        const ql = q.toLowerCase();
-        if (ql.length < 2) { box.innerHTML = '<div class="search-empty">Escribe al menos 2 letras para buscar.</div>'; return; }
-        // Lazy-load: asegurar el texto bíblico antes de buscar.
-        box.innerHTML = '<div class="search-empty">Cargando la Biblia…</div>';
+        if (q.length < 2) { box.innerHTML = '<div class=”search-empty”>Escribe al menos 2 letras para buscar.</div>'; return; }
+
+        box.innerHTML = '<div class=”search-empty”>Buscando…</div>';
         try { await ensureBible(); } catch (e) {}
         const bible = getActiveBible();
-        if (!bible) { box.innerHTML = '<div class="search-empty">No se pudo cargar el texto bíblico.</div>'; return; }
-        // Coincidencia por palabra completa (evita falsos positivos: "amor" no marca "amorreos").
-        // Usa límites Unicode para respetar acentos; si el navegador no soporta lookbehind, cae a \b.
-        const esc = ql.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        let testRe, hlRe;
-        try {
-            testRe = new RegExp('(?<![\\p{L}\\p{N}])' + esc + '(?![\\p{L}\\p{N}])', 'iu');
-            hlRe   = new RegExp('(?<![\\p{L}\\p{N}])(' + esc + ')(?![\\p{L}\\p{N}])', 'giu');
-        } catch (e) {
-            testRe = new RegExp('\\b' + esc + '\\b', 'i');
-            hlRe   = new RegExp('\\b(' + esc + ')\\b', 'gi');
+        if (!bible) { box.innerHTML = '<div class=”search-empty”>No se pudo cargar el texto bíblico.</div>'; return; }
+
+        // Palabras clave: normaliza, filtra stopwords y palabras <2 chars.
+        // “fiate de jehova con todo tu corazon” → [“fiate”,”jehova”,”corazon”]
+        const STOP = new Set(['de','la','el','en','y','a','lo','le','se','su','un','no','ni','mi','me','te','si','al','del','los','las','con','por','que','mas','pero','como','es','son','fue','ha','he']);
+        const qNorm = _sAccents(q).toLowerCase();
+        let keywords = qNorm.split(/\s+/).filter(w => w.length >= 2 && !STOP.has(w));
+        if (!keywords.length) keywords = [qNorm]; // fallback: frase completa
+
+        // Resalta keywords en texto original usando índices del texto normalizado
+        // (NFC→NFD→strip conserva la longitud original, los índices coinciden)
+        function highlight(text) {
+            const norm = _sAccents(text).toLowerCase();
+            const marks = [];
+            for (const kw of keywords) {
+                let pos = 0;
+                while (true) {
+                    const idx = norm.indexOf(kw, pos);
+                    if (idx === -1) break;
+                    marks.push({ s: idx, e: idx + kw.length });
+                    pos = idx + 1;
+                }
+            }
+            if (!marks.length) return text.replace(/</g, '&lt;');
+            marks.sort((a, b) => a.s - b.s);
+            const merged = [];
+            for (const m of marks) {
+                if (merged.length && m.s <= merged[merged.length - 1].e)
+                    merged[merged.length - 1].e = Math.max(merged[merged.length - 1].e, m.e);
+                else merged.push({ ...m });
+            }
+            let out = '', prev = 0;
+            for (const { s, e } of merged) {
+                out += text.slice(prev, s).replace(/</g, '&lt;');
+                out += '<mark>' + text.slice(s, e).replace(/</g, '&lt;') + '</mark>';
+                prev = e;
+            }
+            return out + text.slice(prev).replace(/</g, '&lt;');
         }
+
         const results = [];
         const MAX = 60;
         let truncated = false;
@@ -5445,24 +5475,87 @@
                 if (!verses) continue;
                 for (let v = 0; v < verses.length; v++) {
                     const text = verses[v];
-                    if (text && testRe.test(text)) {
+                    if (!text) continue;
+                    const norm = _sAccents(text).toLowerCase();
+                    // AND: el versículo debe contener TODAS las palabras clave
+                    if (keywords.every(kw => norm.includes(kw))) {
                         results.push({ book, chapter: c + 1, verse: v + 1, text });
                         if (results.length >= MAX) { truncated = true; break outer; }
                     }
                 }
             }
         }
-        if (!results.length) { box.innerHTML = '<div class="search-empty">Sin resultados para “' + q.replace(/</g,'&lt;') + '” como palabra completa.</div>'; return; }
-        const re = hlRe;
-        let html = results.map(r => {
-            const safe = r.text.replace(/</g,'&lt;').replace(re, '<mark>$1</mark>');
-            const bookAttr = r.book.replace(/"/g, '&quot;');
-            return '<button class="search-result" onclick="openSearchResult(&quot;' + bookAttr + '&quot;,' + r.chapter + ')">' +
-                '<div class="search-result-ref">' + r.book + ' ' + r.chapter + ':' + r.verse + '</div>' +
-                '<div class="search-result-text">' + safe + '</div></button>';
-        }).join('');
-        if (truncated) html += '<div class="search-empty">Mostrando los primeros ' + MAX + ' resultados. Afina tu búsqueda.</div>';
-        box.innerHTML = html;
+
+        // Si no hay resultados en la traducción activa, buscar en la otra automáticamente
+        let altResults = [];
+        let altLabel = '';
+        if (!results.length) {
+            const altMode = translationMode === 'sbll' ? 'rva' : 'sbll';
+            try { await ensureBible(altMode); } catch (e) {}
+            const altBible = window[BIBLE_GLOBAL[altMode]];
+            if (altBible) {
+                altLabel = altMode === 'rva' ? 'RVA 1909' : 'SBLL 2026';
+                outer2:
+                for (const book of Object.keys(altBible)) {
+                    const chapters = altBible[book];
+                    if (!chapters) continue;
+                    for (let c = 0; c < chapters.length; c++) {
+                        const verses = chapters[c];
+                        if (!verses) continue;
+                        for (let v = 0; v < verses.length; v++) {
+                            const text = verses[v];
+                            if (!text) continue;
+                            const norm = _sAccents(text).toLowerCase();
+                            if (keywords.every(kw => norm.includes(kw))) {
+                                altResults.push({ book, chapter: c + 1, verse: v + 1, text });
+                                if (altResults.length >= MAX) break outer2;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (!results.length && !altResults.length) {
+            box.innerHTML = '<div class=”search-empty”>Sin resultados para <em>”' + q.replace(/</g,'&lt;') + '”</em>.<br>Prueba con menos palabras, por ejemplo solo <em>”' + (keywords[0] || q).replace(/</g,'&lt;') + '”</em>.</div>';
+            return;
+        }
+
+        function buildCards(list) {
+            const frag = document.createDocumentFragment();
+            list.forEach(r => {
+                const btn = document.createElement('button');
+                btn.className = 'search-result';
+                btn.onclick = () => openSearchResult(r.book, r.chapter);
+                const ref = document.createElement('div');
+                ref.className = 'search-result-ref';
+                ref.textContent = r.book + ' ' + r.chapter + ':' + r.verse;
+                const txt = document.createElement('div');
+                txt.className = 'search-result-text';
+                txt.innerHTML = highlight(r.text);
+                btn.appendChild(ref);
+                btn.appendChild(txt);
+                frag.appendChild(btn);
+            });
+            return frag;
+        }
+
+        box.innerHTML = '';
+        box.appendChild(buildCards(results));
+        if (truncated) {
+            const d = document.createElement('div');
+            d.className = 'search-empty';
+            d.textContent = 'Mostrando los primeros ' + MAX + ' resultados. Afina tu búsqueda.';
+            box.appendChild(d);
+        }
+        if (altResults.length) {
+            const sep = document.createElement('div');
+            sep.className = 'search-empty';
+            sep.style.cssText = 'margin-top:1rem;border-top:1px solid rgba(255,255,255,.1);padding-top:.8rem';
+            sep.innerHTML = 'También encontrado en <strong>' + altLabel + '</strong>:';
+            box.appendChild(sep);
+            box.appendChild(buildCards(altResults));
+        }
     }
     function openSearchResult(book, chapter) {
         showTab('biblia');
