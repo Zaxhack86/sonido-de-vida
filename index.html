@@ -1002,19 +1002,20 @@
     <section class="explore-section" data-tab="explorar">
         <div class="section-header reveal"><h2>Explorar</h2><p>Desliza y descubre. Cada experiencia, su propio espacio.</p></div>
 
-        <div class="ex-tier reveal">
+        <!-- OCULTO (recorte 2026): Podcast / Pasajes / Música. Quitar el display:none para reactivar. -->
+        <div class="ex-tier reveal" style="display:none">
             <div class="ex-tier-head"><div class="ex-th-titles"><h3>Podcast de Vida<span class="ex-th-premium">✨ Premium</span></h3><span class="ex-th-sub">Enseñanzas que cobran vida</span></div><button class="ex-seeall" onclick="Podcast.open()">Ver todo ›</button></div>
-            <div class="ex-rail" id="exRailPodcast" data-auto></div>
+            <div class="ex-rail" id="exRailPodcast"></div>
         </div>
 
-        <div class="ex-tier reveal">
+        <div class="ex-tier reveal" style="display:none">
             <div class="ex-tier-head"><div class="ex-th-titles"><h3>Pasajes de Vida</h3><span class="ex-th-sub">Capítulos curados por tema</span></div><button class="ex-seeall" onclick="Pasajes.open()">Ver todo ›</button></div>
-            <div class="ex-rail" id="exRailPasajes" data-auto></div>
+            <div class="ex-rail" id="exRailPasajes"></div>
         </div>
 
-        <div class="ex-tier reveal">
+        <div class="ex-tier reveal" style="display:none">
             <div class="ex-tier-head"><div class="ex-th-titles"><h3>Música para tu día</h3><span class="ex-th-sub">Puro sonido para cada momento · sin voz</span></div></div>
-            <div class="ex-rail" id="exRailMusica" data-auto></div>
+            <div class="ex-rail" id="exRailMusica"></div>
         </div>
 
         <div class="ex-tier reveal">
@@ -1059,7 +1060,7 @@
                 <div class="fx-phone" role="button" tabindex="0" onclick="Focus.enter()" onkeydown="if(event.key==='Enter')Focus.enter()" aria-label="Abrir Modo Enfoque · Estilos de música">
                     <div class="fx-screen" style="--fx-glow:#2d4a3e"><span class="fx-notch"></span><div class="fx-bg"></div>
                         <div class="fx-content"><span class="fx-kicker">Elige tu estilo</span>
-                            <div class="fx-styles"><span class="on">🎹 Piano</span><span>🎻 Cuerdas</span><span>🌧️ Lluvia</span><span>🌊 Mar</span><span>🕊️ Paz</span><span>🌙 Noche</span><span>🌿 Naturaleza</span><span>☁️ Sus Alas</span></div>
+                            <div class="fx-styles"><span class="on">🎹 Piano</span><span>🎻 Cuerdas</span><span>🕊️ Paz</span><span>🌙 Noche</span><span>🎼 Orquesta</span><span>☁️ Sus Alas</span><span>✝️ Santuario</span><span>🌾 Calma</span></div>
                             <p class="fx-line2">+20 ambientes para escoger</p>
                         </div>
                     </div>
@@ -1285,7 +1286,6 @@
         <button class="bn-item active" data-bn="inicio" onclick="showTab('inicio')" role="tab"><span class="bn-ico">🏠</span><span class="bn-label">Inicio</span></button>
         <button class="bn-item" data-bn="explorar" onclick="showTab('explorar')" role="tab"><span class="bn-ico">🧭</span><span class="bn-label">Explorar</span></button>
         <button class="bn-item" data-bn="biblia" onclick="showTab('biblia')" role="tab"><span class="bn-ico">📖</span><span class="bn-label">Biblia</span></button>
-        <button class="bn-item" data-bn="buscar" onclick="showTab('buscar')" role="tab"><span class="bn-ico"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span><span class="bn-label">Buscar</span></button>
         <button class="bn-item" data-bn="yo" onclick="showTab('yo')" role="tab"><span class="bn-ico">👤</span><span class="bn-label">Yo</span></button>
     </nav>
 
@@ -2603,7 +2603,7 @@
             { id:'piano-relajante', cat:'piano', label:'Piano Relajante', emoji:'🎹', ids:[2,13] },
             { id:'piano-meditacion', cat:'piano', label:'Piano Sereno', emoji:'🎼', ids:[16,15] },
             { id:'piano-instrumental', cat:'piano', label:'Piano Instrumental', emoji:'🎹', ids:[4,14] },
-            { id:'piano-naturaleza', cat:'piano', label:'Piano y Naturaleza', emoji:'🌿', ids:[18,17] },
+            { id:'piano-naturaleza', cat:'piano', label:'Piano Suave', emoji:'🎹', ids:[18,17] },
             { id:'calma', cat:'ambiente', label:'Paz y Quietud', emoji:'🕊️', ids:[37,36,9] },
             { id:'paz-abraza', cat:'ambiente', label:'Paz que Abraza', emoji:'🤍', ids:[11,59] },
             { id:'paz-suspiros', cat:'ambiente', label:'Aliento de Paz', emoji:'🌬️', ids:[62,61,60] },
@@ -4161,18 +4161,20 @@
                 '</div></div>';
         }
         function render(){
+            // No poblar escalones ocultos (recorte 2026): evita cargar portadas/red inútil.
+            var hidden=function(el){ var t=el&&el.closest('.ex-tier'); return !!(t && t.style.display==='none'); };
             var rp=document.getElementById('exRailPodcast');
             var rc=document.getElementById('exRailPasajes');
-            if(rp && window.Podcast && Podcast.episodes){
+            if(rp && !hidden(rp) && window.Podcast && Podcast.episodes){
                 rp.innerHTML = Podcast.episodes().map(function(ep,i){return cardEp(i,ep);}).join('');
             }
-            if(rc && window.Pasajes && Pasajes.collections){
+            if(rc && !hidden(rc) && window.Pasajes && Pasajes.collections){
                 rc.innerHTML = Pasajes.collections().map(function(col,i){return cardCol(i,col);}).join('');
             }
             var rd=document.getElementById('exRailDevos');
             if(rd){ rd.innerHTML = DEVOS.map(cardDevo).join(''); }
             var rm=document.getElementById('exRailMusica');
-            if(rm && window.Musica && Musica.playlists){
+            if(rm && !hidden(rm) && window.Musica && Musica.playlists){
                 rm.innerHTML = Musica.playlists().map(function(pl,i){return cardMix(i,pl);}).join('');
             }
             document.querySelectorAll('#exRailPodcast .ex-card, #exRailPasajes .ex-card').forEach(function(el){
@@ -5059,7 +5061,7 @@
     })();
 
     /* ════════ Router de pestañas (app-shell) ════════ */
-    const TABS = ['inicio','explorar','biblia','buscar','yo'];
+    const TABS = ['inicio','explorar','biblia','yo'];
     function showTab(name, opts) {
         if (!TABS.includes(name)) name = 'inicio';
         document.body.setAttribute('data-tab-active', name);
