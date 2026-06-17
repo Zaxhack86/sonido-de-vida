@@ -1297,27 +1297,30 @@
                 </div>
             </div>
 
-            <div class="yo-listas" id="yoListasWrap" style="display:none"></div>
+            <!-- Panel de miembro: SOLO visible con sesión iniciada (se muestra en reflectSession). -->
+            <div id="yoMemberArea" style="display:none">
+                <div class="yo-listas" id="yoListasWrap" style="display:none"></div>
 
-            <ul class="yo-menu">
-                <li onclick="resumeListening()"><span class="yo-ico">📖</span> Seguir escuchando <span class="yo-arrow">›</span></li>
-                <li onclick="SDV_Account.open();return false;"><span class="yo-ico">🔖</span> Mis versículos <span class="yo-arrow">›</span></li>
-                <li onclick="toggleOfflinePanel()"><span class="yo-ico">💾</span> Mis descargas <span class="yo-arrow">›</span></li>
-                <li onclick="openInstall(event)"><span class="yo-ico">📲</span> Instalar app <span class="yo-arrow">›</span></li>
-                <li onclick="openShareModal();return false;"><span class="yo-ico">🔗</span> Compartir / QR <span class="yo-arrow">›</span></li>
-            </ul>
+                <ul class="yo-menu">
+                    <li onclick="resumeListening()"><span class="yo-ico">📖</span> Seguir escuchando <span class="yo-arrow">›</span></li>
+                    <li onclick="SDV_Account.open();return false;"><span class="yo-ico">🔖</span> Mis versículos <span class="yo-arrow">›</span></li>
+                    <li onclick="toggleOfflinePanel()"><span class="yo-ico">💾</span> Mis descargas <span class="yo-arrow">›</span></li>
+                    <li onclick="openInstall(event)"><span class="yo-ico">📲</span> Instalar app <span class="yo-arrow">›</span></li>
+                    <li onclick="openShareModal();return false;"><span class="yo-ico">🔗</span> Compartir / QR <span class="yo-arrow">›</span></li>
+                </ul>
 
-            <div class="yo-card offline-panel" id="offlinePanel" style="display:none">
-                <div class="offline-head">
-                    <span>💾 Mis descargas</span>
-                    <span class="offline-total" id="offlineTotal"></span>
+                <div class="yo-card offline-panel" id="offlinePanel" style="display:none">
+                    <div class="offline-head">
+                        <span>💾 Mis descargas</span>
+                        <span class="offline-total" id="offlineTotal"></span>
+                    </div>
+                    <p class="offline-note" id="offlineNote">📌 Se guardan en este dispositivo para escuchar sin conexión. Si borras los datos del navegador, se pierden.</p>
+                    <div id="offlineListItems"></div>
                 </div>
-                <p class="offline-note" id="offlineNote">📌 Se guardan en este dispositivo para escuchar sin conexión. Si borras los datos del navegador, se pierden.</p>
-                <div id="offlineListItems"></div>
-            </div>
 
-            <div class="yo-card" style="text-align:center;margin-top:1.1rem">
-                <p style="font-family:'Lora',serif;color:rgba(255,255,255,.6);font-size:.9rem;font-style:italic">"Lámpara es a mis pies tu palabra, y lumbrera a mi camino." — Salmo 119:105</p>
+                <div class="yo-card" style="text-align:center;margin-top:1.1rem">
+                    <p style="font-family:'Lora',serif;color:rgba(255,255,255,.6);font-size:.9rem;font-style:italic">"Lámpara es a mis pies tu palabra, y lumbrera a mi camino." — Salmo 119:105</p>
+                </div>
             </div>
         </div>
     </section>
@@ -6007,9 +6010,11 @@
             $('accountLoggedOut').style.display = user ? 'none' : '';
             $('accountLoggedIn').style.display = user ? '' : 'none';
             // Pestaña "Yo": tarjeta de cuenta según sesión
-            const yoIn = $('yoLoggedIn'), yoOut = $('yoLoggedOut');
+            const yoIn = $('yoLoggedIn'), yoOut = $('yoLoggedOut'), yoArea = $('yoMemberArea');
             if (yoIn) yoIn.style.display = user ? '' : 'none';
             if (yoOut) yoOut.style.display = user ? 'none' : '';
+            // El panel de miembro (menú, listas, descargas) solo existe con sesión.
+            if (yoArea) yoArea.style.display = user ? '' : 'none';
             if (user) {
                 $('accountName').textContent = user.displayName || '👋';
                 $('accountEmailShown').textContent = user.email || '';
