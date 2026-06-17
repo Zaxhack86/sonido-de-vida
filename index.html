@@ -1286,6 +1286,7 @@
         <button class="bn-item active" data-bn="inicio" onclick="showTab('inicio')" role="tab"><span class="bn-ico">🏠</span><span class="bn-label">Inicio</span></button>
         <button class="bn-item" data-bn="explorar" onclick="showTab('explorar')" role="tab"><span class="bn-ico">🧭</span><span class="bn-label">Explorar</span></button>
         <button class="bn-item" data-bn="biblia" onclick="showTab('biblia')" role="tab"><span class="bn-ico">📖</span><span class="bn-label">Biblia</span></button>
+        <button class="bn-item" data-bn="buscar" onclick="showTab('buscar')" role="tab"><span class="bn-ico"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span><span class="bn-label">Buscar</span></button>
         <button class="bn-item" data-bn="yo" onclick="showTab('yo')" role="tab"><span class="bn-ico">👤</span><span class="bn-label">Yo</span></button>
     </nav>
 
@@ -5061,7 +5062,7 @@
     })();
 
     /* ════════ Router de pestañas (app-shell) ════════ */
-    const TABS = ['inicio','explorar','biblia','yo'];
+    const TABS = ['inicio','explorar','biblia','buscar','yo'];
     function showTab(name, opts) {
         if (!TABS.includes(name)) name = 'inicio';
         document.body.setAttribute('data-tab-active', name);
