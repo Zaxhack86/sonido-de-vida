@@ -1657,7 +1657,6 @@
             <div class="focus-timer voz-only">
                 <span>🐢 Velocidad de la voz</span>
                 <div class="focus-timer-opts" id="focusSpeedOpts">
-                    <button data-rate="0.8" onclick="Focus.setSpeed(0.8,this)">0.8×</button>
                     <button data-rate="0.9" onclick="Focus.setSpeed(0.9,this)">0.9×</button>
                     <button data-rate="1" class="active" onclick="Focus.setSpeed(1,this)">Normal</button>
                     <button data-rate="1.25" onclick="Focus.setSpeed(1.25,this)">1.25×</button>
@@ -3096,7 +3095,7 @@
         function setVoz(v)    { vozVol = Math.max(0, Math.min(1, v / 100)); applyVolumes(); }
         function setMusica(v) { musicaVol = Math.max(0, Math.min(1, v / 100)); applyVolumes(); }
 
-        // Velocidad de la voz. Acotada a [0.8, 1.25] para que nunca distorsione
+        // Velocidad de la voz. Acotada a [0.9, 1.25] para que nunca distorsione
         // ni "se escuche mal" por llevarla demasiado lejos.
         // La cámara lenta (<1×) solo se permite con la voz SBLL 2026: la RVA 1909
         // pierde calidad al ralentizarla, así que con esa voz se ofrece cambiar.
@@ -3106,7 +3105,7 @@
                 if (hint) { hint.classList.add('show'); hint.classList.remove('pulse'); void hint.offsetWidth; hint.classList.add('pulse'); }
                 return;   // no aplicar cámara lenta con la voz 1909
             }
-            playbackSpeed = Math.max(0.8, Math.min(1.25, rate));
+            playbackSpeed = Math.max(0.9, Math.min(1.25, rate));
             try { audioA.playbackRate = playbackSpeed; audioB.playbackRate = playbackSpeed; } catch (e) {}
             document.querySelectorAll('#focusSpeedOpts button').forEach(b => b.classList.remove('active'));
             if (btn) btn.classList.add('active');
