@@ -2846,9 +2846,9 @@
                 const r = await SDV_Auth.checkout(plan);
                 if (r.ok && r.data && r.data.url) { window.location.href = r.data.url; return; }
                 if (r.status === 503) showToast('Los pagos se activan muy pronto. ¡Gracias por tu paciencia! 🙏');
-                else showToast('Error ' + r.status + ': ' + ((r.data && r.data.error) || 'desconocido'));
+                else showToast('No se pudo abrir el pago. Intenta de nuevo en un momento. 🙏');
             } catch (e) {
-                if (window.showToast) showToast('Fallo de red: ' + ((e && e.message) || e));
+                if (window.showToast) showToast('No se pudo abrir el pago. Revisa tu conexión.');
             } finally { busy = false; }
         }
 

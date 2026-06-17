@@ -1,4 +1,4 @@
-const CACHE_STATIC = 'sdv-static-v81';
+const CACHE_STATIC = 'sdv-static-v82';
 const CACHE_AUDIO  = 'sdv-audio-v2';
 
 // Lazy-load: bible.js / bible_sbll.js YA NO se precachean en install (eran ~7.6MB
