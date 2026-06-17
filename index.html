@@ -421,6 +421,18 @@
         .audio-player-bar{bottom:var(--bottomnav-h)}
         .install-banner{bottom:calc(var(--bottomnav-h) + 1rem)}
         .toast{bottom:calc(var(--bottomnav-h) + 1rem)}
+        /* ════ Banner de anuncios (AdSense) — solo gratis, se oculta en premium/Enfoque ════ */
+        :root{--ad-h:0px}
+        .ad-banner{position:fixed;left:0;right:0;bottom:var(--bottomnav-h);z-index:1000;height:60px;display:none;align-items:center;justify-content:center;overflow:hidden;background:rgba(10,10,20,.97);backdrop-filter:blur(20px);border-top:1px solid rgba(201,168,76,.18)}
+        .ad-banner .adsbygoogle{display:block;width:100%;height:100%}
+        body.ads-on{--ad-h:60px;padding-bottom:calc(var(--bottomnav-h) + 60px)}
+        body.ads-on .ad-banner{display:flex}
+        /* Cuando hay banner, el reproductor sube para no taparlo */
+        body.ads-on .audio-player-bar{bottom:calc(var(--bottomnav-h) + var(--ad-h))}
+        body.ads-on .toast{bottom:calc(var(--bottomnav-h) + var(--ad-h) + 1rem)}
+        /* Placeholder visible solo en modo prueba (sin anuncio real aún) */
+        .ad-ph{display:flex;flex-direction:column;align-items:center;gap:.1rem;font-family:'Inter',sans-serif;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.34)}
+        .ad-ph small{font-size:.62rem;letter-spacing:.02em;text-transform:none;color:var(--gold-light);opacity:.6}
         /* Cada pestaña arranca su scroll desde arriba */
         [data-tab]{scroll-margin-top:0}
         /* Mostrar solo la pestaña activa (preserva el display natural de cada sección) */
@@ -1282,6 +1294,9 @@
         </div>
     </footer>
 
+    <!-- Banner de anuncios (AdSense). Vacío hasta configurar SDV_ADS; lo gestiona window.Ads. -->
+    <div class="ad-banner" id="adSlot" aria-hidden="true"></div>
+
     <nav class="bottom-nav" id="bottomNav" role="tablist" aria-label="Navegación principal">
         <button class="bn-item active" data-bn="inicio" onclick="showTab('inicio')" role="tab"><span class="bn-ico">🏠</span><span class="bn-label">Inicio</span></button>
         <button class="bn-item" data-bn="explorar" onclick="showTab('explorar')" role="tab"><span class="bn-ico">🧭</span><span class="bn-label">Explorar</span></button>
@@ -2019,6 +2034,8 @@
         if (window.Listas) Listas.checkSharedLink();
         // Si entraron por un enlace de episodio compartido (/?ep=contentId).
         if (window.Podcast) Podcast.checkSharedEpisode();
+        // Evaluar el banner de anuncios según la pestaña inicial / sesión.
+        if (window.Ads) Ads.refresh();
     });
 
     function registerSW() {
@@ -2991,6 +3008,7 @@
             overlay.setAttribute('aria-hidden', 'false');
             document.body.style.overflow = 'hidden';
             FocusFX.start();
+            if (window.Ads) Ads.refresh();
             document.getElementById('playerFocusBtn')?.classList.add('active');
             applyVolumes();
             if (!currentAmbient) { shuffleAuto = true; updateShuffleBtn(); pickRandomAmbient(); }
@@ -3140,6 +3158,7 @@
             overlay.removeAttribute('data-mode');
             overlay.removeAttribute('data-cat');
             FocusFX.stop();
+            if (window.Ads) Ads.refresh();
             document.body.style.overflow = '';
             _stopMeditation();
             if (focusSubMode === 'voz') {
@@ -5066,6 +5085,58 @@
 
     /* ════════ Router de pestañas (app-shell) ════════ */
     const TABS = ['inicio','explorar','biblia','buscar','yo'];
+    // ════════════════════════════════════════════════════════════════
+    // Anuncios (Google AdSense) — andamiaje.
+    // PARA ACTIVAR cuando tengas la cuenta AdSense aprobada:
+    //   1) pon `client` = tu ID de editor 'ca-pub-XXXXXXXXXXXXXXXX'
+    //   2) pon `slot`   = el ID del bloque de anuncio (display/banner)
+    //   3) pon `enabled: true` y `test: false`
+    // El banner solo aparece en las pestañas de `tabs`, NUNCA para premium
+    // (SDV_Auth.premium) ni con el Modo Enfoque abierto. Mientras `test` sea
+    // true se muestra un placeholder en vez de un anuncio real.
+    // ════════════════════════════════════════════════════════════════
+    const SDV_ADS = { client: '', slot: '', enabled: false, test: true, tabs: ['biblia'] };
+    const Ads = (function () {
+        let injected = false;
+        const premium   = () => !!(window.SDV_Auth && SDV_Auth.premium);
+        const focusOpen = () => { const o = document.getElementById('focusOverlay'); return !!(o && o.classList.contains('open')); };
+        const activeTab = () => document.body.getAttribute('data-tab-active');
+        function shouldShow() {
+            if (premium() || focusOpen()) return false;
+            if (SDV_ADS.tabs.indexOf(activeTab()) === -1) return false;
+            return SDV_ADS.enabled || SDV_ADS.test;
+        }
+        function injectScript() {
+            if (injected || !SDV_ADS.enabled || !SDV_ADS.client) return;
+            const s = document.createElement('script');
+            s.async = true; s.crossOrigin = 'anonymous';
+            s.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=' + SDV_ADS.client;
+            document.head.appendChild(s);
+            injected = true;
+        }
+        function build() {
+            const box = document.getElementById('adSlot');
+            if (!box) return;
+            if (SDV_ADS.enabled && SDV_ADS.client && SDV_ADS.slot) {
+                if (!box.querySelector('.adsbygoogle')) {
+                    box.innerHTML = '<ins class="adsbygoogle" data-ad-client="' + SDV_ADS.client +
+                        '" data-ad-slot="' + SDV_ADS.slot + '" data-ad-format="auto" data-full-width-responsive="true"></ins>';
+                    injectScript();
+                    try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch (e) {}
+                }
+            } else if (SDV_ADS.test && !box.querySelector('.ad-ph')) {
+                box.innerHTML = '<div class="ad-ph">Espacio publicitario<small>Sin anuncios con Premium ✨</small></div>';
+            }
+        }
+        function refresh() {
+            const show = shouldShow();
+            document.body.classList.toggle('ads-on', show);
+            if (show) build();
+        }
+        return { refresh, cfg: SDV_ADS };
+    })();
+    window.Ads = Ads;
+
     function showTab(name, opts) {
         if (!TABS.includes(name)) name = 'inicio';
         document.body.setAttribute('data-tab-active', name);
@@ -5077,6 +5148,7 @@
         document.querySelectorAll('[data-tab="' + name + '"] .reveal').forEach(el => el.classList.add('visible'));
         closeMenu();
         if (!opts || opts.scroll !== false) window.scrollTo({ top: 0, behavior: 'auto' });
+        if (window.Ads) Ads.refresh();
     }
 
     // Retomar la escucha donde se quedó (último capítulo cargado)
@@ -5422,6 +5494,8 @@
             if (window.Focus) Focus.refreshGate();
             // Cargar/limpiar likes y listas de reproducción (Fase 2).
             if (window.Listas) Listas.refresh();
+            // Reevaluar anuncios: premium los quita.
+            if (window.Ads) Ads.refresh();
         }
 
         // Esperar a que auth.js esté listo. Si Firebase no está configurado, no mostramos nada.
