@@ -17,8 +17,8 @@ SENDER_EMAIL = "noreply@sonidodevida.com"
 # Los price IDs se crean en el dashboard de Stripe (Productos → añadir precio).
 # Plan acordado: $2.99/mes y $24.99/año, con 7 días de prueba gratis.
 # REEMPLAZA estos placeholders por tus price_... reales antes de desplegar.
-STRIPE_PRICE_MONTHLY = "price_REEMPLAZAR_MENSUAL"
-STRIPE_PRICE_ANNUAL  = "price_REEMPLAZAR_ANUAL"
+STRIPE_PRICE_MONTHLY = "price_1TjQaIAdTR9UfqK3UB6Ie1g1"
+STRIPE_PRICE_ANNUAL  = "price_1TjQbpAdTR9UfqK3U0tH0PI7"
 STRIPE_TRIAL_DAYS    = "7"
 
 # SECRETOS (NO van aquí, se ponen en el dashboard de Cloudflare como cifrados):
