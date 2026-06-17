@@ -517,6 +517,19 @@
         @keyframes fAura3{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(5vmax,-7vmax) scale(1.14)}}
         .focus-motes{position:fixed;inset:0;z-index:0;pointer-events:none}
         @media(prefers-reduced-motion:reduce){.focus-aura span{animation:none}}
+        /* ── Temas de fondo visual elegibles. Van DESPUÉS del tinte por categoría
+           para que, en empate de especificidad, el tema elegido gane sobre el
+           color del ambiente. "aurora" = sin reglas (usa el fondo base + tinte). ── */
+        .focus-overlay[data-bg="noche"]{--f-aura1:rgba(120,150,230,.22);--f-aura2:rgba(90,110,200,.16);--f-aura3:rgba(60,80,160,.18);--f-mote:200,215,255;background:radial-gradient(120% 120% at 50% 0%,#0d1430 0%,#070a1c 55%,#03040c 100%)}
+        .focus-overlay[data-bg="noche"] .focus-bg{background:radial-gradient(60% 50% at 50% 38%,rgba(150,180,255,.10),transparent 70%)}
+        .focus-overlay[data-bg="amanecer"]{--f-aura1:rgba(255,180,120,.26);--f-aura2:rgba(240,120,140,.18);--f-aura3:rgba(200,110,90,.20);--f-mote:255,210,170;background:radial-gradient(120% 120% at 50% 100%,#3a1d33 0%,#1d1226 50%,#0a0712 100%)}
+        .focus-overlay[data-bg="amanecer"] .focus-bg{background:radial-gradient(70% 60% at 50% 88%,rgba(255,170,110,.16),transparent 72%)}
+        .focus-overlay[data-bg="vela"]{--f-aura1:rgba(255,160,60,.22);--f-aura2:rgba(220,110,40,.14);--f-aura3:rgba(150,70,20,.16);--f-mote:255,190,120;background:radial-gradient(90% 90% at 50% 62%,#1a1208 0%,#0c0904 55%,#040302 100%)}
+        .focus-overlay[data-bg="vela"] .focus-bg{background:radial-gradient(40% 36% at 50% 60%,rgba(255,170,80,.18),transparent 70%)}
+        /* Racha diaria */
+        .focus-streak{display:inline-flex;align-items:center;gap:.4rem;padding:.3rem .85rem;border-radius:50px;border:1px solid rgba(201,168,76,.32);background:rgba(201,168,76,.09);color:var(--gold-light);font-family:'Inter',sans-serif;font-size:.82rem;font-weight:600;z-index:1}
+        .focus-streak small{color:rgba(255,255,255,.55);font-weight:400}
+        .focus-streak[hidden]{display:none}
         .focus-close{position:absolute;top:calc(env(safe-area-inset-top) + .9rem);right:1rem;width:42px;height:42px;border-radius:50%;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.05);color:rgba(255,255,255,.8);font-size:1.1rem;cursor:pointer;z-index:2;transition:all .25s}
         .focus-close:hover{background:rgba(255,255,255,.12);color:#fff}
         .focus-stage{position:relative;z-index:1;width:100%;max-width:560px;margin:auto 0;display:flex;flex-direction:column;align-items:center;gap:1.4rem;text-align:center}
@@ -1598,6 +1611,7 @@
         <button class="focus-close" onclick="Focus.exit()" aria-label="Salir del Modo Enfoque">✕</button>
         <div class="focus-stage">
             <div class="focus-ref" id="focusRef">Modo Enfoque</div>
+            <div class="focus-streak" id="focusStreak" hidden></div>
             <div class="focus-emblem" id="focusEmblem">
                 <div class="focus-emblem-ring"></div>
                 <div class="focus-emblem-icon" id="focusEmblemIcon">🕊️</div>
@@ -1643,6 +1657,15 @@
                     <button data-min="20" onclick="Focus.setTimer(20,this)">20m</button>
                     <button data-min="30" onclick="Focus.setTimer(30,this)">30m</button>
                     <button data-min="60" onclick="Focus.setTimer(60,this)">60m</button>
+                </div>
+            </div>
+            <div class="focus-timer">
+                <span>🎨 Ambiente visual</span>
+                <div class="focus-timer-opts" id="focusBgOpts">
+                    <button data-bg="aurora" class="active" onclick="Focus.setBg('aurora',this)">Aurora</button>
+                    <button data-bg="noche" onclick="Focus.setBg('noche',this)">Noche</button>
+                    <button data-bg="amanecer" onclick="Focus.setBg('amanecer',this)">Amanecer</button>
+                    <button data-bg="vela" onclick="Focus.setBg('vela',this)">Vela</button>
                 </div>
             </div>
         </div>
@@ -2618,13 +2641,27 @@
     const FocusFX = (function () {
         const canvas  = document.getElementById('focusMotes');
         const overlay = document.getElementById('focusOverlay');
-        if (!canvas || !overlay) return { start(){}, stop(){}, retint(){} };
+        if (!canvas || !overlay) return { start(){}, stop(){}, retint(){}, theme(){} };
         const ctx = canvas.getContext('2d');
         const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
         let motes = [], W = 0, H = 0, raf = 0, running = false, t = 0, rgb = '201,168,76';
         const pointer = { x: .5, y: .5, active: false };
-
+        // Cada fondo visual define un "movimiento" de partículas distinto:
+        //  rise = motas que suben (aurora/amanecer), twinkle = estrellas que titilan
+        //  en su sitio (noche), embers = brasas lentas y grandes, pocas (vela).
+        const BG_FX = {
+            aurora:   { motion:'rise',    density:1,   rMul:1   },
+            noche:    { motion:'twinkle', density:1.3, rMul:1   },
+            amanecer: { motion:'rise',    density:1,   rMul:1   },
+            vela:     { motion:'embers',  density:.5,  rMul:1.8 },
+        };
+        let motion = 'rise', dens = 1, rMul = 1;
         function readColor() { rgb = (getComputedStyle(overlay).getPropertyValue('--f-mote').trim()) || '201,168,76'; }
+        function applyTheme() {
+            const cfg = BG_FX[overlay.dataset.bg] || BG_FX.aurora;
+            motion = cfg.motion; dens = cfg.density; rMul = cfg.rMul;
+            readColor();
+        }
         function resize() {
             const dpr = Math.min(devicePixelRatio || 1, 2);
             W = canvas.width = innerWidth * dpr; H = canvas.height = innerHeight * dpr;
@@ -2632,29 +2669,40 @@
             ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         }
         const rnd = (a, b) => a + Math.random() * (b - a);
-        function spawn(initial) {
-            return { x: rnd(0, innerWidth), y: initial ? rnd(0, innerHeight) : innerHeight + 10,
+        function spawn(initial, anyY) {
+            return { x: rnd(0, innerWidth), y: (initial || anyY) ? rnd(0, innerHeight) : innerHeight + 10,
                 r: rnd(.8, 2.6), sp: rnd(.15, .55), sway: rnd(.3, 1.1), phase: rnd(0, Math.PI * 2), a: rnd(.25, .8) };
         }
         function seed() {
-            const count = Math.round(Math.min(innerWidth, 520) / 9);
-            motes = []; for (let i = 0; i < count; i++) motes.push(spawn(true));
+            const count = Math.round(Math.min(innerWidth, 520) / 9 * dens);
+            // En "twinkle" las estrellas no suben: se reparten por toda la pantalla.
+            motes = []; for (let i = 0; i < count; i++) motes.push(spawn(true, motion === 'twinkle'));
+        }
+        function dot(x, y, r, alpha) {
+            const g = ctx.createRadialGradient(x, y, 0, x, y, r * 4);
+            g.addColorStop(0, `rgba(${rgb},${alpha})`); g.addColorStop(1, `rgba(${rgb},0)`);
+            ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r * 4, 0, Math.PI * 2); ctx.fill();
         }
         function frame() {
             if (!running) return;
             t += 0.016;
             ctx.clearRect(0, 0, innerWidth, innerHeight);
             for (const m of motes) {
-                m.y -= m.sp; m.phase += 0.01;
+                if (motion === 'twinkle') {
+                    // Estrellas: quietas en su sitio, parpadeo amplio.
+                    m.phase += 0.02;
+                    const tw = 0.2 + 0.8 * (0.5 + 0.5 * Math.sin(t * 1.6 + m.phase));
+                    dot(m.x, m.y, m.r * rMul, m.a * tw);
+                    continue;
+                }
+                m.y -= (motion === 'embers' ? m.sp * 0.45 : m.sp); m.phase += 0.01;
                 let x = m.x + Math.sin(m.phase) * m.sway * 8;
                 if (pointer.active) {
                     const dx = pointer.x * innerWidth - x, dy = pointer.y * innerHeight - m.y, d = Math.hypot(dx, dy);
                     if (d < 160) x += dx / d * (160 - d) * 0.02;
                 }
                 const flick = 0.7 + Math.sin(t * 2 + m.phase) * 0.3;
-                const g = ctx.createRadialGradient(x, m.y, 0, x, m.y, m.r * 4);
-                g.addColorStop(0, `rgba(${rgb},${m.a * flick})`); g.addColorStop(1, `rgba(${rgb},0)`);
-                ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, m.y, m.r * 4, 0, Math.PI * 2); ctx.fill();
+                dot(x, m.y, m.r * rMul, m.a * flick);
                 if (m.y < -10) Object.assign(m, spawn(false));
             }
             raf = requestAnimationFrame(frame);
@@ -2664,12 +2712,12 @@
         function onVisibility() { if (document.hidden) stop(true); else if (overlay.classList.contains('open')) start(); }
 
         function start() {
-            readColor();
+            applyTheme();
             if (running) return;
             resize(); seed();
             if (reduce) {   // estático: una sola pasada, sin loop
                 ctx.clearRect(0, 0, innerWidth, innerHeight);
-                for (const m of motes) { ctx.fillStyle = `rgba(${rgb},${m.a})`; ctx.beginPath(); ctx.arc(m.x, m.y, m.r, 0, Math.PI * 2); ctx.fill(); }
+                for (const m of motes) { ctx.fillStyle = `rgba(${rgb},${m.a})`; ctx.beginPath(); ctx.arc(m.x, m.y, m.r * rMul, 0, Math.PI * 2); ctx.fill(); }
                 return;
             }
             running = true;
@@ -2684,7 +2732,51 @@
             ctx.clearRect(0, 0, innerWidth, innerHeight);
         }
         function retint() { readColor(); }
-        return { start, stop, retint };
+        // Re-aplica el tema visual elegido (color + movimiento + densidad) en
+        // caliente, resembrando las partículas. Si el overlay está cerrado, nada.
+        function theme() {
+            applyTheme();
+            if (!overlay.classList.contains('open')) return;
+            resize(); seed();
+            if (!running) {   // prefers-reduced-motion: redibujo estático
+                ctx.clearRect(0, 0, innerWidth, innerHeight);
+                for (const m of motes) { ctx.fillStyle = `rgba(${rgb},${m.a})`; ctx.beginPath(); ctx.arc(m.x, m.y, m.r * rMul, 0, Math.PI * 2); ctx.fill(); }
+            }
+        }
+        return { start, stop, retint, theme };
+    })();
+
+    // ════════════════════════════════════════════════════════════════
+    // Racha diaria del Modo Enfoque (retención). Cuenta días CONSECUTIVOS
+    // en que el usuario inicia una sesión. 100% local (localStorage), sin
+    // backend: es un detalle ligero, no dato crítico. Fecha en hora local.
+    // ════════════════════════════════════════════════════════════════
+    const FocusStreak = (function () {
+        const KEY = 'sdv-focus-streak';
+        const today = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
+        const dayDiff = (a, b) => Math.round((Date.parse(b + 'T00:00:00') - Date.parse(a + 'T00:00:00')) / 86400000);
+        function load() { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; } }
+        function save(s) { try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) {} }
+        function render(s) {
+            const el = document.getElementById('focusStreak');
+            if (!el) return;
+            const c = s.count || 0;
+            if (c <= 0) { el.hidden = true; return; }
+            el.hidden = false;
+            el.innerHTML = `🔥 ${c} ${c === 1 ? 'día' : 'días'} seguidos` + (s.best && s.best > c ? ` <small>· récord ${s.best}</small>` : '');
+        }
+        // Marca el día de hoy. Devuelve {count,best,sameDay,advanced,restarted}.
+        function mark() {
+            const s = load(), t = today(), prev = s.count || 0;
+            const out = { count: prev, best: s.best || 0, sameDay: false, advanced: false, restarted: false };
+            if (s.last === t) { out.sameDay = true; render(s); return out; }
+            if (s.last && dayDiff(s.last, t) === 1) { s.count = prev + 1; out.advanced = true; }
+            else { s.count = 1; out.restarted = prev > 1; }
+            s.best = Math.max(s.best || 0, s.count); s.last = t; save(s);
+            render(s); return Object.assign(out, { count: s.count, best: s.best });
+        }
+        function refresh() { render(load()); }
+        return { mark, refresh, get: load };
     })();
 
     // ════════════════════════════════════════════════════════════════
@@ -3092,8 +3184,25 @@
         }
 
         // ── Apertura del overlay (común a los dos modos) ───────────────────────
+        // Fondos visuales elegibles. La preferencia vive en localStorage.
+        const BG_THEMES = ['aurora', 'noche', 'amanecer', 'vela'];
+        function savedBg() { try { return localStorage.getItem('sdv-focus-bg') || 'aurora'; } catch (e) { return 'aurora'; } }
+        function _reflectBgBtns(name) {
+            document.querySelectorAll('#focusBgOpts button').forEach(b => b.classList.toggle('active', b.dataset.bg === name));
+        }
+        // Cambia el fondo visual en caliente y lo recuerda.
+        function setBg(name, btn) {
+            if (!BG_THEMES.includes(name)) name = 'aurora';
+            overlay.dataset.bg = name;
+            try { localStorage.setItem('sdv-focus-bg', name); } catch (e) {}
+            _reflectBgBtns(name);
+            FocusFX.theme();
+        }
+
         function _openOverlay(mode) {
             overlay.dataset.mode = mode;
+            overlay.dataset.bg = savedBg();
+            _reflectBgBtns(overlay.dataset.bg);
             focusSubMode = mode;
             renderAmbients();
             syncVerse();
@@ -3106,6 +3215,12 @@
             document.getElementById('playerFocusBtn')?.classList.add('active');
             applyVolumes();
             if (!currentAmbient) { shuffleAuto = true; updateShuffleBtn(); pickRandomAmbient(); }
+            // Racha diaria: cuenta la sesión de hoy y celebra con un aviso suave.
+            const st = FocusStreak.mark();
+            if (!st.sameDay) {
+                if (st.advanced)        showToast(`🔥 ¡${st.count} días seguidos en la Palabra!`);
+                else if (st.restarted)  showToast('🔥 Bienvenido de nuevo · empiezas una nueva racha');
+            }
         }
 
         // ── Modo Meditación — versículos curados de aliento ────────────────────
@@ -3373,7 +3488,7 @@
             stBusy = false;
         }
 
-        return { enter, exit, enterVoz, enterMeditar, selectAmbient, setVoz, setMusica, setSpeed, setTimer, onNarration, syncVerse, refreshGate, openTeaser, closeTeaser, closeSelector, useSbllVoice, startStreamTrack, tickStreamTrack, ambients, meditNext, meditPrev, meditShuffle };
+        return { enter, exit, enterVoz, enterMeditar, selectAmbient, setVoz, setMusica, setSpeed, setTimer, setBg, onNarration, syncVerse, refreshGate, openTeaser, closeTeaser, closeSelector, useSbllVoice, startStreamTrack, tickStreamTrack, ambients, meditNext, meditPrev, meditShuffle };
     })();
     window.Focus = Focus;
     function formatTime(s) { return `${Math.floor(s/60)}:${Math.floor(s%60).toString().padStart(2,'0')}`; }
