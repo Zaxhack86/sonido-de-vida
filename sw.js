@@ -1,7 +1,10 @@
-const CACHE_STATIC = 'sdv-static-v70';
+const CACHE_STATIC = 'sdv-static-v71';
 const CACHE_AUDIO  = 'sdv-audio-v2';
 
-const STATIC_ASSETS = ['/', '/index.html', '/bible.js', '/manifest.json'];
+// Lazy-load: bible.js / bible_sbll.js YA NO se precachean en install (eran ~7.6MB
+// impuestos a todos en la primera visita). Se cachean cacheFirst cuando el frontend
+// los pide bajo demanda (ver regla más abajo).
+const STATIC_ASSETS = ['/', '/index.html', '/manifest.json'];
 
 self.addEventListener('install', e => {
     e.waitUntil(caches.open(CACHE_STATIC).then(c => c.addAll(STATIC_ASSETS)));
@@ -39,7 +42,9 @@ self.addEventListener('fetch', e => {
         return;
     }
 
-    if (url.pathname === '/bible.js') {
+    // Datos bíblicos (lazy-load): inmutables, cacheFirst. Incluye SBLL, que antes
+    // NO se cacheaba (solo bible.js) pese a ser la traducción por defecto.
+    if (url.pathname === '/bible.js' || url.pathname === '/bible_sbll.js') {
         e.respondWith(cacheFirst(e.request, CACHE_STATIC));
         return;
     }

@@ -17,13 +17,38 @@ Stack: HTML/CSS/JS puro (sin framework) + Cloudflare Workers + Cloudflare R2 + C
 |---|---|
 | `index.html` | **Toda la app**. SPA de ~2 000 líneas. Contiene HTML, CSS en `<style>` y JS en `<script>`. |
 | `sw.js` | Service Worker. Versión actual: `sdv-static-v49`. Hay que subirla en cada cambio a `index.html`. |
-| `bible.js` | Datos de la Biblia RVA 1909 (versículos texto). |
-| `bible_sbll.js` | Datos de la Biblia SBLL 2026 (versículos texto). |
+| `bible.js` | Datos de la Biblia RVA 1909 (`window.BIBLE`). **Lazy-load** (ver abajo). |
+| `bible_sbll.js` | Datos de la Biblia SBLL 2026 (`window.BIBLE_SBLL`). **Lazy-load** (ver abajo). |
 | `worker_updated.js` | Cloudflare Worker de audio (se despliega en `sonido-de-vida-audio.*`). |
 | `backend/api-worker.js` | Cloudflare Worker de API (auth, contenido premium, suscripciones). |
 | `backend/wrangler-api.toml` | Config del worker de API (D1, KV, R2 premium). |
 | `wrangler.toml` | Config del worker de audio (R2 de audio público). |
 | `vercel.json` | Config de Vercel (SPA fallback a `index.html`). |
+
+---
+
+## Carga diferida de la Escritura (lazy-load)
+
+`bible.js` (~4MB, RVA) y `bible_sbll.js` (~3.6MB, SBLL) **ya NO se bajan en el
+arranque**. Antes eran `<script defer>` que imponían ~7.6MB a todos los usuarios.
+Ahora se inyectan bajo demanda con `ensureBible(mode)`:
+
+- `ensureBible(mode)` → inyecta el `.js` una sola vez (reutiliza la promesa en
+  vuelo). `mode` = `'sbll'` (default) | `'rva'`. Solo carga la traducción activa.
+- `prepareBibleUI()` → llamada desde `showTab('biblia'|'buscar')`; carga la
+  Escritura y llena el selector de libros (`populateBooks`) la primera vez.
+- **RVA** (`bible.js`) solo se baja al togglear a RVA (`setTranslation('rva')`) o
+  como fallback de texto en `loadChapter` cuando SBLL no tiene ese capítulo.
+- Los lectores de datos son `async` y hacen `await ensureBible()` antes de leer
+  `getActiveBible()`: `loadChapter`, `runSearch`, `getRandomVerse`,
+  `resumeListening`, `checkChapterLink`, `setTranslation` y el botón "escuchar"
+  del devocional. **Si añades un punto que lea versículos, antepón
+  `await ensureBible()`** o tocará `getActiveBible()` cuando aún es `undefined`.
+- ⚠️ NO reintroduzcas la guardia `if (!window.BIBLE) return;` en
+  `DOMContentLoaded`: abortaría toda la init porque la Biblia ya no está cargada
+  en el arranque.
+- **SW**: `bible.js`/`bible_sbll.js` ya NO están en `STATIC_ASSETS` (no se
+  precachean en `install`); se sirven `cacheFirst` cuando el frontend los pide.
 
 ---
 

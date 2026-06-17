@@ -1764,12 +1764,12 @@
         <audio id="pasajesAudio"></audio>
     </div>
 
-    <!-- defer: estos scripts pesados (bible.js ~4MB, bible_sbll.js ~3.6MB) no bloquean
-         el parseo ni el primer pintado. Los scripts diferidos se ejecutan en orden
-         ANTES del evento DOMContentLoaded, así que window.BIBLE ya existe cuando el
-         handler de DOMContentLoaded lo necesita. Mejora PageSpeed (FCP/TTI). -->
-    <script defer src="/bible.js"></script>
-    <script defer src="/bible_sbll.js"></script>
+    <!-- LAZY-LOAD: bible.js (~4MB, RVA) y bible_sbll.js (~3.6MB, SBLL) YA NO se
+         bajan en el arranque. Antes bloqueaban ~7.6MB a todos los usuarios, fueran
+         o no a la Biblia. Ahora los inyecta ensureBible() bajo demanda: solo la
+         traducción activa (SBLL por defecto), al entrar a Biblia/Buscar, deep-links
+         o reproducir. RVA solo se baja al togglear o como fallback de texto.
+         (Ver ensureBible/prepareBibleUI más abajo.) -->
     <!-- Cuenta de usuario (Firebase Auth). Inerte hasta poner config real en auth.js -->
     <script defer src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
     <script defer src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
@@ -1791,8 +1791,55 @@
     function getTranslationLabel() {
         return translationMode === 'sbll' ? 'SBLL 2026' : 'RVA 1909';
     }
-    function setTranslation(mode) {
+    // ── Carga diferida de los datos bíblicos (lazy-load) ──────────────
+    // Cada traducción es un .js que define window.BIBLE (RVA) / window.BIBLE_SBLL
+    // (SBLL). Se inyectan bajo demanda, una sola vez, y se reutiliza la promesa
+    // en vuelo si llegan varias peticiones a la vez.
+    const BIBLE_SRC    = { rva: '/bible.js',  sbll: '/bible_sbll.js' };
+    const BIBLE_GLOBAL = { rva: 'BIBLE',      sbll: 'BIBLE_SBLL' };
+    const _bibleLoading = {};   // mode -> Promise en vuelo
+    function bibleLoaded(mode) { return !!window[BIBLE_GLOBAL[mode]]; }
+    function ensureBible(mode = translationMode) {
+        if (bibleLoaded(mode)) return Promise.resolve();
+        if (_bibleLoading[mode]) return _bibleLoading[mode];
+        _bibleLoading[mode] = new Promise((resolve, reject) => {
+            const s = document.createElement('script');
+            s.src = BIBLE_SRC[mode];
+            s.async = true;
+            s.onload  = () => resolve();
+            s.onerror = () => { delete _bibleLoading[mode]; reject(new Error('No se pudo cargar ' + BIBLE_SRC[mode])); };
+            document.head.appendChild(s);
+        });
+        return _bibleLoading[mode];
+    }
+
+    // Prepara la UI de la Biblia (selector de libros) la primera vez que el
+    // usuario la necesita. Idempotente. Antes esto corría en DOMContentLoaded
+    // forzando la descarga de los datos en el arranque.
+    let _booksPopulated = false;
+    let _bibleUILoading = false;
+    async function prepareBibleUI() {
+        if (_booksPopulated || _bibleUILoading) return;
+        _bibleUILoading = true;
+        const sel = document.getElementById('bookSelect');
+        if (sel) sel.innerHTML = '<option value="">Cargando la Biblia…</option>';
+        try {
+            await ensureBible();
+            populateBooks();
+            _booksPopulated = true;
+        } catch (e) {
+            if (sel) sel.innerHTML = '<option value="">Error al cargar</option>';
+            showToast('⚠️ No se pudo cargar la Biblia. Revisa tu conexión.');
+        } finally {
+            _bibleUILoading = false;
+        }
+    }
+
+    async function setTranslation(mode) {
         if (translationMode === mode) return;
+        // Asegurar que la traducción destino esté cargada antes de cambiar
+        try { await ensureBible(mode); }
+        catch (e) { showToast('⚠️ No se pudo cargar esa traducción'); return; }
         translationMode = mode;
         // Actualizar botones del toggle
         document.getElementById('tt-rva').classList.toggle('active', mode === 'rva');
@@ -2013,8 +2060,9 @@
         const more = document.getElementById('devoHoyMore');
         more.href = `/devocional/${d.slug}`;
         const listen = document.getElementById('devoHoyListen');
-        listen.onclick = () => {
+        listen.onclick = async () => {
             showTab('biblia');
+            try { await ensureBible(); } catch (e) { return showToast('No se pudo cargar el capítulo'); }
             if (getActiveBible()[d.libro]) {
                 loadChapter({ book: d.libro, chapter: d.cap, autoplay: true });
             } else {
@@ -2026,12 +2074,13 @@
     // Enlace profundo a un capítulo: /?libro=Salmos&cap=91 (CTA de audio de los
     // devocionales). Cambia a la pestaña Biblia y reproduce. Los nombres de libro
     // van sin acento, igual que las claves de getActiveBible()/BOOK_KEY.
-    function checkChapterLink() {
+    async function checkChapterLink() {
         try {
             const params = new URLSearchParams(window.location.search);
             const libro = params.get('libro');
             const cap = parseInt(params.get('cap'), 10);
             if (!libro || !cap) return;
+            try { await ensureBible(); } catch (e) { showToast('No se pudo cargar el capítulo'); return; }
             if (!getActiveBible()[libro]) {
                 showToast('No se pudo cargar el capítulo');
                 return;
@@ -2042,9 +2091,9 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        if (!window.BIBLE) { showToast('⚠️ Error: No se cargó bible.js'); return; }
+        // Los datos bíblicos ya NO se cargan aquí (lazy-load). El selector de
+        // libros se llena vía prepareBibleUI() al entrar a Biblia/Buscar.
         document.getElementById('playerSub').textContent = `${getTranslationLabel()} · Sonido de Vida`;
-        populateBooks();
         createParticles();
         initScrollAnimations();
         initTabLinks();
@@ -2119,15 +2168,20 @@
         for (let i = 1; i <= count; i++) { const o = document.createElement('option'); o.value = i; o.textContent = i; sel.appendChild(o); }
     }
 
-    function loadChapter(opts = {}) {
+    async function loadChapter(opts = {}) {
         const book    = opts.book    ?? document.getElementById('bookSelect').value;
         const chapter = opts.chapter ?? parseInt(document.getElementById('chapterSelect').value);
         if (!book || !chapter) return showToast('Selecciona un libro y capítulo');
+        // Lazy-load: asegurar la traducción activa antes de leer versículos.
+        try { await ensureBible(); }
+        catch (e) { return showToast('⚠️ No se pudo cargar la Biblia'); }
         let verses = getActiveBible()[book]?.[chapter - 1];
         let textFallback = false;
-        // Fallback: si SBLL no tiene texto para este capítulo, usar RVA 1909
+        // Fallback: si SBLL no tiene texto para este capítulo, usar RVA 1909.
+        // Carga bible.js (RVA) bajo demanda solo en este caso.
         if (translationMode === 'sbll' && (!verses || verses.length === 0)) {
-            verses = window.BIBLE[book]?.[chapter - 1];
+            try { await ensureBible('rva'); } catch (e) {}
+            verses = window.BIBLE?.[book]?.[chapter - 1];
             if (verses) textFallback = true;
         }
         if (!verses) return showToast('⚠️ Capítulo no disponible en la base de datos');
@@ -3374,7 +3428,9 @@
         showToast('¡Texto del capítulo copiado!');
     }
 
-    function getRandomVerse() {
+    async function getRandomVerse() {
+        try { await ensureBible(); }
+        catch (e) { return showToast('⚠️ No se pudo cargar la Biblia'); }
         try {
             const books = Object.keys(getActiveBible());
             const book  = books[Math.floor(Math.random() * books.length)];
@@ -5173,6 +5229,8 @@
 
     function showTab(name, opts) {
         if (!TABS.includes(name)) name = 'inicio';
+        // Lazy-load: la Escritura solo se descarga al entrar a Biblia o Buscar.
+        if (name === 'biblia' || name === 'buscar') prepareBibleUI();
         document.body.setAttribute('data-tab-active', name);
         // Resaltar el botón activo de la barra inferior
         document.querySelectorAll('.bottom-nav .bn-item').forEach(b => {
@@ -5186,10 +5244,11 @@
     }
 
     // Retomar la escucha donde se quedó (último capítulo cargado)
-    function resumeListening() {
+    async function resumeListening() {
         showTab('biblia');
         let last = null;
         try { last = JSON.parse(localStorage.getItem('sdv:last') || 'null'); } catch (e) {}
+        try { await ensureBible(); } catch (e) { return showToast('⚠️ No se pudo cargar la Biblia'); }
         if (last && last.book && last.chapter && getActiveBible()[last.book]) {
             loadChapter({ book: last.book, chapter: last.chapter });
         } else {
@@ -5351,12 +5410,15 @@
     }
 
     /* ════════ Búsqueda en la Biblia ════════ */
-    function runSearch() {
+    async function runSearch() {
         const input = document.getElementById('searchInput');
         const box = document.getElementById('searchResults');
         const q = (input.value || '').trim();
         const ql = q.toLowerCase();
         if (ql.length < 2) { box.innerHTML = '<div class="search-empty">Escribe al menos 2 letras para buscar.</div>'; return; }
+        // Lazy-load: asegurar el texto bíblico antes de buscar.
+        box.innerHTML = '<div class="search-empty">Cargando la Biblia…</div>';
+        try { await ensureBible(); } catch (e) {}
         const bible = getActiveBible();
         if (!bible) { box.innerHTML = '<div class="search-empty">No se pudo cargar el texto bíblico.</div>'; return; }
         // Coincidencia por palabra completa (evita falsos positivos: "amor" no marca "amorreos").
