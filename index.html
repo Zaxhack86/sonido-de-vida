@@ -2843,7 +2843,7 @@
             busy = true;
             if (window.showToast) showToast('Abriendo pago seguro…');
             try {
-                const r = await SDV.checkout(plan);
+                const r = await SDV_Auth.checkout(plan);
                 if (r.ok && r.data && r.data.url) { window.location.href = r.data.url; return; }
                 if (r.status === 503) showToast('Los pagos se activan muy pronto. ¡Gracias por tu paciencia! 🙏');
                 else showToast('Error ' + r.status + ': ' + ((r.data && r.data.error) || 'desconocido'));
@@ -2857,7 +2857,7 @@
             if (!logged()) { if (window.SDV_Account) SDV_Account.open(); return; }
             if (window.showToast) showToast('Abriendo tu suscripción…');
             try {
-                const r = await SDV.portal();
+                const r = await SDV_Auth.portal();
                 if (r.ok && r.data && r.data.url) { window.location.href = r.data.url; return; }
                 showToast(r.status === 404 ? 'No encontramos una suscripción activa.' : 'No se pudo abrir la gestión.');
             } catch (e) { if (window.showToast) showToast('No se pudo abrir la gestión.'); }
@@ -2874,8 +2874,8 @@
                 // El webhook puede tardar unos segundos: reintenta refrescar el estado.
                 let tries = 0;
                 const tick = () => {
-                    if (window.SDV && SDV.refresh) {
-                        SDV.refresh().then((isPrem) => {
+                    if (window.SDV_Auth && SDV_Auth.refresh) {
+                        SDV_Auth.refresh().then((isPrem) => {
                             if (!isPrem && ++tries < 5) setTimeout(tick, 2000);
                         });
                     } else if (++tries < 5) setTimeout(tick, 2000);
