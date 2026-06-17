@@ -489,6 +489,20 @@
         .focus-overlay{position:fixed;inset:0;z-index:4000;display:none;flex-direction:column;align-items:center;justify-content:flex-start;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:calc(env(safe-area-inset-top) + 1.2rem) 1.2rem calc(env(safe-area-inset-bottom) + 1.2rem);background:radial-gradient(120% 120% at 50% 0%,#15131f 0%,#0b0a12 55%,#050409 100%);opacity:0;transition:opacity .5s ease}
         .focus-overlay.open{display:flex;opacity:1}
         .focus-overlay .focus-bg{position:absolute;inset:0;background:radial-gradient(60% 50% at 50% 38%,rgba(201,168,76,.10),transparent 70%);pointer-events:none}
+        /* ── Fondo animado: aurora (CSS) + motas (canvas). Colores por ambiente. ── */
+        .focus-overlay{--f-aura1:rgba(201,168,76,.26);--f-aura2:rgba(150,120,200,.15);--f-aura3:rgba(120,90,40,.20);--f-mote:201,168,76}
+        .focus-overlay[data-cat="ambiente"]{--f-aura1:rgba(232,214,176,.26);--f-aura2:rgba(200,150,110,.15);--f-aura3:rgba(150,110,70,.20);--f-mote:232,214,176}
+        .focus-overlay[data-cat="piano"]{--f-aura1:rgba(176,158,214,.26);--f-aura2:rgba(120,110,190,.15);--f-aura3:rgba(90,80,150,.20);--f-mote:201,182,224}
+        .focus-aura{position:fixed;inset:-20%;z-index:0;pointer-events:none;filter:blur(64px);opacity:.85}
+        .focus-aura span{position:absolute;border-radius:50%;mix-blend-mode:screen;will-change:transform}
+        .focus-aura span:nth-child(1){width:55vmax;height:55vmax;left:-5%;top:-10%;background:radial-gradient(circle,var(--f-aura1),transparent 65%);animation:fAura1 26s ease-in-out infinite}
+        .focus-aura span:nth-child(2){width:48vmax;height:48vmax;right:-10%;top:18%;background:radial-gradient(circle,var(--f-aura2),transparent 65%);animation:fAura2 32s ease-in-out infinite}
+        .focus-aura span:nth-child(3){width:60vmax;height:60vmax;left:8%;bottom:-25%;background:radial-gradient(circle,var(--f-aura3),transparent 65%);animation:fAura3 38s ease-in-out infinite}
+        @keyframes fAura1{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(8vmax,6vmax) scale(1.12)}}
+        @keyframes fAura2{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-7vmax,4vmax) scale(1.08)}}
+        @keyframes fAura3{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(5vmax,-7vmax) scale(1.14)}}
+        .focus-motes{position:fixed;inset:0;z-index:0;pointer-events:none}
+        @media(prefers-reduced-motion:reduce){.focus-aura span{animation:none}}
         .focus-close{position:absolute;top:calc(env(safe-area-inset-top) + .9rem);right:1rem;width:42px;height:42px;border-radius:50%;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.05);color:rgba(255,255,255,.8);font-size:1.1rem;cursor:pointer;z-index:2;transition:all .25s}
         .focus-close:hover{background:rgba(255,255,255,.12);color:#fff}
         .focus-stage{position:relative;z-index:1;width:100%;max-width:560px;margin:auto 0;display:flex;flex-direction:column;align-items:center;gap:1.4rem;text-align:center}
@@ -1049,7 +1063,7 @@
                             <p class="fx-line2">+20 ambientes para escoger</p>
                         </div>
                     </div>
-                    <div class="fx-caption"><h4>Tú eliges la música</h4><p>Piano, lluvia, mar, cuerdas…</p></div>
+                    <div class="fx-caption"><h4>Tú eliges la música</h4><p>Piano, cuerdas, adoración…</p></div>
                 </div>
                 <div class="fx-phone" role="button" tabindex="0" onclick="Focus.enter()" onkeydown="if(event.key==='Enter')Focus.enter()" aria-label="Abrir Modo Enfoque · Temporizador">
                     <div class="fx-screen" style="--fx-glow:#2a2550"><span class="fx-notch"></span><div class="fx-bg"></div>
@@ -1391,7 +1405,7 @@
             <div class="modal-title" id="teaserTitle">Modo Enfoque <span class="focus-premium-badge">✨ Premium</span></div>
             <div class="modal-subtitle">Convierte tu lectura en un momento de oración: música y ambientes suaves <em>bajo</em> la narración de la Palabra.</div>
             <ul class="teaser-list">
-                <li><span>🎹</span> Decenas de ambientes: piano, naturaleza y adoración</li>
+                <li><span>🎹</span> Decenas de ambientes: piano, cuerdas y adoración</li>
                 <li><span>🎚️</span> Mezclador de voz y música a tu gusto</li>
                 <li><span>🕊️</span> Ambiente visual sereno para orar con la Palabra</li>
                 <li><span>⏱️</span> Temporizador de sueño y velocidad de la voz</li>
@@ -1558,6 +1572,8 @@
     <!-- ════ Modo Enfoque (premium): capa de música ambiente + UI inmersiva ════ -->
     <audio id="ambientAudio" loop preload="none" playsinline></audio>
     <div class="focus-overlay" id="focusOverlay" aria-hidden="true" role="dialog" aria-label="Modo Enfoque">
+        <div class="focus-aura" aria-hidden="true"><span></span><span></span><span></span></div>
+        <canvas class="focus-motes" id="focusMotes" aria-hidden="true"></canvas>
         <div class="focus-bg"></div>
         <button class="focus-close" onclick="Focus.exit()" aria-label="Salir del Modo Enfoque">✕</button>
         <div class="focus-stage">
@@ -2493,6 +2509,84 @@
     }
 
     // ════════════════════════════════════════════════════════════════
+    // Fondo animado del Modo Enfoque: motas de luz que flotan en canvas.
+    // Liviano (≤58 partículas, dpr≤2), solo corre con el overlay abierto y
+    // se detiene al cerrar o con la pestaña en segundo plano (ahorra batería).
+    // Respeta prefers-reduced-motion. El color lo toma de --f-mote del overlay.
+    // ════════════════════════════════════════════════════════════════
+    const FocusFX = (function () {
+        const canvas  = document.getElementById('focusMotes');
+        const overlay = document.getElementById('focusOverlay');
+        if (!canvas || !overlay) return { start(){}, stop(){}, retint(){} };
+        const ctx = canvas.getContext('2d');
+        const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+        let motes = [], W = 0, H = 0, raf = 0, running = false, t = 0, rgb = '201,168,76';
+        const pointer = { x: .5, y: .5, active: false };
+
+        function readColor() { rgb = (getComputedStyle(overlay).getPropertyValue('--f-mote').trim()) || '201,168,76'; }
+        function resize() {
+            const dpr = Math.min(devicePixelRatio || 1, 2);
+            W = canvas.width = innerWidth * dpr; H = canvas.height = innerHeight * dpr;
+            canvas.style.width = innerWidth + 'px'; canvas.style.height = innerHeight + 'px';
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        }
+        const rnd = (a, b) => a + Math.random() * (b - a);
+        function spawn(initial) {
+            return { x: rnd(0, innerWidth), y: initial ? rnd(0, innerHeight) : innerHeight + 10,
+                r: rnd(.8, 2.6), sp: rnd(.15, .55), sway: rnd(.3, 1.1), phase: rnd(0, Math.PI * 2), a: rnd(.25, .8) };
+        }
+        function seed() {
+            const count = Math.round(Math.min(innerWidth, 520) / 9);
+            motes = []; for (let i = 0; i < count; i++) motes.push(spawn(true));
+        }
+        function frame() {
+            if (!running) return;
+            t += 0.016;
+            ctx.clearRect(0, 0, innerWidth, innerHeight);
+            for (const m of motes) {
+                m.y -= m.sp; m.phase += 0.01;
+                let x = m.x + Math.sin(m.phase) * m.sway * 8;
+                if (pointer.active) {
+                    const dx = pointer.x * innerWidth - x, dy = pointer.y * innerHeight - m.y, d = Math.hypot(dx, dy);
+                    if (d < 160) x += dx / d * (160 - d) * 0.02;
+                }
+                const flick = 0.7 + Math.sin(t * 2 + m.phase) * 0.3;
+                const g = ctx.createRadialGradient(x, m.y, 0, x, m.y, m.r * 4);
+                g.addColorStop(0, `rgba(${rgb},${m.a * flick})`); g.addColorStop(1, `rgba(${rgb},0)`);
+                ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, m.y, m.r * 4, 0, Math.PI * 2); ctx.fill();
+                if (m.y < -10) Object.assign(m, spawn(false));
+            }
+            raf = requestAnimationFrame(frame);
+        }
+        function onMove(e) { pointer.x = e.clientX / innerWidth; pointer.y = e.clientY / innerHeight; pointer.active = true; }
+        function onLeave() { pointer.active = false; }
+        function onVisibility() { if (document.hidden) stop(true); else if (overlay.classList.contains('open')) start(); }
+
+        function start() {
+            readColor();
+            if (running) return;
+            resize(); seed();
+            if (reduce) {   // estático: una sola pasada, sin loop
+                ctx.clearRect(0, 0, innerWidth, innerHeight);
+                for (const m of motes) { ctx.fillStyle = `rgba(${rgb},${m.a})`; ctx.beginPath(); ctx.arc(m.x, m.y, m.r, 0, Math.PI * 2); ctx.fill(); }
+                return;
+            }
+            running = true;
+            addEventListener('resize', resize); addEventListener('pointermove', onMove); addEventListener('pointerleave', onLeave);
+            document.addEventListener('visibilitychange', onVisibility);
+            raf = requestAnimationFrame(frame);
+        }
+        function stop(soft) {
+            running = false; cancelAnimationFrame(raf);
+            removeEventListener('resize', resize); removeEventListener('pointermove', onMove); removeEventListener('pointerleave', onLeave);
+            if (!soft) document.removeEventListener('visibilitychange', onVisibility);
+            ctx.clearRect(0, 0, innerWidth, innerHeight);
+        }
+        function retint() { readColor(); }
+        return { start, stop, retint };
+    })();
+
+    // ════════════════════════════════════════════════════════════════
     // Modo Enfoque (premium): música ambiente bajo la narración + mezclador
     // ════════════════════════════════════════════════════════════════
     const Focus = (function () {
@@ -2510,9 +2604,6 @@
             { id:'piano-meditacion', cat:'piano', label:'Piano Sereno', emoji:'🎼', ids:[16,15] },
             { id:'piano-instrumental', cat:'piano', label:'Piano Instrumental', emoji:'🎹', ids:[4,14] },
             { id:'piano-naturaleza', cat:'piano', label:'Piano y Naturaleza', emoji:'🌿', ids:[18,17] },
-            { id:'lluvia', cat:'asmr', label:'Lluvia', emoji:'🌧️', ids:[5,25] },
-            { id:'mar', cat:'asmr', label:'Mar', emoji:'🌊', ids:[6,26] },
-            { id:'naturaleza', cat:'asmr', label:'Naturaleza', emoji:'🌿', ids:[8,19,31,27,28,29,22,30] },
             { id:'calma', cat:'ambiente', label:'Paz y Quietud', emoji:'🕊️', ids:[37,36,9] },
             { id:'paz-abraza', cat:'ambiente', label:'Paz que Abraza', emoji:'🤍', ids:[11,59] },
             { id:'paz-suspiros', cat:'ambiente', label:'Aliento de Paz', emoji:'🌬️', ids:[62,61,60] },
@@ -2526,13 +2617,12 @@
             { id:'nube-segura', cat:'ambiente', label:'Bajo Sus Alas', emoji:'☁️', ids:[54,53] },
             { id:'oceano-altares', cat:'ambiente', label:'Santuario', emoji:'✝️', ids:[56,55] },
             { id:'orquesta-niebla', cat:'ambiente', label:'Cuerdas Celestiales', emoji:'🎶', ids:[58,57] },
-            { id:'mar-viento', cat:'ambiente', label:'Mar y Viento', emoji:'🌊', ids:[10,48] },
             { id:'meditacion', cat:'ambiente', label:'Reposo del Alma', emoji:'🕊️', ids:[52,51] },
             { id:'salmos-oceano', cat:'ambiente', label:'Salmos en Calma', emoji:'📜', ids:[12,32] },
             { id:'relajacion', cat:'ambiente', label:'Descanso', emoji:'🍃', ids:[63,64] },
         ];
-        const CAT_LABELS = { piano: '🎹 Piano', asmr: '🌿 Naturaleza', ambiente: '🙏 Adoración / Reposo' };
-        const CAT_ORDER  = ['piano', 'asmr', 'ambiente'];
+        const CAT_LABELS = { piano: '🎹 Piano', ambiente: '🙏 Adoración / Reposo' };
+        const CAT_ORDER  = ['piano', 'ambiente'];
 
         // Segundo elemento de audio para fundir entre variantes/ambientes sin silencio.
         const ambientElB = document.createElement('audio');
@@ -2773,12 +2863,15 @@
             if (ambient) {
                 icon.textContent = ambient.emoji || '🕊️';
                 box.dataset.cat = ambient.cat || '';
+                overlay.dataset.cat = ambient.cat || '';
                 if (cap) cap.textContent = ambient.label;
             } else {
                 icon.textContent = '🕊️';
                 box.removeAttribute('data-cat');
+                overlay.removeAttribute('data-cat');
                 if (cap) cap.textContent = state.book ? 'Reposa en la Palabra' : 'Elige un ambiente y reposa en la Palabra';
             }
+            FocusFX.retint();
         }
 
         function setVoz(v)    { vozVol = Math.max(0, Math.min(1, v / 100)); applyVolumes(); }
@@ -2896,6 +2989,7 @@
             overlay.classList.add('open');
             overlay.setAttribute('aria-hidden', 'false');
             document.body.style.overflow = 'hidden';
+            FocusFX.start();
             document.getElementById('playerFocusBtn')?.classList.add('active');
             applyVolumes();
             if (!currentAmbient) { shuffleAuto = true; updateShuffleBtn(); pickRandomAmbient(); }
@@ -3043,6 +3137,8 @@
             overlay.classList.remove('open');
             overlay.setAttribute('aria-hidden', 'true');
             overlay.removeAttribute('data-mode');
+            overlay.removeAttribute('data-cat');
+            FocusFX.stop();
             document.body.style.overflow = '';
             _stopMeditation();
             if (focusSubMode === 'voz') {
