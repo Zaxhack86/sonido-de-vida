@@ -622,6 +622,14 @@
         .teaser-price strong{display:block;font-size:1.7rem;color:var(--gold-light);font-weight:700;line-height:1.1}
         .teaser-price small{display:block;margin-top:.35rem;font-size:.82rem;color:rgba(255,255,255,.7)}
         .teaser-cta{width:100%;margin-top:.6rem}
+        /* Selector de plan mensual/anual en el muro premium. */
+        .plan-toggle{display:flex;gap:.5rem;margin:.4rem 0 .2rem}
+        .plan-toggle button{flex:1;display:flex;flex-direction:column;align-items:center;gap:.15rem;padding:.7rem .4rem;border-radius:12px;cursor:pointer;font-family:'Inter',sans-serif;background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.14);color:rgba(255,255,255,.82);transition:border-color .2s,background .2s;position:relative}
+        .plan-toggle button strong{display:block;font-size:1.15rem;color:#fff;font-weight:700;line-height:1.1}
+        .plan-toggle button small{display:block;font-size:.72rem;color:var(--gold-light);font-weight:600}
+        .plan-toggle button .plan-name{font-size:.78rem;font-weight:600;letter-spacing:.02em;text-transform:uppercase;opacity:.8}
+        .plan-toggle button.active{border-color:var(--gold);background:rgba(201,168,76,.14)}
+        .plan-toggle button.active strong{color:var(--gold-light)}
 
         /* ════════ Explorar: escaparate de hubs ════════ */
         .showcase-section{max-width:1100px;margin:0 auto;padding:2.5rem 1.2rem 1rem}
@@ -1276,6 +1284,8 @@
                 <div class="yo-account-name" id="yoName">—</div>
                 <div class="yo-account-mail" id="yoMail"></div>
                 <div class="yo-account-plan" id="yoPlan" style="color:var(--gold-dark)">Cuenta gratuita</div>
+                <button class="yo-cta" id="yoUpgradeBtn" style="margin-top:.9rem;display:none" onclick="Premium.checkout();return false;">✨ Hazte Premium · 7 días gratis</button>
+                <button class="yo-cta" id="yoManageBtn" style="margin-top:.9rem;display:none;background:rgba(255,255,255,.06);color:#fff;border:1px solid rgba(255,255,255,.18)" onclick="Premium.manage();return false;">⚙️ Gestionar mi suscripción</button>
             </div>
 
             <div id="yoLoggedOut">
@@ -1454,19 +1464,19 @@
                 <li><span>🕊️</span> Ambiente visual sereno para orar con la Palabra</li>
                 <li><span>⏱️</span> Temporizador de sueño y velocidad de la voz</li>
             </ul>
-            <!-- Precio oculto hasta que Modo Enfoque quede pulido. Restaurar este bloque
-                 cuando esté listo (precio acordado 2026-06-17: $2.99/mes o $24.99/año ≈ 2
-                 meses gratis; el gancho es "sin anuncios + apoyas el proyecto", no "más contenido"):
             <div class="teaser-price">
                 <span class="teaser-promo">✨ Sin anuncios · Apoyas el proyecto</span>
-                <strong>$2.99/mes</strong>
-                <small>O $24.99/año — ahorras casi 2 meses.</small>
-                <small>Incluye 7 días de prueba gratis.</small>
-            </div> -->
-            <div class="teaser-price">
-                <span class="teaser-promo">✨ Muy pronto</span>
-                <strong>Próximamente</strong>
+                <div class="plan-toggle" id="focusPlanToggle">
+                    <button type="button" data-plan="annual" class="active" onclick="Premium.selectPlan('annual',this)">
+                        <span class="plan-name">Anual</span><strong>$24.99</strong><small>2 meses gratis</small>
+                    </button>
+                    <button type="button" data-plan="monthly" onclick="Premium.selectPlan('monthly',this)">
+                        <span class="plan-name">Mensual</span><strong>$2.99</strong><small>al mes</small>
+                    </button>
+                </div>
+                <small>Incluye 7 días de prueba gratis. Cancela cuando quieras.</small>
             </div>
+            <button class="share-btn gold" id="focusTeaserCta" style="width:100%;font-size:1rem;padding:.9rem;margin-top:.4rem">✨ Empezar prueba gratis</button>
         </div>
     </div>
 
@@ -1484,11 +1494,18 @@
                 <li><span>✨</span> Nuevos episodios sumándose cada semana</li>
             </ul>
             <div class="teaser-price">
-                <span class="teaser-promo">🔥 Precio fundador · por tiempo limitado</span>
-                <strong>$4.99/mes</strong>
-                <small>Precio normal: $7.99/mes.</small>
+                <span class="teaser-promo">✨ Premium · desbloquea todo</span>
+                <div class="plan-toggle" id="podPlanToggle">
+                    <button type="button" data-plan="annual" class="active" onclick="Premium.selectPlan('annual',this)">
+                        <span class="plan-name">Anual</span><strong>$24.99</strong><small>2 meses gratis</small>
+                    </button>
+                    <button type="button" data-plan="monthly" onclick="Premium.selectPlan('monthly',this)">
+                        <span class="plan-name">Mensual</span><strong>$2.99</strong><small>al mes</small>
+                    </button>
+                </div>
+                <small>Incluye 7 días de prueba gratis. Cancela cuando quieras.</small>
             </div>
-            <button class="share-btn gold" id="podPremCta" style="width:100%;font-size:1rem;padding:.9rem;margin-top:.2rem">✨ Quiero ser Premium</button>
+            <button class="share-btn gold" id="podPremCta" style="width:100%;font-size:1rem;padding:.9rem;margin-top:.2rem">✨ Empezar prueba gratis</button>
             <button class="share-btn ghost" id="podPremSecond" style="width:100%;margin-top:.6rem;display:none" onclick="Podcast.closePremium();if(window.SDV_Account)SDV_Account.open()">👤 Crear mi cuenta gratis</button>
         </div>
     </div>
@@ -2149,6 +2166,8 @@
         if (window.Listas) Listas.checkSharedLink();
         // Si entraron por un enlace de episodio compartido (/?ep=contentId).
         if (window.Podcast) Podcast.checkSharedEpisode();
+        // Si vuelven de Stripe (?checkout=success|cancel): avisar y refrescar premium.
+        if (window.Premium) Premium.checkReturn();
         // Evaluar el banner de anuncios según la pestaña inicial / sesión.
         if (window.Ads) Ads.refresh();
     });
@@ -2791,6 +2810,88 @@
         }
         function refresh() { render(load()); }
         return { mark, refresh, get: load };
+    })();
+
+    // ════════════════════════════════════════════════════════════════
+    // Premium: suscripción con Stripe ($2.99/mes · $24.99/año · 7 días gratis)
+    // ════════════════════════════════════════════════════════════════
+    window.Premium = (function () {
+        let plan = 'annual';   // plan seleccionado en el muro (anual por defecto)
+        let busy = false;
+        let pending = false;   // el usuario quería pagar pero aún no tenía sesión
+
+        // Selector mensual/anual en los muros (#focusPlanToggle, #podPlanToggle).
+        function selectPlan(p, btn) {
+            plan = (p === 'monthly') ? 'monthly' : 'annual';
+            if (btn && btn.parentElement) {
+                btn.parentElement.querySelectorAll('button').forEach((b) => b.classList.remove('active'));
+                btn.classList.add('active');
+            }
+        }
+
+        function logged() { return !!(window.SDV_Auth && SDV_Auth.user); }
+
+        // Inicia el checkout de Stripe. Si no hay sesión, abre el alta de cuenta.
+        async function checkout(p) {
+            if (p) plan = (p === 'monthly') ? 'monthly' : 'annual';
+            if (!logged()) {
+                pending = true;   // reanudar el pago en cuanto inicie sesión
+                if (window.SDV_Account) SDV_Account.open();
+                return;
+            }
+            if (busy) return;
+            busy = true;
+            if (window.showToast) showToast('Abriendo pago seguro…');
+            try {
+                const r = await SDV.checkout(plan);
+                if (r.ok && r.data && r.data.url) { window.location.href = r.data.url; return; }
+                if (r.status === 503) showToast('Los pagos se activan muy pronto. ¡Gracias por tu paciencia! 🙏');
+                else showToast('No se pudo abrir el pago. Intenta de nuevo.');
+            } catch (e) {
+                if (window.showToast) showToast('No se pudo abrir el pago. Revisa tu conexión.');
+            } finally { busy = false; }
+        }
+
+        // Portal de Stripe: cancelar, cambiar tarjeta o plan.
+        async function manage() {
+            if (!logged()) { if (window.SDV_Account) SDV_Account.open(); return; }
+            if (window.showToast) showToast('Abriendo tu suscripción…');
+            try {
+                const r = await SDV.portal();
+                if (r.ok && r.data && r.data.url) { window.location.href = r.data.url; return; }
+                showToast(r.status === 404 ? 'No encontramos una suscripción activa.' : 'No se pudo abrir la gestión.');
+            } catch (e) { if (window.showToast) showToast('No se pudo abrir la gestión.'); }
+        }
+
+        // Al volver de Stripe (?checkout=success|cancel): avisa y refresca premium.
+        function checkReturn() {
+            let c;
+            try { c = new URLSearchParams(window.location.search).get('checkout'); } catch (e) { return; }
+            if (!c) return;
+            try { history.replaceState(null, '', window.location.pathname); } catch (e) {}
+            if (c === 'success') {
+                if (window.showToast) showToast('🎉 ¡Bienvenido a Premium! Tu prueba de 7 días ya está activa.');
+                // El webhook puede tardar unos segundos: reintenta refrescar el estado.
+                let tries = 0;
+                const tick = () => {
+                    if (window.SDV && SDV.refresh) {
+                        SDV.refresh().then((isPrem) => {
+                            if (!isPrem && ++tries < 5) setTimeout(tick, 2000);
+                        });
+                    } else if (++tries < 5) setTimeout(tick, 2000);
+                };
+                setTimeout(tick, 1500);
+            } else if (c === 'cancel') {
+                if (window.showToast) showToast('Pago cancelado. Puedes intentarlo cuando quieras. 💛');
+            }
+        }
+
+        // Tras iniciar sesión, si el usuario venía a pagar, reanuda el checkout.
+        function resumeIfPending() {
+            if (pending && logged()) { pending = false; checkout(); }
+        }
+
+        return { selectPlan, checkout, manage, checkReturn, resumeIfPending };
     })();
 
     // ════════════════════════════════════════════════════════════════
@@ -3517,13 +3618,8 @@
             const logged = !!(window.SDV_Auth && SDV_Auth.user);
             const cta = document.getElementById('focusTeaserCta');
             if (cta) {
-                if (!logged) {
-                    cta.textContent = '👤 Empezar con mi cuenta gratis';
-                    cta.onclick = () => { closeTeaser(); if (window.SDV_Account) SDV_Account.open(); };
-                } else {
-                    cta.textContent = '✨ Quiero ser de los primeros';
-                    cta.onclick = () => { closeTeaser(); showToast('🙏 ¡Gracias! El acceso Premium abre muy pronto.'); };
-                }
+                cta.textContent = logged ? '✨ Empezar prueba de 7 días gratis' : '👤 Crear cuenta y empezar gratis';
+                cta.onclick = () => { closeTeaser(); Premium.checkout(); };
             }
             m.classList.add('visible');
             m.setAttribute('aria-hidden', 'false');
@@ -4267,12 +4363,8 @@
             const cta = document.getElementById('podPremCta');
             const second = document.getElementById('podPremSecond');
             if (cta) {
-                cta.textContent = '✨ Quiero ser Premium';
-                cta.onclick = () => {
-                    if (!logged) { closePremium(); if (window.SDV_Account) SDV_Account.open(); return; }
-                    closePremium();
-                    if (window.showToast) showToast('🙏 ¡Gracias! Te avisaremos en cuanto abra Premium.');
-                };
+                cta.textContent = logged ? '✨ Empezar prueba de 7 días gratis' : '👤 Crear cuenta y empezar gratis';
+                cta.onclick = () => { closePremium(); Premium.checkout(); };
             }
             // Si no hay sesión, ofrece crear cuenta gratis (para poder guardar).
             if (second) second.style.display = logged ? 'none' : '';
@@ -5926,8 +6018,13 @@
                 if ($('yoName')) $('yoName').textContent = user.displayName || '👋';
                 if ($('yoMail')) $('yoMail').textContent = user.email || '';
                 if ($('yoPlan')) $('yoPlan').textContent = SDV_Auth.premium ? '⭐ Premium' : 'Cuenta gratuita';
+                // Botones de Premium en "Yo": gestionar si ya es premium, o suscribirse si no.
+                if ($('yoUpgradeBtn')) $('yoUpgradeBtn').style.display = SDV_Auth.premium ? 'none' : '';
+                if ($('yoManageBtn'))  $('yoManageBtn').style.display  = SDV_Auth.premium ? '' : 'none';
                 if ($('accountModal').classList.contains('visible')) Acc.loadVerses();
             }
+            // Si el usuario venía a pagar y acaba de entrar, reanuda el checkout.
+            if (user && window.Premium) Premium.resumeIfPending();
             // Sincronizar cupo de descargas desde el servidor (por uid).
             // Sin sesión = bloqueado; logueado = trae usadas/restantes/límite reales.
             if (window.refreshDownloads) window.refreshDownloads();

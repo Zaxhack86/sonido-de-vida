@@ -139,6 +139,20 @@
         localStorage.setItem(EMAIL_KEY, email);
     };
 
+    // ── Suscripción premium (Stripe) ─────────────────────────────────
+    // checkout(plan) -> { url } de Stripe Checkout (redirigir el navegador).
+    // portal()       -> { url } del portal de facturación (cancelar/cambiar).
+    SDV.checkout = (plan) => api('/api/checkout', { method: 'POST', body: JSON.stringify({ plan: plan === 'annual' ? 'annual' : 'monthly' }) });
+    SDV.portal   = () => api('/api/portal', { method: 'POST', body: '{}' });
+
+    // Re-lee /api/me y actualiza SDV.premium (tras volver de Stripe).
+    SDV.refresh = async () => {
+        if (!auth.currentUser) { SDV.premium = false; return false; }
+        try { const r = await api('/api/me'); SDV.premium = !!(r.ok && r.data.premium); } catch { /* conserva el valor */ }
+        if (typeof SDV.on.change === 'function') SDV.on.change(SDV.user);
+        return SDV.premium;
+    };
+
     SDV.signOut = () => auth.signOut();
 
     // Completar magic link si la página se abrió desde el correo.

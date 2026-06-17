@@ -156,6 +156,181 @@ async function isPremium(env, uid) {
     }
 }
 
+// ── Stripe (suscripciones premium) ───────────────────────────────────
+// El estado premium se sincroniza DESDE Stripe hacia KV PREMIUM vía webhook;
+// la app nunca decide sola si alguien es premium tras pagar.
+//
+// Secretos (dashboard de Cloudflare, cifrados — NO en el .toml):
+//   STRIPE_SECRET_KEY     -> sk_live_... (o sk_test_... para pruebas)
+//   STRIPE_WEBHOOK_SECRET -> whsec_...   (del endpoint /api/stripe/webhook)
+// Vars (wrangler-api.toml):
+//   STRIPE_PRICE_MONTHLY  -> price_... del plan mensual ($2.99)
+//   STRIPE_PRICE_ANNUAL   -> price_... del plan anual  ($24.99)
+//   STRIPE_TRIAL_DAYS     -> días de prueba gratis (ej. "7")
+//
+// Mapeo uid <-> customer en KV (para que el webhook sepa de quién es la sub):
+//   stripe:uid:<uid>          -> customerId
+//   stripe:cus:<customerId>   -> uid
+
+function stripeEnabled(env) { return !!env.STRIPE_SECRET_KEY; }
+
+// Llama a la API REST de Stripe (cuerpo x-www-form-urlencoded). `params` admite
+// claves anidadas tipo "subscription_data[metadata][uid]".
+async function stripeCall(env, method, path, params) {
+    const res = await fetch('https://api.stripe.com/v1/' + path, {
+        method,
+        headers: {
+            'Authorization': 'Bearer ' + env.STRIPE_SECRET_KEY,
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: params ? new URLSearchParams(params).toString() : undefined,
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw { status: 502, msg: 'Stripe: ' + ((data.error && data.error.message) || res.status) };
+    return data;
+}
+
+// Reutiliza el customer de Stripe del usuario o lo crea la primera vez.
+async function getOrCreateCustomer(env, uid, email) {
+    const existing = await env.PREMIUM.get('stripe:uid:' + uid);
+    if (existing) return existing;
+    const cust = await stripeCall(env, 'POST', 'customers', {
+        email: email || '',
+        'metadata[uid]': uid,
+    });
+    await env.PREMIUM.put('stripe:uid:' + uid, cust.id);
+    await env.PREMIUM.put('stripe:cus:' + cust.id, uid);
+    return cust.id;
+}
+
+// POST /api/checkout {plan:'monthly'|'annual'} -> { url } de Stripe Checkout.
+async function handleCheckout(request, env, user) {
+    if (!stripeEnabled(env)) throw { status: 503, msg: 'Pagos no disponibles aún' };
+    let body; try { body = await request.json(); } catch { body = {}; }
+    const plan = body.plan === 'annual' ? 'annual' : 'monthly';
+    const price = plan === 'annual' ? env.STRIPE_PRICE_ANNUAL : env.STRIPE_PRICE_MONTHLY;
+    if (!price || price.indexOf('price_') !== 0) throw { status: 503, msg: 'Plan no configurado' };
+
+    const customer = await getOrCreateCustomer(env, user.uid, user.email);
+    const origin = env.ALLOWED_ORIGIN || 'https://sonidodevida.com';
+    const trial = parseInt(env.STRIPE_TRIAL_DAYS || '0', 10);
+
+    const params = {
+        mode: 'subscription',
+        customer,
+        'line_items[0][price]': price,
+        'line_items[0][quantity]': '1',
+        client_reference_id: user.uid,
+        'subscription_data[metadata][uid]': user.uid,
+        allow_promotion_codes: 'true',
+        locale: 'es',
+        success_url: origin + '/?checkout=success',
+        cancel_url: origin + '/?checkout=cancel',
+    };
+    if (trial > 0) params['subscription_data[trial_period_days]'] = String(trial);
+
+    const session = await stripeCall(env, 'POST', 'checkout/sessions', params);
+    return json(env, request, { url: session.url });
+}
+
+// POST /api/portal -> { url } del portal de facturación (cancelar / cambiar tarjeta).
+async function handlePortal(request, env, user) {
+    if (!stripeEnabled(env)) throw { status: 503, msg: 'Pagos no disponibles aún' };
+    const customer = await env.PREMIUM.get('stripe:uid:' + user.uid);
+    if (!customer) throw { status: 404, msg: 'No tienes una suscripción activa' };
+    const origin = env.ALLOWED_ORIGIN || 'https://sonidodevida.com';
+    const session = await stripeCall(env, 'POST', 'billing_portal/sessions', {
+        customer,
+        return_url: origin + '/?tab=yo',
+    });
+    return json(env, request, { url: session.url });
+}
+
+function timingSafeEqual(a, b) {
+    if (a.length !== b.length) return false;
+    let out = 0;
+    for (let i = 0; i < a.length; i++) out |= a.charCodeAt(i) ^ b.charCodeAt(i);
+    return out === 0;
+}
+
+// Verifica la cabecera Stripe-Signature ("t=...,v1=...") con HMAC-SHA256.
+async function verifyStripeSignature(rawBody, sigHeader, secret) {
+    if (!sigHeader || !secret) return false;
+    let t = null; const v1 = [];
+    sigHeader.split(',').forEach((kv) => {
+        const i = kv.indexOf('=');
+        if (i < 0) return;
+        const k = kv.slice(0, i), val = kv.slice(i + 1);
+        if (k === 't') t = val; else if (k === 'v1') v1.push(val);
+    });
+    if (!t || !v1.length) return false;
+    if (Math.abs(Date.now() / 1000 - Number(t)) > 300) return false; // tolerancia 5 min
+    const key = await crypto.subtle.importKey(
+        'raw', new TextEncoder().encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']
+    );
+    const mac = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(t + '.' + rawBody));
+    const hex = [...new Uint8Array(mac)].map((b) => b.toString(16).padStart(2, '0')).join('');
+    return v1.some((sig) => timingSafeEqual(sig, hex));
+}
+
+// Refleja una suscripción de Stripe en KV PREMIUM (key = uid del usuario).
+async function syncSubscription(env, sub) {
+    if (!sub || !sub.id) return;
+    let uid = sub.metadata && sub.metadata.uid;
+    if (!uid && sub.customer) uid = await env.PREMIUM.get('stripe:cus:' + sub.customer);
+    if (!uid) return;
+    const active = sub.status === 'active' || sub.status === 'trialing';
+    // +2 días de gracia sobre el fin de periodo para tolerar retrasos del webhook.
+    const expira = active && sub.current_period_end
+        ? new Date(sub.current_period_end * 1000 + 2 * 86400 * 1000).toISOString()
+        : null;
+    const interval = sub.items && sub.items.data && sub.items.data[0]
+        && sub.items.data[0].price && sub.items.data[0].price.recurring
+        && sub.items.data[0].price.recurring.interval;
+    const record = {
+        premium: active,
+        status: sub.status,
+        plan: interval === 'year' ? 'annual' : 'monthly',
+        customer: sub.customer || null,
+        subscription: sub.id,
+        expira,
+        actualizado: new Date().toISOString(),
+    };
+    await env.PREMIUM.put(uid, JSON.stringify(record));
+}
+
+// POST /api/stripe/webhook (público; autenticado por firma, no por token Firebase).
+async function handleStripeWebhook(request, env) {
+    const raw = await request.text();
+    const ok = await verifyStripeSignature(raw, request.headers.get('Stripe-Signature'), env.STRIPE_WEBHOOK_SECRET);
+    if (!ok) return new Response('firma inválida', { status: 400 });
+
+    let event; try { event = JSON.parse(raw); } catch { return new Response('json inválido', { status: 400 }); }
+    const obj = (event.data && event.data.object) || {};
+
+    try {
+        if (event.type === 'checkout.session.completed') {
+            const uid = obj.client_reference_id || (obj.metadata && obj.metadata.uid);
+            if (uid && obj.customer) {
+                await env.PREMIUM.put('stripe:uid:' + uid, obj.customer);
+                await env.PREMIUM.put('stripe:cus:' + obj.customer, uid);
+            }
+            if (obj.subscription) {
+                const sub = await stripeCall(env, 'GET', 'subscriptions/' + obj.subscription, null);
+                await syncSubscription(env, sub);
+            }
+        } else if (event.type === 'customer.subscription.created' ||
+                   event.type === 'customer.subscription.updated' ||
+                   event.type === 'customer.subscription.deleted') {
+            await syncSubscription(env, obj);
+        }
+    } catch (e) {
+        // 200 igual: evita que Stripe reintente sin fin por un dato suelto.
+        return new Response('ok (aviso: ' + (e.msg || 'error') + ')', { status: 200 });
+    }
+    return new Response('ok', { status: 200 });
+}
+
 // ── Endpoints ────────────────────────────────────────────────────────
 async function getVerses(env, request, uid) {
     const { results } = await env.DB
@@ -678,6 +853,11 @@ export default {
             if (path === '/api/magic-link' && request.method === 'POST') {
                 return handleMagicLink(request, env);
             }
+            // Endpoint público (sin token Firebase): webhook de Stripe.
+            // Se autentica por firma (Stripe-Signature), por eso va antes de requireUser.
+            if (path === '/api/stripe/webhook' && request.method === 'POST') {
+                return handleStripeWebhook(request, env);
+            }
             // Endpoint público (sin token): ver una lista compartida (solo si es pública).
             const pub = path.match(/^\/api\/public\/playlist\/([A-Za-z0-9]+)$/);
             if (pub && request.method === 'GET') {
@@ -691,6 +871,14 @@ export default {
             if (path === '/api/me' && request.method === 'GET') {
                 return json(env, request, { uid: user.uid, email: user.email, premium: await isPremium(env, user.uid), admin: isAdmin(env, user.uid) });
             }
+            // Suscripción premium (Stripe). `return await`: lanzan { status }.
+            if (path === '/api/checkout' && request.method === 'POST') {
+                return await handleCheckout(request, env, user);
+            }
+            if (path === '/api/portal' && request.method === 'POST') {
+                return await handlePortal(request, env, user);
+            }
+
             if (path === '/api/verses' && request.method === 'GET') {
                 return getVerses(env, request, user.uid);
             }

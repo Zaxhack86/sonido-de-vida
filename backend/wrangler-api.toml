@@ -13,10 +13,20 @@ ADMIN_UIDS = "h1u8iq53w8T7oBcVfN1167zEsC22"
 # Remitente de los correos de login (debe ser de un dominio autenticado en Brevo).
 SENDER_EMAIL = "noreply@sonidodevida.com"
 
+# ── Stripe (suscripciones premium) ───────────────────────────────────
+# Los price IDs se crean en el dashboard de Stripe (Productos → añadir precio).
+# Plan acordado: $2.99/mes y $24.99/año, con 7 días de prueba gratis.
+# REEMPLAZA estos placeholders por tus price_... reales antes de desplegar.
+STRIPE_PRICE_MONTHLY = "price_REEMPLAZAR_MENSUAL"
+STRIPE_PRICE_ANNUAL  = "price_REEMPLAZAR_ANUAL"
+STRIPE_TRIAL_DAYS    = "7"
+
 # SECRETOS (NO van aquí, se ponen en el dashboard de Cloudflare como cifrados):
 #   BREVO_API_KEY           -> la API key de Brevo (SMTP & API → API Keys)
 #   FIREBASE_SERVICE_ACCOUNT-> el contenido COMPLETO del .json de la cuenta de
 #                              servicio de Firebase (pegado tal cual, todo el JSON)
+#   STRIPE_SECRET_KEY        -> sk_live_... (o sk_test_... para pruebas)
+#   STRIPE_WEBHOOK_SECRET    -> whsec_... (del endpoint /api/stripe/webhook en Stripe)
 
 # D1: crear con  ->  npx wrangler d1 create sonido-de-vida-db
 # luego pega aquí el database_id que imprime el comando.
