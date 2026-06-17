@@ -2021,6 +2021,24 @@
         };
     }
 
+    // Enlace profundo a un capítulo: /?libro=Salmos&cap=91 (CTA de audio de los
+    // devocionales). Cambia a la pestaña Biblia y reproduce. Los nombres de libro
+    // van sin acento, igual que las claves de getActiveBible()/BOOK_KEY.
+    function checkChapterLink() {
+        try {
+            const params = new URLSearchParams(window.location.search);
+            const libro = params.get('libro');
+            const cap = parseInt(params.get('cap'), 10);
+            if (!libro || !cap) return;
+            if (!getActiveBible()[libro]) {
+                showToast('No se pudo cargar el capítulo');
+                return;
+            }
+            showTab('biblia');
+            loadChapter({ book: libro, chapter: cap, autoplay: true });
+        } catch (e) {}
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
         if (!window.BIBLE) { showToast('⚠️ Error: No se cargó bible.js'); return; }
         document.getElementById('playerSub').textContent = `${getTranslationLabel()} · Sonido de Vida`;
@@ -2035,6 +2053,9 @@
         updateNavModeIndicator();
         updateDownloadBtn();
         renderDevoHoy();
+        // Si entraron por un enlace de capítulo (/?libro=Salmos&cap=91), por
+        // ejemplo desde el CTA "Escuchar en audio" de un devocional.
+        checkChapterLink();
         // Si entraron por un enlace de lista compartida (/?lista=ID), ábrela.
         if (window.Listas) Listas.checkSharedLink();
         // Si entraron por un enlace de episodio compartido (/?ep=contentId).
