@@ -1,11 +1,16 @@
 // src/worker.js — Sonido de Vida Audio Worker
 // Rutas:
-//   /{libro}/{capitulo}              → audio RVA 1909 individual (mp3)
-//   /sbll/{libro}/{capitulo}         → audio SBLL 2026 individual (mp3)
-//   /stream/{libro}/{capitulo}       → stream RVA 1909 continuo desde ese punto
-//   /stream/sbll/{libro}/{capitulo}  → stream SBLL 2026 continuo desde ese punto
+//   /{libro}/{capitulo}              → audio RVA 1909 TTS individual (mp3)
+//   /sbll/{libro}/{capitulo}         → audio SBLL 2026 TTS individual (mp3)
+//   /real/{libro}/{capitulo}         → audio RVA 1909 voz REAL/humana individual (mp3)
+//   /stream/{libro}/{capitulo}       → stream RVA 1909 TTS continuo desde ese punto
+//   /stream/sbll/{libro}/{capitulo}  → stream SBLL 2026 TTS continuo desde ese punto
+//   /stream/real/{libro}/{capitulo}  → stream RVA 1909 voz REAL continuo desde ese punto
 //   ?modo=continuar (default) → resto del libro
 //   ?modo=full                → resto del libro + libros siguientes hasta Apocalipsis
+//
+// Cada "voz" se guarda bajo su propio prefijo en R2:
+//   rva (TTS)  → audio/...        sbll (TTS) → audio_sbll/...     real (humano) → audio_real/...
 
 const CORS = {
     "Access-Control-Allow-Origin": "*",
@@ -45,11 +50,16 @@ const CHAPTER_COUNTS = {
     "1-juan":5,"2-juan":1,"3-juan":1,"judas":1,"apocalipsis":22,
 };
 
+// Prefijo R2 por voz. Las tres voces son MP3.
+//   rva  → audio        (TTS RVA 1909)
+//   sbll → audio_sbll   (TTS SBLL 2026)
+//   real → audio_real   (narración humana RVA 1909)
+const VOICE_PREFIX = { rva: "audio", sbll: "audio_sbll", real: "audio_real" };
+
 // Devuelve las claves R2 a unir según punto inicial y modo
-function buildSegmentKeys(isSBLL, book, chapter, mode) {
+function buildSegmentKeys(prefix, book, chapter, mode) {
     const out = [];
-    const prefix = isSBLL ? "audio_sbll" : "audio";
-    const ext = "mp3"; // ambas traducciones son MP3 ahora
+    const ext = "mp3"; // todas las voces son MP3
     const startIdx = BIBLE_ORDER.indexOf(book);
     if (startIdx < 0) return out;
 
@@ -86,9 +96,8 @@ async function getR2Object(env, primaryKey, isSBLL, ext) {
     return null;
 }
 
-async function handleSingle(env, isSBLL, book, chapter) {
-    const prefix = isSBLL ? "audio_sbll" : "audio";
-    const obj = await getR2Object(env, `${prefix}/${book}/${chapter}.mp3`, isSBLL, "mp3");
+async function handleSingle(env, prefix, book, chapter) {
+    const obj = await getR2Object(env, `${prefix}/${book}/${chapter}.mp3`, false, "mp3");
     if (!obj) {
         return new Response(
             JSON.stringify({ error: "Audio no encontrado", book, chapter }),
@@ -104,8 +113,8 @@ async function handleSingle(env, isSBLL, book, chapter) {
     return new Response(obj.body, { status: 200, headers });
 }
 
-async function handleStream(env, isSBLL, book, chapter, mode) {
-    const segments = buildSegmentKeys(isSBLL, book, chapter, mode);
+async function handleStream(env, prefix, book, chapter, mode) {
+    const segments = buildSegmentKeys(prefix, book, chapter, mode);
     if (segments.length === 0) {
         return new Response(
             JSON.stringify({ error: "Sin segmentos", book, chapter, mode }),
@@ -125,7 +134,7 @@ async function handleStream(env, isSBLL, book, chapter, mode) {
                         return;
                     }
                     const key = segments[segIdx++];
-                    const obj = await getR2Object(env, key, isSBLL, "mp3");
+                    const obj = await getR2Object(env, key, false, "mp3");
                     if (!obj || !obj.body) continue; // saltar capítulos faltantes
                     currentReader = obj.body.getReader();
                 }
@@ -169,10 +178,10 @@ const worker_default = {
 
         // Detectar /stream/...
         if (parts[0] === "stream") {
-            let isSBLL = false;
+            let prefix = VOICE_PREFIX.rva;
             let book, chapter;
-            if (parts[1] === "sbll" && parts.length >= 4) {
-                isSBLL = true; book = parts[2]; chapter = parseInt(parts[3], 10);
+            if ((parts[1] === "sbll" || parts[1] === "real") && parts.length >= 4) {
+                prefix = VOICE_PREFIX[parts[1]]; book = parts[2]; chapter = parseInt(parts[3], 10);
             } else if (parts.length >= 3) {
                 book = parts[1]; chapter = parseInt(parts[2], 10);
             } else {
@@ -181,13 +190,13 @@ const worker_default = {
             if (!book || isNaN(chapter) || chapter < 1) {
                 return new Response("Bad Request", { status: 400, headers: CORS });
             }
-            return handleStream(env, isSBLL, book, chapter, mode);
+            return handleStream(env, prefix, book, chapter, mode);
         }
 
-        // Single chapter: /sbll/{libro}/{cap} ó /{libro}/{cap}
-        let isSBLL = false, bookPart, chapterPart;
-        if (parts[0] === "sbll" && parts.length >= 3) {
-            isSBLL = true; bookPart = parts[1]; chapterPart = parts[2];
+        // Single chapter: /sbll/{libro}/{cap} · /real/{libro}/{cap} · /{libro}/{cap}
+        let prefix = VOICE_PREFIX.rva, bookPart, chapterPart;
+        if ((parts[0] === "sbll" || parts[0] === "real") && parts.length >= 3) {
+            prefix = VOICE_PREFIX[parts[0]]; bookPart = parts[1]; chapterPart = parts[2];
         } else if (parts.length >= 2) {
             bookPart = parts[0]; chapterPart = parts[1];
         } else {
@@ -197,7 +206,7 @@ const worker_default = {
         const chapter = parseInt(chapterPart, 10);
         if (isNaN(chapter) || chapter < 1) return new Response("Bad Request", { status: 400, headers: CORS });
 
-        return handleSingle(env, isSBLL, bookPart, chapter);
+        return handleSingle(env, prefix, bookPart, chapter);
     },
 };
 

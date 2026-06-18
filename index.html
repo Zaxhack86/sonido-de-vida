@@ -343,6 +343,8 @@
         .translation-toggle input{display:none}
         .tt-option{position:relative;z-index:1;padding:.45rem 1.1rem;font-size:.8rem;font-weight:600;font-family:'Inter',sans-serif;color:rgba(255,255,255,.5);cursor:pointer;border-radius:50px;transition:color .25s;white-space:nowrap;user-select:none;letter-spacing:.2px}
         .tt-option.active{color:var(--dark);background:linear-gradient(135deg,var(--gold-light),var(--gold));box-shadow:0 2px 8px rgba(201,168,76,.35)}
+        .translation-note{text-align:center;font-size:.74rem;line-height:1.45;color:rgba(255,255,255,.55);max-width:420px;margin:-.7rem auto 1.4rem;font-family:'Inter',sans-serif}
+        .translation-note strong{color:var(--gold-light);font-weight:600}
         @media(max-width:480px){
             .translation-toggle-wrap{flex-direction:column;gap:.5rem}
             .translation-toggle{display:flex;width:100%;max-width:320px}
@@ -1096,7 +1098,7 @@
                     <div class="fx-screen" style="--fx-glow:#46306e"><span class="fx-notch"></span><div class="fx-bg"></div>
                         <div class="fx-content"><span class="fx-kicker">Con voz</span>
                             <div class="fx-play">▶</div>
-                            <p class="fx-line2">Salmos 23 · SBLL 2026</p>
+                            <p class="fx-line2">Salmos 23 · Voz Real</p>
                             <div class="fx-mixer">
                                 <div class="fx-mrow"><span>🎙️ Voz</span><div class="fx-bar"><i style="width:82%"></i></div></div>
                                 <div class="fx-mrow"><span>🎵 Música</span><div class="fx-bar"><i style="width:55%"></i></div></div>
@@ -1137,10 +1139,12 @@
                 <div class="translation-toggle-wrap">
                     <span class="translation-toggle-label">Traducción</span>
                     <div class="translation-toggle" id="translationToggle">
-                        <span class="tt-option" id="tt-rva" onclick="setTranslation('rva')">🎤 RVA 1909</span>
-                        <span class="tt-option active" id="tt-sbll" onclick="setTranslation('sbll')">🎧 SBLL 2026</span>
+                        <span class="tt-option active" id="tt-real" onclick="setTranslation('real')">🎙️ Voz Real</span>
+                        <span class="tt-option" id="tt-rva" onclick="setTranslation('rva')">🤖 RVA 1909</span>
+                        <span class="tt-option" id="tt-sbll" onclick="setTranslation('sbll')">🎧 SBLL 2026</span>
                     </div>
                 </div>
+                <p class="translation-note" id="translationNote">🎙️ <strong>Voz Real</strong>: narración humana (RVA 1909). RVA y SBLL son voces generadas por IA (TTS).</p>
                 <div class="listen-selectors">
                     <div class="form-group">
                         <label>Libro</label>
@@ -1356,7 +1360,7 @@
             </div>
             <div class="player-info">
                 <div class="player-ref-text" id="playerRef"></div>
-                <div class="player-sub" id="playerSub">Biblia RVA 1909 · Sonido de Vida</div>
+                <div class="player-sub" id="playerSub">RVA 1909 · Voz Real · Sonido de Vida</div>
                 <div class="player-progress" id="playerProgress" onclick="seekAudio(event)">
                     <div class="player-progress-fill" id="playerProgressFill"></div>
                 </div>
@@ -1840,21 +1844,27 @@
     // ══════════════════════════════════════════════════════════════
     const AUDIO_BASE = 'https://sonido-de-vida-audio.sonidodevida.workers.dev';
 
-    // ── Traducción activa: 'rva' (RVA 1909) | 'sbll' (SBLL 2026) ──
-    let translationMode = 'sbll';
+    // ── Voz/traducción activa ──────────────────────────────────────────
+    //   'real' (RVA 1909, narración HUMANA · principal) | 'rva' (RVA 1909 TTS) | 'sbll' (SBLL 2026 TTS)
+    //   'real' y 'rva' comparten el MISMO texto (RVA 1909 → window.BIBLE); solo
+    //   cambia el audio. 'sbll' usa su propio texto (window.BIBLE_SBLL).
+    let translationMode = 'real';
 
     function getActiveBible() {
         return (translationMode === 'sbll' && window.BIBLE_SBLL) ? window.BIBLE_SBLL : window.BIBLE;
     }
     function getTranslationLabel() {
-        return translationMode === 'sbll' ? 'SBLL 2026' : 'RVA 1909';
+        if (translationMode === 'sbll') return 'SBLL 2026';
+        if (translationMode === 'real') return 'RVA 1909 · Voz Real';
+        return 'RVA 1909';
     }
     // ── Carga diferida de los datos bíblicos (lazy-load) ──────────────
     // Cada traducción es un .js que define window.BIBLE (RVA) / window.BIBLE_SBLL
     // (SBLL). Se inyectan bajo demanda, una sola vez, y se reutiliza la promesa
     // en vuelo si llegan varias peticiones a la vez.
-    const BIBLE_SRC    = { rva: '/bible.js',  sbll: '/bible_sbll.js' };
-    const BIBLE_GLOBAL = { rva: 'BIBLE',      sbll: 'BIBLE_SBLL' };
+    // 'real' reutiliza el texto RVA (mismo .js / mismo global que 'rva').
+    const BIBLE_SRC    = { rva: '/bible.js',  sbll: '/bible_sbll.js', real: '/bible.js' };
+    const BIBLE_GLOBAL = { rva: 'BIBLE',      sbll: 'BIBLE_SBLL',     real: 'BIBLE' };
     const _bibleLoading = {};   // mode -> Promise en vuelo
     function bibleLoaded(mode) { return !!window[BIBLE_GLOBAL[mode]]; }
     function ensureBible(mode = translationMode) {
@@ -1900,6 +1910,7 @@
         catch (e) { showToast('⚠️ No se pudo cargar esa traducción'); return; }
         translationMode = mode;
         // Actualizar botones del toggle
+        document.getElementById('tt-real').classList.toggle('active', mode === 'real');
         document.getElementById('tt-rva').classList.toggle('active', mode === 'rva');
         document.getElementById('tt-sbll').classList.toggle('active', mode === 'sbll');
         // Si hay capítulo cargado, recargarlo con la nueva traducción
@@ -2313,7 +2324,8 @@
 
     function audioUrl(book, chapter, single = false) {
         const key = BOOK_KEY[book] || book.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/\s+/g,'-');
-        const prefix = translationMode === 'sbll' ? 'sbll/' : '';
+        // Prefijo de ruta del Worker por voz: real→/real, sbll→/sbll, rva→(raíz)
+        const prefix = translationMode === 'real' ? 'real/' : (translationMode === 'sbll' ? 'sbll/' : '');
         // Stream continuo del servidor: concatena todos los MP3 desde este capítulo
         // en una sola respuesta HTTP. Esto evita el evento 'ended' entre capítulos,
         // lo que es esencial para reproducción confiable con pantalla bloqueada en
@@ -3262,7 +3274,7 @@
         // La cámara lenta (<1×) solo se permite con la voz SBLL 2026: la RVA 1909
         // pierde calidad al ralentizarla, así que con esa voz se ofrece cambiar.
         function setSpeed(rate, btn) {
-            if (rate < 1 && translationMode === 'rva') {
+            if (rate < 1 && translationMode !== 'sbll') {
                 const hint = document.getElementById('focusSpeedHint');
                 if (hint) { hint.classList.add('show'); hint.classList.remove('pulse'); void hint.offsetWidth; hint.classList.add('pulse'); }
                 return;   // no aplicar cámara lenta con la voz 1909
@@ -3274,12 +3286,13 @@
         }
         // Atenúa los botones de cámara lenta y muestra el aviso cuando la voz es RVA 1909.
         function updateSpeedAvailability() {
-            const rva = (translationMode === 'rva');
+            // La cámara lenta solo está disponible con la voz TTS SBLL 2026.
+            const noSlow = (translationMode !== 'sbll');
             document.querySelectorAll('#focusSpeedOpts button').forEach(b => {
-                b.classList.toggle('locked', parseFloat(b.dataset.rate) < 1 && rva);
+                b.classList.toggle('locked', parseFloat(b.dataset.rate) < 1 && noSlow);
             });
             const hint = document.getElementById('focusSpeedHint');
-            if (hint) hint.classList.toggle('show', rva);
+            if (hint) hint.classList.toggle('show', noSlow);
         }
         // Cambia a la voz SBLL 2026 desde el Modo Enfoque (para usar la cámara lenta).
         function useSbllVoice() {
