@@ -34,7 +34,9 @@ arranque**. Antes eran `<script defer>` que imponían ~7.6MB a todos los usuario
 Ahora se inyectan bajo demanda con `ensureBible(mode)`:
 
 - `ensureBible(mode)` → inyecta el `.js` una sola vez (reutiliza la promesa en
-  vuelo). `mode` = `'sbll'` (default) | `'rva'`. Solo carga la traducción activa.
+  vuelo). `mode` = `'real'` (default) | `'rva'` | `'sbll'`. Solo carga la traducción activa.
+  `'real'` y `'rva'` comparten el MISMO texto RVA 1909 (`bible.js`/`window.BIBLE`);
+  solo difieren en el audio. `'sbll'` usa `bible_sbll.js`/`window.BIBLE_SBLL`.
 - `prepareBibleUI()` → llamada desde `showTab('biblia'|'buscar')`; carga la
   Escritura y llena el selector de libros (`populateBooks`) la primera vez.
 - **RVA** (`bible.js`) solo se baja al togglear a RVA (`setTranslation('rva')`) o
@@ -55,8 +57,10 @@ Ahora se inyectan bajo demanda con `ensureBible(mode)`:
 ## Arquitectura de workers
 
 ### Worker de audio (`sonido-de-vida-audio.*`)
-- Sirve MP3 desde R2 bucket `sonido-de-vida-audio`.
-- Rutas: `/{libro}/{cap}`, `/sbll/{libro}/{cap}`, `/stream/{libro}/{cap}`, `/stream/sbll/{libro}/{cap}`
+- Sirve MP3 desde R2 bucket `sonido-de-vida-audio`. Tres voces, cada una con su prefijo R2:
+  `rva`→`audio/` (TTS), `sbll`→`audio_sbll/` (TTS), `real`→`audio_real/` (narración HUMANA, voz principal).
+- Rutas: `/{libro}/{cap}`, `/sbll/{libro}/{cap}`, `/real/{libro}/{cap}`, `/stream/{libro}/{cap}`, `/stream/sbll/{libro}/{cap}`, `/stream/real/{libro}/{cap}`
+- El audio `real` es la grabación humana RVA 1909 de archive.org (BibliaEnAudioRVA1909), 1189 capítulos completos.
 - Parámetro: `?modo=continuar` (default, resto del libro) | `?modo=full` (hasta Apocalipsis)
 - Los streams concatenan múltiples objetos R2 en un `ReadableStream`.
 - **No tiene autenticación**: es público.
@@ -82,7 +86,7 @@ Ahora se inyectan bajo demanda con `ensureBible(mode)`:
 ## Variables de estado importantes en `index.html`
 
 ```js
-let translationMode = 'sbll';     // 'rva' | 'sbll' — traducción activa
+let translationMode = 'real';     // 'real' (voz humana, default) | 'rva' (TTS) | 'sbll' (TTS)
 let playbackMode = null;          // null | 'continue' | 'full' — modo de reproducción
 let focusNarration = false;       // true → modo Enfoque Con Voz activo (fuerza modo=full)
 let focusSubMode = null;          // 'meditar' | 'voz' | null
@@ -90,7 +94,7 @@ let state = { book, chapter };    // libro y capítulo actualmente seleccionados
 ```
 
 `effectiveMode()` devuelve `'full'` si `focusNarration` es `true` o `playbackMode === 'full'`.  
-La URL del stream es `/stream/{libro}/{cap}?modo={effectiveMode()}`.
+La URL del stream lleva el prefijo de la voz activa: `/stream/{real|sbll|}/{libro}/{cap}?modo={effectiveMode()}` (la voz `rva` no lleva prefijo). La construye `audioUrl()`.
 
 ---
 
