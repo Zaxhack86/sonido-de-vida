@@ -1631,12 +1631,12 @@
         </div>
     </div>
 
-    <audio id="mainAudio" preload="none"></audio>
+    <audio id="mainAudio" preload="none" controlsList="nodownload noplaybackrate" oncontextmenu="return false"></audio>
     <!-- Audio dedicado del Podcast de Vida: independiente del motor de la Biblia -->
-    <audio id="podcastAudio" preload="none"></audio>
+    <audio id="podcastAudio" preload="none" controlsList="nodownload noplaybackrate" oncontextmenu="return false"></audio>
 
     <!-- ════ Modo Enfoque (premium): capa de música ambiente + UI inmersiva ════ -->
-    <audio id="ambientAudio" loop preload="none" playsinline></audio>
+    <audio id="ambientAudio" loop preload="none" playsinline controlsList="nodownload noplaybackrate" oncontextmenu="return false"></audio>
     <div class="focus-overlay" id="focusOverlay" aria-hidden="true" role="dialog" aria-label="Modo Enfoque">
         <div class="focus-aura" aria-hidden="true"><span></span><span></span><span></span></div>
         <canvas class="focus-motes" id="focusMotes" aria-hidden="true"></canvas>
@@ -1819,7 +1819,7 @@
                 </div>
             </div>
         </div>
-        <audio id="pasajesAudio"></audio>
+        <audio id="pasajesAudio" controlsList="nodownload noplaybackrate" oncontextmenu="return false"></audio>
     </div>
 
     <!-- LAZY-LOAD: bible.js (~4MB, RVA) y bible_sbll.js (~3.6MB, SBLL) YA NO se
