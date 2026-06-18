@@ -2965,6 +2965,9 @@
         let ambPlaylist = [], ambPos = 0, ambToken = 0;
         let crossing = false;
         let shuffleAuto = false;
+        let pendingHopId = null;   // id del próximo ambiente al azar ya precargado (salto sin silencio)
+        // Último ambiente usado: para no repetirlo al abrir / al saltar (variedad real).
+        let lastAmbientId = (() => { try { return localStorage.getItem('sdv-focus-last') || null; } catch (e) { return null; } })();
         let _pauseTimer = null;   // debounce: ignora micro-pauses del stream entre libros
         const blobCache = new Map();   // contentId -> objectURL
         const CROSSFADE_MS = 1400;
@@ -3072,22 +3075,44 @@
             crossing = false;
             incoming.volume = tgt;
         }
+        // Elige un id de ambiente al azar, evitando el actual y el último usado
+        // (para que nunca "empiece siempre por lo mismo" ni se repita al saltar).
+        function randomAmbientId() {
+            let pool = ambients.filter(a => a.id !== currentAmbient && a.id !== lastAmbientId);
+            if (!pool.length) pool = ambients.filter(a => a.id !== currentAmbient);
+            if (!pool.length) pool = ambients.slice();
+            const pick = pool[Math.floor(Math.random() * pool.length)];
+            return pick ? pick.id : null;
+        }
         function preloadNextVariant() {
             if (ambPlaylist.length <= 1) return;
             const n = (ambPos + 1) % ambPlaylist.length;
+            // Si toca saltar a otro ambiente (shuffleAuto al cerrar la lista),
+            // precarga su PRIMERA pista para que el salto sea sin silencio.
+            if (shuffleAuto && n === 0) {
+                pendingHopId = randomAmbientId();
+                const a = ambients.find(x => x.id === pendingHopId);
+                if (a) loadBlob(a.ids[0]).catch(() => {});
+                return;
+            }
+            pendingHopId = null;
             loadBlob(ambPlaylist[n]).catch(() => {});
         }
         // Rota a la siguiente variante del mismo ambiente (con fundido).
-        // Si shuffleAuto está activo y la lista de variantes se termina, elige
-        // un ambiente completamente distinto en lugar de volver a empezar.
+        // Si shuffleAuto está activo y la lista de variantes se termina, salta a
+        // un ambiente completamente distinto (ya precargado) sin silencio.
         async function rotateNext() {
-            if (rotating || crossing || ambPlaylist.length <= 1) return;
+            if (rotating || crossing || loading || ambPlaylist.length <= 1) return;
             rotating = true;
             try {
                 const nextPos = (ambPos + 1) % ambPlaylist.length;
                 if (shuffleAuto && nextPos === 0) {
-                    rotating = false;
-                    pickRandomAmbient();
+                    // OJO: NO soltamos `rotating` aquí. Si lo hiciéramos, la pista
+                    // actual terminaría (evento 'ended') durante la descarga del
+                    // salto y dispararía otro rotateNext → dos fundidos a la vez →
+                    // la música se traba y enmudece. La guarda se mantiene hasta
+                    // que el nuevo ambiente está sonando.
+                    await hopRandomAmbient();
                     return;
                 }
                 ambPos = nextPos;
@@ -3096,6 +3121,29 @@
                 preloadNextVariant();
             } catch (e) {} finally { rotating = false; }
         }
+        // Salta a un ambiente al azar empezando por la pista ya precargada
+        // (caché → instantáneo → sin silencio). Pensado para llamarse DENTRO de
+        // rotateNext, con la guarda `rotating` aún puesta.
+        async function hopRandomAmbient() {
+            const id = pendingHopId || randomAmbientId();
+            pendingHopId = null;
+            const a = ambients.find(x => x.id === id);
+            if (!a) return;
+            const my = ++ambToken;
+            currentAmbient = id;
+            try { localStorage.setItem('sdv-focus-last', id); } catch (e) {}
+            lastAmbientId = id;
+            setEmblem(a);
+            markChips();
+            // Empezar por la pista precargada; el resto, barajado.
+            const first = a.ids[0];
+            ambPlaylist = [first, ...shuffle(a.ids.filter(x => x !== first))];
+            ambPos = 0;
+            const url = await loadBlob(ambPlaylist[0]);
+            if (my !== ambToken) return;
+            await crossfadeTo(url);
+            preloadNextVariant();
+        }
 
         async function selectAmbient(id) {
             const a = ambients.find(x => x.id === id);
@@ -3103,6 +3151,8 @@
             if (currentAmbient === id) { stopAmbient(); return; }   // tocar de nuevo = apagar
             const my = ++ambToken;
             currentAmbient = id;
+            try { localStorage.setItem('sdv-focus-last', id); } catch (e) {}
+            lastAmbientId = id;
             setEmblem(a);
             ambPlaylist = shuffle(a.ids);
             ambPos = 0;
@@ -3120,9 +3170,8 @@
         }
         // Elige un ambiente al azar de cualquier categoría (distinto del actual).
         function pickRandomAmbient() {
-            const pool = ambients.filter(a => a.id !== currentAmbient);
-            const pick = pool[Math.floor(Math.random() * pool.length)];
-            if (pick) selectAmbient(pick.id);
+            const id = randomAmbientId();
+            if (id) selectAmbient(id);
         }
         // Activa/desactiva el modo aleatorio automático: al activar elige un
         // ambiente al azar; al terminar la lista de variantes elige otro distinto.
@@ -3148,6 +3197,7 @@
             blobCache.forEach(u => { try { URL.revokeObjectURL(u); } catch (e) {} });
             blobCache.clear();
             ambPlaylist = []; ambPos = 0;
+            pendingHopId = null;
             currentAmbient = null;
             shuffleAuto = false;
             setEmblem(null);
@@ -3158,13 +3208,13 @@
         // la pista; si igual llega al final, saltar en seco como respaldo.
         [ambientEl, ambientElB].forEach(el => {
             el.addEventListener('timeupdate', () => {
-                if (el !== ambCur || crossing || rotating || ambPlaylist.length <= 1 || !el.duration) return;
+                if (el !== ambCur || crossing || rotating || loading || ambPlaylist.length <= 1 || !el.duration) return;
                 if (el.duration - el.currentTime < (CROSSFADE_MS / 1000 + 0.3)) rotateNext();
             });
             el.addEventListener('ended', () => {
                 if (el !== ambCur) return;
                 if (ambPlaylist.length <= 1) { try { el.currentTime = 0; el.play().catch(() => {}); } catch (e) {} return; }
-                if (!crossing && !rotating) rotateNext();
+                if (!crossing && !rotating && !loading) rotateNext();
             });
         });
 
