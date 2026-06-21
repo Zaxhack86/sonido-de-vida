@@ -18,7 +18,7 @@ SENDER_EMAIL = "noreply@sonidodevida.com"
 # verificar el dominio y dar acceso a la cuenta de servicio (ver METRICAS-SETUP.md).
 # Mientras siga sin definir, el cron de SEO queda inerte (no falla).
 # Formato dominio-completo (recomendado):  sc-domain:sonidodevida.com
-# SEARCH_CONSOLE_SITE = "sc-domain:sonidodevida.com"
+SEARCH_CONSOLE_SITE = "sc-domain:sonidodevida.com"
 
 # ── Stripe (suscripciones premium) ───────────────────────────────────
 # Los price IDs se crean en el dashboard de Stripe (Productos → añadir precio).

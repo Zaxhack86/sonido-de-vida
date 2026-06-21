@@ -337,6 +337,9 @@
         { label: 'Impresiones', data: ss.map(function (x) { return x.impresiones; }), color: '#7e9bd1' },
         { label: 'Clics', data: ss.map(function (x) { return x.clics; }), color: '#C9A84C' },
       ]);
+    } else if (seo.configurado) {
+      $('seoBadge').innerHTML = '<span class="badge-fase" style="background:rgba(95,174,126,.16);color:var(--verde)">Activado · esperando datos</span>';
+      $('seoWrap').innerHTML = '<div class="empty">✅ Conectado a Search Console. Google entrega los datos de SEO con <b>2-3 días de retraso</b>; en cuanto haya impresiones aparecerán aquí solas (el panel se sincroniza cada noche).</div>';
     } else {
       $('seoBadge').innerHTML = '<span class="badge-fase">Fase 2 · por activar</span>';
       $('seoWrap').innerHTML = '<div class="empty">Conecta Google Search Console para ver aquí si tu SEO funciona (impresiones, clics y posición en Google).<br>Pasos en <b>METRICAS-SETUP.md</b> → es un trámite de una sola vez.</div>';
