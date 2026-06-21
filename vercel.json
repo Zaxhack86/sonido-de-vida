@@ -2,8 +2,6 @@
   "version": 2,
   "cleanUrls": true,
   "routes": [
-    { "src": "/", "dest": "/landing/index.html" },
-    { "src": "/app/?", "dest": "/index.html" },
     { "handle": "filesystem" },
     { "src": "/(.*)", "dest": "/index.html" }
   ]

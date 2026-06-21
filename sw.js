@@ -1,11 +1,10 @@
-const CACHE_STATIC = 'sdv-static-v90';
+const CACHE_STATIC = 'sdv-static-v89';
 const CACHE_AUDIO  = 'sdv-audio-v2';
 
-// La landing premium vive en la raíz ('/'); la app (PWA) vive en '/app/'.
 // Lazy-load: bible.js / bible_sbll.js YA NO se precachean en install (eran ~7.6MB
 // impuestos a todos en la primera visita). Se cachean cacheFirst cuando el frontend
 // los pide bajo demanda (ver regla más abajo).
-const STATIC_ASSETS = ['/', '/app/', '/manifest.json'];
+const STATIC_ASSETS = ['/', '/index.html', '/manifest.json'];
 
 self.addEventListener('install', e => {
     e.waitUntil(caches.open(CACHE_STATIC).then(c => c.addAll(STATIC_ASSETS)));
@@ -50,10 +49,7 @@ self.addEventListener('fetch', e => {
         return;
     }
 
-    // Documentos shell: landing ('/') y app ('/app' o '/app/') + manifest.
-    // networkFirst para que un deploy nuevo se vea sin esperar, con caché de
-    // respaldo si no hay conexión.
-    if (url.pathname === '/' || url.pathname === '/app' || url.pathname === '/app/' || url.pathname === '/manifest.json') {
+    if (STATIC_ASSETS.includes(url.pathname)) {
         e.respondWith(networkFirst(e.request, CACHE_STATIC));
         return;
     }

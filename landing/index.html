@@ -3,23 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script>
-/* La landing vive en la raíz (sonidodevida.com). La app vive en /app.
-   Dos casos deben saltarse la landing e ir directo a la app:
-   1) La PWA ya instalada (su start_url viejo era '/').
-   2) Cualquier enlace profundo con query (?libro=&cap=, ?lista=, ?tema=,
-      magic-link de login, etc.). La landing no usa query params propios,
-      así que reenviar cualquier ?... a la app es seguro.
-   Se ejecuta antes de pintar nada para evitar parpadeo. */
-(function () {
-  try {
-    var standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
-    if (standalone || location.search) {
-      location.replace('/app/' + location.search + location.hash);
-    }
-  } catch (e) {}
-})();
-</script>
 <title>Sonido de Vida — Biblia en Audio</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
@@ -1181,10 +1164,10 @@ document.querySelectorAll('a[href^="#"]:not([data-app]):not([data-app-chapter]):
 
 // ══════════════════════════════════════════════════════════════
 // ENLACE A LA APP REAL  ·  Single source of truth
-// La app vive en /app (la landing ocupa la raíz). Ruta relativa para que
-// funcione igual en producción y en previsualización.
+// Cambia APP_URL si la app vive en otra ruta/host (p.ej. '/app' o
+// 'https://app.sonidodevida.com/'). Por defecto: dominio de producción.
 // ══════════════════════════════════════════════════════════════
-const APP_URL = '/app/';
+const APP_URL = 'https://sonidodevida.com/';
 
 function appBase() { return APP_URL.replace(/\/+$/, ''); }
 function appChapterUrl(libro, cap) {
