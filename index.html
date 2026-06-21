@@ -1048,6 +1048,65 @@
         @media(prefers-reduced-motion:reduce){.ex-card-cover,.ex-banner{transition:none}}
     </style>
 
+    <style id="sdv-premium-dark">
+    /* ════════════════════════════════════════════════════════════════
+       CAPA PREMIUM — Tema oscuro unificado (mismo lenguaje que la landing)
+       Aditiva: no toca la lógica ni el resto del CSS. REVERSIBLE: para
+       volver al tema claro, borra este único bloque <style id="sdv-premium-dark">.
+       Lleva las secciones claras de la Home + el feed Explorar al acabado
+       navy / oro / glass que el resto de la app ya usa.
+       ════════════════════════════════════════════════════════════════ */
+    :root{
+        --warm-white:#0a1226;   /* fondo base: era claro → navy profundo */
+        --cream:#0d1733;        /* superficie alterna: era clara → navy */
+        --text-dark:#f3eee2;    /* texto principal: era oscuro → crema  */
+        --text-light:#a6abba;   /* texto secundario → zinc claro        */
+    }
+    body{
+        background:
+            radial-gradient(1100px 620px at 50% -8%, rgba(201,168,76,.07), transparent 62%),
+            linear-gradient(180deg,#070e20 0%, #0a1226 60%, #0b1430 100%);
+        background-attachment:fixed;
+        color:var(--text-dark);
+    }
+    /* Encabezados de sección genéricos sobre fondo oscuro */
+    .section-header h2{color:#f4efe3}
+
+    /* ── Barra de estadísticas (era blanca) ── */
+    .stats-bar{background:linear-gradient(180deg,rgba(13,21,48,.55),rgba(10,18,38,.55));
+        box-shadow:none;border-top:1px solid rgba(201,168,76,.12);
+        border-bottom:1px solid rgba(255,255,255,.05);backdrop-filter:blur(10px)}
+    .stat-item h3{color:var(--gold-light)}
+
+    /* ── Características (tarjetas eran blancas) ── */
+    .features{background:transparent}
+    .feature-card{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07);
+        backdrop-filter:blur(14px)}
+    .feature-card:hover{box-shadow:0 24px 60px rgba(0,0,0,.45);border-color:rgba(201,168,76,.25)}
+    .feature-card h3{color:#f0ead9}
+
+    /* ── Versículo al azar (tarjeta era blanca) ── */
+    .random-section{background:transparent}
+    .random-verse-card{background:rgba(255,255,255,.035);border:1px solid rgba(201,168,76,.16);
+        backdrop-filter:blur(14px);box-shadow:0 18px 50px rgba(0,0,0,.35)}
+    .random-ref{color:var(--gold-light)}
+    .random-text::before{color:var(--gold)}
+    .random-action-btn.ra-copy{background:rgba(100,181,246,.12);color:#90caf9;border-color:rgba(100,181,246,.28)}
+    .random-action-btn.ra-copy:hover{background:rgba(100,181,246,.2)}
+
+    /* ── Devocionales (sección + tarjetas eran blancas) ── */
+    .devocionales-section{background:transparent}
+    .devocional-card{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07);
+        backdrop-filter:blur(14px)}
+    .devocional-card:hover{box-shadow:0 22px 55px rgba(0,0,0,.45)}
+    .devocional-card-ref{color:#f0ead9}
+    .devocional-card-tag{color:var(--gold-light)}
+
+    /* ── Feed Explorar: acentos dorados que estaban en tono oscuro ── */
+    .ex-seeall,.ex-th-premium{color:var(--gold-light)}
+    .ex-th-premium{border-color:rgba(201,168,76,.42);background:rgba(201,168,76,.14)}
+    </style>
+
     <!-- ════════ Explorar — feed por escalones, estilo Dwell ════════ -->
     <section class="explore-section" data-tab="explorar">
         <div class="section-header reveal"><h2>Explorar</h2><p>Desliza y descubre. Cada experiencia, su propio espacio.</p></div>
