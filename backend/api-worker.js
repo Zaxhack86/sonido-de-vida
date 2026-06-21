@@ -297,6 +297,8 @@ async function syncSubscription(env, sub) {
         actualizado: new Date().toISOString(),
     };
     await env.PREMIUM.put(uid, JSON.stringify(record));
+    // Embudo: deja la conversión a premium una sola vez por uid (primera activación).
+    if (active) await logEvent(env, 'premium', uid);
 }
 
 // POST /api/stripe/webhook (público; autenticado por firma, no por token Firebase).
@@ -839,8 +841,209 @@ async function handleMagicLink(request, env) {
     return json(env, request, { ok: true });
 }
 
+// ── Métricas: analytics propio (visitas + embudo) y SEO ──────────────
+// Todo best-effort: un fallo de métrica NUNCA debe romper la app del usuario.
+
+// Clasifica de dónde viene una visita a partir del referrer y utm_source.
+// Devuelve { source, medium, host }. medium ∈ social|organic|referral|direct|campaign.
+function classifyTraffic(referrer, utmSource, selfHost) {
+    const utm = String(utmSource || '').toLowerCase().trim().slice(0, 40);
+    if (utm) {
+        const social = ['instagram', 'facebook', 'fb', 'ig', 'tiktok', 'youtube', 'twitter', 'x', 'whatsapp', 'telegram'];
+        return { source: utm, medium: social.includes(utm) ? 'social' : 'campaign', host: null };
+    }
+    let host = '';
+    try { host = new URL(referrer).hostname.replace(/^www\./, '').toLowerCase(); } catch { host = ''; }
+    if (!host || (selfHost && host.endsWith(selfHost))) return { source: 'directo', medium: 'direct', host: null };
+
+    const map = [
+        [/(^|\.)instagram\.com$|l\.instagram/, 'instagram', 'social'],
+        [/(^|\.)facebook\.com$|^[a-z]{1,3}\.facebook\.com$|(^|\.)fb\.com$/, 'facebook', 'social'],
+        [/(^|\.)t\.co$|(^|\.)twitter\.com$|(^|\.)x\.com$/, 'twitter', 'social'],
+        [/(^|\.)tiktok\.com$/, 'tiktok', 'social'],
+        [/(^|\.)youtube\.com$|youtu\.be/, 'youtube', 'social'],
+        [/(^|\.)whatsapp\.com$|wa\.me/, 'whatsapp', 'social'],
+        [/(^|\.)t\.me$|(^|\.)telegram\.(org|me)$/, 'telegram', 'social'],
+        [/google\./, 'google', 'organic'],
+        [/(^|\.)bing\.com$/, 'bing', 'organic'],
+        [/duckduckgo\.com$/, 'duckduckgo', 'organic'],
+        [/search\.yahoo|(^|\.)yahoo\.com$/, 'yahoo', 'organic'],
+    ];
+    for (const [re, source, medium] of map) if (re.test(host)) return { source, medium, host };
+    return { source: host, medium: 'referral', host };
+}
+
+async function sha256Hex(s) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
+    return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, '0')).join('');
+}
+
+// Hash anónimo del visitante que ROTA cada día (la fecha actúa de sal): permite
+// contar únicos del día sin guardar la IP ni poder seguir a nadie entre días.
+async function dailyVisitorHash(dia, ip, ua) {
+    return (await sha256Hex(dia + '|' + (ip || '') + '|' + (ua || ''))).slice(0, 16);
+}
+
+// POST /api/track — beacon público y anónimo (sin token). Registra una visita.
+async function handleTrack(request, env) {
+    let body; try { body = await request.json(); } catch { body = {}; }
+    const dia = todayUTC();
+    const path = String(body.path || '/').replace(/[?#].*$/, '').slice(0, 200);
+    const referrer = String(body.ref || '').slice(0, 400);
+    const utm = String(body.utm || '').slice(0, 60);
+
+    let selfHost = '';
+    try { selfHost = new URL(env.ALLOWED_ORIGIN || 'https://sonidodevida.com').hostname.replace(/^www\./, ''); } catch { /* */ }
+    const { source, medium, host } = classifyTraffic(referrer, utm, selfHost);
+
+    const ip = request.headers.get('CF-Connecting-IP') || '';
+    const ua = request.headers.get('User-Agent') || '';
+    const visitor = await dailyVisitorHash(dia, ip, ua);
+    const country = request.headers.get('CF-IPCountry') || (request.cf && request.cf.country) || '';
+    const device = /Mobi|Android|iPhone|iPad|iPod/i.test(ua) ? 'mobile' : 'desktop';
+
+    try {
+        await env.DB.prepare(
+            'INSERT INTO analytics_pageviews (dia, path, source, medium, referrer_host, visitor, country, device) VALUES (?,?,?,?,?,?,?,?)'
+        ).bind(dia, path, source, medium, host, visitor, country, device).run();
+    } catch { /* nunca romper por una métrica */ }
+    return new Response(null, { status: 204, headers: corsHeaders(env, request) });
+}
+
+// Registra un evento de embudo UNA sola vez por uid ('registro' | 'premium').
+async function logEvent(env, tipo, uid) {
+    if (!uid) return;
+    try {
+        await env.DB.prepare('INSERT OR IGNORE INTO analytics_events (dia, tipo, uid) VALUES (?, ?, ?)')
+            .bind(todayUTC(), tipo, uid).run();
+    } catch { /* best-effort */ }
+}
+
+// GET /api/metrics — resumen agregado para el dashboard. Solo administradores.
+async function handleMetrics(env, request, user) {
+    if (!isAdmin(env, user.uid)) throw { status: 403, msg: 'Solo administradores' };
+    const DB = env.DB;
+    const many = (sql, ...b) => DB.prepare(sql).bind(...b).all().then((r) => r.results || []);
+    const one = (sql, ...b) => DB.prepare(sql).bind(...b).first();
+    const hoy = todayUTC();
+
+    const [visHoy, vis7, vis30, regTot, preTot, reg30, pre30, seo30] = await Promise.all([
+        one('SELECT COUNT(*) n, COUNT(DISTINCT visitor) u FROM analytics_pageviews WHERE dia = ?', hoy),
+        one("SELECT COUNT(*) n, COUNT(DISTINCT visitor) u FROM analytics_pageviews WHERE dia >= date('now','-6 days')"),
+        one("SELECT COUNT(*) n, COUNT(DISTINCT visitor) u FROM analytics_pageviews WHERE dia >= date('now','-29 days')"),
+        one("SELECT COUNT(*) n FROM analytics_events WHERE tipo='registro'"),
+        one("SELECT COUNT(*) n FROM analytics_events WHERE tipo='premium'"),
+        one("SELECT COUNT(*) n FROM analytics_events WHERE tipo='registro' AND dia >= date('now','-29 days')"),
+        one("SELECT COUNT(*) n FROM analytics_events WHERE tipo='premium' AND dia >= date('now','-29 days')"),
+        one("SELECT COALESCE(SUM(impresiones),0) imp, COALESCE(SUM(clics),0) clk FROM seo_daily WHERE dia >= date('now','-29 days')"),
+    ]);
+
+    const [serie, fuentes, medios, paginas, paises, devices, seoSerie, seoQueries] = await Promise.all([
+        many("SELECT dia, COUNT(*) visitas, COUNT(DISTINCT visitor) unicos FROM analytics_pageviews WHERE dia >= date('now','-29 days') GROUP BY dia ORDER BY dia"),
+        many("SELECT source, medium, COUNT(*) n, COUNT(DISTINCT visitor) u FROM analytics_pageviews WHERE dia >= date('now','-29 days') GROUP BY source ORDER BY n DESC LIMIT 12"),
+        many("SELECT medium, COUNT(*) n FROM analytics_pageviews WHERE dia >= date('now','-29 days') GROUP BY medium ORDER BY n DESC"),
+        many("SELECT path, COUNT(*) n FROM analytics_pageviews WHERE dia >= date('now','-29 days') GROUP BY path ORDER BY n DESC LIMIT 10"),
+        many("SELECT country, COUNT(*) n FROM analytics_pageviews WHERE dia >= date('now','-29 days') AND country <> '' GROUP BY country ORDER BY n DESC LIMIT 8"),
+        many("SELECT device, COUNT(*) n FROM analytics_pageviews WHERE dia >= date('now','-29 days') GROUP BY device"),
+        many("SELECT dia, impresiones, clics, ctr, posicion FROM seo_daily WHERE dia >= date('now','-29 days') ORDER BY dia"),
+        many("SELECT query, impresiones, clics, posicion FROM seo_queries WHERE dia = (SELECT MAX(dia) FROM seo_queries) ORDER BY clics DESC, impresiones DESC LIMIT 15"),
+    ]);
+
+    return json(env, request, {
+        generado: new Date().toISOString(),
+        resumen: {
+            visitas_hoy: visHoy?.n || 0, unicos_hoy: visHoy?.u || 0,
+            visitas_7d: vis7?.n || 0, unicos_7d: vis7?.u || 0,
+            visitas_30d: vis30?.n || 0, unicos_30d: vis30?.u || 0,
+            registros_total: regTot?.n || 0, premium_total: preTot?.n || 0,
+            registros_30d: reg30?.n || 0, premium_30d: pre30?.n || 0,
+            seo_impresiones_30d: seo30?.imp || 0, seo_clics_30d: seo30?.clk || 0,
+        },
+        serie, fuentes, medios, paginas, paises, devices,
+        embudo: { visitas: vis30?.u || 0, registros: reg30?.n || 0, premium: pre30?.n || 0 },
+        seo: { serie: seoSerie, queries: seoQueries, configurado: !!env.SEARCH_CONSOLE_SITE },
+    });
+}
+
+// ── SEO: sincronización con Search Console (cron nocturno) — Fase 2 ───
+// Inerte hasta configurar SEARCH_CONSOLE_SITE (ej. 'sc-domain:sonidodevida.com')
+// y dar acceso a la cuenta de servicio de FIREBASE_SERVICE_ACCOUNT en Search Console.
+let SC_TOKEN_CACHE = { token: null, exp: 0 };
+async function getSearchConsoleToken(env) {
+    const now = Date.now();
+    if (SC_TOKEN_CACHE.token && now < SC_TOKEN_CACHE.exp) return SC_TOKEN_CACHE.token;
+    const sa = JSON.parse(env.FIREBASE_SERVICE_ACCOUNT);
+    const tokenUri = sa.token_uri || 'https://oauth2.googleapis.com/token';
+    const iat = Math.floor(now / 1000);
+    const claim = { iss: sa.client_email, scope: 'https://www.googleapis.com/auth/webmasters.readonly', aud: tokenUri, iat, exp: iat + 3600 };
+    const unsigned = strToB64url(JSON.stringify({ alg: 'RS256', typ: 'JWT' })) + '.' + strToB64url(JSON.stringify(claim));
+    const key = await importServiceKey(sa.private_key);
+    const sig = await crypto.subtle.sign('RSASSA-PKCS1-v1_5', key, new TextEncoder().encode(unsigned));
+    const jwt = unsigned + '.' + bytesToB64url(new Uint8Array(sig));
+    const res = await fetch(tokenUri, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: 'grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=' + encodeURIComponent(jwt),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data.access_token) throw new Error('OAuth SC: ' + (data.error_description || data.error || res.status));
+    SC_TOKEN_CACHE = { token: data.access_token, exp: now + (data.expires_in ? data.expires_in - 60 : 3000) * 1000 };
+    return SC_TOKEN_CACHE.token;
+}
+
+async function scQuery(token, site, dims, startDate, endDate, rowLimit) {
+    const res = await fetch('https://searchconsole.googleapis.com/webmasters/v3/sites/' + encodeURIComponent(site) + '/searchAnalytics/query', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ startDate, endDate, dimensions: dims, rowLimit: rowLimit || 1000 }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error('Search Console: ' + ((data.error && data.error.message) || res.status));
+    return data.rows || [];
+}
+
+function isoDaysAgo(n) { return new Date(Date.now() - n * 86400000).toISOString().slice(0, 10); }
+
+async function runSeoSync(env) {
+    const site = env.SEARCH_CONSOLE_SITE;
+    if (!site || !env.FIREBASE_SERVICE_ACCOUNT) return; // Fase 2 sin configurar: inerte
+    const token = await getSearchConsoleToken(env);
+    const start = isoDaysAgo(10), end = isoDaysAgo(1); // Search Console va ~2-3 días atrasado
+
+    const byDate = await scQuery(token, site, ['date'], start, end, 30);
+    for (const r of byDate) {
+        await env.DB.prepare(
+            'INSERT INTO seo_daily (dia, impresiones, clics, ctr, posicion) VALUES (?,?,?,?,?) ' +
+            'ON CONFLICT(dia) DO UPDATE SET impresiones=excluded.impresiones, clics=excluded.clics, ctr=excluded.ctr, posicion=excluded.posicion'
+        ).bind(r.keys[0], r.impressions | 0, r.clicks | 0, r.ctr || 0, r.position || 0).run();
+    }
+
+    // Top búsquedas del corte (atribuidas al día final); se refresca cada noche.
+    const byQuery = await scQuery(token, site, ['query'], start, end, 200);
+    await env.DB.prepare('DELETE FROM seo_queries WHERE dia = ?').bind(end).run();
+    for (const r of byQuery) {
+        await env.DB.prepare('INSERT OR REPLACE INTO seo_queries (dia, query, impresiones, clics, posicion) VALUES (?,?,?,?,?)')
+            .bind(end, String(r.keys[0]).slice(0, 120), r.impressions | 0, r.clicks | 0, r.position || 0).run();
+    }
+}
+
+// Limpieza: las visitas crudas no se guardan para siempre (privacidad + tamaño).
+async function pruneOldMetrics(env) {
+    try {
+        await env.DB.prepare("DELETE FROM analytics_pageviews WHERE dia < date('now','-180 days')").run();
+        await env.DB.prepare("DELETE FROM seo_queries WHERE dia < date('now','-120 days')").run();
+    } catch { /* */ }
+}
+
 export default {
-    async fetch(request, env) {
+    async scheduled(event, env, ctx) {
+        ctx.waitUntil((async () => {
+            try { await runSeoSync(env); } catch (e) { console.warn('SEO sync:', e.message); }
+            try { await pruneOldMetrics(env); } catch { /* */ }
+        })());
+    },
+
+    async fetch(request, env, ctx) {
         if (request.method === 'OPTIONS') {
             return new Response(null, { status: 204, headers: corsHeaders(env, request) });
         }
@@ -858,6 +1061,10 @@ export default {
             if (path === '/api/stripe/webhook' && request.method === 'POST') {
                 return handleStripeWebhook(request, env);
             }
+            // Endpoint público (sin token): beacon de visitas (anónimo).
+            if (path === '/api/track' && request.method === 'POST') {
+                return await handleTrack(request, env);
+            }
             // Endpoint público (sin token): ver una lista compartida (solo si es pública).
             const pub = path.match(/^\/api\/public\/playlist\/([A-Za-z0-9]+)$/);
             if (pub && request.method === 'GET') {
@@ -869,7 +1076,14 @@ export default {
             const user = await requireUser(request, env);
 
             if (path === '/api/me' && request.method === 'GET') {
+                // Embudo: la primera vez que vemos este uid queda como 'registro'
+                // (idempotente vía índice único). No bloquea la respuesta.
+                if (ctx && ctx.waitUntil) ctx.waitUntil(logEvent(env, 'registro', user.uid));
                 return json(env, request, { uid: user.uid, email: user.email, premium: await isPremium(env, user.uid), admin: isAdmin(env, user.uid) });
+            }
+            // Dashboard de métricas (solo admin). `return await`: lanza { status }.
+            if (path === '/api/metrics' && request.method === 'GET') {
+                return await handleMetrics(env, request, user);
             }
             // Suscripción premium (Stripe). `return await`: lanzan { status }.
             if (path === '/api/checkout' && request.method === 'POST') {

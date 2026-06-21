@@ -1837,6 +1837,22 @@
     <script defer src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
     <script defer src="/auth.js"></script>
 
+    <!-- Métricas: beacon de visita anónimo (sin cookies). Ver backend/api-worker.js → /api/track -->
+    <script>
+    (function () {
+        try {
+            var p = new URLSearchParams(location.search);
+            fetch('https://sonido-de-vida-api.sonidodevida.workers.dev/api/track', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ path: location.pathname, ref: document.referrer || '', utm: p.get('utm_source') || '' }),
+                keepalive: true,
+                credentials: 'omit',
+            }).catch(function () {});
+        } catch (e) { /* una métrica nunca debe afectar la app */ }
+    })();
+    </script>
+
     <script>
     // ══════════════════════════════════════════════════════════════
     // CAMBIA ESTA URL después de hacer deploy del Worker de Cloudflare

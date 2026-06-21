@@ -13,6 +13,13 @@ ADMIN_UIDS = "h1u8iq53w8T7oBcVfN1167zEsC22"
 # Remitente de los correos de login (debe ser de un dominio autenticado en Brevo).
 SENDER_EMAIL = "noreply@sonidodevida.com"
 
+# ── Métricas / SEO (Fase 2) ──────────────────────────────────────────
+# Propiedad de Search Console que lee el cron nocturno. Déjala COMENTADA hasta
+# verificar el dominio y dar acceso a la cuenta de servicio (ver METRICAS-SETUP.md).
+# Mientras siga sin definir, el cron de SEO queda inerte (no falla).
+# Formato dominio-completo (recomendado):  sc-domain:sonidodevida.com
+# SEARCH_CONSOLE_SITE = "sc-domain:sonidodevida.com"
+
 # ── Stripe (suscripciones premium) ───────────────────────────────────
 # Los price IDs se crean en el dashboard de Stripe (Productos → añadir precio).
 # Plan acordado: $2.99/mes y $24.99/año, con 7 días de prueba gratis.
@@ -30,6 +37,11 @@ STRIPE_TRIAL_DAYS    = "7"
 
 # D1: crear con  ->  npx wrangler d1 create sonido-de-vida-db
 # luego pega aquí el database_id que imprime el comando.
+# Cron: una corrida nocturna (07:00 UTC) que sincroniza SEO (Search Console) y
+# poda las visitas crudas antiguas. Inofensivo aunque SEO no esté configurado.
+[triggers]
+crons = ["0 7 * * *"]
+
 [[d1_databases]]
 binding = "DB"
 database_name = "sonido-de-vida-db"
