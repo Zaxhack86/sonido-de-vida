@@ -414,13 +414,20 @@
         :root{--bottomnav-h:62px}
         body{padding-bottom:var(--bottomnav-h)}
         .bottom-nav{position:fixed;top:auto;bottom:0;left:0;right:0;z-index:1001;height:var(--bottomnav-h);background:rgba(13,13,26,.97);backdrop-filter:blur(20px);border-top:1px solid rgba(201,168,76,.2);display:flex;justify-content:space-around;align-items:stretch;box-shadow:0 -6px 30px rgba(0,0,0,.35);padding-bottom:env(safe-area-inset-bottom)}
-        .bn-item{flex:1;background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.18rem;color:rgba(255,255,255,.55);font-family:'Inter',sans-serif;font-size:.66rem;font-weight:500;transition:color .25s;padding:.35rem 0;min-width:0}
-        .bn-item .bn-ico{font-size:1.32rem;line-height:1;transition:transform .25s;filter:grayscale(.35) opacity(.85)}
-        .bn-item .bn-label{letter-spacing:.2px;white-space:nowrap}
-        .bn-item:hover{color:var(--gold-light)}
+        .bn-item{position:relative;flex:1;background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.2rem;color:rgba(255,255,255,.5);font-family:'Inter',sans-serif;font-size:.66rem;font-weight:500;transition:color .3s ease;padding:.4rem 0;min-width:0;-webkit-tap-highlight-color:transparent}
+        /* Acento superior que se desliza bajo el ítem activo */
+        .bn-item::before{content:'';position:absolute;top:0;left:50%;width:34px;height:3px;border-radius:0 0 4px 4px;background:linear-gradient(90deg,var(--gold),var(--gold-light));transform:translateX(-50%) scaleX(0);transform-origin:center;opacity:0;transition:transform .4s cubic-bezier(.34,1.56,.64,1),opacity .3s ease}
+        .bn-item.active::before{transform:translateX(-50%) scaleX(1);opacity:1}
+        .bn-item .bn-ico{display:flex;align-items:center;justify-content:center;width:46px;height:30px;border-radius:15px;background:transparent;transition:transform .4s cubic-bezier(.34,1.56,.64,1),background .3s ease}
+        .bn-item .bn-ico svg{width:23px;height:23px;display:block;transition:filter .3s ease}
+        .bn-item .bn-label{letter-spacing:.2px;white-space:nowrap;transition:font-weight .2s ease,opacity .3s ease}
+        .bn-item:hover{color:rgba(255,255,255,.85)}
+        .bn-item:active .bn-ico{transform:scale(.88)}
         .bn-item.active{color:var(--gold-light)}
-        .bn-item.active .bn-ico{transform:translateY(-2px) scale(1.1);filter:none;text-shadow:0 0 12px rgba(201,168,76,.6)}
+        .bn-item.active .bn-ico{transform:translateY(-3px);background:rgba(201,168,76,.15)}
+        .bn-item.active .bn-ico svg{filter:drop-shadow(0 0 5px rgba(201,168,76,.55))}
         .bn-item.active .bn-label{font-weight:700}
+        @media (prefers-reduced-motion:reduce){.bn-item,.bn-item::before,.bn-item .bn-ico,.bn-item .bn-ico svg{transition:none}}
         /* El reproductor flota justo encima de la barra inferior */
         .audio-player-bar{bottom:var(--bottomnav-h)}
         .install-banner{bottom:calc(var(--bottomnav-h) + 1rem)}
@@ -445,6 +452,10 @@
         body[data-tab-active="biblia"]   [data-tab]:not([data-tab="biblia"]),
         body[data-tab-active="buscar"]   [data-tab]:not([data-tab="buscar"]),
         body[data-tab-active="yo"]       [data-tab]:not([data-tab="yo"]){display:none!important}
+        /* Transición suave al entrar a una pestaña (se reaplica desde showTab) */
+        @keyframes sdvTabIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+        .sdv-tab-in{animation:sdvTabIn .42s cubic-bezier(.22,.61,.36,1) both}
+        @media (prefers-reduced-motion:reduce){.sdv-tab-in{animation:none}}
 
         /* ════════ Pestaña Buscar ════════ */
         .search-section{padding:5rem 2rem 3rem;background:linear-gradient(180deg,var(--deep-blue) 0%,var(--dark) 100%);min-height:80vh}
@@ -1402,11 +1413,11 @@
     <div class="ad-banner" id="adSlot" aria-hidden="true"></div>
 
     <nav class="bottom-nav" id="bottomNav" role="tablist" aria-label="Navegación principal">
-        <button class="bn-item active" data-bn="inicio" onclick="showTab('inicio')" role="tab"><span class="bn-ico">🏠</span><span class="bn-label">Inicio</span></button>
-        <button class="bn-item" data-bn="explorar" onclick="showTab('explorar')" role="tab"><span class="bn-ico">🧭</span><span class="bn-label">Explorar</span></button>
-        <button class="bn-item" data-bn="biblia" onclick="showTab('biblia')" role="tab"><span class="bn-ico">📖</span><span class="bn-label">Biblia</span></button>
-        <button class="bn-item" data-bn="buscar" onclick="showTab('buscar')" role="tab"><span class="bn-ico"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span><span class="bn-label">Buscar</span></button>
-        <button class="bn-item" data-bn="yo" onclick="showTab('yo')" role="tab"><span class="bn-ico">👤</span><span class="bn-label">Yo</span></button>
+        <button class="bn-item active" data-bn="inicio" onclick="showTab('inicio')" role="tab" aria-label="Inicio"><span class="bn-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9.5 21v-6h5v6"/></svg></span><span class="bn-label">Inicio</span></button>
+        <button class="bn-item" data-bn="explorar" onclick="showTab('explorar')" role="tab" aria-label="Explorar"><span class="bn-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-5 2-2 5 5-2z"/></svg></span><span class="bn-label">Explorar</span></button>
+        <button class="bn-item" data-bn="biblia" onclick="showTab('biblia')" role="tab" aria-label="Biblia"><span class="bn-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.5C10.4 5 7.5 4.5 4 5v13c3.5-.5 6.4 0 8 1.5 1.6-1.5 4.5-2 8-1.5V5c-3.5-.5-6.4 0-8 1.5z"/><path d="M12 6.5V20"/></svg></span><span class="bn-label">Biblia</span></button>
+        <button class="bn-item" data-bn="buscar" onclick="showTab('buscar')" role="tab" aria-label="Buscar"><span class="bn-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span><span class="bn-label">Buscar</span></button>
+        <button class="bn-item" data-bn="yo" onclick="showTab('yo')" role="tab" aria-label="Yo"><span class="bn-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6"/></svg></span><span class="bn-label">Yo</span></button>
     </nav>
 
     <div class="audio-player-bar" id="audioPlayerBar">
@@ -2248,6 +2259,13 @@
         updateNavModeIndicator();
         updateDownloadBtn();
         renderDevoHoy();
+        // Pestaña inicial según el hash de la URL (/app#explorar, /app#biblia…),
+        // útil al recargar o al abrir un enlace directo a una sección. Solo si no
+        // hay query (los enlaces con ?libro=/?lista= mandan a Biblia más abajo).
+        (function () {
+            const h = (location.hash || '').replace('#', '');
+            if (h && TABS.includes(h) && !location.search) showTab(h, { scroll: false });
+        })();
         // Si entraron por un enlace de capítulo (/?libro=Salmos&cap=91), por
         // ejemplo desde el CTA "Escuchar en audio" de un devocional.
         checkChapterLink();
@@ -5734,6 +5752,15 @@
         });
         // Forzar la aparición de los elementos .reveal de la pestaña (no esperan al scroll)
         document.querySelectorAll('[data-tab="' + name + '"] .reveal').forEach(el => el.classList.add('visible'));
+        // Animación de entrada: reaplica .sdv-tab-in a las secciones de la pestaña activa
+        document.querySelectorAll('[data-tab="' + name + '"]').forEach(el => {
+            el.classList.remove('sdv-tab-in'); void el.offsetWidth; el.classList.add('sdv-tab-in');
+        });
+        // Reflejar la pestaña en la URL (#explorar, #biblia…) sin crear entradas de
+        // historial: usamos replaceState para no interferir con el guardia del botón atrás.
+        try {
+            history.replaceState(history.state, '', location.pathname + (name === 'inicio' ? '' : '#' + name));
+        } catch (e) {}
         closeMenu();
         if (!opts || opts.scroll !== false) window.scrollTo({ top: 0, behavior: 'auto' });
         if (window.Ads) Ads.refresh();
