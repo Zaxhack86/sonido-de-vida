@@ -75,9 +75,23 @@
         nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:1rem 2rem;display:flex;justify-content:space-between;align-items:center;transition:all .4s ease;background:transparent}
         nav.scrolled{background:rgba(13,13,26,.95);backdrop-filter:blur(20px);padding:.7rem 2rem;box-shadow:0 4px 30px rgba(0,0,0,.3)}
         .nav-logo{font-family:'Cinzel',serif;font-size:1.5rem;font-weight:700;color:var(--gold-light);text-decoration:none;display:flex;align-items:center;gap:.5rem}
+        .nav-logo .logo-mark{font-size:1.8rem;line-height:1}
         .nav-links{display:flex;gap:2rem;list-style:none;align-items:center}
-        .nav-links a{color:rgba(255,255,255,.85);text-decoration:none;font-size:.9rem;font-weight:500;transition:color .3s}
+        .nav-links a{position:relative;color:rgba(255,255,255,.85);text-decoration:none;font-size:.9rem;font-weight:500;transition:color .3s;padding:.2rem 0}
+        .nav-links a::after{content:'';position:absolute;left:0;right:0;bottom:-3px;height:2px;border-radius:2px;background:linear-gradient(90deg,var(--gold),var(--gold-light));transform:scaleX(0);transform-origin:center;transition:transform .3s ease}
         .nav-links a:hover{color:var(--gold-light)}
+        .nav-links a.active{color:var(--gold-light);font-weight:700}
+        .nav-links a.active::after{transform:scaleX(1)}
+        /* En la PWA instalada manda la barra inferior: ocultamos los enlaces de arriba */
+        @media (display-mode: standalone){.nav-links{display:none}}
+        /* Web en móvil: navbar compacto, logo solo con el símbolo y enlaces más pequeños */
+        @media (max-width:600px) and (display-mode: browser){
+            #navbar{padding:.6rem .9rem}
+            .nav-logo .logo-text{display:none}
+            .nav-logo{font-size:1.1rem}
+            .nav-links{gap:1rem}
+            .nav-links a{font-size:.82rem}
+        }
         .nav-cta{background:linear-gradient(135deg,var(--gold),var(--gold-dark))!important;color:var(--dark)!important;padding:.5rem 1.5rem;border-radius:50px;font-weight:600!important}
         .nav-right{display:flex;align-items:center;gap:1.5rem}
         .nav-actions{display:flex;align-items:center;gap:.6rem}
@@ -281,11 +295,6 @@
         /* La barra de navegación cambia al menú móvil antes (1024px) para evitar
            que los enlaces + pastilla de cuenta + "Escuchar Ahora" se amontonen
            y se corten en tablets/pantallas estrechas. */
-        @media(max-width:1024px){
-            .nav-links{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(13,13,26,.98);flex-direction:column;justify-content:center;align-items:center;gap:2rem;z-index:999}
-            .nav-links.open{display:flex}
-            .mobile-menu-btn{display:inline-flex}
-        }
         @media(max-width:768px){
             .listen-selectors{grid-template-columns:1fr}
             .chapter-actions,.random-actions{flex-direction:column}
@@ -411,9 +420,14 @@
         .welcome-perks li{color:rgba(255,255,255,.88);font-family:'Inter',sans-serif;font-size:.92rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:.7rem .9rem}
 
         /* ════════ Barra de navegación inferior (app-shell) ════════ */
-        :root{--bottomnav-h:62px}
+        /* La barra inferior es un patrón de APP: solo se muestra en la PWA
+           instalada (display-mode: standalone). En la web (navegador) la
+           navegación vive en el navbar superior y no hay barra inferior. */
+        :root{--bottomnav-h:0px}
         body{padding-bottom:var(--bottomnav-h)}
-        .bottom-nav{position:fixed;top:auto;bottom:0;left:0;right:0;z-index:1001;height:var(--bottomnav-h);background:rgba(13,13,26,.97);backdrop-filter:blur(20px);border-top:1px solid rgba(201,168,76,.2);display:flex;justify-content:space-around;align-items:stretch;box-shadow:0 -6px 30px rgba(0,0,0,.35);padding-bottom:env(safe-area-inset-bottom)}
+        @media (display-mode: standalone){:root{--bottomnav-h:62px}}
+        .bottom-nav{display:none;position:fixed;top:auto;bottom:0;left:0;right:0;z-index:1001;height:var(--bottomnav-h);background:rgba(13,13,26,.97);backdrop-filter:blur(20px);border-top:1px solid rgba(201,168,76,.2);justify-content:space-around;align-items:stretch;box-shadow:0 -6px 30px rgba(0,0,0,.35);padding-bottom:env(safe-area-inset-bottom)}
+        @media (display-mode: standalone){.bottom-nav{display:flex}}
         .bn-item{position:relative;flex:1;background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.2rem;color:rgba(255,255,255,.5);font-family:'Inter',sans-serif;font-size:.66rem;font-weight:500;transition:color .3s ease;padding:.4rem 0;min-width:0;-webkit-tap-highlight-color:transparent}
         /* Acento superior que se desliza bajo el ítem activo */
         .bn-item::before{content:'';position:absolute;top:0;left:50%;width:34px;height:3px;border-radius:0 0 4px 4px;background:linear-gradient(90deg,var(--gold),var(--gold-light));transform:translateX(-50%) scaleX(0);transform-origin:center;opacity:0;transition:transform .4s cubic-bezier(.34,1.56,.64,1),opacity .3s ease}
@@ -905,7 +919,15 @@
 <body data-tab-active="inicio">
 
     <nav id="navbar">
-        <a href="#" class="nav-logo" onclick="showTab('inicio');return false;"><span style="font-size:1.8rem">✝</span> Sonido de Vida</a>
+        <a href="#" class="nav-logo" onclick="showTab('inicio');return false;"><span class="logo-mark">✝</span><span class="logo-text">Sonido de Vida</span></a>
+        <!-- Navegación de la WEB (oculta en la PWA instalada, donde manda la barra inferior) -->
+        <ul class="nav-links" id="navLinks" role="tablist">
+            <li><a href="#" data-navtab="inicio" onclick="showTab('inicio');return false;">Inicio</a></li>
+            <li><a href="#" data-navtab="explorar" onclick="showTab('explorar');return false;">Explorar</a></li>
+            <li><a href="#" data-navtab="biblia" onclick="showTab('biblia');return false;">Biblia</a></li>
+            <li><a href="#" data-navtab="buscar" onclick="showTab('buscar');return false;">Buscar</a></li>
+            <li><a href="#" data-navtab="yo" onclick="showTab('yo');return false;">Yo</a></li>
+        </ul>
     </nav>
 
     <section class="hero" data-tab="inicio">
@@ -970,8 +992,9 @@
         .explore-section{max-width:1100px;margin:0 auto;padding:calc(env(safe-area-inset-top) + 1.4rem) 0 2.5rem}
         .explore-section .section-header{padding:0 1.2rem;margin-bottom:.4rem}
         /* Oculta el navbar superior flotante en Explorar (NO el nav inferior):
-           el feed es inmersivo y la marca "Sonido de Vida" estorba aquí. */
-        body[data-tab-active="explorar"] #navbar{display:none}
+           el feed es inmersivo y la marca "Sonido de Vida" estorba aquí.
+           SOLO en la PWA instalada: en la web el navbar es la única navegación. */
+        @media (display-mode: standalone){body[data-tab-active="explorar"] #navbar{display:none}}
         .ex-tier{margin:1.7rem 0 0}
         .ex-tier-head{display:flex;align-items:flex-end;justify-content:space-between;gap:.6rem;padding:0 1.2rem;margin:0 0 .85rem}
         .ex-th-titles{min-width:0}
@@ -5749,6 +5772,10 @@
         // Resaltar el botón activo de la barra inferior
         document.querySelectorAll('.bottom-nav .bn-item').forEach(b => {
             b.classList.toggle('active', b.dataset.bn === name);
+        });
+        // Resaltar el enlace activo del navbar superior (navegación de la web)
+        document.querySelectorAll('#navLinks a[data-navtab]').forEach(a => {
+            a.classList.toggle('active', a.dataset.navtab === name);
         });
         // Forzar la aparición de los elementos .reveal de la pestaña (no esperan al scroll)
         document.querySelectorAll('[data-tab="' + name + '"] .reveal').forEach(el => el.classList.add('visible'));
