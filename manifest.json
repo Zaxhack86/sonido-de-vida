@@ -2,7 +2,8 @@
   "name": "Sonido de Vida - Biblia",
   "short_name": "Sonido de Vida",
   "description": "Escucha y lee la Biblia completa en español. Audio por capítulo, gratis y sin registro.",
-  "start_url": "/",
+  "start_url": "/app",
+  "scope": "/app",
   "display": "standalone",
   "orientation": "portrait",
   "theme_color": "#1a1a3e",
@@ -13,7 +14,7 @@
     { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
   ],
   "shortcuts": [
-    { "name": "Escuchar Biblia", "url": "/#listen" },
-    { "name": "Versículo Aleatorio", "url": "/#random" }
+    { "name": "Escuchar Biblia", "url": "/app#listen" },
+    { "name": "Versículo Aleatorio", "url": "/app#random" }
   ]
 }
