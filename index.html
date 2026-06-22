@@ -277,12 +277,15 @@ tailwind.config = {
       </div>
     </a>
 
-    <!-- Nav Links -->
-    <div class="hidden md:flex items-center gap-8">
-      <a href="#escuchar" class="text-xs text-zinc-400 hover:text-cream transition-colors duration-300 tracking-wide uppercase">Escuchar</a>
-      <a href="#versiculos" class="text-xs text-zinc-400 hover:text-cream transition-colors duration-300 tracking-wide uppercase">Versículos</a>
-      <a href="#libros" class="text-xs text-zinc-400 hover:text-cream transition-colors duration-300 tracking-wide uppercase">Libros</a>
-      <a href="#about" class="text-xs text-zinc-400 hover:text-cream transition-colors duration-300 tracking-wide uppercase">Nosotros</a>
+    <!-- Nav Links (centrados horizontalmente sobre la barra) -->
+    <div class="hidden md:flex items-center gap-8 absolute left-1/2 -translate-x-1/2">
+      <a href="#escuchar" class="text-[13px] text-zinc-300 hover:text-gold-400 transition-colors duration-300 tracking-wide">Escuchar</a>
+      <a href="#enfoque" class="group flex items-center gap-1.5 text-[13px] text-gold-300 hover:text-gold-200 transition-colors duration-300 tracking-wide font-medium">
+        <span class="iconify text-sm" data-icon="mdi:meditation"></span>Modo Enfoque
+      </a>
+      <a href="#versiculos" class="text-[13px] text-zinc-300 hover:text-gold-400 transition-colors duration-300 tracking-wide">Versículos</a>
+      <a href="#libros" class="text-[13px] text-zinc-300 hover:text-gold-400 transition-colors duration-300 tracking-wide">Libros</a>
+      <a href="#about" class="text-[13px] text-zinc-300 hover:text-gold-400 transition-colors duration-300 tracking-wide">Nosotros</a>
     </div>
 
     <!-- CTA -->
@@ -300,6 +303,7 @@ tailwind.config = {
 <!-- Mobile Menu -->
 <div id="mobile-menu" class="fixed inset-0 z-40 bg-dark-950/95 nav-blur hidden flex-col items-center justify-center gap-8">
   <a href="#escuchar" class="text-2xl font-cinzel text-zinc-300 hover:text-gold-400 transition-colors mobile-link">Escuchar</a>
+  <a href="#enfoque" class="text-2xl font-cinzel text-gold-300 hover:text-gold-200 transition-colors mobile-link flex items-center gap-2"><span class="iconify text-xl" data-icon="mdi:meditation"></span>Modo Enfoque</a>
   <a href="#versiculos" class="text-2xl font-cinzel text-zinc-300 hover:text-gold-400 transition-colors mobile-link">Versículos</a>
   <a href="#libros" class="text-2xl font-cinzel text-zinc-300 hover:text-gold-400 transition-colors mobile-link">Libros</a>
   <a href="#about" class="text-2xl font-cinzel text-zinc-300 hover:text-gold-400 transition-colors mobile-link">Nosotros</a>
@@ -385,9 +389,90 @@ tailwind.config = {
 </section>
 
 <!-- ============ VERSE TICKER STRIP ============ -->
-<div class="relative py-6 border-y border-white/5 overflow-hidden verse-strip">
+<div class="relative py-5 border-y border-gold-500/15 overflow-hidden verse-strip" style="background:linear-gradient(90deg, rgba(201,168,76,0.05), rgba(201,168,76,0.09), rgba(201,168,76,0.05));">
   <div class="ticker flex gap-12 whitespace-nowrap" id="verse-ticker"></div>
 </div>
+
+<!-- ============ MODO ENFOQUE · PREMIUM ============ -->
+<section id="enfoque" class="relative py-24 sm:py-32 overflow-hidden">
+  <!-- Glows -->
+  <div class="absolute top-1/2 left-0 -translate-y-1/2 w-[420px] h-[420px] bg-gold-500/10 rounded-full blur-[120px] pointer-events-none"></div>
+  <div class="absolute bottom-0 right-0 w-[360px] h-[360px] bg-gold-600/8 rounded-full blur-[110px] pointer-events-none"></div>
+
+  <div class="max-w-6xl mx-auto px-6 relative z-10">
+    <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+      <!-- Texto -->
+      <div>
+        <div class="reveal inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-gold mb-6">
+          <span class="iconify text-gold-400 text-sm" data-icon="mdi:star-four-points"></span>
+          <span class="text-[11px] font-semibold text-gold-400 tracking-[0.2em] uppercase">Experiencia Premium</span>
+        </div>
+        <h2 class="reveal text-4xl sm:text-6xl font-bold leading-[1.05] mb-5">
+          <span class="text-gradient-gold">Modo Enfoque</span>
+        </h2>
+        <p class="reveal text-base sm:text-lg font-light text-zinc-300 leading-relaxed mb-8 max-w-lg">
+          Convierte tu lectura en un momento de oración. Música y ambientes suaves <span class="text-cream italic">bajo</span> la narración de la Palabra — o versículos que reposan en tu corazón, uno a uno, sin distracción alguna.
+        </p>
+        <ul class="reveal space-y-3.5 mb-10">
+          <li class="flex items-center gap-3 text-sm text-zinc-300">
+            <span class="w-9 h-9 rounded-lg bg-gold-500/10 flex items-center justify-center flex-shrink-0"><span class="iconify text-gold-400" data-icon="mdi:piano"></span></span>
+            Decenas de ambientes: piano, cuerdas y adoración
+          </li>
+          <li class="flex items-center gap-3 text-sm text-zinc-300">
+            <span class="w-9 h-9 rounded-lg bg-gold-500/10 flex items-center justify-center flex-shrink-0"><span class="iconify text-gold-400" data-icon="mdi:tune-vertical-variant"></span></span>
+            Mezclador de voz y música a tu gusto
+          </li>
+          <li class="flex items-center gap-3 text-sm text-zinc-300">
+            <span class="w-9 h-9 rounded-lg bg-gold-500/10 flex items-center justify-center flex-shrink-0"><span class="iconify text-gold-400" data-icon="mdi:timer-sand"></span></span>
+            Temporizador de sueño y velocidad de la voz
+          </li>
+          <li class="flex items-center gap-3 text-sm text-zinc-300">
+            <span class="w-9 h-9 rounded-lg bg-gold-500/10 flex items-center justify-center flex-shrink-0"><span class="iconify text-gold-400" data-icon="mdi:cross"></span></span>
+            Ambiente visual sereno para orar con la Palabra
+          </li>
+        </ul>
+        <div class="reveal flex flex-col sm:flex-row items-start sm:items-center gap-5">
+          <button data-app-path="#enfoque" class="btn-glow bg-gradient-to-r from-gold-500 to-gold-600 text-dark-950 font-cinzel font-semibold px-8 py-4 rounded-full flex items-center gap-3 text-sm relative z-10 tracking-wide">
+            <span class="iconify text-lg" data-icon="mdi:meditation"></span>
+            Probar 7 días gratis
+          </button>
+          <div class="text-xs text-zinc-500 leading-relaxed">
+            <span class="text-cream font-semibold text-sm">$2.99</span>/mes · o <span class="text-cream font-semibold text-sm">$24.99</span>/año<br>
+            <span class="text-gold-500/70">Sin anuncios · Cancela cuando quieras</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Visual -->
+      <div class="reveal-scale relative">
+        <div class="glass-gold rounded-3xl p-8 sm:p-10 relative overflow-hidden">
+          <div class="absolute top-0 right-0 w-48 h-48 bg-gold-500/10 rounded-full blur-[70px] pointer-events-none"></div>
+          <div class="relative z-10 text-center">
+            <div class="w-20 h-20 rounded-full bg-gradient-to-br from-gold-400/20 to-gold-600/10 border border-gold-500/25 flex items-center justify-center mx-auto mb-6 relative">
+              <span class="text-3xl">🕊️</span>
+              <div class="absolute inset-0 rounded-full bg-gradient-to-br from-gold-400 to-gold-600 pulse-ring opacity-40"></div>
+            </div>
+            <p class="font-cinzel text-lg text-cream mb-1 tracking-wide">Reposa en la Palabra</p>
+            <p class="text-xs text-zinc-500 mb-7">Salmos 23 · ambiente piano</p>
+            <div class="flex items-end justify-center gap-[3px] h-10 mb-8" id="focus-bars"></div>
+            <div class="grid grid-cols-2 gap-3">
+              <div class="glass rounded-xl p-4 text-center">
+                <div class="text-2xl mb-1.5">🌿</div>
+                <p class="text-xs font-semibold text-cream">Meditación</p>
+                <p class="text-[10px] text-zinc-500 mt-0.5">Música + versículos</p>
+              </div>
+              <div class="glass rounded-xl p-4 text-center">
+                <div class="text-2xl mb-1.5">🎧</div>
+                <p class="text-xs font-semibold text-cream">Con voz</p>
+                <p class="text-[10px] text-zinc-500 mt-0.5">Música + narración</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
 <!-- ============ NOW PLAYING / ESCUCHAR ============ -->
 <section id="escuchar" class="relative py-24 sm:py-32">
@@ -951,6 +1036,18 @@ for (let i = 0; i < 40; i++) {
   barsContainer.appendChild(bar);
 }
 
+// Mini visualizador de la tarjeta Modo Enfoque
+const focusBars = document.getElementById('focus-bars');
+if (focusBars) {
+  for (let i = 0; i < 22; i++) {
+    const bar = document.createElement('div');
+    const maxH = Math.random() * 28 + 6;
+    bar.className = 'audio-bar rounded-full w-[3px] bg-gradient-to-t from-gold-600/70 to-gold-400/80';
+    bar.style.cssText = `--bar-h: ${maxH}px; --bar-d: ${0.6 + Math.random() * 0.9}s; --bar-delay: ${Math.random() * 0.6}s; height: 6px;`;
+    focusBars.appendChild(bar);
+  }
+}
+
 // ====== WAVEFORM CANVAS ======
 const waveCanvas = document.getElementById('waveform-canvas');
 const wCtx = waveCanvas.getContext('2d');
@@ -1140,10 +1237,10 @@ const tickerVerses = [
 
 const tickerEl = document.getElementById('verse-ticker');
 const tickerHTML = [...tickerVerses, ...tickerVerses].map(v =>
-  `<span class="inline-flex items-center gap-3 text-sm text-zinc-500 font-light flex-shrink-0">
-    <span class="text-gold-500/40">&#10022;</span>
+  `<span class="inline-flex items-center gap-3 text-[15px] text-zinc-200 font-normal flex-shrink-0">
+    <span class="text-gold-400">&#10022;</span>
     <span class="italic">&ldquo;${v.text}&rdquo;</span>
-    <span class="text-gold-500/60 text-xs font-medium not-italic">${v.ref}</span>
+    <span class="text-gold-400 text-xs font-semibold not-italic tracking-wide">${v.ref}</span>
   </span>`
 ).join('');
 tickerEl.innerHTML = tickerHTML;

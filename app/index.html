@@ -2288,6 +2288,12 @@
         (function () {
             const h = (location.hash || '').replace('#', '');
             if (h && TABS.includes(h) && !location.search) showTab(h, { scroll: false });
+            // Enlace directo al Modo Enfoque desde la landing (/app/#enfoque):
+            // abre el selector si es premium, o el teaser de venta si no lo es.
+            if (h === 'enfoque' && window.Focus) {
+                history.replaceState(null, '', location.pathname + location.search);
+                setTimeout(() => Focus.enter(), 350);
+            }
         })();
         // Si entraron por un enlace de capítulo (/?libro=Salmos&cap=91), por
         // ejemplo desde el CTA "Escuchar en audio" de un devocional.
