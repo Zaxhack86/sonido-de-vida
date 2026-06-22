@@ -4839,30 +4839,54 @@
             setupAutoScroll();
         }
         // Auto-scroll suave (ping-pong) que da "vida" a los rieles sin impedir el
-        // deslizamiento manual: se pausa al tocar/pasar el ratón y al salir de la
-        // pestaña. Respeta prefers-reduced-motion.
+        // deslizamiento manual. OPTIMIZADO (2026-06-21): un solo bucle rAF que
+        //  · SOLO corre mientras Explorar está activa y la pestaña visible (antes
+        //    corría siempre, en todas las pestañas, saturando el render);
+        //  · cachea scrollWidth/clientWidth (recalculado en resize/kick) para no
+        //    forzar reflow sincrónico en cada frame.
+        // Se pausa al tocar/pasar el ratón. Respeta prefers-reduced-motion.
+        var _autoRails = [], _autoRaf = null;
+        function _autoMax(rail){ rail._max = rail.scrollWidth - rail.clientWidth; }
+        function _autoTick(){
+            _autoRaf = null;
+            if (document.hidden || document.body.getAttribute('data-tab-active') !== 'explorar') return;
+            for (var i = 0; i < _autoRails.length; i++){
+                var rail = _autoRails[i];
+                if (rail._paused) continue;
+                var max = rail._max || 0;
+                if (max > 4){
+                    rail.scrollLeft += rail._dir * 0.35;
+                    if (rail.scrollLeft >= max - 0.5) rail._dir = -1;
+                    else if (rail.scrollLeft <= 0.5) rail._dir = 1;
+                }
+            }
+            _autoRaf = requestAnimationFrame(_autoTick);
+        }
+        function kickAutoScroll(){
+            if (_autoRaf == null && !document.hidden && _autoRails.length &&
+                document.body.getAttribute('data-tab-active') === 'explorar'){
+                _autoRails.forEach(_autoMax);
+                _autoRaf = requestAnimationFrame(_autoTick);
+            }
+        }
+        window.kickAutoScroll = kickAutoScroll;
         function setupAutoScroll(){
             if (window.matchMedia && matchMedia('(prefers-reduced-motion:reduce)').matches) return;
-            document.querySelectorAll('.ex-rail[data-auto], .fx-rail[data-auto]').forEach(function(rail){
+            _autoRails = Array.prototype.slice.call(document.querySelectorAll('.ex-rail[data-auto], .fx-rail[data-auto]'));
+            _autoRails.forEach(function(rail){
+                _autoMax(rail);
                 if (rail._autoInit) return; rail._autoInit = true;
-                var dir = 1, paused = false, idle = null;
-                function pause(){ paused = true; clearTimeout(idle); idle = setTimeout(function(){ paused = false; }, 2600); }
+                rail._dir = 1; rail._paused = false;
+                var pause = function(){ rail._paused = true; clearTimeout(rail._idle);
+                    rail._idle = setTimeout(function(){ rail._paused = false; kickAutoScroll(); }, 2600); };
                 ['pointerdown','touchstart','wheel','mouseenter'].forEach(function(ev){ rail.addEventListener(ev, pause, {passive:true}); });
-                function step(){
-                    var onTab = document.body.getAttribute('data-tab-active') === 'explorar';
-                    if (!paused && onTab && !document.hidden){
-                        var max = rail.scrollWidth - rail.clientWidth;
-                        if (max > 4){
-                            rail.scrollLeft += dir * 0.35;
-                            if (rail.scrollLeft >= max - 0.5) dir = -1;
-                            else if (rail.scrollLeft <= 0.5) dir = 1;
-                        }
-                    }
-                    rail._raf = requestAnimationFrame(step);
-                }
-                cancelAnimationFrame(rail._raf || 0);
-                rail._raf = requestAnimationFrame(step);
             });
+            if (!window._autoGlobInit){
+                window._autoGlobInit = true;
+                window.addEventListener('resize', function(){ _autoRails.forEach(_autoMax); }, {passive:true});
+                document.addEventListener('visibilitychange', kickAutoScroll);
+            }
+            kickAutoScroll();
         }
         return { render };
     })();
@@ -5791,6 +5815,9 @@
         closeMenu();
         if (!opts || opts.scroll !== false) window.scrollTo({ top: 0, behavior: 'auto' });
         if (window.Ads) Ads.refresh();
+        // Reanuda el auto-scroll de los rieles solo al entrar a Explorar (el bucle
+        // se detiene solo en las demás pestañas para no saturar el render).
+        if (name === 'explorar' && window.kickAutoScroll) window.kickAutoScroll();
     }
 
     // Retomar la escucha donde se quedó (último capítulo cargado)
