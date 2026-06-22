@@ -1335,6 +1335,28 @@ document.querySelectorAll('[data-scroll]').forEach(btn => {
   });
 });
 
+// ════════════════════════════════════════════════════════════════
+// SERVICE WORKER · fuerza salida del caché viejo
+// Antes la landing NO registraba el SW: los usuarios que aún tenían el
+// SW antiguo (de cuando la app vivía en '/') seguían viendo el '/'
+// cacheado viejo, porque nada disparaba la actualización. Ahora la
+// landing registra el SW, fuerza reg.update() y recarga UNA sola vez si
+// el SW cambió de versión (no recarga en la primera instalación).
+// sw.js sirve '/' con networkFirst, así que tras el swap se ve lo nuevo.
+// ════════════════════════════════════════════════════════════════
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    var hadController = !!navigator.serviceWorker.controller;
+    navigator.serviceWorker.register('/sw.js').then(function (reg) { reg.update(); }).catch(function () {});
+    var refreshing = false;
+    navigator.serviceWorker.addEventListener('controllerchange', function () {
+      if (refreshing || !hadController) return;   // no recargar en la 1ª instalación
+      refreshing = true;
+      window.location.reload();
+    });
+  });
+}
+
 // ====== NAV BACKGROUND ON SCROLL ======
 const nav = document.querySelector('nav');
 window.addEventListener('scroll', () => {
