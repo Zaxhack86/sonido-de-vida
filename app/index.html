@@ -1283,6 +1283,34 @@
     .listen-btn{box-shadow:0 12px 32px -10px rgba(201,168,76,.55)}
     .chapter-card{background:rgba(255,255,255,.035);border:1px solid rgba(201,168,76,.18);
         box-shadow:0 18px 50px rgba(0,0,0,.35);backdrop-filter:blur(14px)}
+
+    /* ════════════════════════════════════════════════════════════════
+       RE-TEMATIZADO TIPO LANDING · Modo Enfoque
+       Lleva la "cara premium" (modales de entrada/venta, títulos y el
+       escenario inmersivo) del navy-morado viejo (#1a1a3e/#2d1b69) al
+       navy profundo + oro degradado del landing.
+       ════════════════════════════════════════════════════════════════ */
+    /* Tarjetas de TODOS los modales: navy profundo del landing + halo dorado */
+    .modal-card{background:linear-gradient(160deg,#0b1430 0%,#070e20 100%);
+        border-color:rgba(201,168,76,.22);
+        box-shadow:0 28px 70px rgba(0,0,0,.6),0 0 0 1px rgba(201,168,76,.1),0 0 90px -34px rgba(201,168,76,.3)}
+    /* Títulos de modal en oro degradado (igual que el resto de la app) */
+    .modal-title{background:linear-gradient(135deg,#E6CE80,#C9A84C,#A8863A);
+        -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+    /* El badge "✨ Premium" vive dentro del título: restaurar su relleno */
+    .modal-title .focus-premium-badge{-webkit-text-fill-color:var(--gold-light);
+        background:rgba(201,168,76,.16);border:1px solid rgba(201,168,76,.3)}
+    /* Precio del teaser en oro degradado */
+    .teaser-price strong,.plan-toggle button.active strong{
+        background:linear-gradient(135deg,#E6CE80,#C9A84C);
+        -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+    /* Selector de submodo: realce dorado más nítido al pasar el cursor */
+    .focus-mode-opt:hover{box-shadow:0 14px 34px -16px rgba(201,168,76,.5)}
+    /* Escenario inmersivo por defecto (sin ambiente elegido): base navy del
+       landing y aura dorada en vez del tinte morado. Los ambientes con
+       data-bg/data-cat siguen poniendo su propio color (no se tocan). */
+    .focus-overlay{background:radial-gradient(120% 120% at 50% 0%,#0b1430 0%,#070e20 55%,#04060f 100%);--f-aura2:rgba(201,168,76,.12)}
+    .focus-overlay .focus-bg{background:radial-gradient(60% 50% at 50% 38%,rgba(201,168,76,.12),transparent 70%)}
     </style>
 
     <!-- ════════ Explorar — feed por escalones, estilo Dwell ════════ -->
