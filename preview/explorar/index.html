@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sonido de Vida — App</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: {
+        display: ['Cinzel', 'serif'],
+        body: ['Inter', 'sans-serif'],
+        serif: ['Lora', 'serif'],
+      }
+    }
+  }
+}
+</script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { font-family: 'Inter', sans-serif; background: #f5f0e8; color: #1a1a3e; overflow-x: hidden; }
+
+/* Noise */
+.noise {
+  position: fixed; inset: 0; z-index: 9000; opacity: 0.03; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Glass */
+.glass { background: rgba(255,255,255,0.35); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.5); }
+.glass-dark { background: rgba(0,0,0,0.5); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.08); }
+.glass-card { background: rgba(255,255,255,0.25); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.3); }
+
+/* Scrollbar hide */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Section transitions */
+.app-section { display: none; opacity: 0; transition: opacity 0.5s ease; min-height: 100vh; padding-bottom: 120px; }
+.app-section.active { display: block; opacity: 1; }
+
+/* Timer circle */
+.timer-circle { transition: stroke-dashoffset 1s linear; }
+
+/* Ambient button */
+.ambient-btn { transition: all 0.3s ease; }
+.ambient-btn.active { background: rgba(201,168,76,0.2); border-color: rgba(201,168,76,0.5); }
+.ambient-btn.active .ambient-icon { color: #c9a84c; }
+
+/* Phone mockup */
+.phone-mockup {
+  background: #111; border-radius: 24px; padding: 8px; position: relative;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1);
+}
+.phone-mockup::before {
+  content: ''; position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+  width: 60px; height: 6px; background: #333; border-radius: 3px; z-index: 2;
+}
+.phone-screen { border-radius: 18px; overflow: hidden; aspect-ratio: 9/16; }
+
+/* Devotional card */
+.devo-card { transition: all 0.5s cubic-bezier(0.25,1,0.5,1); }
+.devo-card:hover { transform: translateY(-4px); box-shadow: 0 20px 50px rgba(0,0,0,0.15); }
+.devo-card:hover .devo-img { transform: scale(1.05); }
+.devo-img { transition: transform 1.2s cubic-bezier(0.25,1,0.5,1); }
+
+/* Time preset */
+.time-btn { transition: all 0.3s ease; }
+.time-btn.active { background: #c9a84c; color: #fff; }
+
+/* Speed preset */
+.speed-btn { transition: all 0.3s ease; border: 1px solid rgba(255,255,255,0.06); }
+.speed-btn:hover { background: rgba(255,255,255,0.08); }
+.speed-btn.active { background: #c9a84c; border-color: #c9a84c; color: #fff; box-shadow: 0 4px 20px rgba(201,168,76,0.3); }
+.speed-btn.locked { opacity: 0.4; }
+.speed-hint { display: none; }
+.speed-hint.show { display: block; }
+.speed-hint.pulse { animation: hintPulse 0.5s ease; }
+@keyframes hintPulse { 0%,100% { opacity: 0.7; } 50% { opacity: 1; transform: scale(1.02); } }
+
+/* Continuous playback toggle */
+.cont-toggle { transition: all 0.3s ease; border: 1px solid rgba(255,255,255,0.08); color: rgba(255,255,255,0.3); }
+.cont-toggle.active { background: rgba(201,168,76,0.12); border-color: rgba(201,168,76,0.35); color: #c9a84c; }
+
+/* Range sliders (Música / Voz) */
+input[type="range"] {
+  -webkit-appearance: none; appearance: none;
+  width: 100%; height: 3px; background: rgba(255,255,255,0.12);
+  border-radius: 2px; outline: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 12px; height: 12px; border-radius: 50%;
+  background: #c9a84c; cursor: pointer; box-shadow: 0 0 10px rgba(201,168,76,0.3);
+}
+input[type="range"]::-moz-range-thumb {
+  width: 12px; height: 12px; border-radius: 50%; border: none;
+  background: #c9a84c; cursor: pointer;
+}
+
+/* Environment selector */
+.env-btn { transition: all 0.3s ease; }
+.env-btn.active { background: rgba(201,168,76,0.15); border-color: rgba(201,168,76,0.4); }
+
+/* Track item */
+.track-item { transition: all 0.3s ease; }
+.track-item:hover { background: rgba(255,255,255,0.3); }
+.track-item:hover .play-sm { opacity: 1; transform: scale(1); }
+.play-sm { opacity: 0; transform: scale(0.8); transition: all 0.3s ease; }
+
+/* Focus bg */
+.focus-bg {
+  position: fixed; inset: 0; z-index: -1;
+  background: radial-gradient(ellipse at 50% 0%, #1a1a3e 0%, #0d0d1a 70%);
+  transition: opacity 0.8s ease;
+}
+.focus-stars {
+  position: fixed; inset: 0; z-index: -1;
+  background-image:
+    radial-gradient(1.5px 1.5px at 8% 12%, rgba(255,255,255,0.9), transparent),
+    radial-gradient(1px 1px at 17% 28%, rgba(255,255,255,0.7), transparent),
+    radial-gradient(2px 2px at 24% 9%, rgba(255,248,228,0.95), transparent),
+    radial-gradient(1px 1px at 33% 22%, rgba(255,255,255,0.6), transparent),
+    radial-gradient(1.5px 1.5px at 41% 6%, rgba(255,255,255,0.85), transparent),
+    radial-gradient(1px 1px at 48% 17%, rgba(255,255,255,0.55), transparent),
+    radial-gradient(1.5px 1.5px at 56% 11%, rgba(255,255,255,0.8), transparent),
+    radial-gradient(1px 1px at 63% 25%, rgba(255,255,255,0.6), transparent),
+    radial-gradient(2px 2px at 71% 7%, rgba(255,248,228,0.9), transparent),
+    radial-gradient(1px 1px at 79% 19%, rgba(255,255,255,0.7), transparent),
+    radial-gradient(1.5px 1.5px at 87% 13%, rgba(255,255,255,0.85), transparent),
+    radial-gradient(1px 1px at 94% 26%, rgba(255,255,255,0.6), transparent),
+    radial-gradient(1px 1px at 12% 42%, rgba(255,255,255,0.65), transparent),
+    radial-gradient(1.5px 1.5px at 28% 38%, rgba(255,255,255,0.8), transparent),
+    radial-gradient(1px 1px at 44% 48%, rgba(255,255,255,0.5), transparent),
+    radial-gradient(1.5px 1.5px at 59% 44%, rgba(255,255,255,0.75), transparent),
+    radial-gradient(1px 1px at 73% 40%, rgba(255,255,255,0.6), transparent),
+    radial-gradient(2px 2px at 88% 47%, rgba(255,248,228,0.85), transparent),
+    radial-gradient(1px 1px at 6% 58%, rgba(255,255,255,0.6), transparent),
+    radial-gradient(1.5px 1.5px at 21% 66%, rgba(255,255,255,0.8), transparent),
+    radial-gradient(1px 1px at 37% 61%, rgba(255,255,255,0.55), transparent),
+    radial-gradient(1px 1px at 52% 72%, rgba(255,255,255,0.65), transparent),
+    radial-gradient(1.5px 1.5px at 67% 68%, rgba(255,255,255,0.8), transparent),
+    radial-gradient(1px 1px at 82% 74%, rgba(255,255,255,0.6), transparent),
+    radial-gradient(1.5px 1.5px at 95% 63%, rgba(255,255,255,0.75), transparent),
+    radial-gradient(1px 1px at 14% 84%, rgba(255,255,255,0.6), transparent),
+    radial-gradient(1px 1px at 31% 90%, rgba(255,255,255,0.7), transparent),
+    radial-gradient(1.5px 1.5px at 49% 86%, rgba(255,255,255,0.8), transparent),
+    radial-gradient(1px 1px at 64% 92%, rgba(255,255,255,0.55), transparent),
+    radial-gradient(1.5px 1.5px at 86% 88%, rgba(255,255,255,0.75), transparent);
+  animation: twinkle 5s ease-in-out infinite alternate;
+}
+@keyframes twinkle { 0% { opacity: 0.7; } 100% { opacity: 1; } }
+
+/* Rain effect (Enfoque) */
+.rain-overlay { position: fixed; inset: 0; z-index: -1; pointer-events: none; display: none; }
+.rain-drop {
+  position: absolute; width: 1px;
+  background: linear-gradient(to bottom, transparent, rgba(180,200,230,0.45));
+  animation: rain-fall linear infinite;
+}
+@keyframes rain-fall {
+  0% { transform: translateY(-120px); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(100vh); opacity: 0; }
+}
+
+/* Cloud effect (Enfoque) — cúmulos blandos hechos de varios "puffs" + blur */
+.cloud-overlay { position: fixed; inset: 0; z-index: -1; pointer-events: none; display: none; overflow: hidden; }
+.cloud {
+  position: absolute; left: 0;
+  width: 130px; height: 44px;
+  background: rgba(255,255,255,0.07);
+  border-radius: 44px;
+  filter: blur(14px);
+  box-shadow:
+    32px 8px 0 -2px rgba(255,255,255,0.07),
+    70px 2px 0 -4px rgba(255,255,255,0.06),
+    20px -14px 0 -7px rgba(255,255,255,0.06),
+    52px -16px 0 -5px rgba(255,255,255,0.07),
+    96px 10px 0 -6px rgba(255,255,255,0.05);
+  animation: cloud-drift linear infinite;
+}
+@keyframes cloud-drift {
+  0% { transform: translateX(-280px) scale(var(--s,1)); }
+  100% { transform: translateX(calc(100vw + 280px)) scale(var(--s,1)); }
+}
+
+/* Estrellas radiantes "cercanas" (con halo) */
+.star-glow { position: fixed; inset: 0; z-index: -1; pointer-events: none; display: none; }
+.glow-star {
+  position: absolute; border-radius: 50%; background: #fff;
+  animation: star-pulse ease-in-out infinite alternate;
+}
+@keyframes star-pulse {
+  0%   { opacity: 0.35; transform: scale(0.8); }
+  100% { opacity: 1;    transform: scale(1.25); }
+}
+
+/* Mini player */
+.mini-player { transition: all 0.4s cubic-bezier(0.25,1,0.5,1); }
+
+/* Nav link */
+.nav-link { position: relative; }
+.nav-link::after {
+  content: ''; position: absolute; bottom: -2px; left: 0; width: 0; height: 1px;
+  background: currentColor; transition: width 0.3s ease;
+}
+.nav-link:hover::after, .nav-link.active::after { width: 100%; }
+
+/* Bottom nav */
+.bnav-item { transition: color 0.3s ease; }
+.bnav-item.active { color: #c9a84c; }
+.bnav-item.active .bnav-dot { opacity: 1; transform: scale(1); }
+.bnav-dot { opacity: 0; transform: scale(0); transition: all 0.3s ease; }
+
+/* Fade in animation */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-up { animation: fadeUp 0.8s cubic-bezier(0.25,1,0.5,1) forwards; opacity: 0; }
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+.delay-3 { animation-delay: 0.3s; }
+.delay-4 { animation-delay: 0.4s; }
+.delay-5 { animation-delay: 0.5s; }
+.delay-6 { animation-delay: 0.6s; }
+
+/* Premium badge */
+.premium-badge {
+  background: linear-gradient(135deg, #c9a84c 0%, #a07c2a 100%);
+  font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase;
+}
+
+/* Responsive bottom nav */
+@media (min-width: 768px) {
+  .bottom-nav { display: none !important; }
+  .app-section { padding-bottom: 40px; }
+}
+@media (max-width: 767px) {
+  .desktop-nav { display: none !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- Noise Overlay -->
+<div class="noise"></div>
+
+<!-- ==================== TOP NAV ==================== -->
+<nav class="fixed top-0 left-0 right-0 z-50 px-6 py-5 md:px-10 md:py-7 flex items-center justify-between transition-all duration-500" id="topNav">
+  <a href="#" class="font-display text-sm md:text-base font-bold tracking-wider text-white" style="mix-blend-mode:difference;" onclick="navigateTo('explorar');return false;">SONIDO DE VIDA</a>
+  <div class="desktop-nav hidden md:flex items-center gap-8">
+    <a href="#explorar" class="nav-link active text-xs uppercase tracking-[0.2em] font-medium text-white" style="mix-blend-mode:difference;" onclick="navigateTo('explorar');return false;">Explorar</a>
+    <a href="#enfoque" class="nav-link text-xs uppercase tracking-[0.2em] font-medium text-white" style="mix-blend-mode:difference;" onclick="navigateTo('enfoque');return false;">Enfoque</a>
+    <a href="#" class="nav-link text-xs uppercase tracking-[0.2em] font-medium text-white" style="mix-blend-mode:difference;">Biblia</a>
+    <a href="#" class="nav-link text-xs uppercase tracking-[0.2em] font-medium text-white" style="mix-blend-mode:difference;">Mi Perfil</a>
+  </div>
+</nav>
+
+<!-- ==================== MINI PLAYER ==================== -->
+<div class="mini-player fixed bottom-16 md:bottom-6 left-3 right-3 md:left-1/2 md:-translate-x-1/2 md:w-[480px] z-40 glass-dark rounded-2xl px-4 py-3 flex items-center gap-3 cursor-pointer" id="miniPlayer" onclick="togglePlay()" style="display:none;">
+  <div class="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0">
+    <img src="https://picsum.photos/seed/bajo-sus-alas/80/80.jpg" class="w-full h-full object-cover" alt="">
+  </div>
+  <div class="flex-1 min-w-0">
+    <p class="text-white text-xs font-semibold truncate">Bajo Sus Alas</p>
+    <p class="text-white/40 text-[10px] truncate">Piano Romántico</p>
+  </div>
+  <div class="flex items-center gap-2">
+    <button class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors" id="miniPlayBtn">
+      <i data-lucide="pause" class="w-3.5 h-3.5 text-white"></i>
+    </button>
+  </div>
+</div>
+
+<!-- ==================== EXPLORAR SECTION ==================== -->
+<section class="app-section active" id="sec-explorar">
+
+  <!-- Hero Welcome -->
+  <div class="pt-28 md:pt-32 px-6 md:px-10 lg:px-16 max-w-[1400px] mx-auto">
+    <p class="text-xs uppercase tracking-[0.25em] text-gray-500 font-semibold mb-3 fade-up">Buenas noches</p>
+    <h1 class="font-display text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.05] fade-up delay-1">
+      Explora la<br>
+      <span class="text-[#c9a84c]">Palabra</span>
+    </h1>
+    <p class="mt-4 text-base md:text-lg text-gray-500 font-light max-w-md leading-relaxed fade-up delay-2">
+      Devocionales, música y herramientas para conectar con Dios en cada momento del día.
+    </p>
+  </div>
+
+  <!-- Devocionales -->
+  <div class="mt-12 md:mt-16 px-6 md:px-10 lg:px-16 max-w-[1400px] mx-auto">
+    <div class="flex items-center justify-between mb-6 fade-up delay-2">
+      <h2 class="font-display text-sm md:text-base tracking-[0.15em] font-bold uppercase">Devocionales</h2>
+      <a href="#" class="text-xs uppercase tracking-[0.15em] text-gray-500 hover:text-[#c9a84c] transition-colors font-medium">Ver todos</a>
+    </div>
+
+    <!-- Featured Card -->
+    <div class="devo-card glass-card rounded-2xl overflow-hidden mb-6 fade-up delay-3 cursor-pointer" onclick="showPlayer()">
+      <div class="md:flex">
+        <div class="md:w-2/5 h-52 md:h-auto overflow-hidden relative">
+          <img src="https://picsum.photos/seed/paz-sobrepasa/800/600.jpg" class="devo-img w-full h-full object-cover" alt="">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent md:bg-gradient-to-r"></div>
+          <div class="absolute top-4 left-4 premium-badge text-white px-2.5 py-1 rounded-full font-bold">Destacado</div>
+        </div>
+        <div class="md:w-3/5 p-6 md:p-8 flex flex-col justify-center">
+          <p class="text-[10px] uppercase tracking-[0.25em] text-[#c9a84c] font-bold mb-2">Filipenses 4:7</p>
+          <h3 class="text-xl md:text-2xl font-bold tracking-tight mb-3">La Paz que Sobrepasa</h3>
+          <p class="font-serif italic text-[15px] text-gray-600 leading-relaxed mb-4">"Y la paz de Dios, que sobrepasa todo entendimiento, guardará vuestros corazones y vuestros pensamientos en Cristo Jesús."</p>
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-[#1a1a3e] flex items-center justify-center">
+              <i data-lucide="play" class="w-3.5 h-3.5 text-white ml-0.5"></i>
+            </div>
+            <span class="text-xs text-gray-400 font-medium">12 min · Audio devocional</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Devotional Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div class="devo-card glass-card rounded-xl overflow-hidden fade-up delay-3 cursor-pointer" onclick="showPlayer()">
+        <div class="h-40 overflow-hidden relative">
+          <img src="https://picsum.photos/seed/bajo-alas/600/400.jpg" class="devo-img w-full h-full object-cover" alt="">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+          <div class="absolute bottom-3 left-3 right-3">
+            <p class="text-[9px] uppercase tracking-[0.2em] text-white/60 font-bold">Salmo 91:4</p>
+            <h4 class="text-white text-sm font-bold mt-0.5">Bajo Sus Alas</h4>
+          </div>
+        </div>
+        <div class="p-4">
+          <p class="text-xs text-gray-500 font-light leading-relaxed line-clamp-2">"Con sus plumas te cubrirá, y debajo de sus alas estarás seguro."</p>
+          <div class="flex items-center gap-2 mt-3">
+            <i data-lucide="headphones" class="w-3 h-3 text-gray-400"></i>
+            <span class="text-[10px] text-gray-400">8 min</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="devo-card glass-card rounded-xl overflow-hidden fade-up delay-4 cursor-pointer" onclick="showPlayer()">
+        <div class="h-40 overflow-hidden relative">
+          <img src="https://picsum.photos/seed/agua-viva/600/400.jpg" class="devo-img w-full h-full object-cover" alt="">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+          <div class="absolute bottom-3 left-3 right-3">
+            <p class="text-[9px] uppercase tracking-[0.2em] text-white/60 font-bold">Juan 4:14</p>
+            <h4 class="text-white text-sm font-bold mt-0.5">Agua Viva</h4>
+          </div>
+        </div>
+        <div class="p-4">
+          <p class="text-xs text-gray-500 font-light leading-relaxed line-clamp-2">"El que beba del agua que yo le daré, no tendrá sed jamás."</p>
+          <div class="flex items-center gap-2 mt-3">
+            <i data-lucide="headphones" class="w-3 h-3 text-gray-400"></i>
+            <span class="text-[10px] text-gray-400">10 min</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="devo-card glass-card rounded-xl overflow-hidden fade-up delay-5 cursor-pointer" onclick="showPlayer()">
+        <div class="h-40 overflow-hidden relative">
+          <img src="https://picsum.photos/seed/luz-camino/600/400.jpg" class="devo-img w-full h-full object-cover" alt="">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+          <div class="absolute bottom-3 left-3 right-3">
+            <p class="text-[9px] uppercase tracking-[0.2em] text-white/60 font-bold">Salmo 119:105</p>
+            <h4 class="text-white text-sm font-bold mt-0.5">Luz en el Camino</h4>
+          </div>
+        </div>
+        <div class="p-4">
+          <p class="text-xs text-gray-500 font-light leading-relaxed line-clamp-2">"Lámpara es a mis pies tu palabra, y lumbrera a mi camino."</p>
+          <div class="flex items-center gap-2 mt-3">
+            <i data-lucide="headphones" class="w-3 h-3 text-gray-400"></i>
+            <span class="text-[10px] text-gray-400">7 min</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="devo-card glass-card rounded-xl overflow-hidden fade-up delay-4 cursor-pointer" onclick="showPlayer()">
+        <div class="h-40 overflow-hidden relative">
+          <img src="https://picsum.photos/seed/fuerza-renovada/600/400.jpg" class="devo-img w-full h-full object-cover" alt="">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+          <div class="absolute bottom-3 left-3 right-3">
+            <p class="text-[9px] uppercase tracking-[0.2em] text-white/60 font-bold">Isaías 40:31</p>
+            <h4 class="text-white text-sm font-bold mt-0.5">Fuerza Renovada</h4>
+          </div>
+        </div>
+        <div class="p-4">
+          <p class="text-xs text-gray-500 font-light leading-relaxed line-clamp-2">"Los que esperan a Jehová renovarán sus fuerzas; volarán como águilas."</p>
+          <div class="flex items-center gap-2 mt-3">
+            <i data-lucide="headphones" class="w-3 h-3 text-gray-400"></i>
+            <span class="text-[10px] text-gray-400">9 min</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="devo-card glass-card rounded-xl overflow-hidden fade-up delay-5 cursor-pointer" onclick="showPlayer()">
+        <div class="h-40 overflow-hidden relative">
+          <img src="https://picsum.photos/seed/buen-pastor/600/400.jpg" class="devo-img w-full h-full object-cover" alt="">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+          <div class="absolute bottom-3 left-3 right-3">
+            <p class="text-[9px] uppercase tracking-[0.2em] text-white/60 font-bold">Salmo 23:1</p>
+            <h4 class="text-white text-sm font-bold mt-0.5">El Buen Pastor</h4>
+          </div>
+        </div>
+        <div class="p-4">
+          <p class="text-xs text-gray-500 font-light leading-relaxed line-clamp-2">"Jehová es mi pastor; nada me faltará."</p>
+          <div class="flex items-center gap-2 mt-3">
+            <i data-lucide="headphones" class="w-3 h-3 text-gray-400"></i>
+            <span class="text-[10px] text-gray-400">6 min</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="devo-card glass-card rounded-xl overflow-hidden fade-up delay-6 cursor-pointer" onclick="showPlayer()">
+        <div class="h-40 overflow-hidden relative">
+          <img src="https://picsum.photos/seed/reposo-dulce/600/400.jpg" class="devo-img w-full h-full object-cover" alt="">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+          <div class="absolute bottom-3 left-3 right-3">
+            <p class="text-[9px] uppercase tracking-[0.2em] text-white/60 font-bold">Mateo 11:28</p>
+            <h4 class="text-white text-sm font-bold mt-0.5">Reposo Dulce</h4>
+          </div>
+        </div>
+        <div class="p-4">
+          <p class="text-xs text-gray-500 font-light leading-relaxed line-clamp-2">"Venid a mí todos los que estáis trabajados y cargados, y yo os haré descansar."</p>
+          <div class="flex items-center gap-2 mt-3">
+            <i data-lucide="headphones" class="w-3 h-3 text-gray-400"></i>
+            <span class="text-[10px] text-gray-400">11 min</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modo Enfoque Preview -->
+  <div class="mt-16 md:mt-20 px-6 md:px-10 lg:px-16 max-w-[1400px] mx-auto">
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h2 class="font-display text-sm md:text-base tracking-[0.15em] font-bold uppercase">Modo Enfoque</h2>
+        <p class="text-xs text-gray-400 mt-1">Diseñado para tu momento de quietud</p>
+      </div>
+      <a href="#enfoque" class="flex items-center gap-2 text-xs uppercase tracking-[0.15em] text-[#c9a84c] hover:text-[#a07c2a] transition-colors font-semibold" onclick="navigateTo('enfoque');return false;">
+        Acceder <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+      </a>
+    </div>
+
+    <div class="flex gap-5 overflow-x-auto no-scrollbar pb-4 -mx-6 px-6 md:-mx-10 md:px-10">
+      <!-- Phone 1: Timer -->
+      <div class="phone-mockup flex-shrink-0 w-[180px] md:w-[200px] cursor-pointer" onclick="navigateTo('enfoque')">
+        <div class="phone-screen bg-gradient-to-b from-[#1a1a3e] to-[#0d0d1a] p-4 flex flex-col items-center justify-center text-center">
+          <div class="w-20 h-20 rounded-full border border-white/10 flex items-center justify-center mb-3">
+            <i data-lucide="timer" class="w-7 h-7 text-[#c9a84c]"></i>
+          </div>
+          <p class="text-white text-[11px] font-bold">Temporizador</p>
+          <p class="text-white/30 text-[9px] mt-1">Sesiones guiadas</p>
+        </div>
+      </div>
+
+      <!-- Phone 2: Lectura -->
+      <div class="phone-mockup flex-shrink-0 w-[180px] md:w-[200px] cursor-pointer" onclick="navigateTo('enfoque')">
+        <div class="phone-screen bg-gradient-to-b from-[#1a1a3e] to-[#0d0d1a] p-4 flex flex-col items-center justify-center text-center">
+          <div class="w-20 h-20 rounded-full border border-white/10 flex items-center justify-center mb-3">
+            <i data-lucide="book-open" class="w-7 h-7 text-[#c9a84c]"></i>
+          </div>
+          <p class="text-white text-[11px] font-bold">Lectura Bíblica</p>
+          <p class="text-white/30 text-[9px] mt-1">Con audio sincronizado</p>
+        </div>
+      </div>
+
+      <!-- Phone 3: Música -->
+      <div class="phone-mockup flex-shrink-0 w-[180px] md:w-[200px] cursor-pointer" onclick="navigateTo('enfoque')">
+        <div class="phone-screen bg-gradient-to-b from-[#1a1a3e] to-[#0d0d1a] p-4 flex flex-col items-center justify-center text-center">
+          <div class="w-20 h-20 rounded-full border border-white/10 flex items-center justify-center mb-3">
+            <i data-lucide="music" class="w-7 h-7 text-[#c9a84c]"></i>
+          </div>
+          <p class="text-white text-[11px] font-bold">Música Ambiental</p>
+          <p class="text-white/30 text-[9px] mt-1">Piano, naturaleza y más</p>
+        </div>
+      </div>
+
+      <!-- Phone 4: Sonidos -->
+      <div class="phone-mockup flex-shrink-0 w-[180px] md:w-[200px] cursor-pointer" onclick="navigateTo('enfoque')">
+        <div class="phone-screen bg-gradient-to-b from-[#1a1a3e] to-[#0d0d1a] p-4 flex flex-col items-center justify-center text-center">
+          <div class="w-20 h-20 rounded-full border border-white/10 flex items-center justify-center mb-3">
+            <i data-lucide="waves" class="w-7 h-7 text-[#c9a84c]"></i>
+          </div>
+          <p class="text-white text-[11px] font-bold">Sonidos Inmersivos</p>
+          <p class="text-white/30 text-[9px] mt-1">Lluvia, fuego, olas</p>
+        </div>
+      </div>
+
+      <!-- Phone 5: Sueño -->
+      <div class="phone-mockup flex-shrink-0 w-[180px] md:w-[200px] cursor-pointer" onclick="navigateTo('enfoque')">
+        <div class="phone-screen bg-gradient-to-b from-[#1a1a3e] to-[#0d0d1a] p-4 flex flex-col items-center justify-center text-center">
+          <div class="w-20 h-20 rounded-full border border-white/10 flex items-center justify-center mb-3">
+            <i data-lucide="moon" class="w-7 h-7 text-[#c9a84c]"></i>
+          </div>
+          <p class="text-white text-[11px] font-bold">Modo Sueño</p>
+          <p class="text-white/30 text-[9px] mt-1">Descanso reparador</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Salmos Populares -->
+  <div class="mt-16 md:mt-20 px-6 md:px-10 lg:px-16 max-w-[1400px] mx-auto">
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="font-display text-sm md:text-base tracking-[0.15em] font-bold uppercase">Salmos Populares</h2>
+    </div>
+    <div class="glass-card rounded-2xl overflow-hidden divide-y divide-white/20">
+      <div class="track-item flex items-center gap-4 p-4 cursor-pointer" onclick="showPlayer()">
+        <div class="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0">
+          <img src="https://picsum.photos/seed/salmo23/80/80.jpg" class="w-full h-full object-cover" alt="">
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-semibold truncate">Salmo 23 — Piano Romántico</p>
+          <p class="text-[10px] text-gray-400">5:32</p>
+        </div>
+        <div class="play-sm w-8 h-8 rounded-full bg-[#1a1a3e] flex items-center justify-center">
+          <i data-lucide="play" class="w-3 h-3 text-white ml-0.5"></i>
+        </div>
+      </div>
+      <div class="track-item flex items-center gap-4 p-4 cursor-pointer" onclick="showPlayer()">
+        <div class="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0">
+          <img src="https://picsum.photos/seed/salmo91/80/80.jpg" class="w-full h-full object-cover" alt="">
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-semibold truncate">Salmo 91 — Salmos de Reposo</p>
+          <p class="text-[10px] text-gray-400">8:15</p>
+        </div>
+        <div class="play-sm w-8 h-8 rounded-full bg-[#1a1a3e] flex items-center justify-center">
+          <i data-lucide="play" class="w-3 h-3 text-white ml-0.5"></i>
+        </div>
+      </div>
+      <div class="track-item flex items-center gap-4 p-4 cursor-pointer" onclick="showPlayer()">
+        <div class="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0">
+          <img src="https://picsum.photos/seed/salmo46/80/80.jpg" class="w-full h-full object-cover" alt="">
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-semibold truncate">Salmo 46 — Aquíetaos</p>
+          <p class="text-[10px] text-gray-400">6:48</p>
+        </div>
+        <div class="play-sm w-8 h-8 rounded-full bg-[#1a1a3e] flex items-center justify-center">
+          <i data-lucide="play" class="w-3 h-3 text-white ml-0.5"></i>
+        </div>
+      </div>
+      <div class="track-item flex items-center gap-4 p-4 cursor-pointer" onclick="showPlayer()">
+        <div class="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0">
+          <img src="https://picsum.photos/seed/salmo121/80/80.jpg" class="w-full h-full object-cover" alt="">
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-semibold truncate">Salmo 121 — Mi Ayuda Viene del Señor</p>
+          <p class="text-[10px] text-gray-400">4:56</p>
+        </div>
+        <div class="play-sm w-8 h-8 rounded-full bg-[#1a1a3e] flex items-center justify-center">
+          <i data-lucide="play" class="w-3 h-3 text-white ml-0.5"></i>
+        </div>
+      </div>
+      <div class="track-item flex items-center gap-4 p-4 cursor-pointer" onclick="showPlayer()">
+        <div class="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0">
+          <img src="https://picsum.photos/seed/salmo139/80/80.jpg" class="w-full h-full object-cover" alt="">
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-semibold truncate">Salmo 139 — Me Has Formado</p>
+          <p class="text-[10px] text-gray-400">7:22</p>
+        </div>
+        <div class="play-sm w-8 h-8 rounded-full bg-[#1a1a3e] flex items-center justify-center">
+          <i data-lucide="play" class="w-3 h-3 text-white ml-0.5"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer Quote -->
+  <div class="mt-20 px-6 md:px-10 lg:px-16 max-w-[1400px] mx-auto text-center pb-8">
+    <div class="w-8 h-px bg-[#c9a84c]/30 mx-auto mb-6"></div>
+    <p class="font-serif text-base text-gray-500 italic leading-relaxed max-w-lg mx-auto">"Enquietad, y conoced que yo soy Dios; seré exaltado entre las naciones."</p>
+    <p class="text-[10px] uppercase tracking-[0.25em] text-[#c9a84c] font-bold mt-3">Salmo 46:10</p>
+    <div class="flex items-center justify-center gap-6 mt-8">
+      <a href="#" class="text-[10px] uppercase tracking-[0.15em] text-gray-400 hover:text-[#c9a84c] transition-colors">Sobre Nosotros</a>
+      <a href="#" class="text-[10px] uppercase tracking-[0.15em] text-gray-400 hover:text-[#c9a84c] transition-colors">Contacto</a>
+      <a href="#" class="text-[10px] uppercase tracking-[0.15em] text-gray-400 hover:text-[#c9a84c] transition-colors">Privacidad</a>
+    </div>
+    <p class="text-[9px] text-gray-400/50 mt-4">© 2025 Sonido de Vida</p>
+  </div>
+
+</section>
+
+<!-- ==================== ENFOQUE SECTION ==================== -->
+<section class="app-section" id="sec-enfoque">
+  <div class="focus-bg"></div>
+  <div class="focus-stars" id="focusStars"></div>
+  <div class="star-glow" id="starGlow"></div>
+  <div class="rain-overlay" id="rainOverlay"></div>
+  <div class="cloud-overlay" id="cloudOverlay"></div>
+
+  <!-- Enfoque Top Bar -->
+  <div class="fixed top-0 left-0 right-0 z-50 px-6 py-5 md:px-10 flex items-center justify-between" id="enfoqueNav">
+    <button onclick="navigateTo('explorar')" class="w-9 h-9 rounded-full glass-dark flex items-center justify-center hover:bg-white/10 transition-colors">
+      <i data-lucide="arrow-left" class="w-4 h-4 text-white"></i>
+    </button>
+    <div class="text-center">
+      <p class="text-[10px] uppercase tracking-[0.25em] text-white/40 font-semibold">Modo</p>
+      <p class="text-xs font-bold text-white tracking-wide">Enfoque</p>
+    </div>
+    <div class="flex items-center gap-2">
+      <span class="premium-badge text-white px-2.5 py-1 rounded-full font-bold">Premium</span>
+      <button class="w-9 h-9 rounded-full glass-dark flex items-center justify-center hover:bg-white/10 transition-colors">
+        <i data-lucide="settings" class="w-4 h-4 text-white/60"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="pt-24 md:pt-28 px-6 md:px-10 max-w-xl mx-auto flex flex-col items-center">
+
+    <!-- Timer -->
+    <div class="relative w-56 h-56 md:w-64 md:h-64 mb-8">
+      <svg class="w-full h-full -rotate-90" viewBox="0 0 200 200">
+        <circle cx="100" cy="100" r="88" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="3"/>
+        <circle cx="100" cy="100" r="88" fill="none" stroke="rgba(201,168,76,0.3)" stroke-width="3" stroke-linecap="round"
+          class="timer-circle" id="timerCircle"
+          stroke-dasharray="553" stroke-dashoffset="0"/>
+      </svg>
+      <div class="absolute inset-0 flex flex-col items-center justify-center">
+        <p class="font-display text-4xl md:text-5xl font-bold text-white tracking-tight" id="timerDisplay">15:00</p>
+        <p class="text-[10px] uppercase tracking-[0.25em] text-white/30 mt-2 font-semibold" id="timerLabel">Listo para empezar</p>
+      </div>
+    </div>
+
+    <!-- Timer Controls -->
+    <div class="flex items-center gap-4 mb-6">
+      <button onclick="resetTimer()" class="w-10 h-10 rounded-full glass-dark flex items-center justify-center hover:bg-white/10 transition-colors">
+        <i data-lucide="rotate-ccw" class="w-4 h-4 text-white/50"></i>
+      </button>
+      <button onclick="toggleTimer()" id="timerPlayBtn" class="w-14 h-14 rounded-full bg-[#c9a84c] flex items-center justify-center hover:bg-[#b8973f] transition-colors shadow-lg shadow-[#c9a84c]/20">
+        <i data-lucide="play" class="w-5 h-5 text-white ml-0.5" id="timerPlayIcon"></i>
+      </button>
+      <button onclick="skipTimer()" class="w-10 h-10 rounded-full glass-dark flex items-center justify-center hover:bg-white/10 transition-colors">
+        <i data-lucide="skip-forward" class="w-4 h-4 text-white/50"></i>
+      </button>
+    </div>
+
+    <!-- Time Presets -->
+    <div class="flex flex-wrap items-center justify-center gap-2 mb-10 max-w-xs">
+      <button onclick="setTime(5)" class="time-btn text-[10px] uppercase tracking-[0.15em] font-bold px-3.5 py-1.5 rounded-full glass-dark text-white/50 hover:text-white transition-colors">5m</button>
+      <button onclick="setTime(10)" class="time-btn text-[10px] uppercase tracking-[0.15em] font-bold px-3.5 py-1.5 rounded-full glass-dark text-white/50 hover:text-white transition-colors">10m</button>
+      <button onclick="setTime(15)" class="time-btn active text-[10px] uppercase tracking-[0.15em] font-bold px-3.5 py-1.5 rounded-full glass-dark text-white/50 hover:text-white transition-colors">15m</button>
+      <button onclick="setTime(25)" class="time-btn text-[10px] uppercase tracking-[0.15em] font-bold px-3.5 py-1.5 rounded-full glass-dark text-white/50 hover:text-white transition-colors">25m</button>
+      <button onclick="setTime(30)" class="time-btn text-[10px] uppercase tracking-[0.15em] font-bold px-3.5 py-1.5 rounded-full glass-dark text-white/50 hover:text-white transition-colors">30m</button>
+      <button onclick="setTime(45)" class="time-btn text-[10px] uppercase tracking-[0.15em] font-bold px-3.5 py-1.5 rounded-full glass-dark text-white/50 hover:text-white transition-colors">45m</button>
+      <button onclick="setTime(60)" class="time-btn text-[10px] uppercase tracking-[0.15em] font-bold px-3.5 py-1.5 rounded-full glass-dark text-white/50 hover:text-white transition-colors">1h</button>
+    </div>
+
+    <!-- Ambient Sounds -->
+    <div class="w-full mb-8">
+      <p class="text-[10px] uppercase tracking-[0.25em] text-white/30 font-bold mb-4 text-center">Música de Fondo</p>
+      <div class="grid grid-cols-3 gap-3" id="ambientGrid">
+        <button onclick="toggleAmbient(this)" class="ambient-btn active glass-dark rounded-xl p-4 flex flex-col items-center gap-2 hover:bg-white/10 transition-colors">
+          <i data-lucide="piano" class="ambient-icon w-5 h-5 text-white/40"></i>
+          <span class="text-[10px] text-white/50 font-medium">Piano</span>
+        </button>
+        <button onclick="toggleAmbient(this)" class="ambient-btn glass-dark rounded-xl p-4 flex flex-col items-center gap-2 hover:bg-white/10 transition-colors">
+          <i data-lucide="music-2" class="ambient-icon w-5 h-5 text-white/40"></i>
+          <span class="text-[10px] text-white/50 font-medium">Cuerdas</span>
+        </button>
+        <button onclick="toggleAmbient(this)" class="ambient-btn glass-dark rounded-xl p-4 flex flex-col items-center gap-2 hover:bg-white/10 transition-colors">
+          <i data-lucide="feather" class="ambient-icon w-5 h-5 text-white/40"></i>
+          <span class="text-[10px] text-white/50 font-medium">Paz y Quietud</span>
+        </button>
+        <button onclick="toggleAmbient(this)" class="ambient-btn glass-dark rounded-xl p-4 flex flex-col items-center gap-2 hover:bg-white/10 transition-colors">
+          <i data-lucide="scroll-text" class="ambient-icon w-5 h-5 text-white/40"></i>
+          <span class="text-[10px] text-white/50 font-medium">Salmos</span>
+        </button>
+        <button onclick="toggleAmbient(this)" class="ambient-btn glass-dark rounded-xl p-4 flex flex-col items-center gap-2 hover:bg-white/10 transition-colors">
+          <i data-lucide="moon" class="ambient-icon w-5 h-5 text-white/40"></i>
+          <span class="text-[10px] text-white/50 font-medium">Reposo</span>
+        </button>
+        <button onclick="toggleAmbient(this)" class="ambient-btn glass-dark rounded-xl p-4 flex flex-col items-center gap-2 hover:bg-white/10 transition-colors">
+          <i data-lucide="sparkles" class="ambient-icon w-5 h-5 text-white/40"></i>
+          <span class="text-[10px] text-white/50 font-medium">Adoración</span>
+        </button>
+      </div>
+
+      <!-- Mezcla: Música + Voz -->
+      <div class="mt-5 space-y-3 px-1">
+        <div class="flex items-center gap-3">
+          <span class="text-[10px] text-white/40 font-semibold w-16 flex items-center gap-1.5 flex-shrink-0"><i data-lucide="music" class="w-3.5 h-3.5"></i>Música</span>
+          <input type="range" min="0" max="100" value="70" id="musicVolume" class="flex-1">
+          <span class="text-[9px] text-white/30 w-7 text-right" id="musicVolVal">70</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="text-[10px] text-white/40 font-semibold w-16 flex items-center gap-1.5 flex-shrink-0"><i data-lucide="mic" class="w-3.5 h-3.5"></i>Voz</span>
+          <input type="range" min="0" max="100" value="100" id="voiceVolume" class="flex-1">
+          <span class="text-[9px] text-white/30 w-7 text-right" id="voiceVolVal">100</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Voice Speed -->
+    <div class="w-full mb-8">
+      <p class="text-[10px] uppercase tracking-[0.25em] text-white/30 font-bold mb-4 text-center">Velocidad de la Voz</p>
+      <div class="flex items-center justify-center gap-2" id="speedOpts">
+        <button data-rate="0.9" onclick="setSpeed(this, 0.9)" class="speed-btn locked text-[10px] uppercase tracking-[0.1em] font-bold px-3.5 py-1.5 rounded-full glass-dark text-white/50">0.9×</button>
+        <button data-rate="1" onclick="setSpeed(this, 1)" class="speed-btn active text-[10px] uppercase tracking-[0.1em] font-bold px-3.5 py-1.5 rounded-full glass-dark text-white/50">Normal</button>
+        <button data-rate="1.25" onclick="setSpeed(this, 1.25)" class="speed-btn text-[10px] uppercase tracking-[0.1em] font-bold px-3.5 py-1.5 rounded-full glass-dark text-white/50">1.25×</button>
+      </div>
+      <p class="speed-hint show mt-3 text-center text-[9px] text-white/40 leading-relaxed px-4" id="speedHint">
+        🐢 La cámara lenta suena mejor con la voz <span class="text-[#c9a84c] font-semibold">SBLL 2026</span>.
+        <button onclick="useSbllVoice()" class="ml-1 text-[#c9a84c] underline underline-offset-2 hover:text-[#e8d48b] transition-colors">Usar voz 2026</button>
+      </p>
+    </div>
+
+    <!-- Visual Environment -->
+    <div class="w-full mb-8">
+      <p class="text-[10px] uppercase tracking-[0.25em] text-white/30 font-bold mb-4 text-center">Entorno Visual</p>
+      <div class="flex items-center justify-center gap-3">
+        <button onclick="setEnv(this,'stars')" class="env-btn active glass-dark rounded-full px-4 py-2 flex items-center gap-2">
+          <i data-lucide="stars" class="w-3.5 h-3.5 text-[#c9a84c]"></i>
+          <span class="text-[10px] text-white/60 font-medium">Estrellas</span>
+        </button>
+        <button onclick="setEnv(this,'rain')" class="env-btn glass-dark rounded-full px-4 py-2 flex items-center gap-2">
+          <i data-lucide="cloud-drizzle" class="w-3.5 h-3.5 text-white/40"></i>
+          <span class="text-[10px] text-white/60 font-medium">Lluvia</span>
+        </button>
+        <button onclick="setEnv(this,'clouds')" class="env-btn glass-dark rounded-full px-4 py-2 flex items-center gap-2">
+          <i data-lucide="cloud" class="w-3.5 h-3.5 text-white/40"></i>
+          <span class="text-[10px] text-white/60 font-medium">Nubes</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Bible Passage Card -->
+    <div class="w-full glass-dark rounded-2xl p-6 mb-8">
+      <div class="flex items-start gap-3">
+        <div class="w-8 h-8 rounded-lg bg-[#c9a84c]/15 flex items-center justify-center flex-shrink-0 mt-0.5">
+          <i data-lucide="book-open" class="w-4 h-4 text-[#c9a84c]"></i>
+        </div>
+        <div>
+          <p class="text-[9px] uppercase tracking-[0.25em] text-[#c9a84c] font-bold mb-1.5">Salmo 46:10</p>
+          <p class="font-serif italic text-[15px] text-white/80 leading-relaxed">"Enquietad, y conoced que yo soy Dios; seré exaltado entre las naciones; seré enaltecido en la tierra."</p>
+          <button class="mt-3 text-[10px] uppercase tracking-[0.15em] text-white/30 hover:text-[#c9a84c] transition-colors font-semibold flex items-center gap-1.5">
+            Cambiar pasaje <i data-lucide="refresh-cw" class="w-3 h-3"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Now Playing in Focus -->
+    <div class="w-full glass-dark rounded-2xl p-5 mb-8">
+      <div class="flex items-center justify-between mb-3">
+        <p class="text-[9px] uppercase tracking-[0.25em] text-white/20 font-bold">Reproduciendo ahora</p>
+        <button onclick="toggleContinuous(this)" id="contBtn" class="cont-toggle active flex items-center gap-1.5 text-[8px] uppercase tracking-[0.15em] font-bold px-2.5 py-1 rounded-full">
+          <i data-lucide="repeat" class="w-3 h-3"></i> <span>Continua</span>
+        </button>
+      </div>
+      <div class="flex items-center gap-4">
+        <div class="w-14 h-14 rounded-xl overflow-hidden flex-shrink-0">
+          <img src="https://picsum.photos/seed/bajo-sus-alas/120/120.jpg" class="w-full h-full object-cover" alt="">
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="text-sm text-white font-semibold truncate">Bajo Sus Alas</p>
+          <p class="text-[10px] text-white/30">Piano Romántico</p>
+          <div class="mt-2 h-0.5 bg-white/10 rounded-full overflow-hidden">
+            <div class="h-full bg-[#c9a84c]/50 rounded-full" style="width: 35%;"></div>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button class="w-8 h-8 rounded-full hover:bg-white/10 flex items-center justify-center transition-colors">
+            <i data-lucide="skip-back" class="w-3.5 h-3.5 text-white/40"></i>
+          </button>
+          <button class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
+            <i data-lucide="pause" class="w-4 h-4 text-white"></i>
+          </button>
+          <button class="w-8 h-8 rounded-full hover:bg-white/10 flex items-center justify-center transition-colors">
+            <i data-lucide="skip-forward" class="w-3.5 h-3.5 text-white/40"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ==================== BOTTOM NAV (Mobile) ==================== -->
+<nav class="bottom-nav fixed bottom-0 left-0 right-0 z-50 glass-dark md:hidden">
+  <div class="flex items-center justify-around py-2.5 px-4">
+    <button class="bnav-item active flex flex-col items-center gap-0.5 py-1 px-3" onclick="navigateTo('explorar')">
+      <i data-lucide="compass" class="w-5 h-5"></i>
+      <span class="text-[9px] font-semibold uppercase tracking-wider">Explorar</span>
+      <div class="bnav-dot w-1 h-1 rounded-full bg-[#c9a84c]"></div>
+    </button>
+    <button class="bnav-item flex flex-col items-center gap-0.5 py-1 px-3 text-white/40" onclick="navigateTo('biblia')">
+      <i data-lucide="book-open" class="w-5 h-5"></i>
+      <span class="text-[9px] font-semibold uppercase tracking-wider">Biblia</span>
+      <div class="bnav-dot w-1 h-1 rounded-full bg-[#c9a84c]"></div>
+    </button>
+    <button class="bnav-item flex flex-col items-center gap-0.5 py-1 px-3 text-white/40" onclick="navigateTo('enfoque')">
+      <i data-lucide="target" class="w-5 h-5"></i>
+      <span class="text-[9px] font-semibold uppercase tracking-wider">Enfoque</span>
+      <div class="bnav-dot w-1 h-1 rounded-full bg-[#c9a84c]"></div>
+    </button>
+    <button class="bnav-item flex flex-col items-center gap-0.5 py-1 px-3 text-white/40">
+      <i data-lucide="user" class="w-5 h-5"></i>
+      <span class="text-[9px] font-semibold uppercase tracking-wider">Perfil</span>
+      <div class="bnav-dot w-1 h-1 rounded-full bg-[#c9a84c]"></div>
+    </button>
+  </div>
+</nav>
+
+<script>
+// ==================== NAVIGATION ====================
+let currentSection = 'explorar';
+
+function navigateTo(section) {
+  if (section === currentSection) return;
+  
+  const oldEl = document.getElementById('sec-' + currentSection);
+  const newEl = document.getElementById('sec-' + section);
+  
+  if (!newEl) return;
+  
+  // Fade out
+  oldEl.style.opacity = '0';
+  setTimeout(() => {
+    oldEl.classList.remove('active');
+    newEl.classList.add('active');
+    // Update body background
+    if (section === 'enfoque') {
+      document.body.style.background = '#0d0d1a';
+      document.body.style.color = '#fff';
+    } else {
+      document.body.style.background = '#f5f0e8';
+      document.body.style.color = '#1a1a3e';
+    }
+    // Fade in
+    requestAnimationFrame(() => {
+      newEl.style.opacity = '1';
+    });
+    
+    // Update top nav style
+    const topNav = document.getElementById('topNav');
+    if (section === 'enfoque') {
+      topNav.style.mixBlendMode = 'normal';
+    } else {
+      topNav.style.mixBlendMode = 'difference';
+    }
+    
+    // Update nav links
+    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+    document.querySelectorAll(`.nav-link[href="#${section}"]`).forEach(l => l.classList.add('active'));
+    
+    // Update bottom nav
+    document.querySelectorAll('.bnav-item').forEach(b => {
+      b.classList.remove('active');
+      b.classList.add('text-white/40');
+    });
+    const bnavMap = { explorar: 0, biblia: 1, enfoque: 2 };
+    if (bnavMap[section] !== undefined) {
+      const btn = document.querySelectorAll('.bnav-item')[bnavMap[section]];
+      btn.classList.add('active');
+      btn.classList.remove('text-white/40');
+    }
+    
+    // Show/hide elements
+    const enfoqueNav = document.getElementById('enfoqueNav');
+    enfoqueNav.style.display = section === 'enfoque' ? 'flex' : 'none';
+    const focusBg = document.querySelector('.focus-bg');
+    if (focusBg) focusBg.style.display = section === 'enfoque' ? 'block' : 'none';
+    applyFocusEnv(section === 'enfoque');
+
+    currentSection = section;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    lucide.createIcons();
+  }, 300);
+  
+  // Update hash
+  history.pushState(null, '', '#' + section);
+}
+
+// Handle hash on load
+window.addEventListener('load', () => {
+  const hash = window.location.hash.replace('#', '') || 'explorar';
+  if (hash === 'enfoque') {
+    navigateTo('enfoque');
+  }
+  lucide.createIcons();
+});
+
+// Handle back/forward
+window.addEventListener('popstate', () => {
+  const hash = window.location.hash.replace('#', '') || 'explorar';
+  if (hash !== currentSection) {
+    const oldEl = document.getElementById('sec-' + currentSection);
+    const newEl = document.getElementById('sec-' + hash);
+    if (newEl) {
+      oldEl.classList.remove('active');
+      newEl.classList.add('active');
+      if (hash === 'enfoque') {
+        document.body.style.background = '#0d0d1a';
+        document.body.style.color = '#fff';
+      } else {
+        document.body.style.background = '#f5f0e8';
+        document.body.style.color = '#1a1a3e';
+      }
+      const focusBg = document.querySelector('.focus-bg');
+      if (focusBg) focusBg.style.display = hash === 'enfoque' ? 'block' : 'none';
+      document.getElementById('enfoqueNav').style.display = hash === 'enfoque' ? 'flex' : 'none';
+      applyFocusEnv(hash === 'enfoque');
+      newEl.style.opacity = '1';
+      currentSection = hash;
+    }
+  }
+});
+
+// Apply the active visual environment (stars / rain / clouds) when in Enfoque,
+// or clear every overlay when leaving it.
+function applyFocusEnv(on) {
+  const stars = document.getElementById('focusStars');
+  const glow = document.getElementById('starGlow');
+  const rain = document.getElementById('rainOverlay');
+  const clouds = document.getElementById('cloudOverlay');
+  stars.style.display = 'none';
+  glow.style.display = 'none';
+  rain.style.display = 'none';
+  clouds.style.display = 'none';
+  glow.innerHTML = '';
+  rain.innerHTML = '';
+  clouds.innerHTML = '';
+  if (!on) return;
+  if (currentEnv === 'rain') { rain.style.display = 'block'; createRain(); }
+  else if (currentEnv === 'clouds') { clouds.style.display = 'block'; createClouds(); }
+  else { stars.style.display = 'block'; glow.style.display = 'block'; createGlowStars(); }
+}
+
+// Hide enfoque nav + overlays initially
+document.getElementById('enfoqueNav').style.display = 'none';
+document.querySelector('.focus-bg').style.display = 'none';
+applyFocusEnv(false);
+
+// ==================== TIMER ====================
+let timerSeconds = 15 * 60;
+let timerTotal = 15 * 60;
+let timerInterval = null;
+let timerRunning = false;
+
+function updateTimerDisplay() {
+  const mins = Math.floor(timerSeconds / 60);
+  const secs = timerSeconds % 60;
+  document.getElementById('timerDisplay').textContent = 
+    String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+  
+  // Update circle
+  const circle = document.getElementById('timerCircle');
+  const circumference = 553;
+  const progress = 1 - (timerSeconds / timerTotal);
+  circle.style.strokeDashoffset = circumference * progress;
+}
+
+function toggleTimer() {
+  if (timerRunning) {
+    clearInterval(timerInterval);
+    timerRunning = false;
+    document.getElementById('timerLabel').textContent = 'Pausado';
+    document.getElementById('timerPlayIcon').setAttribute('data-lucide', 'play');
+    document.getElementById('timerPlayIcon').classList.add('ml-0.5');
+  } else {
+    timerRunning = true;
+    document.getElementById('timerLabel').textContent = 'En enfoque...';
+    document.getElementById('timerPlayIcon').setAttribute('data-lucide', 'pause');
+    document.getElementById('timerPlayIcon').classList.remove('ml-0.5');
+    timerInterval = setInterval(() => {
+      if (timerSeconds > 0) {
+        timerSeconds--;
+        updateTimerDisplay();
+      } else {
+        clearInterval(timerInterval);
+        timerRunning = false;
+        document.getElementById('timerLabel').textContent = '¡Sesión completada!';
+        document.getElementById('timerPlayIcon').setAttribute('data-lucide', 'play');
+        document.getElementById('timerPlayIcon').classList.add('ml-0.5');
+      }
+    }, 1000);
+  }
+  lucide.createIcons();
+}
+
+function resetTimer() {
+  clearInterval(timerInterval);
+  timerRunning = false;
+  timerSeconds = timerTotal;
+  updateTimerDisplay();
+  document.getElementById('timerLabel').textContent = 'Listo para empezar';
+  document.getElementById('timerPlayIcon').setAttribute('data-lucide', 'play');
+  document.getElementById('timerPlayIcon').classList.add('ml-0.5');
+  lucide.createIcons();
+}
+
+function skipTimer() {
+  timerSeconds = 0;
+  updateTimerDisplay();
+  clearInterval(timerInterval);
+  timerRunning = false;
+  document.getElementById('timerLabel').textContent = '¡Sesión completada!';
+  document.getElementById('timerPlayIcon').setAttribute('data-lucide', 'play');
+  document.getElementById('timerPlayIcon').classList.add('ml-0.5');
+  lucide.createIcons();
+}
+
+function setTime(minutes) {
+  clearInterval(timerInterval);
+  timerRunning = false;
+  timerTotal = minutes * 60;
+  timerSeconds = timerTotal;
+  updateTimerDisplay();
+  document.getElementById('timerLabel').textContent = 'Listo para empezar';
+  document.getElementById('timerPlayIcon').setAttribute('data-lucide', 'play');
+  document.getElementById('timerPlayIcon').classList.add('ml-0.5');
+  
+  // Update active state
+  document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  lucide.createIcons();
+}
+
+// ==================== MÚSICA DE FONDO (selección única) ====================
+// Las 6 categorías de la UI agrupan TODO el catálogo real `ambients[]` de la app
+// (app/index.html). Ningún ambiente queda fuera. Mapa para la integración:
+const CATEGORIA_AMBIENTES = {
+  piano:     ['piano-romantico','piano-relajante','piano-meditacion','piano-instrumental','piano-naturaleza'],
+  cuerdas:   ['cuerdas-terciopelo','orquesta-niebla'],
+  paz:       ['calma','paz-abraza','paz-suspiros','seda-suave','aliento-agua','corrientes-calidas','luz-violeta','corazon-calma'],
+  salmos:    ['salmos-reposo','salmo-oracion','salmo-luz','salmos-oceano'],
+  reposo:    ['meditacion','relajacion','medianoche-agua','deriva-umbral','cancion-cuna','flauta-serena','compas-agua','corriente-seda'],
+  adoracion: ['nube-segura','oceano-altares','incienso','incienso-sagrado','luz-oracion'],
+};
+
+function toggleAmbient(btn) {
+  document.querySelectorAll('#ambientGrid .ambient-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  // Integración: reproducir un ambiente al azar de la categoría elegida.
+}
+
+// ==================== VOZ: VELOCIDAD + VOLÚMENES + CONTINUA ====================
+// voz por defecto = RVA 1909 humana ('real'). Espejo de translationMode en la app.
+let voiceSpeed = 1, musicVol = 70, voiceVol = 100, continuousPlay = true, focusVoice = 'real';
+
+// Velocidad acotada a [0.9, 1.25]. La cámara lenta (<1×) SOLO con la voz SBLL 2026:
+// la RVA 1909 pierde calidad al ralentizarla (regla real de la app).
+function setSpeed(btn, val) {
+  if (val < 1 && focusVoice !== 'sbll') {
+    const hint = document.getElementById('speedHint');
+    hint.classList.add('show'); hint.classList.remove('pulse'); void hint.offsetWidth; hint.classList.add('pulse');
+    return; // no aplicar cámara lenta con la voz 1909
+  }
+  voiceSpeed = Math.max(0.9, Math.min(1.25, val));
+  document.querySelectorAll('#speedOpts .speed-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  // Integración: audioA.playbackRate = audioB.playbackRate = voiceSpeed;
+}
+
+// Cambia a la voz SBLL 2026 para habilitar la cámara lenta.
+function useSbllVoice() {
+  focusVoice = 'sbll';
+  document.querySelectorAll('#speedOpts .speed-btn').forEach(b => {
+    if (parseFloat(b.dataset.rate) < 1) b.classList.remove('locked');
+  });
+  document.getElementById('speedHint').classList.remove('show');
+  // Integración: setTranslation('sbll'); showToast('Voz SBLL 2026 activada');
+}
+
+function toggleContinuous(btn) {
+  continuousPlay = !continuousPlay;
+  btn.classList.toggle('active', continuousPlay);
+  // Integración: continuousPlay → effectiveMode()='full' (sigue al siguiente capítulo).
+}
+
+(function initMixers(){
+  const mv = document.getElementById('musicVolume'), vv = document.getElementById('voiceVolume');
+  if (mv) mv.addEventListener('input', e => { musicVol = +e.target.value; document.getElementById('musicVolVal').textContent = musicVol; });
+  if (vv) vv.addEventListener('input', e => { voiceVol = +e.target.value; document.getElementById('voiceVolVal').textContent = voiceVol; });
+})();
+
+// ==================== ENVIRONMENT ====================
+let currentEnv = 'stars';
+
+function setEnv(btn, type) {
+  currentEnv = type;
+  document.querySelectorAll('.env-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  const stars = document.getElementById('focusStars');
+  const glow = document.getElementById('starGlow');
+  const rain = document.getElementById('rainOverlay');
+  const clouds = document.getElementById('cloudOverlay');
+  const bg = document.querySelector('.focus-bg');
+
+  // Reset all overlays
+  stars.style.display = 'none';
+  glow.style.display = 'none';
+  rain.style.display = 'none';
+  clouds.style.display = 'none';
+  glow.innerHTML = '';
+  rain.innerHTML = '';
+  clouds.innerHTML = '';
+
+  switch(type) {
+    case 'stars':
+      stars.style.display = 'block';
+      glow.style.display = 'block';
+      createGlowStars();
+      bg.style.background = 'radial-gradient(ellipse at 50% 0%, #1a1a3e 0%, #0d0d1a 70%)';
+      break;
+    case 'rain':
+      rain.style.display = 'block';
+      bg.style.background = 'radial-gradient(ellipse at 50% 0%, #13203e 0%, #080c18 70%)';
+      createRain();
+      break;
+    case 'clouds':
+      clouds.style.display = 'block';
+      bg.style.background = 'radial-gradient(ellipse at 50% 0%, #1a1830 0%, #0c0b16 70%)';
+      createClouds();
+      break;
+  }
+}
+
+function createRain() {
+  const container = document.getElementById('rainOverlay');
+  container.innerHTML = '';
+  for (let i = 0; i < 110; i++) {
+    const drop = document.createElement('div');
+    drop.className = 'rain-drop';
+    drop.style.left = Math.random() * 100 + '%';
+    drop.style.height = (15 + Math.random() * 25) + 'px';
+    drop.style.animationDuration = (0.6 + Math.random() * 0.6) + 's';
+    drop.style.animationDelay = Math.random() * 2 + 's';
+    container.appendChild(drop);
+  }
+}
+
+function createGlowStars() {
+  const container = document.getElementById('starGlow');
+  container.innerHTML = '';
+  for (let i = 0; i < 10; i++) {
+    const s = document.createElement('div');
+    s.className = 'glow-star';
+    const size = 2 + Math.random() * 2.8;            // 2–4.8px (cerca = más grande)
+    const tint = Math.random() < 0.3 ? '255,248,228' : '255,255,255';
+    s.style.width = size + 'px';
+    s.style.height = size + 'px';
+    s.style.left = (2 + Math.random() * 95) + '%';
+    s.style.top = (Math.random() * 72) + '%';
+    s.style.background = 'rgba(' + tint + ',1)';
+    s.style.boxShadow = '0 0 ' + (5 + size * 3.2).toFixed(0) + 'px rgba(' + tint + ',0.9)';
+    s.style.animationDuration = (2.4 + Math.random() * 3.2) + 's';
+    s.style.animationDelay = (-Math.random() * 4) + 's';
+    container.appendChild(s);
+  }
+}
+
+function createClouds() {
+  const container = document.getElementById('cloudOverlay');
+  container.innerHTML = '';
+  for (let i = 0; i < 7; i++) {
+    const cloud = document.createElement('div');
+    cloud.className = 'cloud';
+    cloud.style.setProperty('--s', (0.6 + Math.random() * 1.2).toFixed(2));
+    cloud.style.top = (Math.random() * 65) + '%';
+    cloud.style.animationDuration = (38 + Math.random() * 42) + 's';
+    cloud.style.animationDelay = (-Math.random() * 60) + 's';
+    container.appendChild(cloud);
+  }
+}
+
+// ==================== MINI PLAYER ====================
+let isPlaying = true;
+
+function showPlayer() {
+  document.getElementById('miniPlayer').style.display = 'flex';
+  isPlaying = true;
+  updateMiniPlayerIcon();
+}
+
+function togglePlay() {
+  isPlaying = !isPlaying;
+  updateMiniPlayerIcon();
+}
+
+function updateMiniPlayerIcon() {
+  const icon = document.querySelector('#miniPlayBtn i');
+  if (isPlaying) {
+    icon.setAttribute('data-lucide', 'pause');
+  } else {
+    icon.setAttribute('data-lucide', 'play');
+    icon.classList.add('ml-0.5');
+  }
+  lucide.createIcons();
+}
+
+// Show mini player by default
+showPlayer();
+
+// Init
+lucide.createIcons();
+updateTimerDisplay();
+</script>
+
+</body>
+</html> 

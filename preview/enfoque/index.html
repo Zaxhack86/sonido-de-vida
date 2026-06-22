@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sonido de Vida — Modo Enfoque</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: {
+        display: ['Cinzel', 'serif'],
+        body: ['Inter', 'sans-serif'],
+        serif: ['Lora', 'serif'],
+      }
+    }
+  }
+}
+</script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Inter', sans-serif;
+  background: #0d0d1a;
+  color: #fff;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* Noise */
+.noise {
+  position: fixed; inset: 0; z-index: 9000; opacity: 0.025; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Background */
+.focus-bg {
+  position: fixed; inset: 0; z-index: 0;
+  background: radial-gradient(ellipse at 50% 0%, #1a1a3e 0%, #0d0d1a 70%);
+  transition: background 1s ease;
+}
+
+/* Stars */
+.focus-stars {
+  position: fixed; inset: 0; z-index: 0;
+  background-image:
+    radial-gradient(1.5px 1.5px at 8% 12%, rgba(255,255,255,0.9), transparent),
+    radial-gradient(1px 1px at 17% 28%, rgba(255,255,255,0.7), transparent),
+    radial-gradient(2px 2px at 24% 9%, rgba(255,248,228,0.95), transparent),
+    radial-gradient(1px 1px at 33% 22%, rgba(255,255,255,0.6), transparent),
+    radial-gradient(1.5px 1.5px at 41% 6%, rgba(255,255,255,0.85), transparent),
+    radial-gradient(1px 1px at 48% 17%, rgba(255,255,255,0.55), transparent),
+    radial-gradient(1.5px 1.5px at 56% 11%, rgba(255,255,255,0.8), transparent),
+    radial-gradient(1px 1px at 63% 25%, rgba(255,255,255,0.6), transparent),
+    radial-gradient(2px 2px at 71% 7%, rgba(255,248,228,0.9), transparent),
+    radial-gradient(1px 1px at 79% 19%, rgba(255,255,255,0.7), transparent),
+    radial-gradient(1.5px 1.5px at 87% 13%, rgba(255,255,255,0.85), transparent),
+    radial-gradient(1px 1px at 94% 26%, rgba(255,255,255,0.6), transparent),
+    radial-gradient(1px 1px at 12% 42%, rgba(255,255,255,0.65), transparent),
+    radial-gradient(1.5px 1.5px at 28% 38%, rgba(255,255,255,0.8), transparent),
+    radial-gradient(1px 1px at 44% 48%, rgba(255,255,255,0.5), transparent),
+    radial-gradient(1.5px 1.5px at 59% 44%, rgba(255,255,255,0.75), transparent),
+    radial-gradient(1px 1px at 73% 40%, rgba(255,255,255,0.6), transparent),
+    radial-gradient(2px 2px at 88% 47%, rgba(255,248,228,0.85), transparent),
+    radial-gradient(1px 1px at 6% 58%, rgba(255,255,255,0.6), transparent),
+    radial-gradient(1.5px 1.5px at 21% 66%, rgba(255,255,255,0.8), transparent),
+    radial-gradient(1px 1px at 37% 61%, rgba(255,255,255,0.55), transparent),
+    radial-gradient(1px 1px at 52% 72%, rgba(255,255,255,0.65), transparent),
+    radial-gradient(1.5px 1.5px at 67% 68%, rgba(255,255,255,0.8), transparent),
+    radial-gradient(1px 1px at 82% 74%, rgba(255,255,255,0.6), transparent),
+    radial-gradient(1.5px 1.5px at 95% 63%, rgba(255,255,255,0.75), transparent),
+    radial-gradient(1px 1px at 14% 84%, rgba(255,255,255,0.6), transparent),
+    radial-gradient(1px 1px at 31% 90%, rgba(255,255,255,0.7), transparent),
+    radial-gradient(1.5px 1.5px at 49% 86%, rgba(255,255,255,0.8), transparent),
+    radial-gradient(1px 1px at 64% 92%, rgba(255,255,255,0.55), transparent),
+    radial-gradient(1.5px 1.5px at 86% 88%, rgba(255,255,255,0.75), transparent);
+  animation: twinkle 5s ease-in-out infinite alternate;
+}
+@keyframes twinkle { 0% { opacity: 0.7; } 100% { opacity: 1; } }
+
+/* Rain effect */
+.rain-overlay {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none; display: none;
+}
+.rain-drop {
+  position: absolute; width: 1px; background: linear-gradient(to bottom, transparent, rgba(180,200,230,0.45));
+  animation: rain-fall linear infinite;
+}
+@keyframes rain-fall {
+  0% { transform: translateY(-100px); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(100vh); opacity: 0; }
+}
+
+/* Cloud effect — cúmulos blandos hechos de varios "puffs" + blur */
+.cloud-overlay {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none; display: none; overflow: hidden;
+}
+.cloud {
+  position: absolute; left: 0;
+  width: 130px; height: 44px;
+  background: rgba(255,255,255,0.07);
+  border-radius: 44px;
+  filter: blur(14px);
+  box-shadow:
+    32px 8px 0 -2px rgba(255,255,255,0.07),
+    70px 2px 0 -4px rgba(255,255,255,0.06),
+    20px -14px 0 -7px rgba(255,255,255,0.06),
+    52px -16px 0 -5px rgba(255,255,255,0.07),
+    96px 10px 0 -6px rgba(255,255,255,0.05);
+  animation: cloud-drift linear infinite;
+}
+@keyframes cloud-drift {
+  0% { transform: translateX(-280px) scale(var(--s,1)); }
+  100% { transform: translateX(calc(100vw + 280px)) scale(var(--s,1)); }
+}
+
+/* Estrellas radiantes "cercanas" (con halo), sobre el polvo de estrellas lejano */
+.star-glow { position: fixed; inset: 0; z-index: 0; pointer-events: none; display: none; }
+.glow-star {
+  position: absolute; border-radius: 50%; background: #fff;
+  animation: star-pulse ease-in-out infinite alternate;
+}
+@keyframes star-pulse {
+  0%   { opacity: 0.35; transform: scale(0.8); }
+  100% { opacity: 1;    transform: scale(1.25); }
+}
+
+/* Glass dark */
+.glass-dark {
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+/* Timer circle */
+.timer-ring { transition: stroke-dashoffset 1s linear; }
+
+/* Ambient buttons */
+.ambient-btn {
+  transition: all 0.35s cubic-bezier(0.25,1,0.5,1);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.ambient-btn:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.1);
+}
+.ambient-btn.active {
+  background: rgba(201,168,76,0.12);
+  border-color: rgba(201,168,76,0.35);
+  box-shadow: 0 0 30px rgba(201,168,76,0.08);
+}
+.ambient-btn.active .amb-icon { color: #c9a84c; }
+.ambient-btn.active .amb-label { color: rgba(255,255,255,0.8); }
+
+/* Time preset */
+.time-preset {
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.time-preset:hover { background: rgba(255,255,255,0.08); }
+.time-preset.active {
+  background: #c9a84c;
+  border-color: #c9a84c;
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(201,168,76,0.3);
+}
+
+/* Speed preset (misma estética que el tiempo) */
+.speed-btn {
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.speed-btn:hover { background: rgba(255,255,255,0.08); }
+.speed-btn.active {
+  background: #c9a84c;
+  border-color: #c9a84c;
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(201,168,76,0.3);
+}
+.speed-btn.locked { opacity: 0.4; }
+.speed-hint { display: none; }
+.speed-hint.show { display: block; }
+.speed-hint.pulse { animation: hintPulse 0.5s ease; }
+@keyframes hintPulse { 0%,100% { opacity: 0.6; } 50% { opacity: 1; transform: scale(1.02); } }
+
+/* Continuous playback toggle */
+.cont-toggle {
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.3);
+}
+.cont-toggle.active {
+  background: rgba(201,168,76,0.12);
+  border-color: rgba(201,168,76,0.35);
+  color: #c9a84c;
+}
+
+/* Env buttons */
+.env-btn {
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.env-btn:hover { background: rgba(255,255,255,0.06); }
+.env-btn.active {
+  background: rgba(201,168,76,0.1);
+  border-color: rgba(201,168,76,0.3);
+}
+.env-btn.active .env-icon { color: #c9a84c; }
+
+/* Premium badge */
+.prem-badge {
+  background: linear-gradient(135deg, #c9a84c 0%, #a07c2a 100%);
+}
+
+/* Fade up */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-up { animation: fadeUp 0.9s cubic-bezier(0.25,1,0.5,1) forwards; opacity: 0; }
+.d1 { animation-delay: 0.05s; }
+.d2 { animation-delay: 0.15s; }
+.d3 { animation-delay: 0.25s; }
+.d4 { animation-delay: 0.35s; }
+.d5 { animation-delay: 0.45s; }
+.d6 { animation-delay: 0.55s; }
+.d7 { animation-delay: 0.65s; }
+
+/* Pulse glow on timer play */
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 4px 20px rgba(201,168,76,0.2); }
+  50% { box-shadow: 0 4px 40px rgba(201,168,76,0.4); }
+}
+.timer-playing { animation: pulse-glow 2s ease-in-out infinite; }
+
+/* Bottom nav */
+.bnav-item { transition: color 0.3s ease; }
+.bnav-item.active { color: #c9a84c; }
+.bnav-item.active .bnav-dot { opacity: 1; transform: scale(1); }
+.bnav-dot { opacity: 0; transform: scale(0); transition: all 0.3s ease; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+
+/* Volume slider */
+input[type="range"] {
+  -webkit-appearance: none; appearance: none;
+  width: 100%; height: 3px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 2px; outline: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: #c9a84c;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(201,168,76,0.3);
+}
+input[type="range"]::-moz-range-thumb {
+  width: 12px; height: 12px;
+  border-radius: 50%; border: none;
+  background: #c9a84c;
+  cursor: pointer;
+}
+
+/* Completion overlay */
+.completion-overlay {
+  position: fixed; inset: 0; z-index: 100;
+  background: rgba(13,13,26,0.92);
+  backdrop-filter: blur(30px);
+  display: none; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity 0.5s ease;
+}
+.completion-overlay.show { display: flex; opacity: 1; }
+</style>
+</head>
+<body>
+
+<div class="noise"></div>
+<div class="focus-bg" id="focusBg"></div>
+<div class="focus-stars" id="focusStars"></div>
+<div class="star-glow" id="starGlow"></div>
+<div class="rain-overlay" id="rainOverlay"></div>
+<div class="cloud-overlay" id="cloudOverlay"></div>
+
+<!-- ==================== TOP BAR ==================== -->
+<header class="fixed top-0 left-0 right-0 z-50 px-5 py-4 md:px-8 md:py-5 flex items-center justify-between">
+  <a href="https://www.sonidodevida.com/app#explorar" class="w-9 h-9 rounded-full glass-dark flex items-center justify-center hover:bg-white/10 transition-colors">
+    <i data-lucide="arrow-left" class="w-4 h-4 text-white/70"></i>
+  </a>
+  <div class="text-center">
+    <p class="text-[9px] uppercase tracking-[0.3em] text-white/30 font-bold">Modo</p>
+    <p class="text-[11px] font-bold text-white tracking-wider mt-0.5">ENFOQUE</p>
+  </div>
+  <div class="flex items-center gap-2">
+    <span class="prem-badge text-white text-[8px] tracking-[0.15em] uppercase font-bold px-2.5 py-1 rounded-full">Premium</span>
+    <button class="w-9 h-9 rounded-full glass-dark flex items-center justify-center hover:bg-white/10 transition-colors" id="settingsBtn">
+      <i data-lucide="settings" class="w-4 h-4 text-white/40"></i>
+    </button>
+  </div>
+</header>
+
+<!-- ==================== MAIN CONTENT ==================== -->
+<main class="relative z-10 pt-24 pb-36 md:pb-12 px-5 md:px-8 max-w-lg mx-auto flex flex-col items-center">
+
+  <!-- Timer -->
+  <div class="relative w-56 h-56 md:w-64 md:h-64 mb-6 fade-up d1">
+    <!-- Subtle glow behind timer -->
+    <div class="absolute inset-0 rounded-full opacity-20" style="background: radial-gradient(circle, rgba(201,168,76,0.3) 0%, transparent 70%);" id="timerGlow"></div>
+
+    <svg class="w-full h-full -rotate-90 relative z-10" viewBox="0 0 200 200">
+      <!-- Background track -->
+      <circle cx="100" cy="100" r="88" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="2.5"/>
+      <!-- Progress ring -->
+      <circle cx="100" cy="100" r="88" fill="none" stroke="url(#timerGrad)" stroke-width="2.5"
+        stroke-linecap="round" class="timer-ring" id="timerRing"
+        stroke-dasharray="553" stroke-dashoffset="0"/>
+      <defs>
+        <linearGradient id="timerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#c9a84c"/>
+          <stop offset="100%" stop-color="#a07c2a"/>
+        </linearGradient>
+      </defs>
+    </svg>
+
+    <div class="absolute inset-0 flex flex-col items-center justify-center z-20">
+      <p class="font-display text-4xl md:text-5xl font-bold text-white tracking-tight" id="timerDisplay">15:00</p>
+      <p class="text-[9px] uppercase tracking-[0.3em] text-white/25 mt-2.5 font-bold" id="timerLabel">Listo para empezar</p>
+    </div>
+  </div>
+
+  <!-- Timer Controls -->
+  <div class="flex items-center gap-5 mb-7 fade-up d2">
+    <button onclick="resetTimer()" class="w-10 h-10 rounded-full glass-dark flex items-center justify-center hover:bg-white/10 transition-all active:scale-90" title="Reiniciar">
+      <i data-lucide="rotate-ccw" class="w-4 h-4 text-white/40"></i>
+    </button>
+    <button onclick="toggleTimer()" id="mainPlayBtn" class="w-16 h-16 rounded-full bg-[#c9a84c] flex items-center justify-center hover:bg-[#b8973f] transition-all active:scale-95" style="box-shadow: 0 4px 20px rgba(201,168,76,0.25);">
+      <i data-lucide="play" class="w-6 h-6 text-white ml-1" id="mainPlayIcon"></i>
+    </button>
+    <button onclick="skipTimer()" class="w-10 h-10 rounded-full glass-dark flex items-center justify-center hover:bg-white/10 transition-all active:scale-90" title="Finalizar">
+      <i data-lucide="skip-forward" class="w-4 h-4 text-white/40"></i>
+    </button>
+  </div>
+
+  <!-- Time Presets -->
+  <div class="flex flex-wrap items-center justify-center gap-2 mb-10 fade-up d3 max-w-xs">
+    <button onclick="setTime(5)" class="time-preset text-[10px] uppercase tracking-[0.12em] font-bold px-4 py-1.5 rounded-full glass-dark text-white/40">5m</button>
+    <button onclick="setTime(10)" class="time-preset text-[10px] uppercase tracking-[0.12em] font-bold px-4 py-1.5 rounded-full glass-dark text-white/40">10m</button>
+    <button onclick="setTime(15)" class="time-preset active text-[10px] uppercase tracking-[0.12em] font-bold px-4 py-1.5 rounded-full glass-dark text-white/40">15m</button>
+    <button onclick="setTime(25)" class="time-preset text-[10px] uppercase tracking-[0.12em] font-bold px-4 py-1.5 rounded-full glass-dark text-white/40">25m</button>
+    <button onclick="setTime(30)" class="time-preset text-[10px] uppercase tracking-[0.12em] font-bold px-4 py-1.5 rounded-full glass-dark text-white/40">30m</button>
+    <button onclick="setTime(45)" class="time-preset text-[10px] uppercase tracking-[0.12em] font-bold px-4 py-1.5 rounded-full glass-dark text-white/40">45m</button>
+    <button onclick="setTime(60)" class="time-preset text-[10px] uppercase tracking-[0.12em] font-bold px-4 py-1.5 rounded-full glass-dark text-white/40">1h</button>
+  </div>
+
+  <!-- Divider -->
+  <div class="w-12 h-px bg-white/5 mb-10 fade-up d3"></div>
+
+  <!-- Ambient Sounds -->
+  <div class="w-full mb-10 fade-up d4">
+    <p class="text-[9px] uppercase tracking-[0.3em] text-white/20 font-bold mb-4 text-center">Música de Fondo</p>
+    <div class="grid grid-cols-3 gap-2.5" id="ambientGrid">
+      <button onclick="toggleAmbient(this, 'piano')" class="ambient-btn active rounded-xl p-4 flex flex-col items-center gap-2.5">
+        <i data-lucide="piano" class="amb-icon w-5 h-5 text-white/30"></i>
+        <span class="amb-label text-[10px] text-white/35 font-medium">Piano</span>
+      </button>
+      <button onclick="toggleAmbient(this, 'cuerdas')" class="ambient-btn rounded-xl p-4 flex flex-col items-center gap-2.5">
+        <i data-lucide="music-2" class="amb-icon w-5 h-5 text-white/30"></i>
+        <span class="amb-label text-[10px] text-white/35 font-medium">Cuerdas</span>
+      </button>
+      <button onclick="toggleAmbient(this, 'paz')" class="ambient-btn rounded-xl p-4 flex flex-col items-center gap-2.5">
+        <i data-lucide="feather" class="amb-icon w-5 h-5 text-white/30"></i>
+        <span class="amb-label text-[10px] text-white/35 font-medium">Paz y Quietud</span>
+      </button>
+      <button onclick="toggleAmbient(this, 'salmos')" class="ambient-btn rounded-xl p-4 flex flex-col items-center gap-2.5">
+        <i data-lucide="scroll-text" class="amb-icon w-5 h-5 text-white/30"></i>
+        <span class="amb-label text-[10px] text-white/35 font-medium">Salmos</span>
+      </button>
+      <button onclick="toggleAmbient(this, 'reposo')" class="ambient-btn rounded-xl p-4 flex flex-col items-center gap-2.5">
+        <i data-lucide="moon" class="amb-icon w-5 h-5 text-white/30"></i>
+        <span class="amb-label text-[10px] text-white/35 font-medium">Reposo</span>
+      </button>
+      <button onclick="toggleAmbient(this, 'adoracion')" class="ambient-btn rounded-xl p-4 flex flex-col items-center gap-2.5">
+        <i data-lucide="sparkles" class="amb-icon w-5 h-5 text-white/30"></i>
+        <span class="amb-label text-[10px] text-white/35 font-medium">Adoración</span>
+      </button>
+    </div>
+    <!-- Mezcla: Música + Voz -->
+    <div class="mt-5 space-y-3 px-1">
+      <div class="flex items-center gap-3">
+        <span class="text-[10px] text-white/40 font-semibold w-16 flex items-center gap-1.5 flex-shrink-0"><i data-lucide="music" class="w-3.5 h-3.5"></i>Música</span>
+        <input type="range" min="0" max="100" value="70" id="musicVolume" class="flex-1">
+        <span class="text-[9px] text-white/25 w-7 text-right" id="musicVolVal">70</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="text-[10px] text-white/40 font-semibold w-16 flex items-center gap-1.5 flex-shrink-0"><i data-lucide="mic" class="w-3.5 h-3.5"></i>Voz</span>
+        <input type="range" min="0" max="100" value="100" id="voiceVolume" class="flex-1">
+        <span class="text-[9px] text-white/25 w-7 text-right" id="voiceVolVal">100</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Voice Speed -->
+  <div class="w-full mb-10 fade-up d4">
+    <p class="text-[9px] uppercase tracking-[0.3em] text-white/20 font-bold mb-4 text-center">Velocidad de la Voz</p>
+    <div class="flex items-center justify-center gap-2" id="speedOpts">
+      <button data-rate="0.9" onclick="setSpeed(this, 0.9)" class="speed-btn locked text-[10px] uppercase tracking-[0.1em] font-bold px-4 py-1.5 rounded-full glass-dark text-white/40">0.9×</button>
+      <button data-rate="1" onclick="setSpeed(this, 1)" class="speed-btn active text-[10px] uppercase tracking-[0.1em] font-bold px-4 py-1.5 rounded-full glass-dark text-white/40">Normal</button>
+      <button data-rate="1.25" onclick="setSpeed(this, 1.25)" class="speed-btn text-[10px] uppercase tracking-[0.1em] font-bold px-4 py-1.5 rounded-full glass-dark text-white/40">1.25×</button>
+    </div>
+    <p class="speed-hint show mt-3 text-center text-[9px] text-white/30 leading-relaxed px-4" id="speedHint">
+      🐢 La cámara lenta suena mejor con la voz <span class="text-[#c9a84c] font-semibold">SBLL 2026</span>.
+      <button onclick="useSbllVoice()" class="ml-1 text-[#c9a84c] underline underline-offset-2 hover:text-[#e8d48b] transition-colors">Usar voz 2026</button>
+    </p>
+  </div>
+
+  <!-- Visual Environment -->
+  <div class="w-full mb-10 fade-up d5">
+    <p class="text-[9px] uppercase tracking-[0.3em] text-white/20 font-bold mb-4 text-center">Entorno Visual</p>
+    <div class="flex items-center justify-center gap-2.5">
+      <button onclick="setEnv('stars', this)" class="env-btn active rounded-full px-4 py-2 flex items-center gap-2">
+        <i data-lucide="stars" class="env-icon w-3.5 h-3.5 text-[#c9a84c]"></i>
+        <span class="text-[10px] text-white/50 font-medium">Estrellas</span>
+      </button>
+      <button onclick="setEnv('rain', this)" class="env-btn rounded-full px-4 py-2 flex items-center gap-2">
+        <i data-lucide="cloud-drizzle" class="env-icon w-3.5 h-3.5 text-white/25"></i>
+        <span class="text-[10px] text-white/50 font-medium">Lluvia</span>
+      </button>
+      <button onclick="setEnv('clouds', this)" class="env-btn rounded-full px-4 py-2 flex items-center gap-2">
+        <i data-lucide="cloud" class="env-icon w-3.5 h-3.5 text-white/25"></i>
+        <span class="text-[10px] text-white/50 font-medium">Nubes</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Divider -->
+  <div class="w-12 h-px bg-white/5 mb-10 fade-up d5"></div>
+
+  <!-- Bible Passage -->
+  <div class="w-full glass-dark rounded-2xl p-5 md:p-6 mb-6 fade-up d6">
+    <div class="flex items-start gap-3.5">
+      <div class="w-9 h-9 rounded-lg bg-[#c9a84c]/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+        <i data-lucide="book-open" class="w-4 h-4 text-[#c9a84c]"></i>
+      </div>
+      <div class="flex-1">
+        <p class="text-[9px] uppercase tracking-[0.25em] text-[#c9a84c] font-bold mb-2" id="verseRef">Salmo 46:10</p>
+        <p class="font-serif italic text-[15px] text-white/75 leading-relaxed" id="verseText">"Enquietad, y conoced que yo soy Dios; seré exaltado entre las naciones; seré enaltecido en la tierra."</p>
+        <button onclick="changeVerse()" class="mt-3.5 text-[9px] uppercase tracking-[0.15em] text-white/20 hover:text-[#c9a84c] transition-colors font-bold flex items-center gap-1.5">
+          <i data-lucide="refresh-cw" class="w-3 h-3"></i> Cambiar pasaje
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Now Playing -->
+  <div class="w-full glass-dark rounded-2xl p-4 md:p-5 fade-up d7">
+    <div class="flex items-center justify-between mb-3">
+      <p class="text-[8px] uppercase tracking-[0.3em] text-white/15 font-bold">Reproduciendo ahora</p>
+      <button onclick="toggleContinuous(this)" id="contBtn" class="cont-toggle active flex items-center gap-1.5 text-[8px] uppercase tracking-[0.15em] font-bold px-2.5 py-1 rounded-full">
+        <i data-lucide="repeat" class="w-3 h-3"></i> <span>Continua</span>
+      </button>
+    </div>
+    <div class="flex items-center gap-3.5">
+      <div class="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 relative">
+        <img src="https://picsum.photos/seed/bajo-sus-alas-focus/120/120.jpg" class="w-full h-full object-cover" alt="">
+        <div class="absolute inset-0 bg-black/20"></div>
+      </div>
+      <div class="flex-1 min-w-0">
+        <p class="text-[13px] text-white font-semibold truncate">Bajo Sus Alas</p>
+        <p class="text-[10px] text-white/25 mt-0.5">Piano Romántico</p>
+        <div class="mt-2.5 flex items-center gap-2">
+          <span class="text-[9px] text-white/20 font-medium" id="currentTime">1:52</span>
+          <div class="flex-1 h-[3px] bg-white/8 rounded-full overflow-hidden cursor-pointer" onclick="seekTrack(event)">
+            <div class="h-full rounded-full transition-all duration-300" id="progressBar" style="width: 35%; background: linear-gradient(90deg, #c9a84c, #a07c2a);"></div>
+          </div>
+          <span class="text-[9px] text-white/20 font-medium">5:32</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-1.5 flex-shrink-0">
+        <button class="w-8 h-8 rounded-full hover:bg-white/5 flex items-center justify-center transition-colors active:scale-90">
+          <i data-lucide="skip-back" class="w-3.5 h-3.5 text-white/30"></i>
+        </button>
+        <button onclick="toggleTrackPlay()" class="w-10 h-10 rounded-full bg-white/8 flex items-center justify-center hover:bg-white/15 transition-colors active:scale-90" id="trackPlayBtn">
+          <i data-lucide="pause" class="w-4 h-4 text-white" id="trackPlayIcon"></i>
+        </button>
+        <button class="w-8 h-8 rounded-full hover:bg-white/5 flex items-center justify-center transition-colors active:scale-90">
+          <i data-lucide="skip-forward" class="w-3.5 h-3.5 text-white/30"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- ==================== COMPLETION OVERLAY ==================== -->
+<div class="completion-overlay" id="completionOverlay">
+  <div class="text-center px-6">
+    <div class="w-20 h-20 rounded-full bg-[#c9a84c]/10 border border-[#c9a84c]/20 flex items-center justify-center mx-auto mb-6">
+      <i data-lucide="check" class="w-8 h-8 text-[#c9a84c]"></i>
+    </div>
+    <h2 class="font-display text-2xl md:text-3xl font-bold tracking-tight mb-3">Sesión Completada</h2>
+    <p class="text-sm text-white/40 font-light mb-8 max-w-xs mx-auto leading-relaxed">Has pasado este tiempo en la presencia de Dios. Que su paz te acompañe.</p>
+    <div class="flex items-center justify-center gap-3">
+      <button onclick="closeCompletion()" class="px-6 py-2.5 rounded-full glass-dark text-xs uppercase tracking-[0.15em] font-bold text-white/60 hover:text-white hover:bg-white/10 transition-all">
+        Cerrar
+      </button>
+      <button onclick="closeCompletion(); resetTimer();" class="px-6 py-2.5 rounded-full bg-[#c9a84c] text-xs uppercase tracking-[0.15em] font-bold text-white hover:bg-[#b8973f] transition-all" style="box-shadow: 0 4px 20px rgba(201,168,76,0.25);">
+        Nueva sesión
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== BOTTOM NAV (Mobile) ==================== -->
+<nav class="fixed bottom-0 left-0 right-0 z-50 md:hidden" style="background: rgba(13,13,26,0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-top: 1px solid rgba(255,255,255,0.05);">
+  <div class="flex items-center justify-around py-2 px-4">
+    <a href="https://www.sonidodevida.com/app#explorar" class="bnav-item flex flex-col items-center gap-0.5 py-1 px-3 text-white/30">
+      <i data-lucide="compass" class="w-5 h-5"></i>
+      <span class="text-[8px] font-bold uppercase tracking-wider">Explorar</span>
+      <div class="bnav-dot w-1 h-1 rounded-full bg-[#c9a84c]"></div>
+    </a>
+    <a href="https://www.sonidodevida.com/app#biblia" class="bnav-item flex flex-col items-center gap-0.5 py-1 px-3 text-white/30">
+      <i data-lucide="book-open" class="w-5 h-5"></i>
+      <span class="text-[8px] font-bold uppercase tracking-wider">Biblia</span>
+      <div class="bnav-dot w-1 h-1 rounded-full bg-[#c9a84c]"></div>
+    </a>
+    <a href="https://www.sonidodevida.com/app#enfoque" class="bnav-item active flex flex-col items-center gap-0.5 py-1 px-3">
+      <i data-lucide="target" class="w-5 h-5"></i>
+      <span class="text-[8px] font-bold uppercase tracking-wider">Enfoque</span>
+      <div class="bnav-dot w-1 h-1 rounded-full bg-[#c9a84c]"></div>
+    </a>
+    <a href="#" class="bnav-item flex flex-col items-center gap-0.5 py-1 px-3 text-white/30">
+      <i data-lucide="user" class="w-5 h-5"></i>
+      <span class="text-[8px] font-bold uppercase tracking-wider">Perfil</span>
+      <div class="bnav-dot w-1 h-1 rounded-full bg-[#c9a84c]"></div>
+    </a>
+  </div>
+</nav>
+
+
+<script>
+// ==================== INIT ====================
+lucide.createIcons();
+
+// ==================== TIMER ====================
+let totalSeconds = 15 * 60;
+let remainingSeconds = totalSeconds;
+let timerInterval = null;
+let isRunning = false;
+const CIRCUMFERENCE = 553;
+
+function updateDisplay() {
+  const m = Math.floor(remainingSeconds / 60);
+  const s = remainingSeconds % 60;
+  document.getElementById('timerDisplay').textContent =
+    String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+
+  const progress = 1 - (remainingSeconds / totalSeconds);
+  document.getElementById('timerRing').style.strokeDashoffset = CIRCUMFERENCE * progress;
+}
+
+function toggleTimer() {
+  if (isRunning) {
+    pauseTimer();
+  } else {
+    startTimer();
+  }
+}
+
+function startTimer() {
+  if (remainingSeconds <= 0) {
+    remainingSeconds = totalSeconds;
+    updateDisplay();
+  }
+  isRunning = true;
+  document.getElementById('timerLabel').textContent = 'En enfoque...';
+  document.getElementById('mainPlayIcon').setAttribute('data-lucide', 'pause');
+  document.getElementById('mainPlayIcon').classList.remove('ml-1');
+  document.getElementById('mainPlayBtn').classList.add('timer-playing');
+  lucide.createIcons();
+
+  timerInterval = setInterval(() => {
+    if (remainingSeconds > 0) {
+      remainingSeconds--;
+      updateDisplay();
+    } else {
+      completeTimer();
+    }
+  }, 1000);
+}
+
+function pauseTimer() {
+  isRunning = false;
+  clearInterval(timerInterval);
+  document.getElementById('timerLabel').textContent = 'Pausado';
+  document.getElementById('mainPlayIcon').setAttribute('data-lucide', 'play');
+  document.getElementById('mainPlayIcon').classList.add('ml-1');
+  document.getElementById('mainPlayBtn').classList.remove('timer-playing');
+  lucide.createIcons();
+}
+
+function resetTimer() {
+  clearInterval(timerInterval);
+  isRunning = false;
+  remainingSeconds = totalSeconds;
+  updateDisplay();
+  document.getElementById('timerLabel').textContent = 'Listo para empezar';
+  document.getElementById('mainPlayIcon').setAttribute('data-lucide', 'play');
+  document.getElementById('mainPlayIcon').classList.add('ml-1');
+  document.getElementById('mainPlayBtn').classList.remove('timer-playing');
+  lucide.createIcons();
+}
+
+function skipTimer() {
+  completeTimer();
+}
+
+function completeTimer() {
+  clearInterval(timerInterval);
+  isRunning = false;
+  remainingSeconds = 0;
+  updateDisplay();
+  document.getElementById('mainPlayIcon').setAttribute('data-lucide', 'play');
+  document.getElementById('mainPlayIcon').classList.add('ml-1');
+  document.getElementById('mainPlayBtn').classList.remove('timer-playing');
+  lucide.createIcons();
+  showCompletion();
+}
+
+function setTime(minutes) {
+  clearInterval(timerInterval);
+  isRunning = false;
+  totalSeconds = minutes * 60;
+  remainingSeconds = totalSeconds;
+  updateDisplay();
+  document.getElementById('timerLabel').textContent = 'Listo para empezar';
+  document.getElementById('mainPlayIcon').setAttribute('data-lucide', 'play');
+  document.getElementById('mainPlayIcon').classList.add('ml-1');
+  document.getElementById('mainPlayBtn').classList.remove('timer-playing');
+
+  document.querySelectorAll('.time-preset').forEach(b => b.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  lucide.createIcons();
+}
+
+function showCompletion() {
+  const overlay = document.getElementById('completionOverlay');
+  overlay.style.display = 'flex';
+  requestAnimationFrame(() => { overlay.style.opacity = '1'; });
+  document.getElementById('timerLabel').textContent = '¡Sesión completada!';
+  lucide.createIcons();
+}
+
+function closeCompletion() {
+  const overlay = document.getElementById('completionOverlay');
+  overlay.style.opacity = '0';
+  setTimeout(() => { overlay.style.display = 'none'; }, 500);
+}
+
+updateDisplay();
+
+// Entorno por defecto: estrellas → mostrar las radiantes desde el arranque.
+document.getElementById('starGlow').style.display = 'block';
+createGlowStars();
+
+// ==================== MÚSICA DE FONDO (selección única) ====================
+// Las 6 categorías de la UI agrupan TODO el catálogo real `ambients[]` de la app
+// (app/index.html). Ningún ambiente queda fuera. Mapa para la integración:
+const CATEGORIA_AMBIENTES = {
+  piano:     ['piano-romantico','piano-relajante','piano-meditacion','piano-instrumental','piano-naturaleza'],
+  cuerdas:   ['cuerdas-terciopelo','orquesta-niebla'],
+  paz:       ['calma','paz-abraza','paz-suspiros','seda-suave','aliento-agua','corrientes-calidas','luz-violeta','corazon-calma'],
+  salmos:    ['salmos-reposo','salmo-oracion','salmo-luz','salmos-oceano'],
+  reposo:    ['meditacion','relajacion','medianoche-agua','deriva-umbral','cancion-cuna','flauta-serena','compas-agua','corriente-seda'],
+  adoracion: ['nube-segura','oceano-altares','incienso','incienso-sagrado','luz-oracion'],
+};
+let currentCategory = 'piano';
+
+function toggleAmbient(btn, type) {
+  currentCategory = type;
+  document.querySelectorAll('#ambientGrid .ambient-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  // Integración: reproducir un ambiente al azar de CATEGORIA_AMBIENTES[type].
+}
+
+// ==================== VOZ: VELOCIDAD + VOLÚMENES ====================
+// voz por defecto = RVA 1909 humana ('real'). Espejo de translationMode en la app.
+let voiceSpeed = 1, musicVol = 70, voiceVol = 100, continuousPlay = true, focusVoice = 'real';
+
+// Velocidad acotada a [0.9, 1.25]. La cámara lenta (<1×) SOLO con la voz SBLL 2026:
+// la RVA 1909 pierde calidad al ralentizarla (regla real de la app).
+function setSpeed(btn, val) {
+  if (val < 1 && focusVoice !== 'sbll') {
+    const hint = document.getElementById('speedHint');
+    hint.classList.add('show'); hint.classList.remove('pulse'); void hint.offsetWidth; hint.classList.add('pulse');
+    return; // no aplicar cámara lenta con la voz 1909
+  }
+  voiceSpeed = Math.max(0.9, Math.min(1.25, val));
+  document.querySelectorAll('#speedOpts .speed-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  // Integración: audioA.playbackRate = audioB.playbackRate = voiceSpeed;
+}
+
+// Cambia a la voz SBLL 2026 para habilitar la cámara lenta.
+function useSbllVoice() {
+  focusVoice = 'sbll';
+  document.querySelectorAll('#speedOpts .speed-btn').forEach(b => {
+    if (parseFloat(b.dataset.rate) < 1) b.classList.remove('locked');
+  });
+  document.getElementById('speedHint').classList.remove('show');
+  // Integración: setTranslation('sbll'); showToast('Voz SBLL 2026 activada');
+}
+
+function toggleContinuous(btn) {
+  continuousPlay = !continuousPlay;
+  btn.classList.toggle('active', continuousPlay);
+  // Integración: continuousPlay → effectiveMode()='full' (sigue al siguiente capítulo).
+}
+
+(function initMixers(){
+  const mv = document.getElementById('musicVolume'), vv = document.getElementById('voiceVolume');
+  if (mv) mv.addEventListener('input', e => { musicVol = +e.target.value; document.getElementById('musicVolVal').textContent = musicVol; });
+  if (vv) vv.addEventListener('input', e => { voiceVol = +e.target.value; document.getElementById('voiceVolVal').textContent = voiceVol; });
+})();
+
+// ==================== ENVIRONMENT ====================
+let currentEnv = 'stars';
+
+function setEnv(env, btn) {
+  currentEnv = env;
+  document.querySelectorAll('.env-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  const stars = document.getElementById('focusStars');
+  const glow = document.getElementById('starGlow');
+  const rain = document.getElementById('rainOverlay');
+  const clouds = document.getElementById('cloudOverlay');
+  const bg = document.getElementById('focusBg');
+
+  stars.style.display = 'none';
+  glow.style.display = 'none';
+  rain.style.display = 'none';
+  clouds.style.display = 'none';
+  glow.innerHTML = '';
+  rain.innerHTML = '';
+  clouds.innerHTML = '';
+
+  switch(env) {
+    case 'stars':
+      stars.style.display = 'block';
+      glow.style.display = 'block';
+      createGlowStars();
+      bg.style.background = 'radial-gradient(ellipse at 50% 0%, #1a1a3e 0%, #0d0d1a 70%)';
+      break;
+    case 'rain':
+      rain.style.display = 'block';
+      bg.style.background = 'radial-gradient(ellipse at 50% 0%, #13203e 0%, #080c18 70%)';
+      createRain();
+      break;
+    case 'clouds':
+      clouds.style.display = 'block';
+      bg.style.background = 'radial-gradient(ellipse at 50% 0%, #1a1830 0%, #0c0b16 70%)';
+      createClouds();
+      break;
+  }
+  lucide.createIcons();
+}
+
+function createRain() {
+  const container = document.getElementById('rainOverlay');
+  for (let i = 0; i < 110; i++) {
+    const drop = document.createElement('div');
+    drop.className = 'rain-drop';
+    drop.style.left = Math.random() * 100 + '%';
+    drop.style.height = (15 + Math.random() * 25) + 'px';
+    drop.style.animationDuration = (0.6 + Math.random() * 0.6) + 's';
+    drop.style.animationDelay = Math.random() * 2 + 's';
+    container.appendChild(drop);
+  }
+}
+
+// Estrellas "cercanas" con halo: tamaños y brillos variados para dar profundidad.
+function createGlowStars() {
+  const container = document.getElementById('starGlow');
+  container.innerHTML = '';
+  for (let i = 0; i < 10; i++) {
+    const s = document.createElement('div');
+    s.className = 'glow-star';
+    const size = 2 + Math.random() * 2.8;            // 2–4.8px (cerca = más grande)
+    const tint = Math.random() < 0.3 ? '255,248,228' : '255,255,255';
+    s.style.width = size + 'px';
+    s.style.height = size + 'px';
+    s.style.left = (2 + Math.random() * 95) + '%';
+    s.style.top = (Math.random() * 72) + '%';
+    s.style.background = 'rgba(' + tint + ',1)';
+    s.style.boxShadow = '0 0 ' + (5 + size * 3.2).toFixed(0) + 'px rgba(' + tint + ',0.9)';
+    s.style.animationDuration = (2.4 + Math.random() * 3.2) + 's';
+    s.style.animationDelay = (-Math.random() * 4) + 's';
+    container.appendChild(s);
+  }
+}
+
+function createClouds() {
+  const container = document.getElementById('cloudOverlay');
+  for (let i = 0; i < 7; i++) {
+    const cloud = document.createElement('div');
+    cloud.className = 'cloud';
+    cloud.style.setProperty('--s', (0.6 + Math.random() * 1.2).toFixed(2));
+    cloud.style.top = (Math.random() * 65) + '%';
+    cloud.style.animationDuration = (38 + Math.random() * 42) + 's';
+    cloud.style.animationDelay = (-Math.random() * 60) + 's';
+    container.appendChild(cloud);
+  }
+}
+
+// ==================== BIBLE VERSES ====================
+const verses = [
+  { ref: 'Salmo 46:10', text: '"Enquietad, y conoced que yo soy Dios; seré exaltado entre las naciones; seré enaltecido en la tierra."' },
+  { ref: 'Salmo 23:1-2', text: '"Jehová es mi pastor; nada me faltará. En lugares de delicados pastos me hará descansar; junto a aguas de reposo me pastoreará."' },
+  { ref: 'Isaías 26:3', text: '"Tú guardarás en completa paz a aquel cuyo pensamiento en ti persevera; porque en ti ha confiado."' },
+  { ref: 'Filipenses 4:6-7', text: '"Por nada estéis afanosos, sino sean conocidas vuestras peticiones delante de Dios en toda oración y ruego, con acción de gracias. Y la paz de Dios, que sobrepasa todo entendimiento, guardará vuestros corazones y vuestros pensamientos en Cristo Jesús."' },
+  { ref: 'Salmo 62:1', text: '"En Dios solamente está acallada mi alma; de él viene mi salvación."' },
+  { ref: 'Lamentaciones 3:25-26', text: '"Bueno es Jehová a los que le esperan, al alma que le busca. Bueno es esperar en silencio la salvación de Jehová."' },
+  { ref: 'Salmo 131:2', text: '"En verdad he sossegado y quietado mi alma; como niño destetado está mi alma conmigo."' },
+  { ref: 'Mateo 11:28', text: '"Venid a mí todos los que estáis trabajados y cargados, y yo os haré descansar."' },
+];
+let verseIndex = 0;
+
+function changeVerse() {
+  verseIndex = (verseIndex + 1) % verses.length;
+  const v = verses[verseIndex];
+  const refEl = document.getElementById('verseRef');
+  const textEl = document.getElementById('verseText');
+  textEl.style.opacity = '0';
+  refEl.style.opacity = '0';
+  setTimeout(() => {
+    refEl.textContent = v.ref;
+    textEl.textContent = v.text;
+    textEl.style.opacity = '1';
+    refEl.style.opacity = '1';
+  }, 300);
+}
+document.getElementById('verseText').style.transition = 'opacity 0.3s ease';
+document.getElementById('verseRef').style.transition = 'opacity 0.3s ease';
+
+// ==================== TRACK PLAYER ====================
+let trackPlaying = true;
+let trackProgress = 35;
+let trackInterval = null;
+
+function toggleTrackPlay() {
+  trackPlaying = !trackPlaying;
+  const icon = document.getElementById('trackPlayIcon');
+  if (trackPlaying) {
+    icon.setAttribute('data-lucide', 'pause');
+    startTrackProgress();
+  } else {
+    icon.setAttribute('data-lucide', 'play');
+    icon.classList.add('ml-0.5');
+    clearInterval(trackInterval);
+  }
+  lucide.createIcons();
+}
+
+function startTrackProgress() {
+  clearInterval(trackInterval);
+  trackInterval = setInterval(() => {
+    if (trackProgress < 100) {
+      trackProgress += 0.15;
+      document.getElementById('progressBar').style.width = trackProgress + '%';
+      const totalSec = 332;
+      const currentSec = Math.floor(totalSec * trackProgress / 100);
+      const m = Math.floor(currentSec / 60);
+      const s = currentSec % 60;
+      document.getElementById('currentTime').textContent = m + ':' + String(s).padStart(2, '0');
+    } else {
+      trackProgress = 0;
+      clearInterval(trackInterval);
+    }
+  }, 500);
+}
+startTrackProgress();
+
+function seekTrack(e) {
+  const bar = e.currentTarget;
+  const rect = bar.getBoundingClientRect();
+  trackProgress = ((e.clientX - rect.left) / rect.width) * 100;
+  document.getElementById('progressBar').style.width = trackProgress + '%';
+}
+
+// ==================== SETTINGS TOGGLE (simple) ====================
+document.getElementById('settingsBtn').addEventListener('click', function() {
+  // Simple visual feedback
+  this.style.transform = 'rotate(90deg)';
+  this.style.transition = 'transform 0.3s ease';
+  setTimeout(() => { this.style.transform = 'rotate(0deg)'; }, 300);
+});
+</script>
+
+</body>
+</html> 
