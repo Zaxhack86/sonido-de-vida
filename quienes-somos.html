@@ -3,31 +3,148 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1847146837046506" crossorigin="anonymous"></script>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1847146837046506" crossorigin="anonymous"></script>
   <title>Quiénes Somos – Sonido de Vida</title>
   <meta name="description" content="Sonido de Vida es un proyecto cristiano independiente que acerca la Palabra de Dios en audio al mundo hispano: la Biblia narrada, devocionales y un Modo Enfoque para orar." />
+  <meta name="theme-color" content="#070E20" />
   <link rel="canonical" href="https://sonidodevida.com/quienes-somos" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --bg:        #070E20;
+      --gold:      #C9A84C;
+      --gold-lt:   #E6CE80;
+      --gold-dk:   #A8863A;
+      --cream:     #FAF7F0;
+      --muted:     #9aa3bd;
+      --panel-bd:  rgba(201,168,76,0.18);
+    }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: Georgia, 'Times New Roman', serif; background: #faf9f7; color: #2c2c2c; line-height: 1.8; padding: 40px 20px; }
-    .container { max-width: 760px; margin: 0 auto; background: #fff; border: 1px solid #e0ddd8; border-radius: 4px; padding: 48px 52px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
-    h1 { font-size: 1.75rem; font-weight: normal; letter-spacing: 0.01em; color: #1a1a1a; margin-bottom: 4px; }
-    .subtitle { font-size: 0.9rem; color: #888; margin-bottom: 28px; font-style: italic; }
-    h2 { font-size: 1rem; font-weight: bold; text-transform: uppercase; letter-spacing: 0.07em; color: #5a4a38; margin: 32px 0 10px; padding-bottom: 4px; border-bottom: 1px solid #e8e4de; }
-    p { margin-bottom: 12px; font-size: 0.95rem; color: #3a3a3a; }
-    ul { margin: 8px 0 14px 20px; }
-    ul li { font-size: 0.95rem; color: #3a3a3a; margin-bottom: 6px; }
-    .verse { background: #f3f0eb; border-left: 4px solid #8b6f47; border-radius: 2px; padding: 14px 18px; margin: 22px 0; font-style: italic; color: #4a3f30; }
-    .nav-links { margin-top: 40px; padding-top: 16px; border-top: 1px solid #e8e4de; font-size: 0.85rem; }
-    .nav-links a { color: #8b6f47; text-decoration: none; margin-right: 16px; }
-    .nav-links a:hover { text-decoration: underline; }
+
+    body {
+      font-family: 'Lora', Georgia, serif;
+      background: var(--bg);
+      color: var(--cream);
+      line-height: 1.85;
+      padding: 56px 20px 72px;
+      -webkit-font-smoothing: antialiased;
+      position: relative;
+      min-height: 100vh;
+    }
+    body::before {
+      content: "";
+      position: fixed; inset: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(201,168,76,0.10), transparent 60%),
+        radial-gradient(ellipse 60% 50% at 90% 110%, rgba(30,46,92,0.45), transparent 60%);
+      pointer-events: none; z-index: 0;
+    }
+
+    .container {
+      position: relative; z-index: 1;
+      max-width: 740px;
+      margin: 0 auto;
+      background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.015));
+      border: 1px solid var(--panel-bd);
+      border-radius: 20px;
+      padding: 52px 56px 46px;
+      box-shadow: 0 30px 80px -30px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.05);
+      backdrop-filter: blur(6px);
+    }
+
+    .brand {
+      display: flex; align-items: center; gap: 11px;
+      font-family: 'Cinzel', serif;
+      font-weight: 600; font-size: 0.82rem;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 34px;
+    }
+    .brand .mark {
+      width: 30px; height: 30px; border-radius: 50%; flex: none;
+      display: grid; place-items: center;
+      background: radial-gradient(circle at 35% 30%, var(--gold-lt), var(--gold-dk));
+      box-shadow: 0 0 18px rgba(201,168,76,0.4);
+      color: #0a1124; font-size: 0.95rem;
+    }
+
+    h1 {
+      font-family: 'Cinzel', serif;
+      font-size: 2.15rem; font-weight: 700; line-height: 1.15;
+      background: linear-gradient(135deg, var(--gold-lt), var(--gold), var(--gold-dk));
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent; color: var(--gold);
+      margin-bottom: 8px;
+    }
+    .subtitle {
+      font-size: 0.95rem; color: var(--muted);
+      font-style: italic; margin-bottom: 14px;
+    }
+    .rule { height: 1px; background: linear-gradient(to right, var(--gold), transparent); margin: 0 0 30px; opacity: 0.55; }
+
+    h2 {
+      font-family: 'Cinzel', serif;
+      font-size: 0.98rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.09em;
+      color: var(--gold-lt);
+      margin: 34px 0 12px; padding-bottom: 8px;
+      border-bottom: 1px solid rgba(201,168,76,0.16);
+    }
+    p { margin-bottom: 14px; font-size: 1rem; color: #e7e3d8; }
+    p strong { color: var(--cream); }
+    em { color: var(--gold-lt); font-style: italic; }
+    ul { margin: 10px 0 16px 6px; list-style: none; }
+    ul li {
+      font-size: 1rem; color: #e7e3d8; margin-bottom: 9px;
+      padding-left: 22px; position: relative;
+    }
+    ul li::before {
+      content: ""; position: absolute; left: 2px; top: 0.72em;
+      width: 7px; height: 7px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold-lt), var(--gold-dk));
+    }
+    li strong { color: var(--cream); }
+    a { color: var(--gold); }
+    a:hover { color: var(--gold-lt); }
+
+    .verse {
+      background: rgba(201,168,76,0.06);
+      border: 1px solid rgba(201,168,76,0.22);
+      border-left: 3px solid var(--gold);
+      border-radius: 12px;
+      padding: 20px 26px; margin: 26px 0;
+      font-family: 'Cinzel', serif;
+      font-size: 1.05rem; font-weight: 500; line-height: 1.6;
+      color: var(--gold-lt); font-style: normal;
+    }
+
+    .nav-links {
+      margin-top: 44px; padding-top: 22px;
+      border-top: 1px solid rgba(201,168,76,0.16);
+      font-size: 0.88rem;
+      display: flex; flex-wrap: wrap; gap: 8px 22px;
+    }
+    .nav-links a { color: var(--gold); text-decoration: none; transition: color .2s; }
+    .nav-links a:hover { color: var(--gold-lt); text-decoration: underline; }
+
+    @media (max-width: 600px) {
+      body { padding: 32px 14px 48px; }
+      .container { padding: 36px 26px 34px; border-radius: 16px; }
+      h1 { font-size: 1.75rem; }
+      .verse { font-size: 0.98rem; padding: 18px 20px; }
+    }
   </style>
 </head>
 <body>
 <div class="container">
 
+  <div class="brand"><span class="mark">✦</span> Sonido de Vida</div>
+
   <h1>Quiénes Somos</h1>
-  <p class="subtitle">Sonido de Vida — la Palabra que se escucha</p>
+  <p class="subtitle">La Palabra que se escucha</p>
+  <div class="rule"></div>
 
   <p>Sonido de Vida es un proyecto cristiano independiente, nacido del deseo de que la Palabra de Dios
   vuelva a escucharse. Creemos que la fe entra por el oído, y que en medio de una vida ocupada millones
