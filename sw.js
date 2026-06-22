@@ -1,4 +1,4 @@
-const CACHE_STATIC = 'sdv-static-v99';
+const CACHE_STATIC = 'sdv-static-v100';
 const CACHE_AUDIO  = 'sdv-audio-v2';
 
 // La landing premium vive en la raíz ('/'); la app (PWA) vive en '/app'.

@@ -1253,6 +1253,14 @@
        fondo navy con glows, tarjetas glass y acentos dorados.
        ════════════════════════════════════════════════════════════════ */
     /* ── Explorar: encabezado en oro degradado, jerarquía más nítida ── */
+    /* WEB: el navbar fijo NO se oculta en Explorar (en la PWA instalada sí, ver
+       regla display-mode:standalone). Con solo ~1.4rem de padding el título
+       quedaba DEBAJO de la barra superior. Le damos despeje como ya hace Biblia. */
+    @media (display-mode: browser){
+        .explore-section{padding-top:calc(env(safe-area-inset-top) + 5.6rem)}
+    }
+    /* Ambiente premium (glow navy/oro) para que el feed respire como Inicio/Biblia */
+    .explore-section{background:radial-gradient(760px 340px at 50% 0, rgba(201,168,76,.10), transparent 68%)}
     .explore-section .section-header{text-align:left}
     .explore-section .section-header h2{
         background:linear-gradient(135deg,#E6CE80,#C9A84C,#A8863A);
@@ -1261,8 +1269,13 @@
     .explore-section .section-header p{color:#8b90a0;font-size:.92rem;margin-top:.15rem}
     .ex-th-titles h3{color:#f3eee2}
     .ex-th-sub{color:#8b90a0}
-    .ex-seeall{font-weight:600;letter-spacing:.02em}
-    .ex-seeall:hover{color:#E6CE80}
+    /* "Ver todo" como píldora dorada (antes era texto suelto en oro oscuro) */
+    .ex-seeall{font-weight:600;letter-spacing:.02em;color:var(--gold-light);
+        background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.22);
+        border-radius:50px;padding:.32rem .85rem;transition:all .2s}
+    .ex-seeall:hover{color:#070e20;background:linear-gradient(135deg,#E6CE80,#C9A84C);border-color:transparent}
+    /* Tarjetas: filo dorado sutil al pasar el cursor (acabado premium) */
+    .ex-card:hover .ex-card-cover{box-shadow:0 16px 36px rgba(0,0,0,.42),0 0 0 1px rgba(201,168,76,.35)}
 
     /* ── Biblia (Escuchar la Biblia): navy + glows, glass dorado ── */
     .listen-section{background:
