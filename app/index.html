@@ -641,6 +641,111 @@
         .focus-shuffle{display:flex;align-items:center;justify-content:center;gap:.5rem;width:100%;padding:.7rem 1rem;border-radius:50px;border:1px solid rgba(201,168,76,.4);background:linear-gradient(135deg,rgba(201,168,76,.14),rgba(201,168,76,.05));color:var(--gold-light);font-family:'Inter',sans-serif;font-size:.9rem;font-weight:600;cursor:pointer;transition:all .25s}
         .focus-shuffle:hover{border-color:rgba(201,168,76,.7);background:linear-gradient(135deg,rgba(201,168,76,.22),rgba(201,168,76,.08))}
         .focus-shuffle.active{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#0d0d1a;border-color:transparent;box-shadow:0 4px 18px rgba(201,168,76,.45);letter-spacing:.02em}
+
+        /* ════════════════ Modo Enfoque — rediseño 2026 (fx-*) ════════════════ */
+        .focus-overlay .focus-stage{max-width:30rem;gap:1.1rem;padding-bottom:5.5rem}
+        /* Barra superior */
+        .fx-topbar{position:relative;z-index:2;width:100%;max-width:30rem;display:flex;align-items:center;justify-content:space-between;margin-bottom:.4rem}
+        .fx-back{position:static!important;width:40px;height:40px;font-size:1.5rem;line-height:1;display:flex;align-items:center;justify-content:center}
+        .fx-title{text-align:center;display:flex;flex-direction:column;gap:.1rem}
+        .fx-title-eyebrow{font-family:'Inter',sans-serif;font-size:.62rem;letter-spacing:.3em;text-transform:uppercase;color:rgba(255,255,255,.45);font-weight:700}
+        .fx-title-main{font-family:'Inter',sans-serif;font-size:.95rem;letter-spacing:.16em;font-weight:700;color:#fff}
+        .fx-prem-badge{font-family:'Inter',sans-serif;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:#0d0d1a;background:linear-gradient(135deg,var(--gold-light),var(--gold-dark));padding:.4rem .7rem;border-radius:50px}
+        /* Temporizador circular */
+        .fx-timer{position:relative;width:15rem;height:15rem;margin:.2rem 0}
+        .fx-timer-glow{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle,rgba(201,168,76,.3),transparent 70%);opacity:.25}
+        .fx-timer-svg{position:relative;z-index:1;width:100%;height:100%}
+        .fx-timer-ring{transition:stroke-dashoffset 1s linear}
+        .fx-timer-face{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center}
+        .fx-timer-display{font-family:'Cinzel',serif;font-size:3rem;font-weight:700;color:#fff;letter-spacing:.01em;line-height:1}
+        .fx-timer-label{font-family:'Inter',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.22em;color:rgba(255,255,255,.55);font-weight:700;margin-top:.7rem}
+        .fx-timer.running .fx-timer-glow{opacity:.55;animation:fxGlow 2.4s ease-in-out infinite}
+        @keyframes fxGlow{0%,100%{opacity:.4}50%{opacity:.7}}
+        /* Controles del timer */
+        .fx-timer-ctrls{display:flex;align-items:center;gap:1.3rem}
+        .fx-ctrl{width:3rem;height:3rem;border-radius:50%;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:rgba(255,255,255,.75);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s}
+        .fx-ctrl:hover{background:rgba(255,255,255,.12)}
+        .fx-ctrl:active{transform:scale(.9)}
+        .fx-ctrl svg{width:1.25rem;height:1.25rem}
+        .fx-ctrl-main{width:4.5rem;height:4.5rem;background:linear-gradient(135deg,var(--gold),var(--gold-dark));border:none;color:#0d0d1a;box-shadow:0 6px 24px rgba(201,168,76,.3)}
+        .fx-ctrl-main:hover{filter:brightness(1.06)}
+        .fx-ctrl-main svg{width:1.7rem;height:1.7rem;fill:#0d0d1a}
+        /* Presets de tiempo */
+        .fx-presets{display:flex;flex-wrap:wrap;justify-content:center;gap:.5rem;max-width:22rem}
+        .fx-presets button{font-family:'Inter',sans-serif;font-size:.82rem;font-weight:700;letter-spacing:.04em;padding:.5rem 1rem;border-radius:50px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:rgba(255,255,255,.65);cursor:pointer;transition:all .2s}
+        .fx-presets button:hover{background:rgba(255,255,255,.09)}
+        .fx-presets button.active{background:linear-gradient(135deg,var(--gold),var(--gold-dark));border-color:transparent;color:#0d0d1a}
+        .fx-divider{width:3rem;height:1px;background:rgba(255,255,255,.1);margin:.2rem 0}
+        /* Secciones + etiquetas */
+        .fx-section{width:100%}
+        .fx-label{font-family:'Inter',sans-serif;font-size:.74rem;text-transform:uppercase;letter-spacing:.2em;color:rgba(255,255,255,.5);font-weight:700;text-align:center;margin-bottom:.9rem}
+        /* Grid de categorías de música */
+        .fx-cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem}
+        .fx-cat{display:flex;flex-direction:column;align-items:center;gap:.55rem;padding:1rem .5rem;border-radius:.9rem;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);color:rgba(255,255,255,.65);cursor:pointer;transition:all .25s;font-family:'Inter',sans-serif}
+        .fx-cat:hover{background:rgba(255,255,255,.08)}
+        .fx-cat .fx-cat-emoji{font-size:1.5rem;line-height:1}
+        .fx-cat .fx-cat-name{font-size:.8rem;font-weight:500;text-align:center}
+        .fx-cat.active{background:rgba(201,168,76,.12);border-color:rgba(201,168,76,.4);color:#fff;box-shadow:0 0 24px rgba(201,168,76,.1)}
+        .fx-cat.active .fx-cat-name{color:var(--gold-light)}
+        .fx-cat.loading{opacity:.55;pointer-events:none}
+        /* Mixer (valor numérico) */
+        .focus-mixer{max-width:100%}
+        .focus-mixer label{font-size:.9rem;color:rgba(255,255,255,.78)}
+        .focus-mixer label span{width:5.2rem}
+        .focus-mixer label b{font-weight:600;font-size:.82rem;color:rgba(255,255,255,.55);width:2.2rem;text-align:right;flex:none}
+        /* Fila de píldoras (velocidad) */
+        .fx-pill-row{justify-content:center;flex-wrap:wrap}
+        .fx-pill-row button{font-size:.84rem;font-weight:700;padding:.5rem 1.1rem;color:rgba(255,255,255,.65)}
+        /* Entorno visual */
+        .fx-env{display:flex;justify-content:center;gap:.6rem;flex-wrap:wrap}
+        .fx-env button{display:inline-flex;align-items:center;gap:.45rem;font-family:'Inter',sans-serif;font-size:.82rem;font-weight:500;padding:.55rem 1.1rem;border-radius:50px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:rgba(255,255,255,.7);cursor:pointer;transition:all .25s}
+        .fx-env button:hover{background:rgba(255,255,255,.08)}
+        .fx-env button.active{background:rgba(201,168,76,.12);border-color:rgba(201,168,76,.4);color:var(--gold-light)}
+        /* Tarjeta Reproduciendo ahora */
+        .fx-now{width:100%;display:flex;align-items:center;gap:.9rem;padding:.9rem 1rem;border-radius:1rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06)}
+        .fx-now-emblem{width:3rem;height:3rem;border-radius:.75rem;background:rgba(201,168,76,.12);display:flex;align-items:center;justify-content:center;flex:none}
+        .fx-now-emblem .focus-emblem-icon{font-size:1.5rem;line-height:1;filter:none;animation:none}
+        .fx-now-info{flex:1;min-width:0;text-align:left}
+        .fx-now-eyebrow{font-family:'Inter',sans-serif;font-size:.66rem;text-transform:uppercase;letter-spacing:.2em;color:rgba(255,255,255,.4);font-weight:700}
+        .fx-now-title{font-family:'Inter',sans-serif;font-size:.95rem;color:#fff;font-weight:600;margin-top:.2rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .fx-now-eq{display:flex;align-items:flex-end;gap:3px;height:1.4rem;flex:none}
+        .fx-now-eq span{width:3px;background:var(--gold-light);border-radius:2px;height:40%;animation:fxEq 1s ease-in-out infinite}
+        .fx-now-eq span:nth-child(2){animation-delay:.2s}.fx-now-eq span:nth-child(3){animation-delay:.4s}.fx-now-eq span:nth-child(4){animation-delay:.1s}
+        @keyframes fxEq{0%,100%{height:30%}50%{height:100%}}
+        /* Detalle "más ambientes" */
+        .fx-more{width:100%;border-top:1px solid rgba(255,255,255,.06);padding-top:.8rem}
+        .fx-more summary{font-family:'Inter',sans-serif;font-size:.82rem;color:rgba(255,255,255,.55);cursor:pointer;text-align:center;list-style:none}
+        .fx-more summary::-webkit-details-marker{display:none}
+        .fx-more[open] summary{margin-bottom:1rem;color:var(--gold-light)}
+        .fx-more .focus-ambients{max-height:none}
+        /* Sesión completada */
+        .fx-done{position:absolute;inset:0;z-index:10;display:none;align-items:center;justify-content:center;background:rgba(13,13,26,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:1.5rem}
+        .fx-done.show{display:flex}
+        .fx-done-card{text-align:center;max-width:20rem}
+        .fx-done-ico{width:4.5rem;height:4.5rem;margin:0 auto 1.3rem;border-radius:50%;background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.25);display:flex;align-items:center;justify-content:center;font-size:1.8rem;color:var(--gold-light)}
+        .fx-done-card h2{font-family:'Cinzel',serif;font-size:1.5rem;color:#fff;margin-bottom:.7rem}
+        .fx-done-card p{font-family:'Lora',serif;font-style:italic;color:rgba(255,255,255,.55);line-height:1.6;margin-bottom:1.6rem}
+        .fx-done-btns{display:flex;justify-content:center;gap:.7rem}
+        .fx-done-btns button{font-family:'Inter',sans-serif;font-size:.82rem;font-weight:700;padding:.65rem 1.4rem;border-radius:50px;cursor:pointer}
+        .fx-done-sec{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.7)}
+        .fx-done-pri{background:linear-gradient(135deg,var(--gold),var(--gold-dark));border:none;color:#0d0d1a}
+        /* ── Entorno visual: estrellas / lluvia / nubes ── */
+        .fx-stars,.fx-starglow,.fx-rain,.fx-clouds{position:fixed;inset:0;z-index:0;pointer-events:none}
+        .fx-rain,.fx-clouds,.fx-starglow{display:none}
+        .focus-overlay[data-env="rain"] .fx-rain{display:block}
+        .focus-overlay[data-env="clouds"] .fx-clouds{display:block}
+        .focus-overlay[data-env="stars"] .fx-starglow{display:block}
+        .fx-stars{background-image:radial-gradient(1.5px 1.5px at 8% 12%,rgba(255,255,255,.9),transparent),radial-gradient(1px 1px at 17% 28%,rgba(255,255,255,.7),transparent),radial-gradient(2px 2px at 24% 9%,rgba(255,248,228,.95),transparent),radial-gradient(1px 1px at 33% 22%,rgba(255,255,255,.6),transparent),radial-gradient(1.5px 1.5px at 41% 6%,rgba(255,255,255,.85),transparent),radial-gradient(1px 1px at 56% 11%,rgba(255,255,255,.8),transparent),radial-gradient(2px 2px at 71% 7%,rgba(255,248,228,.9),transparent),radial-gradient(1px 1px at 79% 19%,rgba(255,255,255,.7),transparent),radial-gradient(1.5px 1.5px at 87% 13%,rgba(255,255,255,.85),transparent),radial-gradient(1px 1px at 94% 26%,rgba(255,255,255,.6),transparent),radial-gradient(1.5px 1.5px at 28% 38%,rgba(255,255,255,.8),transparent),radial-gradient(1.5px 1.5px at 59% 44%,rgba(255,255,255,.75),transparent),radial-gradient(2px 2px at 88% 47%,rgba(255,248,228,.85),transparent),radial-gradient(1.5px 1.5px at 21% 66%,rgba(255,255,255,.8),transparent),radial-gradient(1.5px 1.5px at 67% 68%,rgba(255,255,255,.8),transparent),radial-gradient(1.5px 1.5px at 49% 86%,rgba(255,255,255,.8),transparent);animation:fxTwinkle 5s ease-in-out infinite alternate}
+        .focus-overlay:not([data-env="stars"]) .fx-stars{opacity:.35}
+        @keyframes fxTwinkle{0%{opacity:.6}100%{opacity:1}}
+        .fx-glow-star{position:absolute;border-radius:50%;background:#fff;animation:fxStarPulse ease-in-out infinite alternate}
+        @keyframes fxStarPulse{0%{opacity:.35;transform:scale(.8)}100%{opacity:1;transform:scale(1.25)}}
+        .fx-rain-drop{position:absolute;width:1px;background:linear-gradient(to bottom,transparent,rgba(180,200,230,.45));animation:fxRainFall linear infinite}
+        @keyframes fxRainFall{0%{transform:translateY(-100px);opacity:0}10%{opacity:1}90%{opacity:1}100%{transform:translateY(100vh);opacity:0}}
+        .fx-cloud{position:absolute;left:0;width:130px;height:44px;background:rgba(255,255,255,.06);border-radius:44px;filter:blur(14px);box-shadow:32px 8px 0 -2px rgba(255,255,255,.06),70px 2px 0 -4px rgba(255,255,255,.05),20px -14px 0 -7px rgba(255,255,255,.05),52px -16px 0 -5px rgba(255,255,255,.06);animation:fxCloudDrift linear infinite}
+        @keyframes fxCloudDrift{0%{transform:translateX(-280px) scale(var(--s,1))}100%{transform:translateX(calc(100vw + 280px)) scale(var(--s,1))}}
+        @media(prefers-reduced-motion:reduce){.fx-stars,.fx-glow-star,.fx-rain-drop,.fx-cloud,.fx-timer.running .fx-timer-glow,.fx-now-eq span{animation:none}}
+        @media(max-height:760px){.fx-timer{width:12rem;height:12rem}.fx-timer-display{font-size:2.4rem}.fx-ctrl-main{width:4rem;height:4rem}}
         .teaser-list{list-style:none;padding:0;margin:1rem 0;display:flex;flex-direction:column;gap:.7rem;text-align:left}
         .teaser-list li{display:flex;align-items:flex-start;gap:.6rem;color:rgba(255,255,255,.85);font-family:'Inter',sans-serif;font-size:.92rem;line-height:1.4}
         .teaser-list li::before{content:'✓';color:var(--gold-light);font-weight:700;flex:none}
@@ -1923,17 +2028,64 @@
         <div class="focus-aura" aria-hidden="true"><span></span><span></span><span></span></div>
         <canvas class="focus-motes" id="focusMotes" aria-hidden="true"></canvas>
         <div class="focus-bg"></div>
-        <button class="focus-close" onclick="Focus.exit()" aria-label="Salir del Modo Enfoque">✕</button>
+        <!-- Entorno visual (estrellas / lluvia / nubes) -->
+        <div class="fx-stars" id="fxStars" aria-hidden="true"></div>
+        <div class="fx-starglow" id="fxStarGlow" aria-hidden="true"></div>
+        <div class="fx-rain" id="fxRain" aria-hidden="true"></div>
+        <div class="fx-clouds" id="fxClouds" aria-hidden="true"></div>
+
+        <!-- Barra superior -->
+        <header class="fx-topbar">
+            <button class="focus-close fx-back" onclick="Focus.exit()" aria-label="Salir del Modo Enfoque">‹</button>
+            <div class="fx-title"><span class="fx-title-eyebrow">Modo</span><span class="fx-title-main">ENFOQUE</span></div>
+            <span class="fx-prem-badge">Premium</span>
+        </header>
+
         <div class="focus-stage">
             <div class="focus-ref" id="focusRef">Modo Enfoque</div>
             <div class="focus-streak" id="focusStreak" hidden></div>
-            <div class="focus-emblem" id="focusEmblem">
-                <div class="focus-emblem-ring"></div>
-                <div class="focus-emblem-icon" id="focusEmblemIcon">🕊️</div>
-            </div>
-            <div class="focus-emblem-caption" id="focusEmblemCaption">Elige un ambiente y reposa en la Palabra</div>
 
-            <!-- Pantalla de versículos — solo en modo Meditación -->
+            <!-- ░░ Temporizador circular de sesión ░░ -->
+            <div class="fx-timer">
+                <div class="fx-timer-glow"></div>
+                <svg class="fx-timer-svg" viewBox="0 0 200 200" aria-hidden="true">
+                    <circle cx="100" cy="100" r="88" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="3"/>
+                    <circle cx="100" cy="100" r="88" fill="none" stroke="url(#fxTimerGrad)" stroke-width="3"
+                        stroke-linecap="round" class="fx-timer-ring" id="fxTimerRing"
+                        stroke-dasharray="553" stroke-dashoffset="0" transform="rotate(-90 100 100)"/>
+                    <defs><linearGradient id="fxTimerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="var(--gold-light)"/><stop offset="100%" stop-color="var(--gold-dark)"/>
+                    </linearGradient></defs>
+                </svg>
+                <div class="fx-timer-face">
+                    <p class="fx-timer-display" id="fxTimerDisplay">15:00</p>
+                    <p class="fx-timer-label" id="fxTimerLabel">Listo para empezar</p>
+                </div>
+            </div>
+            <div class="fx-timer-ctrls">
+                <button onclick="FocusTimer.reset()" class="fx-ctrl" aria-label="Reiniciar"><svg viewBox="0 0 24 24"><path d="M1 4v6h6M3.5 9a9 9 0 1 1-.5 5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                <button onclick="FocusTimer.toggle()" id="fxTimerBtn" class="fx-ctrl fx-ctrl-main" aria-label="Iniciar o pausar"><svg id="fxTimerBtnIcon" viewBox="0 0 24 24"><polygon points="6 4 20 12 6 20 6 4"/></svg></button>
+                <button onclick="FocusTimer.skip()" class="fx-ctrl" aria-label="Finalizar"><svg viewBox="0 0 24 24"><path d="M5 4l11 8-11 8V4zM19 5v14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            </div>
+            <div class="fx-presets" id="fxTimerPresets">
+                <button data-min="5" onclick="FocusTimer.set(5,this)">5m</button>
+                <button data-min="10" onclick="FocusTimer.set(10,this)">10m</button>
+                <button data-min="15" class="active" onclick="FocusTimer.set(15,this)">15m</button>
+                <button data-min="25" onclick="FocusTimer.set(25,this)">25m</button>
+                <button data-min="30" onclick="FocusTimer.set(30,this)">30m</button>
+                <button data-min="45" onclick="FocusTimer.set(45,this)">45m</button>
+                <button data-min="60" onclick="FocusTimer.set(60,this)">1h</button>
+            </div>
+            <!-- compat: el motor de sleep lee #focusTimerOpts; lo mantenemos oculto y sincronizado -->
+            <div class="focus-timer-opts" id="focusTimerOpts" hidden style="display:none!important">
+                <button data-min="0" class="active"></button><button data-min="5"></button><button data-min="10"></button>
+                <button data-min="15"></button><button data-min="25"></button><button data-min="30"></button>
+                <button data-min="45"></button><button data-min="60"></button>
+            </div>
+
+            <div class="fx-divider"></div>
+
+            <!-- ░░ Pantalla de versículos — solo Meditación ░░ -->
             <div class="focus-verse-wrap meditar-only" id="focusVerseWrap">
                 <div class="focus-packs" id="focusPacks"></div>
                 <p class="focus-verse-body" id="focusVerseBody"></p>
@@ -1944,44 +2096,74 @@
                 </div>
             </div>
 
-            <!-- Botón play/pausa narración — solo en modo Con voz -->
+            <!-- ░░ Botón play/pausa narración — solo Con voz ░░ -->
             <button class="focus-play voz-only" id="focusPlayBtn" onclick="togglePlay()" aria-label="Reproducir o pausar la narración">
                 <svg id="focusPlayIcon" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
                 <svg id="focusPauseIcon" viewBox="0 0 24 24" style="display:none"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
             </button>
 
-            <div class="focus-presets" id="focusPresets"></div>
-            <div class="focus-ambients" id="focusAmbients"></div>
-            <div class="focus-mixer">
-                <label class="voz-only"><span>🎙️ Voz</span><input type="range" id="volVoz" min="0" max="100" value="100" oninput="Focus.setVoz(this.value)"></label>
-                <label><span>🎵 Música</span><input type="range" id="volMusica" min="0" max="100" value="55" oninput="Focus.setMusica(this.value)"></label>
+            <!-- ░░ Música de Fondo (categorías) ░░ -->
+            <div class="fx-section">
+                <p class="fx-label">Música de Fondo</p>
+                <div class="fx-cat-grid" id="fxCatGrid"></div>
             </div>
-            <div class="focus-timer voz-only">
-                <span>🐢 Velocidad de la voz</span>
-                <div class="focus-timer-opts" id="focusSpeedOpts">
+
+            <!-- ░░ Mezcla Música / Voz ░░ -->
+            <div class="focus-mixer">
+                <label class="voz-only"><span>🎙️ Voz</span><input type="range" id="volVoz" min="0" max="100" value="100" oninput="Focus.setVoz(this.value)"><b id="volVozVal">100</b></label>
+                <label><span>🎵 Música</span><input type="range" id="volMusica" min="0" max="100" value="55" oninput="Focus.setMusica(this.value)"><b id="volMusicaVal">55</b></label>
+            </div>
+
+            <!-- ░░ Velocidad de la voz — solo Con voz ░░ -->
+            <div class="fx-section voz-only">
+                <p class="fx-label">Velocidad de la Voz</p>
+                <div class="focus-timer-opts fx-pill-row" id="focusSpeedOpts">
                     <button data-rate="0.9" onclick="Focus.setSpeed(0.9,this)">0.9×</button>
                     <button data-rate="1" class="active" onclick="Focus.setSpeed(1,this)">Normal</button>
                     <button data-rate="1.25" onclick="Focus.setSpeed(1.25,this)">1.25×</button>
                 </div>
-                <small class="focus-speed-hint" id="focusSpeedHint">🎧 La cámara lenta suena mejor con la voz SBLL 2026.<button type="button" onclick="Focus.useSbllVoice()">Usar voz 2026</button></small>
+                <small class="focus-speed-hint" id="focusSpeedHint">🐢 La cámara lenta suena mejor con la voz <b>SBLL 2026</b>.<button type="button" onclick="Focus.useSbllVoice()">Usar voz 2026</button></small>
             </div>
-            <div class="focus-timer">
-                <span>⏱️ Temporizador de sueño</span>
-                <div class="focus-timer-opts" id="focusTimerOpts">
-                    <button data-min="0" class="active" onclick="Focus.setTimer(0,this)">Off</button>
-                    <button data-min="10" onclick="Focus.setTimer(10,this)">10m</button>
-                    <button data-min="20" onclick="Focus.setTimer(20,this)">20m</button>
-                    <button data-min="30" onclick="Focus.setTimer(30,this)">30m</button>
-                    <button data-min="60" onclick="Focus.setTimer(60,this)">60m</button>
+
+            <!-- ░░ Entorno Visual ░░ -->
+            <div class="fx-section">
+                <p class="fx-label">Entorno Visual</p>
+                <div class="fx-env" id="fxEnv">
+                    <button data-env="stars" class="active" onclick="FocusEnv.set('stars',this)">✦ Estrellas</button>
+                    <button data-env="rain" onclick="FocusEnv.set('rain',this)">🌧 Lluvia</button>
+                    <button data-env="clouds" onclick="FocusEnv.set('clouds',this)">☁ Nubes</button>
                 </div>
             </div>
-            <div class="focus-timer">
-                <span>🎨 Ambiente visual</span>
-                <div class="focus-timer-opts" id="focusBgOpts">
-                    <button data-bg="aurora" class="active" onclick="Focus.setBg('aurora',this)">Aurora</button>
-                    <button data-bg="noche" onclick="Focus.setBg('noche',this)">Noche</button>
-                    <button data-bg="amanecer" onclick="Focus.setBg('amanecer',this)">Amanecer</button>
-                    <button data-bg="vela" onclick="Focus.setBg('vela',this)">Vela</button>
+
+            <div class="fx-divider"></div>
+
+            <!-- ░░ Reproduciendo ahora ░░ -->
+            <div class="fx-now">
+                <div class="fx-now-emblem" id="focusEmblem"><span class="focus-emblem-icon" id="focusEmblemIcon">🕊️</span></div>
+                <div class="fx-now-info">
+                    <p class="fx-now-eyebrow">Reproduciendo ahora</p>
+                    <p class="fx-now-title" id="focusEmblemCaption">Elige un ambiente y reposa en la Palabra</p>
+                </div>
+                <div class="fx-now-eq" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+            </div>
+
+            <!-- ░░ Todos los ambientes + mezclas guardadas (avanzado) ░░ -->
+            <details class="fx-more">
+                <summary>Más ambientes y mis mezclas</summary>
+                <div class="focus-ambients" id="focusAmbients"></div>
+                <div class="focus-presets" id="focusPresets"></div>
+            </details>
+        </div>
+
+        <!-- Overlay de sesión completada -->
+        <div class="fx-done" id="fxDone" aria-hidden="true">
+            <div class="fx-done-card">
+                <div class="fx-done-ico">✓</div>
+                <h2>Sesión completada</h2>
+                <p>Has pasado este tiempo en la presencia de Dios. Que su paz te acompañe.</p>
+                <div class="fx-done-btns">
+                    <button onclick="FocusTimer.closeDone()" class="fx-done-sec">Cerrar</button>
+                    <button onclick="FocusTimer.closeDone();FocusTimer.reset()" class="fx-done-pri">Nueva sesión</button>
                 </div>
             </div>
         </div>
@@ -3370,6 +3552,7 @@
                 c.classList.toggle('active', c.dataset.ambient === currentAmbient);
                 c.classList.toggle('loading', loading && c.dataset.ambient === currentAmbient);
             });
+            if (window.FocusCats) FocusCats.refresh();
         }
 
         // Descarga (con caché en sesión) el blob de una variante premium.
@@ -3782,6 +3965,9 @@
             renderPresets();
             syncVerse();
             setEmblem(currentAmbient ? ambients.find(a => a.id === currentAmbient) : null);
+            if (window.FocusCats)  FocusCats.render();
+            if (window.FocusEnv)   FocusEnv.init();
+            if (window.FocusTimer) FocusTimer.reset();
             overlay.classList.add('open');
             overlay.setAttribute('aria-hidden', 'false');
             document.body.style.overflow = 'hidden';
@@ -4003,6 +4189,7 @@
             _cancelSleep();
             vozVol = 1; audioA.volume = 1; audioB.volume = 1;
             setSpeed(1, document.querySelector('#focusSpeedOpts button[data-rate="1"]'));
+            if (window.FocusTimer) FocusTimer.stop();
             document.getElementById('playerFocusBtn')?.classList.remove('active');
         }
 
@@ -4110,6 +4297,182 @@
         return { enter, exit, enterVoz, enterMeditar, selectAmbient, setVoz, setMusica, setSpeed, setTimer, setBg, onNarration, syncVerse, refreshGate, openTeaser, closeTeaser, closeSelector, useSbllVoice, startStreamTrack, tickStreamTrack, ambients, meditNext, meditPrev, meditShuffle };
     })();
     window.Focus = Focus;
+
+    // ════════ Modo Enfoque — rediseño 2026: capas de UI (sobre el motor Focus) ════════
+    // Estos módulos son SOLO presentación: delegan el audio en Focus.* (probado).
+
+    // ── Grid de categorías de "Música de Fondo": cada categoría agrupa ambientes
+    //    reales del catálogo de Focus; al tocarla se elige uno al azar del grupo. ──
+    const FocusCats = (function () {
+        const CATS = [
+            { id:'piano',     emoji:'🎹', name:'Piano',         ids:['piano-romantico','piano-relajante','piano-meditacion','piano-instrumental','piano-naturaleza'] },
+            { id:'cuerdas',   emoji:'🎻', name:'Cuerdas',       ids:['cuerdas-terciopelo','orquesta-niebla'] },
+            { id:'paz',       emoji:'🕊️', name:'Paz y Quietud', ids:['calma','paz-abraza','paz-suspiros','seda-suave','aliento-agua','corrientes-calidas','luz-violeta','corazon-calma'] },
+            { id:'salmos',    emoji:'📜', name:'Salmos',        ids:['salmos-reposo','salmo-oracion','salmo-luz','salmos-oceano'] },
+            { id:'reposo',    emoji:'🌙', name:'Reposo',        ids:['meditacion','relajacion','medianoche-agua','deriva-umbral','cancion-cuna','flauta-serena','compas-agua','corriente-seda'] },
+            { id:'adoracion', emoji:'✨', name:'Adoración',     ids:['nube-segura','oceano-altares','incienso','incienso-sagrado','luz-oracion'] },
+        ];
+        const grid = () => document.getElementById('fxCatGrid');
+        function currentAmbient() {
+            return document.querySelector('#focusAmbients .focus-chip.active')?.dataset.ambient || null;
+        }
+        function catOf(ambientId) {
+            return CATS.find(c => c.ids.includes(ambientId)) || null;
+        }
+        function pick(cat) {
+            const cur = currentAmbient();
+            let pool = cat.ids.filter(id => id !== cur);
+            if (!pool.length) pool = cat.ids.slice();
+            return pool[Math.floor(Math.random() * pool.length)];
+        }
+        function select(catId) {
+            const cat = CATS.find(c => c.id === catId);
+            if (!cat || !window.Focus) return;
+            Focus.selectAmbient(pick(cat));
+        }
+        function render() {
+            const box = grid();
+            if (!box) return;
+            box.innerHTML = '';
+            CATS.forEach(c => {
+                const b = document.createElement('button');
+                b.className = 'fx-cat';
+                b.dataset.cat = c.id;
+                b.innerHTML = `<span class="fx-cat-emoji">${c.emoji}</span><span class="fx-cat-name">${c.name}</span>`;
+                b.onclick = () => select(c.id);
+                box.appendChild(b);
+            });
+            refresh();
+        }
+        function refresh() {
+            const cur = currentAmbient();
+            const cat = cur ? catOf(cur) : null;
+            document.querySelectorAll('#fxCatGrid .fx-cat').forEach(b => {
+                b.classList.toggle('active', !!cat && b.dataset.cat === cat.id);
+            });
+        }
+        return { render, refresh };
+    })();
+    window.FocusCats = FocusCats;
+
+    // ── Entorno visual: estrellas (con halo) / lluvia / nubes ──
+    const FocusEnv = (function () {
+        const overlay = () => document.getElementById('focusOverlay');
+        function createGlowStars() {
+            const c = document.getElementById('fxStarGlow'); if (!c) return;
+            c.innerHTML = '';
+            for (let i = 0; i < 10; i++) {
+                const s = document.createElement('div'); s.className = 'fx-glow-star';
+                const size = 2 + Math.random() * 2.8;
+                const tint = Math.random() < 0.3 ? '255,248,228' : '255,255,255';
+                s.style.cssText = `width:${size}px;height:${size}px;left:${2 + Math.random()*95}%;top:${Math.random()*72}%;background:rgba(${tint},1);box-shadow:0 0 ${(5+size*3.2).toFixed(0)}px rgba(${tint},0.9);animation-duration:${(2.4+Math.random()*3.2).toFixed(2)}s;animation-delay:${(-Math.random()*4).toFixed(2)}s`;
+                c.appendChild(s);
+            }
+        }
+        function createRain() {
+            const c = document.getElementById('fxRain'); if (!c) return;
+            c.innerHTML = '';
+            for (let i = 0; i < 90; i++) {
+                const d = document.createElement('div'); d.className = 'fx-rain-drop';
+                d.style.cssText = `left:${Math.random()*100}%;height:${15+Math.random()*25}px;animation-duration:${(0.6+Math.random()*0.6).toFixed(2)}s;animation-delay:${(Math.random()*2).toFixed(2)}s`;
+                c.appendChild(d);
+            }
+        }
+        function createClouds() {
+            const c = document.getElementById('fxClouds'); if (!c) return;
+            c.innerHTML = '';
+            for (let i = 0; i < 7; i++) {
+                const cl = document.createElement('div'); cl.className = 'fx-cloud';
+                cl.style.setProperty('--s', (0.6 + Math.random()*1.2).toFixed(2));
+                cl.style.top = (Math.random()*65) + '%';
+                cl.style.animationDuration = (38 + Math.random()*42).toFixed(0) + 's';
+                cl.style.animationDelay = (-Math.random()*60).toFixed(0) + 's';
+                c.appendChild(cl);
+            }
+        }
+        function set(env, btn) {
+            const ov = overlay(); if (!ov) return;
+            ov.dataset.env = env;
+            document.querySelectorAll('#fxEnv button').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            else document.querySelector(`#fxEnv button[data-env="${env}"]`)?.classList.add('active');
+            ['fxStarGlow','fxRain','fxClouds'].forEach(id => { const e = document.getElementById(id); if (e) e.innerHTML = ''; });
+            if (env === 'stars') createGlowStars();
+            else if (env === 'rain') createRain();
+            else if (env === 'clouds') createClouds();
+            try { localStorage.setItem('sdv-focus-env', env); } catch (e) {}
+        }
+        function init() {
+            let env = 'stars';
+            try { env = localStorage.getItem('sdv-focus-env') || 'stars'; } catch (e) {}
+            set(env, null);
+        }
+        return { set, init };
+    })();
+    window.FocusEnv = FocusEnv;
+
+    // ── Temporizador de sesión (círculo). UI pura: cuenta atrás + pantalla final. ──
+    const FocusTimer = (function () {
+        const CIRC = 553;
+        let duration = 15 * 60, remaining = duration, iv = null, running = false;
+        const $ = id => document.getElementById(id);
+        function draw() {
+            const d = $('fxTimerDisplay'); if (d) d.textContent = `${String(Math.floor(remaining/60)).padStart(2,'0')}:${String(remaining%60).padStart(2,'0')}`;
+            const ring = $('fxTimerRing'); if (ring) ring.style.strokeDashoffset = CIRC * (1 - remaining / duration);
+        }
+        function setLabel(t) { const l = $('fxTimerLabel'); if (l) l.textContent = t; }
+        function setIcon(play) {
+            const i = $('fxTimerBtnIcon'); if (!i) return;
+            i.innerHTML = play
+                ? '<polygon points="6 4 20 12 6 20 6 4"></polygon>'
+                : '<rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect>';
+        }
+        function set(min, btn) {
+            stop();
+            duration = min * 60; remaining = duration;
+            document.querySelectorAll('#fxTimerPresets button').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            else document.querySelector(`#fxTimerPresets button[data-min="${min}"]`)?.classList.add('active');
+            draw(); setLabel('Listo para empezar'); setIcon(true);
+        }
+        function start() {
+            if (remaining <= 0) remaining = duration;
+            running = true; setLabel('En enfoque…'); setIcon(false);
+            document.querySelector('.fx-timer')?.classList.add('running');
+            iv = setInterval(() => {
+                if (remaining > 0) { remaining--; draw(); }
+                else complete();
+            }, 1000);
+        }
+        function pause() {
+            running = false; if (iv) { clearInterval(iv); iv = null; }
+            setLabel('Pausado'); setIcon(true);
+            document.querySelector('.fx-timer')?.classList.remove('running');
+        }
+        function toggle() { running ? pause() : start(); }
+        function stop() {
+            running = false; if (iv) { clearInterval(iv); iv = null; }
+            document.querySelector('.fx-timer')?.classList.remove('running');
+        }
+        function reset() {
+            stop(); remaining = duration; draw(); setLabel('Listo para empezar'); setIcon(true);
+        }
+        function complete() {
+            stop(); remaining = 0; draw(); setIcon(true); setLabel('¡Sesión completada!');
+            const o = $('fxDone'); if (o) { o.classList.add('show'); o.setAttribute('aria-hidden', 'false'); }
+        }
+        function skip() { complete(); }
+        function closeDone() { const o = $('fxDone'); if (o) { o.classList.remove('show'); o.setAttribute('aria-hidden', 'true'); } }
+        return { set, toggle, start, pause, reset, skip, stop, closeDone };
+    })();
+    window.FocusTimer = FocusTimer;
+
+    // Lectura numérica de los sliders de mezcla (Música / Voz).
+    (function initFocusMixerVals(){
+        const sync = (slider, out) => { const s = document.getElementById(slider), o = document.getElementById(out); if (s && o) { o.textContent = s.value; s.addEventListener('input', () => { o.textContent = s.value; }); } };
+        sync('volMusica', 'volMusicaVal'); sync('volVoz', 'volVozVal');
+    })();
+
     function formatTime(s) { return `${Math.floor(s/60)}:${Math.floor(s%60).toString().padStart(2,'0')}`; }
 
     async function downloadChapter() {
