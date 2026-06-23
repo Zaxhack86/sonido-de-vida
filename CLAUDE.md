@@ -15,16 +15,16 @@ Stack: HTML/CSS/JS puro (sin framework) + Cloudflare Workers + Cloudflare R2 + C
 
 | Archivo | Qué es |
 |---|---|
-| `index.html` (raíz) | **Toda la app** (PWA). SPA de ~7 000 líneas. Contiene HTML, CSS en `<style>` y JS en `<script>`. Se sirve en **`/`** (sonidodevida.com). (2026-06-22: se movió de `/app` a la raíz; ahora la app ES el sitio. `/app` redirige a `/`.) |
-| `landing-backup/index.html` | Landing premium de marketing **archivada** (ya NO se sirve en la raíz). Se conservó por si se quiere reusar. Sus imágenes están en `/landing/img/`. |
-| `sw.js` | Service Worker. Hay que subir su `CACHE_STATIC` (`sdv-static-vXX`) en cada cambio a `index.html`. Cachea `/` (la app) + `/manifest.json`. |
+| `app/index.html` | **Toda la app** (PWA). SPA de ~7 000 líneas. Contiene HTML, CSS en `<style>` y JS en `<script>`. Se sirve en **`/app`**. (Antes vivía en la raíz; se movió aquí para liberar `/` a la landing.) |
+| `index.html` (raíz) | **Landing premium** (marketing). Se sirve en **`/`** (sonidodevida.com). Redirige a `/app` la PWA instalada y los enlaces con query (`?libro=`, `?lista=`, login). Sus imágenes están en `/landing/img/` (rutas absolutas). |
+| `sw.js` | Service Worker. Versión actual: `sdv-static-v90`. Hay que subirla en cada cambio a `app/index.html` o a la landing. Cachea `/` (landing) y `/app` (app). |
 | `bible.js` | Datos de la Biblia RVA 1909 (`window.BIBLE`). **Lazy-load** (ver abajo). |
 | `bible_sbll.js` | Datos de la Biblia SBLL 2026 (`window.BIBLE_SBLL`). **Lazy-load** (ver abajo). |
 | `worker_updated.js` | Cloudflare Worker de audio (se despliega en `sonido-de-vida-audio.*`). |
 | `backend/api-worker.js` | Cloudflare Worker de API (auth, contenido premium, suscripciones). |
 | `backend/wrangler-api.toml` | Config del worker de API (D1, KV, R2 premium). |
 | `wrangler.toml` | Config del worker de audio (R2 de audio público). |
-| `vercel.json` | Config de Vercel. `cleanUrls` + filesystem: `/` → la app (raíz `index.html`), páginas estáticas (`/devocionales`, `/devocional/*`, etc.) por archivo, fallback SPA a `/`. Redirige `/app` y `/app/*` → `/` (308). **No usar reescrituras `dest` a rutas `.html`** (rompen con `cleanUrls` → 404). |
+| `vercel.json` | Config de Vercel. `cleanUrls` + filesystem: `/` → landing (raíz `index.html`), `/app` → `app/index.html`, fallback SPA. **No usar reescrituras `dest` a rutas `.html`** (rompen con `cleanUrls` → 404). |
 
 ---
 
