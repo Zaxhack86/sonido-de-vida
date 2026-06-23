@@ -1545,58 +1545,235 @@
         </div>
     </section>
 
+    <style id="bib-redesign">
+    /* ════ Biblia — selección animada paso a paso (marca navy/oro) ════ */
+    #listen .bib-wrap{max-width:1080px;margin:0 auto}
+    #listen .bib-hero{margin-bottom:2.6rem}
+    #listen .bib-kicker{font-size:.66rem;letter-spacing:.34em;text-transform:uppercase;color:#8b90a0;font-weight:700;margin-bottom:.7rem}
+    #listen .bib-title{font-family:'Cinzel',serif;font-weight:700;line-height:1.04;font-size:clamp(2.1rem,5.5vw,3.6rem);color:#f3eee2;letter-spacing:.01em}
+    #listen .bib-title b{font-weight:700;background:linear-gradient(135deg,#E6CE80,#C9A84C,#A8863A);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+    #listen .bib-lead{margin-top:1rem;max-width:34rem;color:#aab0bf;font-size:1rem;line-height:1.7;font-family:'Lora',serif}
+    #listen .bib-block{margin-bottom:2.4rem}
+    #listen .bib-step-label{font-size:.64rem;letter-spacing:.3em;text-transform:uppercase;color:#8b90a0;font-weight:700;margin-bottom:1rem}
+    /* Traducción */
+    #listen .bib-trans-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.85rem}
+    #listen .bib-trans{position:relative;cursor:pointer;border-radius:1rem;padding:1.15rem 1.2rem;background:rgba(255,255,255,.035);border:1.5px solid rgba(255,255,255,.08);transition:transform .35s cubic-bezier(.25,1,.5,1),border-color .35s,box-shadow .35s,background .35s}
+    #listen .bib-trans:hover{transform:translateY(-3px);border-color:rgba(201,168,76,.4);box-shadow:0 16px 42px rgba(0,0,0,.45)}
+    #listen .bib-trans.active{border-color:var(--gold);background:rgba(201,168,76,.09);box-shadow:0 12px 34px -8px rgba(201,168,76,.45)}
+    #listen .bib-trans-ico{width:2.3rem;height:2.3rem;border-radius:.65rem;display:flex;align-items:center;justify-content:center;font-size:1.15rem;background:rgba(201,168,76,.13);margin-bottom:.75rem}
+    #listen .bib-trans h4{margin:0 0 .25rem;font-size:.96rem;font-weight:700;color:#f3eee2;font-family:'Inter',sans-serif}
+    #listen .bib-trans p{margin:0;font-size:.74rem;line-height:1.5;color:#8b90a0}
+    #listen .bib-trans-check{position:absolute;top:.85rem;right:.85rem;width:1.3rem;height:1.3rem;border-radius:50%;background:linear-gradient(135deg,#E6CE80,#C9A84C);color:#070e20;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;opacity:0;transform:scale(.2);transition:all .3s cubic-bezier(.25,1,.5,1)}
+    #listen .bib-trans.active .bib-trans-check{opacity:1;transform:scale(1)}
+    /* Libro: head + buscador */
+    #listen .bib-block-head{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:1rem;flex-wrap:wrap}
+    #listen .bib-search{position:relative;display:flex;align-items:center}
+    #listen .bib-search svg{position:absolute;left:.7rem;width:.95rem;height:.95rem;stroke:#8b90a0;pointer-events:none}
+    #listen .bib-search input{background:rgba(255,255,255,.04);border:1px solid rgba(201,168,76,.18);border-radius:.7rem;padding:.5rem .8rem .5rem 2rem;color:#f3eee2;font-size:.82rem;font-family:'Inter',sans-serif;width:13rem;outline:none;transition:border-color .25s}
+    #listen .bib-search input:focus{border-color:var(--gold)}
+    #listen .bib-search input::placeholder{color:#6b7080}
+    /* Testamento tabs */
+    #listen .bib-tabs{display:flex;gap:1.6rem;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:1.1rem}
+    #listen .bib-tab{background:none;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-size:.74rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#6b7080;padding:0 0 .6rem;border-bottom:2px solid transparent;transition:color .25s,border-color .25s}
+    #listen .bib-tab:hover{color:#cfd3dd}
+    #listen .bib-tab.active{color:var(--gold-light);border-bottom-color:var(--gold)}
+    /* Grid de libros */
+    #listen .bib-grid{display:grid;grid-template-columns:repeat(9,1fr);gap:.4rem}
+    #listen .bib-book{cursor:pointer;text-align:center;padding:.55rem .2rem;border-radius:.55rem;border:1px solid transparent;background:rgba(255,255,255,.03);font-family:'Inter',sans-serif;font-size:.72rem;font-weight:600;color:#aab0bf;transition:transform .2s,background .2s,color .2s,border-color .2s;animation:bibPop .4s cubic-bezier(.25,1,.5,1) both}
+    #listen .bib-book:hover{background:rgba(201,168,76,.12);color:#f3eee2;transform:translateY(-1px)}
+    #listen .bib-book.active{background:linear-gradient(135deg,#E6CE80,#C9A84C);color:#070e20;border-color:transparent;box-shadow:0 4px 14px -2px rgba(201,168,76,.5)}
+    /* Libro seleccionado (pill) */
+    #listen .bib-selected{display:flex;align-items:center;gap:.6rem;margin-top:1rem;background:rgba(255,255,255,.04);border:1px solid rgba(201,168,76,.2);border-radius:.8rem;padding:.7rem .9rem;animation:bibUp .4s ease both}
+    #listen .bib-selected[hidden]{display:none}
+    #listen .bib-sel-ic{font-size:1rem}
+    #listen .bib-sel-name{font-weight:700;color:#f3eee2;font-size:.92rem}
+    #listen .bib-sel-sub{font-size:.74rem;color:#8b90a0}
+    #listen .bib-sel-x{margin-left:auto;background:none;border:none;color:#8b90a0;cursor:pointer;font-size:.85rem;width:1.5rem;height:1.5rem;border-radius:50%;transition:background .2s,color .2s}
+    #listen .bib-sel-x:hover{background:rgba(255,255,255,.08);color:#f3eee2}
+    /* Capítulos */
+    #listen .bib-ch-grid{display:flex;flex-wrap:wrap;gap:.45rem}
+    #listen .bib-ch{cursor:pointer;width:2.4rem;height:2.4rem;border-radius:.6rem;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);color:#aab0bf;font-family:'Inter',sans-serif;font-size:.78rem;font-weight:600;display:flex;align-items:center;justify-content:center;transition:transform .18s,background .18s,color .18s,border-color .18s;animation:bibPop .35s cubic-bezier(.25,1,.5,1) both}
+    #listen .bib-ch:hover{background:rgba(201,168,76,.14);color:#f3eee2;border-color:rgba(201,168,76,.3)}
+    #listen .bib-ch.active{background:linear-gradient(135deg,#E6CE80,#C9A84C);color:#070e20;border-color:transparent;box-shadow:0 4px 14px -2px rgba(201,168,76,.5)}
+    /* Botón cargar */
+    #listen .bib-load{display:inline-flex;align-items:center;gap:.6rem;background:linear-gradient(135deg,#E6CE80,#C9A84C,#A8863A);color:#070e20;border:none;border-radius:.9rem;padding:.95rem 2rem;font-family:'Inter',sans-serif;font-weight:700;font-size:.92rem;cursor:pointer;transition:transform .25s,box-shadow .25s;box-shadow:0 12px 32px -10px rgba(201,168,76,.7)}
+    #listen .bib-load:hover{transform:translateY(-2px);box-shadow:0 18px 40px -10px rgba(201,168,76,.8)}
+    #listen .bib-load svg{width:.85rem;height:.85rem}
+    /* Reveal por pasos */
+    #listen .bib-step[hidden]{display:none}
+    #listen .bib-step{animation:bibUp .55s cubic-bezier(.25,1,.5,1) both}
+    /* Lector */
+    #listen .bib-reader-head{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:1.2rem}
+    #listen .bib-reader-title{font-family:'Cinzel',serif;font-size:1.3rem;color:#f3eee2;margin:0}
+    #listen .bib-reader-sub{font-size:.72rem;text-transform:uppercase;letter-spacing:.14em;color:#8b90a0;font-weight:600}
+    #listen .bib-reader-nav{display:flex;align-items:center;gap:.5rem;flex-shrink:0}
+    #listen .bib-navbtn{width:2.1rem;height:2.1rem;border-radius:.6rem;border:1px solid rgba(201,168,76,.22);background:rgba(201,168,76,.08);color:var(--gold-light);font-size:1.2rem;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s,transform .15s}
+    #listen .bib-navbtn:hover{background:rgba(201,168,76,.18);transform:translateY(-1px)}
+    #listen .bib-navbtn:disabled{opacity:.3;cursor:not-allowed}
+    #listen .bib-verses{max-height:42vh;overflow-y:auto;padding-right:.6rem;margin-bottom:1.4rem}
+    /* Reproductor inline (con Modo Enfoque) */
+    #listen .bib-player{background:rgba(255,255,255,.03);border:1px solid rgba(201,168,76,.16);border-radius:1rem;padding:1.1rem 1.2rem}
+    #listen .bib-prog-row{display:flex;align-items:center;gap:.7rem;margin-bottom:1rem}
+    #listen .bib-time{font-size:.7rem;color:#8b90a0;font-variant-numeric:tabular-nums;min-width:2.6rem}
+    #listen .bib-time-tot{text-align:right}
+    #listen .bib-prog{flex:1;height:4px;border-radius:3px;background:rgba(255,255,255,.1);cursor:pointer;position:relative;overflow:hidden}
+    #listen .bib-prog-fill{height:100%;width:0;border-radius:3px;background:linear-gradient(90deg,#A8863A,#E6CE80)}
+    #listen .bib-ctrl-row{display:flex;align-items:center;justify-content:space-between;gap:.8rem}
+    #listen .bib-speed{display:flex;gap:.15rem}
+    #listen .bib-speed button{background:none;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-size:.68rem;font-weight:700;color:#6b7080;padding:.3rem .45rem;border-radius:.45rem;transition:color .2s,background .2s}
+    #listen .bib-speed button:hover{color:#cfd3dd}
+    #listen .bib-speed button.active{color:var(--gold-light);background:rgba(201,168,76,.14)}
+    #listen .bib-transport{display:flex;align-items:center;gap:.7rem}
+    #listen .bib-skip{width:2.2rem;height:2.2rem;border-radius:50%;border:none;background:none;color:#aab0bf;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s,color .2s}
+    #listen .bib-skip svg{width:1.15rem;height:1.15rem}
+    #listen .bib-skip:hover{background:rgba(255,255,255,.07);color:#f3eee2}
+    #listen .bib-bigplay{width:3.2rem;height:3.2rem;border-radius:50%;border:none;cursor:pointer;background:linear-gradient(135deg,#E6CE80,#C9A84C);color:#070e20;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 22px -6px rgba(201,168,76,.7);transition:transform .15s}
+    #listen .bib-bigplay:hover{transform:scale(1.05)}
+    #listen .bib-bigplay svg{width:1.4rem;height:1.4rem}
+    #listen .bib-focus{display:inline-flex;align-items:center;gap:.4rem;background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.25);color:var(--gold-light);border-radius:50px;padding:.45rem .85rem;font-family:'Inter',sans-serif;font-size:.72rem;font-weight:700;cursor:pointer;transition:background .2s,transform .15s;white-space:nowrap}
+    #listen .bib-focus:hover{background:rgba(201,168,76,.18);transform:translateY(-1px)}
+    #listen .bib-focus svg{width:.95rem;height:.95rem}
+    #listen .bib-actions{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,.06)}
+    #listen .bib-act{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);color:#cfd3dd;border-radius:.6rem;padding:.55rem .9rem;font-family:'Inter',sans-serif;font-size:.78rem;font-weight:600;cursor:pointer;transition:background .2s,border-color .2s}
+    #listen .bib-act:hover{background:rgba(201,168,76,.1);border-color:rgba(201,168,76,.3);color:#f3eee2}
+    /* Animaciones */
+    @keyframes bibUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+    @keyframes bibPop{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:none}}
+    #listen .bibUp{animation:bibUp .65s cubic-bezier(.25,1,.5,1) both}
+    #listen .bu1{animation-delay:.04s}#listen .bu2{animation-delay:.12s}#listen .bu3{animation-delay:.2s}
+    /* Responsive */
+    @media(max-width:880px){#listen .bib-grid{grid-template-columns:repeat(7,1fr)}}
+    @media(max-width:640px){
+      #listen .bib-trans-grid{grid-template-columns:1fr}
+      #listen .bib-grid{grid-template-columns:repeat(5,1fr)}
+      #listen .bib-block-head{align-items:flex-start}
+      #listen .bib-search,#listen .bib-search input{width:100%}
+      #listen .bib-ctrl-row{flex-wrap:wrap;justify-content:center}
+      #listen .bib-speed{order:3;width:100%;justify-content:center;margin-top:.4rem}
+    }
+    </style>
     <section class="listen-section" id="listen" data-tab="biblia">
-        <div class="section-header reveal"><h2>Escuchar la Biblia</h2><p>Selecciona un libro y capítulo para escuchar el audio completo</p></div>
-        <div class="listen-container reveal">
-            <div class="listen-box">
-                <!-- Toggle de Traducción -->
-                <div class="translation-toggle-wrap">
-                    <span class="translation-toggle-label">Traducción</span>
-                    <div class="translation-toggle" id="translationToggle">
-                        <span class="tt-option active" id="tt-real" onclick="setTranslation('real')">🎙️ Voz Real</span>
-                        <span class="tt-option" id="tt-rva" onclick="setTranslation('rva')">🤖 RVA 1909</span>
-                        <span class="tt-option" id="tt-sbll" onclick="setTranslation('sbll')">🎧 SBLL 2026</span>
-                    </div>
-                </div>
-                <p class="translation-note" id="translationNote">🎙️ <strong>Voz Real</strong>: narración humana (RVA 1909). RVA y SBLL son voces generadas por IA (TTS).</p>
-                <div class="listen-selectors">
-                    <div class="form-group">
-                        <label>Libro</label>
-                        <select id="bookSelect"><option value="">Selecciona un libro...</option></select>
-                    </div>
-                    <div class="form-group">
-                        <label>Capítulo</label>
-                        <select id="chapterSelect" disabled><option value="">Cap.</option></select>
-                    </div>
-                </div>
-                <button class="listen-btn" id="listenBtn" onclick="loadChapter()">🎧 Cargar Capítulo</button>
+        <!-- ════ Biblia — selección animada paso a paso (rediseño 2026) ════ -->
+        <div class="bib-wrap">
+          <div class="bib-hero bibUp bu1">
+            <p class="bib-kicker">Escuchar</p>
+            <h1 class="bib-title">La <b>Biblia</b></h1>
+            <p class="bib-lead">Selecciona tu traducción, elige un libro y capítulo, y sumérgete en la Palabra con audio de alta calidad.</p>
+          </div>
+
+          <div class="bib-block bibUp bu2">
+            <p class="bib-step-label">Traducción</p>
+            <div class="bib-trans-grid">
+              <div class="bib-trans active" id="tt-real" onclick="setTranslation('real')">
+                <span class="bib-trans-check">✓</span>
+                <div class="bib-trans-ico">🎙️</div>
+                <h4>Voz Real</h4>
+                <p>Narración humana, natural y expresiva (RVA 1909)</p>
+              </div>
+              <div class="bib-trans" id="tt-rva" onclick="setTranslation('rva')">
+                <span class="bib-trans-check">✓</span>
+                <div class="bib-trans-ico">📖</div>
+                <h4>RVA 1909</h4>
+                <p>Reina-Valera Antigua · voz por IA (TTS)</p>
+              </div>
+              <div class="bib-trans" id="tt-sbll" onclick="setTranslation('sbll')">
+                <span class="bib-trans-check">✓</span>
+                <div class="bib-trans-ico">🎧</div>
+                <h4>SBLL 2026</h4>
+                <p>Voz por IA, ideal para cámara lenta</p>
+              </div>
             </div>
-            <div class="chapter-result" id="chapterResult">
-                <div class="chapter-card">
-                    <div class="chapter-header">
-                        <span class="chapter-ref" id="chapterRef"></span>
-                        <span class="chapter-verse-count" id="chapterVerseCount"></span>
-                    </div>
-                    <div class="chapter-nav">
-                        <button class="chapter-nav-btn" id="prevChapterBtn" onclick="goPrevChapter()" title="Capítulo anterior">
-                            ◀ Anterior
-                        </button>
-                        <div class="chapter-nav-mode" id="navModeIndicator" onclick="openPlaybackModeModal(true)" title="Cambiar modo de reproducción">
-                            <strong id="navModeLabel">Modo</strong>
-                            <span id="navModeText">—</span>
-                        </div>
-                        <button class="chapter-nav-btn" id="nextChapterBtn" onclick="goNextChapter()" title="Capítulo siguiente">
-                            Siguiente ▶
-                        </button>
-                    </div>
-                    <div class="chapter-actions">
-                        <button class="action-btn btn-play" id="playBtn" onclick="togglePlay()">🔊 Escuchar</button>
-                        <button class="action-btn btn-download" id="downloadBtn" onclick="downloadChapter()">💾 Descargar MP3</button>
-                        <button class="action-btn btn-copy-text" onclick="copyChapter()">📋 Copiar texto</button>
-                    </div>
-                    <div class="chapter-verses" id="chapterVerses"></div>
-                </div>
+          </div>
+
+          <div class="bib-block bibUp bu3">
+            <div class="bib-block-head">
+              <p class="bib-step-label" style="margin:0">Libro</p>
+              <div class="bib-search">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" id="bibBookSearch" placeholder="Buscar libro…" oninput="BibleUI.filter(this.value)" autocomplete="off">
+              </div>
             </div>
+            <div class="bib-tabs">
+              <button class="bib-tab active" type="button" onclick="BibleUI.testament('all',this)">Todos</button>
+              <button class="bib-tab" type="button" onclick="BibleUI.testament('ot',this)">Antiguo Test.</button>
+              <button class="bib-tab" type="button" onclick="BibleUI.testament('nt',this)">Nuevo Test.</button>
+            </div>
+            <div class="bib-grid" id="bibBooksGrid"></div>
+            <div class="bib-selected" id="bibSelectedBook" hidden>
+              <span class="bib-sel-ic">📖</span>
+              <span class="bib-sel-name" id="bibSelName"></span>
+              <span class="bib-sel-sub" id="bibSelChaps"></span>
+              <button class="bib-sel-x" type="button" onclick="BibleUI.clearBook()" aria-label="Quitar libro">✕</button>
+            </div>
+          </div>
+
+          <div class="bib-block bib-step" id="bibChapterStep" hidden>
+            <p class="bib-step-label">Capítulo</p>
+            <div class="bib-ch-grid" id="bibChaptersGrid"></div>
+          </div>
+
+          <div class="bib-block bib-step" id="bibLoadStep" hidden style="margin-bottom:1rem">
+            <button class="bib-load" type="button" onclick="BibleUI.load()">
+              <span>🎧</span> Cargar capítulo
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </button>
+          </div>
+
+          <!-- Selectores nativos ocultos: la lógica existente (loadChapter) los lee -->
+          <select id="bookSelect" hidden aria-hidden="true"><option value="">Selecciona un libro...</option></select>
+          <select id="chapterSelect" hidden aria-hidden="true" disabled><option value="">Cap.</option></select>
+        </div>
+
+        <div class="chapter-result" id="chapterResult">
+          <div class="bib-reader">
+            <div class="bib-reader-head">
+              <div class="bib-reader-titles">
+                <h3 class="bib-reader-title" id="chapterRef"></h3>
+                <span class="bib-reader-sub" id="chapterVerseCount"></span>
+              </div>
+              <div class="bib-reader-nav">
+                <button class="bib-navbtn" id="prevChapterBtn" onclick="goPrevChapter()" title="Capítulo anterior" aria-label="Anterior">‹</button>
+                <div class="chapter-nav-mode" id="navModeIndicator" onclick="openPlaybackModeModal(true)" title="Cambiar modo de reproducción">
+                  <strong id="navModeLabel">Modo</strong><span id="navModeText">—</span>
+                </div>
+                <button class="bib-navbtn" id="nextChapterBtn" onclick="goNextChapter()" title="Capítulo siguiente" aria-label="Siguiente">›</button>
+              </div>
+            </div>
+            <div class="bib-verses chapter-verses" id="chapterVerses"></div>
+
+            <div class="bib-player">
+              <div class="bib-prog-row">
+                <span class="bib-time" id="bibCur">0:00</span>
+                <div class="bib-prog" id="bibProg" onclick="seekBib(event)"><div class="bib-prog-fill" id="bibProgFill"></div></div>
+                <span class="bib-time bib-time-tot" id="bibTot">0:00</span>
+              </div>
+              <div class="bib-ctrl-row">
+                <div class="bib-speed" title="Velocidad de la voz">
+                  <button type="button" onclick="setReadSpeed(0.75,this)">0.75×</button>
+                  <button type="button" class="active" onclick="setReadSpeed(1,this)">1×</button>
+                  <button type="button" onclick="setReadSpeed(1.25,this)">1.25×</button>
+                  <button type="button" onclick="setReadSpeed(1.5,this)">1.5×</button>
+                </div>
+                <div class="bib-transport">
+                  <button class="bib-skip" type="button" onclick="goPrevChapter()" aria-label="Capítulo anterior"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="18 20 8 12 18 4 18 20"/><rect x="5" y="5" width="2" height="14" rx="1"/></svg></button>
+                  <button class="bib-bigplay" id="bibPlayBtn" type="button" onclick="togglePlay()" aria-label="Reproducir o pausar">
+                    <svg id="bibPlayIcon" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+                    <svg id="bibPauseIcon" viewBox="0 0 24 24" fill="currentColor" style="display:none"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>
+                  </button>
+                  <button class="bib-skip" type="button" onclick="goNextChapter()" aria-label="Capítulo siguiente"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 16 12 6 20 6 4"/><rect x="17" y="5" width="2" height="14" rx="1"/></svg></button>
+                </div>
+                <button class="bib-focus" type="button" onclick="Focus.enterVoz()" title="Modo Enfoque · música + voz">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
+                  <span>Enfoque</span>
+                </button>
+              </div>
+              <div class="bib-actions">
+                <button class="bib-act" id="downloadBtn" type="button" onclick="downloadChapter()">💾 Descargar MP3</button>
+                <button class="bib-act" type="button" onclick="copyChapter()">📋 Copiar texto</button>
+              </div>
+            </div>
+          </div>
+          <button id="playBtn" onclick="togglePlay()" style="display:none" aria-hidden="true">🔊 Escuchar</button>
         </div>
     </section>
 
@@ -2774,6 +2951,7 @@
             if (book && getActiveBible()[book]) { populateChapters(getActiveBible()[book].length); cs.disabled = false; }
             else { cs.innerHTML = '<option value="">Cap.</option>'; cs.disabled = true; }
         });
+        if (window.BibleUI) BibleUI.render();
     }
 
     function populateChapters(count) {
@@ -2840,6 +3018,7 @@
         document.getElementById('downloadBtn').disabled = false;
         updateDownloadBtn();
         document.getElementById('chapterResult').classList.add('visible');
+        if (window.BibleUI) BibleUI.syncFromState();
 
         updateChapterNavButtons();
         updateNavModeIndicator();
@@ -2997,6 +3176,9 @@
                 if (!audio.duration) return;
                 document.getElementById('playerProgressFill').style.width = (audio.currentTime / audio.duration * 100) + '%';
                 document.getElementById('playerTime').textContent = formatTime(audio.currentTime);
+                const _bf = document.getElementById('bibProgFill'); if (_bf) _bf.style.width = (audio.currentTime / audio.duration * 100) + '%';
+                const _bc = document.getElementById('bibCur'); if (_bc) _bc.textContent = formatTime(audio.currentTime);
+                const _bt = document.getElementById('bibTot'); if (_bt) _bt.textContent = isFinite(audio.duration) ? formatTime(audio.duration) : 'EN VIVO';
                 // Transición preventiva 0.4s antes del final (solo para capítulos individuales)
                 if (!chapterTransitioning && effectiveMode() !== 'single' && !audio.src?.includes('/stream/')) {
                     const remaining = audio.duration - audio.currentTime;
@@ -3183,6 +3365,8 @@
         document.getElementById('playerWave').classList.toggle('paused', !isPlaying);
         const pb = document.getElementById('playBtn');
         if (pb) { pb.disabled = false; pb.classList.toggle('playing', isPlaying); pb.innerHTML = isPlaying ? '⏸ Pausar' : '🔊 Escuchar'; }
+        const _bpi = document.getElementById('bibPlayIcon'), _bpp = document.getElementById('bibPauseIcon');
+        if (_bpi && _bpp) { _bpi.style.display = isPlaying ? 'none' : 'block'; _bpp.style.display = isPlaying ? 'block' : 'none'; }
     }
 
     function setupMediaSession() {
@@ -3215,6 +3399,9 @@
         document.getElementById('audioPlayerBar').classList.remove('visible');
         document.getElementById('playerProgressFill').style.width = '0%';
         document.getElementById('playerTime').textContent = '0:00';
+        const _bf = document.getElementById('bibProgFill'); if (_bf) _bf.style.width = '0%';
+        const _bc = document.getElementById('bibCur'); if (_bc) _bc.textContent = '0:00';
+        const _bt = document.getElementById('bibTot'); if (_bt) _bt.textContent = '0:00';
     }
     function closePlayer() { audio.pause(); audio.removeAttribute('src'); audio.load(); updatePlayUI(false); hidePlayerBar(); }
     function seekAudio(e) {
@@ -6975,6 +7162,151 @@
         }
         init();
     })();
+    </script>
+
+    <!-- ════ Biblia: selección animada paso a paso (grid de libros/capítulos) ════ -->
+    <script>
+    (function () {
+        // [clave en window.BIBLE, nombre con tildes, abreviatura, testamento]
+        const META = [
+            ['Genesis','Génesis','Gén','ot'],['Exodo','Éxodo','Éx','ot'],['Levitico','Levítico','Lev','ot'],
+            ['Numeros','Números','Núm','ot'],['Deuteronomio','Deuteronomio','Deut','ot'],['Josue','Josué','Jos','ot'],
+            ['Jueces','Jueces','Jue','ot'],['Rut','Rut','Rut','ot'],['1 Samuel','1 Samuel','1Sam','ot'],
+            ['2 Samuel','2 Samuel','2Sam','ot'],['1 Reyes','1 Reyes','1Rey','ot'],['2 Reyes','2 Reyes','2Rey','ot'],
+            ['1 Cronicas','1 Crónicas','1Cró','ot'],['2 Cronicas','2 Crónicas','2Cró','ot'],['Esdras','Esdras','Esd','ot'],
+            ['Nehemias','Nehemías','Neh','ot'],['Ester','Ester','Est','ot'],['Job','Job','Job','ot'],
+            ['Salmos','Salmos','Sal','ot'],['Proverbios','Proverbios','Prov','ot'],['Eclesiastes','Eclesiastés','Ecl','ot'],
+            ['Cantares','Cantares','Cant','ot'],['Isaias','Isaías','Isa','ot'],['Jeremias','Jeremías','Jer','ot'],
+            ['Lamentaciones','Lamentaciones','Lam','ot'],['Ezequiel','Ezequiel','Eze','ot'],['Daniel','Daniel','Dan','ot'],
+            ['Oseas','Oseas','Os','ot'],['Joel','Joel','Joel','ot'],['Amos','Amós','Amós','ot'],
+            ['Abdias','Abdías','Abd','ot'],['Jonas','Jonás','Jon','ot'],['Miqueas','Miqueas','Miq','ot'],
+            ['Nahum','Nahúm','Nah','ot'],['Habacuc','Habacuc','Hab','ot'],['Sofonias','Sofonías','Sof','ot'],
+            ['Hageo','Hageo','Hag','ot'],['Zacarias','Zacarías','Zac','ot'],['Malaquias','Malaquías','Mal','ot'],
+            ['Mateo','Mateo','Mt','nt'],['Marcos','Marcos','Mr','nt'],['Lucas','Lucas','Lc','nt'],['Juan','Juan','Jn','nt'],
+            ['Hechos','Hechos','Hch','nt'],['Romanos','Romanos','Ro','nt'],['1 Corintios','1 Corintios','1Co','nt'],
+            ['2 Corintios','2 Corintios','2Co','nt'],['Galatas','Gálatas','Gál','nt'],['Efesios','Efesios','Ef','nt'],
+            ['Filipenses','Filipenses','Fil','nt'],['Colosenses','Colosenses','Col','nt'],
+            ['1 Tesalonicenses','1 Tesalonicenses','1Ts','nt'],['2 Tesalonicenses','2 Tesalonicenses','2Ts','nt'],
+            ['1 Timoteo','1 Timoteo','1Ti','nt'],['2 Timoteo','2 Timoteo','2Ti','nt'],['Tito','Tito','Tit','nt'],
+            ['Filemon','Filemón','Flm','nt'],['Hebreos','Hebreos','Heb','nt'],['Santiago','Santiago','Stg','nt'],
+            ['1 Pedro','1 Pedro','1Pe','nt'],['2 Pedro','2 Pedro','2Pe','nt'],['1 Juan','1 Juan','1Jn','nt'],
+            ['2 Juan','2 Juan','2Jn','nt'],['3 Juan','3 Juan','3Jn','nt'],['Judas','Judas','Jud','nt'],
+            ['Apocalipsis','Apocalipsis','Ap','nt'],
+        ];
+        let curTest = 'all', sel = null, selCh = null, q = '';
+        const $ = id => document.getElementById(id);
+        function data() { return (window.BIBLE) || (typeof getActiveBible === 'function' ? getActiveBible() : {}) || {}; }
+        function chapsOf(key) { const b = data()[key]; return Array.isArray(b) ? b.length : 0; }
+        function metaOf(key) { return META.find(m => m[0] === key); }
+
+        function render() {
+            const grid = $('bibBooksGrid'); if (!grid) return;
+            const d = data(), ql = q.trim().toLowerCase();
+            grid.innerHTML = ''; let n = 0;
+            META.forEach(m => {
+                const [key, name, abbr, test] = m;
+                if (!d[key]) return;
+                if (curTest !== 'all' && test !== curTest) return;
+                if (ql && !(name.toLowerCase().includes(ql) || abbr.toLowerCase().includes(ql) || key.toLowerCase().includes(ql))) return;
+                const b = document.createElement('button');
+                b.type = 'button';
+                b.className = 'bib-book' + (sel === key ? ' active' : '');
+                b.textContent = abbr; b.title = name;
+                b.style.animationDelay = (Math.min(n, 30) * 0.012) + 's'; n++;
+                b.onclick = () => selectBook(key);
+                grid.appendChild(b);
+            });
+        }
+        function renderChapters(count) {
+            const g = $('bibChaptersGrid'); if (!g) return; g.innerHTML = '';
+            for (let i = 1; i <= count; i++) {
+                const c = document.createElement('button');
+                c.type = 'button';
+                c.className = 'bib-ch' + (selCh === i ? ' active' : '');
+                c.textContent = i; c.style.animationDelay = (Math.min(i, 40) * 0.008) + 's';
+                c.onclick = () => selectChapter(i);
+                g.appendChild(c);
+            }
+        }
+        function openStep(el) {
+            if (!el) return;
+            el.hidden = false;
+            el.style.animation = 'none'; void el.offsetWidth; el.style.animation = '';
+        }
+        function selectBook(key) {
+            sel = key; selCh = null;
+            render();
+            const m = metaOf(key), count = chapsOf(key);
+            $('bibSelName').textContent = m ? m[1] : key;
+            $('bibSelChaps').textContent = count + ' capítulos';
+            $('bibSelectedBook').hidden = false;
+            const bs = $('bookSelect'); if (bs) bs.value = key;
+            renderChapters(count);
+            openStep($('bibChapterStep'));
+            $('bibLoadStep').hidden = true;
+            $('bibChapterStep').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+        function selectChapter(n) {
+            selCh = n;
+            renderChapters(chapsOf(sel));
+            const cs = $('chapterSelect');
+            if (cs) {
+                cs.disabled = false; cs.innerHTML = '';
+                for (let i = 1; i <= chapsOf(sel); i++) { const o = document.createElement('option'); o.value = i; o.textContent = i; cs.appendChild(o); }
+                cs.value = n;
+            }
+            openStep($('bibLoadStep'));
+            $('bibLoadStep').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+        function clearBook() {
+            sel = null; selCh = null; q = '';
+            const sb = $('bibBookSearch'); if (sb) sb.value = '';
+            $('bibSelectedBook').hidden = true;
+            $('bibChapterStep').hidden = true;
+            $('bibLoadStep').hidden = true;
+            render();
+        }
+        function load() {
+            if (!sel || !selCh) { if (window.showToast) showToast('Elige un libro y un capítulo'); return; }
+            if (typeof loadChapter === 'function') loadChapter({ book: sel, chapter: selCh });
+        }
+        function testament(t, btn) {
+            curTest = t;
+            document.querySelectorAll('#listen .bib-tab').forEach(x => x.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            render();
+        }
+        function filter(v) { q = v || ''; render(); }
+        function syncFromState() {
+            if (!window.state || !state.book) return;
+            sel = state.book; selCh = state.chapter;
+            const m = metaOf(sel), count = chapsOf(sel);
+            render();
+            if ($('bibSelName')) {
+                $('bibSelName').textContent = m ? m[1] : sel;
+                $('bibSelChaps').textContent = count + ' capítulos';
+                $('bibSelectedBook').hidden = false;
+            }
+            renderChapters(count);
+            if ($('bibChapterStep')) $('bibChapterStep').hidden = false;
+            if ($('bibLoadStep')) $('bibLoadStep').hidden = false;
+        }
+        window.BibleUI = { render, selectBook, selectChapter, clearBook, load, testament, filter, syncFromState };
+    })();
+
+    // Buscar dentro de la barra inline (mismo elemento de audio que el reproductor flotante)
+    function seekBib(e) {
+        if (!audio || !audio.duration || !isFinite(audio.duration)) return;
+        const r = document.getElementById('bibProg').getBoundingClientRect();
+        const pct = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
+        audio.currentTime = pct * audio.duration;
+    }
+    // Velocidad de lectura (0.75×–1.5×): aplica a ambos elementos <audio> y persiste en swaps
+    function setReadSpeed(rate, btn) {
+        try { playbackSpeed = rate; audioA.playbackRate = rate; audioB.playbackRate = rate; } catch (e) {}
+        document.querySelectorAll('#listen .bib-speed button').forEach(b => b.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+    }
     </script>
 </body>
 </html>
