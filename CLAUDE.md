@@ -15,16 +15,15 @@ Stack: HTML/CSS/JS puro (sin framework) + Cloudflare Workers + Cloudflare R2 + C
 
 | Archivo | Qué es |
 |---|---|
-| `app/index.html` | **Toda la app** (PWA). SPA de ~7 000 líneas. Contiene HTML, CSS en `<style>` y JS en `<script>`. Se sirve en **`/app`**. (Antes vivía en la raíz; se movió aquí para liberar `/` a la landing.) |
-| `index.html` (raíz) | **Landing premium** (marketing). Se sirve en **`/`** (sonidodevida.com). Redirige a `/app` la PWA instalada y los enlaces con query (`?libro=`, `?lista=`, login). Sus imágenes están en `/landing/img/` (rutas absolutas). |
-| `sw.js` | Service Worker. Versión actual: `sdv-static-v90`. Hay que subirla en cada cambio a `app/index.html` o a la landing. Cachea `/` (landing) y `/app` (app). |
+| `index.html` (raíz) | **Toda la app** (PWA). SPA de ~7 000 líneas. Contiene HTML, CSS en `<style>` y JS en `<script>`. Se sirve en **`/`** (sonidodevida.com). **NO existe `/app` ni landing**: `/app` y `/app/*` redirigen 308 a `/` (ver `vercel.json`). NO reintroducir una landing separada ni mover la app a `/app`. |
+| `sw.js` | Service Worker. Versión actual: `sdv-static-v111`. Hay que subirla en cada cambio a `index.html`. Cachea solo `/` y `/manifest.json` (shell). |
 | `bible.js` | Datos de la Biblia RVA 1909 (`window.BIBLE`). **Lazy-load** (ver abajo). |
 | `bible_sbll.js` | Datos de la Biblia SBLL 2026 (`window.BIBLE_SBLL`). **Lazy-load** (ver abajo). |
 | `worker_updated.js` | Cloudflare Worker de audio (se despliega en `sonido-de-vida-audio.*`). |
 | `backend/api-worker.js` | Cloudflare Worker de API (auth, contenido premium, suscripciones). |
 | `backend/wrangler-api.toml` | Config del worker de API (D1, KV, R2 premium). |
 | `wrangler.toml` | Config del worker de audio (R2 de audio público). |
-| `vercel.json` | Config de Vercel. `cleanUrls` + filesystem: `/` → landing (raíz `index.html`), `/app` → `app/index.html`, fallback SPA. **No usar reescrituras `dest` a rutas `.html`** (rompen con `cleanUrls` → 404). |
+| `vercel.json` | Config de Vercel. `cleanUrls` + redirects `/app`→`/` y `/app/*`→`/` + fallback SPA (`/(.*)`→`/`). **No usar reescrituras `dest` a rutas `.html`** (rompen con `cleanUrls` → 404). |
 
 ---
 
