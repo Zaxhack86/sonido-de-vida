@@ -691,6 +691,15 @@
         .fx-cat.active{background:rgba(201,168,76,.12);border-color:rgba(201,168,76,.4);color:#fff;box-shadow:0 0 24px rgba(201,168,76,.1)}
         .fx-cat.active .fx-cat-name{color:var(--gold-light)}
         .fx-cat.loading{opacity:.55;pointer-events:none}
+        /* Botón de aleatorio (junto a la música) */
+        .fx-shuffle-btn{width:100%;margin-top:.6rem;padding:.65rem 1rem;border-radius:50px;border:1px solid rgba(201,168,76,.4);background:linear-gradient(135deg,rgba(201,168,76,.14),rgba(201,168,76,.05));color:var(--gold-light);font-family:'Inter',sans-serif;font-size:.86rem;font-weight:600;cursor:pointer;transition:all .25s}
+        .fx-shuffle-btn:hover{border-color:rgba(201,168,76,.7);background:linear-gradient(135deg,rgba(201,168,76,.22),rgba(201,168,76,.08))}
+        .fx-shuffle-btn.active{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#0d0d1a;border-color:transparent;box-shadow:0 4px 18px rgba(201,168,76,.4)}
+        /* Toggle de modo: Solo música ↔ Voz y música */
+        .fx-mode-switch{display:flex;gap:.3rem;padding:.3rem;border-radius:50px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04)}
+        .fx-mode-switch button{flex:1;padding:.55rem 1rem;border-radius:50px;border:none;background:transparent;color:rgba(255,255,255,.6);font-family:'Inter',sans-serif;font-size:.84rem;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap}
+        .fx-mode-switch button:hover{color:rgba(255,255,255,.9)}
+        .fx-mode-switch button.active{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#0d0d1a;box-shadow:0 3px 14px rgba(201,168,76,.3)}
         /* Mixer (valor numérico) */
         .focus-mixer{max-width:100%}
         .focus-mixer label{font-size:.9rem;color:rgba(255,255,255,.78)}
@@ -740,16 +749,33 @@
         .focus-overlay[data-env="rain"] .fx-rain{display:block}
         .focus-overlay[data-env="clouds"] .fx-clouds{display:block}
         .focus-overlay[data-env="stars"] .fx-starglow{display:block}
-        .fx-stars{background-image:radial-gradient(1.5px 1.5px at 8% 12%,rgba(255,255,255,.9),transparent),radial-gradient(1px 1px at 17% 28%,rgba(255,255,255,.7),transparent),radial-gradient(2px 2px at 24% 9%,rgba(255,248,228,.95),transparent),radial-gradient(1px 1px at 33% 22%,rgba(255,255,255,.6),transparent),radial-gradient(1.5px 1.5px at 41% 6%,rgba(255,255,255,.85),transparent),radial-gradient(1px 1px at 56% 11%,rgba(255,255,255,.8),transparent),radial-gradient(2px 2px at 71% 7%,rgba(255,248,228,.9),transparent),radial-gradient(1px 1px at 79% 19%,rgba(255,255,255,.7),transparent),radial-gradient(1.5px 1.5px at 87% 13%,rgba(255,255,255,.85),transparent),radial-gradient(1px 1px at 94% 26%,rgba(255,255,255,.6),transparent),radial-gradient(1.5px 1.5px at 28% 38%,rgba(255,255,255,.8),transparent),radial-gradient(1.5px 1.5px at 59% 44%,rgba(255,255,255,.75),transparent),radial-gradient(2px 2px at 88% 47%,rgba(255,248,228,.85),transparent),radial-gradient(1.5px 1.5px at 21% 66%,rgba(255,255,255,.8),transparent),radial-gradient(1.5px 1.5px at 67% 68%,rgba(255,255,255,.8),transparent),radial-gradient(1.5px 1.5px at 49% 86%,rgba(255,255,255,.8),transparent);animation:fxTwinkle 5s ease-in-out infinite alternate}
+        .fx-stars{background-image:radial-gradient(1.5px 1.5px at 8% 12%,rgba(255,255,255,.9),transparent),radial-gradient(1px 1px at 17% 28%,rgba(255,255,255,.7),transparent),radial-gradient(2px 2px at 24% 9%,rgba(255,248,228,.95),transparent),radial-gradient(1px 1px at 33% 22%,rgba(255,255,255,.6),transparent),radial-gradient(1.5px 1.5px at 41% 6%,rgba(255,255,255,.85),transparent),radial-gradient(1px 1px at 56% 11%,rgba(255,255,255,.8),transparent),radial-gradient(2px 2px at 71% 7%,rgba(255,248,228,.9),transparent),radial-gradient(1px 1px at 79% 19%,rgba(255,255,255,.7),transparent),radial-gradient(1.5px 1.5px at 87% 13%,rgba(255,255,255,.85),transparent),radial-gradient(1px 1px at 94% 26%,rgba(255,255,255,.6),transparent),radial-gradient(1.5px 1.5px at 28% 38%,rgba(255,255,255,.8),transparent),radial-gradient(1.5px 1.5px at 59% 44%,rgba(255,255,255,.75),transparent),radial-gradient(2px 2px at 88% 47%,rgba(255,248,228,.85),transparent),radial-gradient(1.5px 1.5px at 21% 66%,rgba(255,255,255,.8),transparent),radial-gradient(1.5px 1.5px at 67% 68%,rgba(255,255,255,.8),transparent),radial-gradient(1.5px 1.5px at 49% 86%,rgba(255,255,255,.8),transparent),radial-gradient(1px 1px at 13% 19%,rgba(255,255,255,.7),transparent),radial-gradient(1px 1px at 37% 14%,rgba(255,255,255,.6),transparent),radial-gradient(1.5px 1.5px at 64% 16%,rgba(255,248,228,.8),transparent),radial-gradient(1px 1px at 82% 31%,rgba(255,255,255,.65),transparent),radial-gradient(1px 1px at 6% 34%,rgba(255,255,255,.6),transparent),radial-gradient(1.5px 1.5px at 45% 33%,rgba(255,255,255,.75),transparent),radial-gradient(1px 1px at 73% 38%,rgba(255,255,255,.6),transparent),radial-gradient(1.5px 1.5px at 35% 55%,rgba(255,255,255,.7),transparent),radial-gradient(1px 1px at 12% 57%,rgba(255,255,255,.6),transparent),radial-gradient(1px 1px at 78% 58%,rgba(255,248,228,.7),transparent),radial-gradient(1.5px 1.5px at 54% 64%,rgba(255,255,255,.7),transparent),radial-gradient(1px 1px at 30% 76%,rgba(255,255,255,.6),transparent),radial-gradient(1px 1px at 84% 78%,rgba(255,255,255,.65),transparent),radial-gradient(1.5px 1.5px at 9% 80%,rgba(255,255,255,.7),transparent),radial-gradient(1px 1px at 62% 90%,rgba(255,255,255,.55),transparent);animation:fxTwinkle 5s ease-in-out infinite alternate}
         .focus-overlay:not([data-env="stars"]) .fx-stars{opacity:.35}
         @keyframes fxTwinkle{0%{opacity:.6}100%{opacity:1}}
         .fx-glow-star{position:absolute;border-radius:50%;background:#fff;animation:fxStarPulse ease-in-out infinite alternate}
         @keyframes fxStarPulse{0%{opacity:.35;transform:scale(.8)}100%{opacity:1;transform:scale(1.25)}}
         .fx-rain-drop{position:absolute;width:1px;background:linear-gradient(to bottom,transparent,rgba(180,200,230,.45));animation:fxRainFall linear infinite}
         @keyframes fxRainFall{0%{transform:translateY(-100px);opacity:0}10%{opacity:1}90%{opacity:1}100%{transform:translateY(100vh);opacity:0}}
-        .fx-cloud{position:absolute;left:0;width:130px;height:44px;background:rgba(255,255,255,.06);border-radius:44px;filter:blur(14px);box-shadow:32px 8px 0 -2px rgba(255,255,255,.06),70px 2px 0 -4px rgba(255,255,255,.05),20px -14px 0 -7px rgba(255,255,255,.05),52px -16px 0 -5px rgba(255,255,255,.06);animation:fxCloudDrift linear infinite}
-        @keyframes fxCloudDrift{0%{transform:translateX(-280px) scale(var(--s,1))}100%{transform:translateX(calc(100vw + 280px)) scale(var(--s,1))}}
-        @media(prefers-reduced-motion:reduce){.fx-stars,.fx-glow-star,.fx-rain-drop,.fx-cloud,.fx-timer.running .fx-timer-glow,.fx-now-eq span{animation:none}}
+        /* Nube esponjosa: cúmulos blancos definidos sobre base plana (no niebla) */
+        .fx-cloud{position:absolute;left:0;width:190px;height:70px;opacity:.7;filter:blur(2px);background-repeat:no-repeat;
+            background-image:
+                radial-gradient(circle at 28% 62%,rgba(255,255,255,.92) 0 20px,transparent 21px),
+                radial-gradient(circle at 50% 46%,rgba(255,255,255,.96) 0 28px,transparent 29px),
+                radial-gradient(circle at 70% 60%,rgba(255,255,255,.9) 0 24px,transparent 25px),
+                radial-gradient(circle at 86% 66%,rgba(255,255,255,.85) 0 17px,transparent 18px),
+                radial-gradient(circle at 14% 68%,rgba(255,255,255,.82) 0 15px,transparent 16px),
+                radial-gradient(ellipse 86px 17px at 50% 80%,rgba(255,255,255,.8),transparent 75%);
+            animation:fxCloudDrift linear infinite}
+        @keyframes fxCloudDrift{0%{transform:translateX(-320px) scale(var(--s,1))}100%{transform:translateX(calc(100vw + 320px)) scale(var(--s,1))}}
+        /* Meteoritos: solo con estrellas; cruzan de vez en cuando y se desvanecen */
+        .fx-meteor{position:absolute;width:130px;height:2px;border-radius:2px;opacity:0;transform-origin:left center;
+            background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.95));
+            filter:drop-shadow(0 0 6px rgba(255,255,255,.75));animation:fxMeteor linear infinite}
+        @keyframes fxMeteor{0%{opacity:0;transform:translate(0,0) rotate(20deg) scaleX(.4)}
+            3%{opacity:1;transform:translate(7vw,4vh) rotate(20deg) scaleX(1)}
+            9%{opacity:0;transform:translate(34vw,18vh) rotate(20deg) scaleX(1)}
+            100%{opacity:0;transform:translate(34vw,18vh) rotate(20deg) scaleX(1)}}
+        @media(prefers-reduced-motion:reduce){.fx-stars,.fx-glow-star,.fx-rain-drop,.fx-cloud,.fx-meteor,.fx-timer.running .fx-timer-glow,.fx-now-eq span{animation:none}}
         @media(max-height:760px){.fx-timer{width:12rem;height:12rem}.fx-timer-display{font-size:2.4rem}.fx-ctrl-main{width:4rem;height:4rem}}
         .teaser-list{list-style:none;padding:0;margin:1rem 0;display:flex;flex-direction:column;gap:.7rem;text-align:left}
         .teaser-list li{display:flex;align-items:flex-start;gap:.6rem;color:rgba(255,255,255,.85);font-family:'Inter',sans-serif;font-size:.92rem;line-height:1.4}
@@ -2086,6 +2112,12 @@
                 <button data-min="45"></button><button data-min="60"></button>
             </div>
 
+            <!-- ░░ Cambio de modo sin salir: Solo música ↔ Voz y música ░░ -->
+            <div class="fx-mode-switch" id="fxModeSwitch" role="tablist" aria-label="Modo de enfoque">
+                <button data-sub="meditar" onclick="Focus.switchMode('meditar')">🎵 Solo música</button>
+                <button data-sub="voz" onclick="Focus.switchMode('voz')">🎙️ Voz y música</button>
+            </div>
+
             <div class="fx-divider"></div>
 
             <!-- ░░ Pantalla de versículos — solo Meditación ░░ -->
@@ -2110,10 +2142,17 @@
                 <svg id="focusMusicPauseIcon" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
             </button>
 
-            <!-- ░░ Música de Fondo (categorías) ░░ -->
+            <!-- ░░ Música de Fondo (categorías + aleatorio) ░░ -->
             <div class="fx-section">
                 <p class="fx-label">Música de Fondo</p>
                 <div class="fx-cat-grid" id="fxCatGrid"></div>
+                <button class="fx-shuffle-btn" id="fxShuffleBtn" onclick="Focus.toggleShuffleAuto()">🔀 Aleatorio · empieza siempre distinto</button>
+            </div>
+
+            <!-- ░░ Mi mezcla preferida (guardar / aplicar) ░░ -->
+            <div class="fx-section">
+                <p class="fx-label">Mi mezcla preferida</p>
+                <div class="focus-presets" id="focusPresets"></div>
             </div>
 
             <!-- ░░ Mezcla Música / Voz ░░ -->
@@ -2154,13 +2193,6 @@
                 </div>
                 <div class="fx-now-eq" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
             </div>
-
-            <!-- ░░ Todos los ambientes + mezclas guardadas (avanzado) ░░ -->
-            <details class="fx-more">
-                <summary>Más ambientes y mis mezclas</summary>
-                <div class="focus-ambients" id="focusAmbients"></div>
-                <div class="focus-presets" id="focusPresets"></div>
-            </details>
         </div>
 
         <!-- Overlay de sesión completada -->
@@ -3529,6 +3561,7 @@
 
         function renderAmbients() {
             const box = document.getElementById('focusAmbients');
+            if (!box) return;   // lista avanzada retirada del diseño; categorías + aleatorio la sustituyen
             box.innerHTML = '';
             const shuf = document.createElement('button');
             shuf.className = 'focus-shuffle' + (shuffleAuto ? ' active' : '');
@@ -3717,13 +3750,16 @@
             updateShuffleBtn();
             if (shuffleAuto) pickRandomAmbient();
         }
+        // Alias público para el botón de aleatorio que ahora vive junto a la
+        // música. Alterna el modo aleatorio automático (empieza siempre distinto).
+        function toggleShuffleAuto() { shuffleAll(); }
         function updateShuffleBtn() {
-            const btn = document.querySelector('.focus-shuffle');
+            const btn = document.getElementById('fxShuffleBtn');
             if (!btn) return;
             btn.classList.toggle('active', shuffleAuto);
             btn.innerHTML = shuffleAuto
                 ? '🔀 Aleatorio automático · activado'
-                : '🔀 Ambiente al azar · todas las categorías';
+                : '🔀 Aleatorio · empieza siempre distinto';
         }
         function stopAmbient() {
             ambToken++;                 // cancela cargas en vuelo
@@ -3815,10 +3851,18 @@
         // La cámara lenta (<1×) solo se permite con la voz SBLL 2026: la RVA 1909
         // pierde calidad al ralentizarla, así que con esa voz se ofrece cambiar.
         function setSpeed(rate, btn) {
+            // Cámara lenta: un solo clic basta. Si la voz no es SBLL 2026, cambiamos
+            // a ella automáticamente (la RVA 1909 pierde calidad ralentizada) y
+            // aplicamos la velocidad en el mismo gesto. playbackSpeed se fija antes
+            // de recargar para que el handler 'play' del audio nuevo lo reaplique.
             if (rate < 1 && translationMode !== 'sbll') {
-                const hint = document.getElementById('focusSpeedHint');
-                if (hint) { hint.classList.add('show'); hint.classList.remove('pulse'); void hint.offsetWidth; hint.classList.add('pulse'); }
-                return;   // no aplicar cámara lenta con la voz 1909
+                playbackSpeed = Math.max(0.9, Math.min(1.25, rate));
+                if (window.setTranslation) setTranslation('sbll');   // async: recarga con la velocidad ya fijada
+                updateSpeedAvailability();
+                showToast('🎧 Voz SBLL 2026 + cámara lenta activadas');
+                document.querySelectorAll('#focusSpeedOpts button').forEach(b => b.classList.remove('active'));
+                if (btn) btn.classList.add('active');
+                return;
             }
             playbackSpeed = Math.max(0.9, Math.min(1.25, rate));
             try { audioA.playbackRate = playbackSpeed; audioB.playbackRate = playbackSpeed; } catch (e) {}
@@ -4163,22 +4207,14 @@
             closeSelector();
             if (!premiumReady()) { openTeaser(); return; }
             _openOverlay('meditar');
+            _reflectModeSwitch('meditar');
             _startMeditation();
         }
 
         // ── Modo Con voz ───────────────────────────────────────────────────────
-        function enterVoz() {
-            closeSelector();
-            if (!premiumReady()) { openTeaser(); return; }
-
-            // Sin capítulo seleccionado no hay nada que narrar → llevar a Biblia
-            if (!state.book) {
-                showToast('📖 Primero elige un capítulo en la pestaña Biblia');
-                showTab('biblia');
-                return;
-            }
-
-            _openOverlay('voz');
+        // Arranca (o adjunta) la narración bíblica. Reutilizable desde enterVoz y
+        // desde el cambio de modo en caliente (switchMode), sin reabrir el overlay.
+        function _startVozNarration() {
             focusNarration = true;
             updateSpeedAvailability();
 
@@ -4198,6 +4234,54 @@
                 onNarration(true);
                 startStreamTrack();
             }
+        }
+
+        function enterVoz() {
+            closeSelector();
+            if (!premiumReady()) { openTeaser(); return; }
+
+            // Sin capítulo seleccionado no hay nada que narrar → llevar a Biblia
+            if (!state.book) {
+                showToast('📖 Primero elige un capítulo en la pestaña Biblia');
+                showTab('biblia');
+                return;
+            }
+
+            _openOverlay('voz');
+            _reflectModeSwitch('voz');
+            _startVozNarration();
+        }
+
+        // ── Cambio de modo SIN salir del overlay (Solo música ↔ Voz y música) ──
+        function switchMode(mode) {
+            if (mode !== 'voz' && mode !== 'meditar') return;
+            if (focusSubMode === mode) return;
+            if (mode === 'voz') {
+                // Para narrar hace falta un capítulo. Si no hay, avisar y no cambiar.
+                if (!state.book) {
+                    showToast('📖 Elige primero un capítulo en la pestaña Biblia para la voz');
+                    return;
+                }
+                _stopMeditation();
+                overlay.dataset.mode = 'voz';
+                focusSubMode = 'voz';
+                _reflectModeSwitch('voz');
+                syncVerse();
+                _startVozNarration();
+            } else {
+                // Volver a solo música: detener la narración, conservar la música.
+                focusNarration = false;
+                try { audio.pause(); } catch (e) {}
+                overlay.dataset.mode = 'meditar';
+                focusSubMode = 'meditar';
+                _reflectModeSwitch('meditar');
+                _startMeditation();
+            }
+        }
+        // Refleja el modo activo en el toggle superior.
+        function _reflectModeSwitch(mode) {
+            document.querySelectorAll('#fxModeSwitch button').forEach(b =>
+                b.classList.toggle('active', b.dataset.sub === mode));
         }
 
         // ── Entrada desde hub Explorar: muestra el selector ────────────────────
@@ -4331,7 +4415,7 @@
             stBusy = false;
         }
 
-        return { enter, exit, enterVoz, enterMeditar, selectAmbient, toggleMusic, setVoz, setMusica, setSpeed, setTimer, setBg, onNarration, syncVerse, refreshGate, openTeaser, closeTeaser, closeSelector, useSbllVoice, startStreamTrack, tickStreamTrack, ambients, meditNext, meditPrev, meditShuffle };
+        return { enter, exit, enterVoz, enterMeditar, switchMode, toggleShuffleAuto, selectAmbient, toggleMusic, setVoz, setMusica, setSpeed, setTimer, setBg, onNarration, syncVerse, refreshGate, openTeaser, closeTeaser, closeSelector, useSbllVoice, startStreamTrack, tickStreamTrack, ambients, meditNext, meditPrev, meditShuffle };
     })();
     window.Focus = Focus;
 
@@ -4398,13 +4482,19 @@
         function createGlowStars() {
             const c = document.getElementById('fxStarGlow'); if (!c) return;
             c.innerHTML = '';
-            for (let i = 0; i < 10; i++) {
+            for (let i = 0; i < 16; i++) {
                 const s = document.createElement('div'); s.className = 'fx-glow-star';
                 const size = 2 + Math.random() * 2.8;
                 const tint = Math.random() < 0.3 ? '255,248,228' : '255,255,255';
                 s.style.cssText = `width:${size}px;height:${size}px;left:${2 + Math.random()*95}%;top:${Math.random()*72}%;background:rgba(${tint},1);box-shadow:0 0 ${(5+size*3.2).toFixed(0)}px rgba(${tint},0.9);animation-duration:${(2.4+Math.random()*3.2).toFixed(2)}s;animation-delay:${(-Math.random()*4).toFixed(2)}s`;
                 c.appendChild(s);
             }
+            // Meteoritos ocasionales (2, con ciclos largos y distintos → cruzan de vez en cuando).
+            [{ dur: 13, delay: 3 }, { dur: 19, delay: 10 }].forEach(m => {
+                const me = document.createElement('div'); me.className = 'fx-meteor';
+                me.style.cssText = `left:${5 + Math.random()*45}%;top:${2 + Math.random()*30}%;animation-duration:${m.dur}s;animation-delay:${m.delay}s`;
+                c.appendChild(me);
+            });
         }
         function createRain() {
             const c = document.getElementById('fxRain'); if (!c) return;
@@ -4418,10 +4508,10 @@
         function createClouds() {
             const c = document.getElementById('fxClouds'); if (!c) return;
             c.innerHTML = '';
-            for (let i = 0; i < 7; i++) {
+            for (let i = 0; i < 5; i++) {
                 const cl = document.createElement('div'); cl.className = 'fx-cloud';
-                cl.style.setProperty('--s', (0.6 + Math.random()*1.2).toFixed(2));
-                cl.style.top = (Math.random()*65) + '%';
+                cl.style.setProperty('--s', (0.7 + Math.random()*0.9).toFixed(2));
+                cl.style.top = (Math.random()*60) + '%';
                 cl.style.animationDuration = (38 + Math.random()*42).toFixed(0) + 's';
                 cl.style.animationDelay = (-Math.random()*60).toFixed(0) + 's';
                 c.appendChild(cl);
