@@ -156,6 +156,55 @@ async function isPremium(env, uid) {
     }
 }
 
+// Resuelve el uid de Firebase a partir del email (Identity Toolkit, requiere el
+// service account con scope identitytoolkit). Devuelve null si la cuenta no existe.
+async function lookupUidByEmail(env, email) {
+    const accessToken = await getGoogleAccessToken(env);
+    const res = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:lookup', {
+        method: 'POST',
+        headers: {
+            'Authorization': 'Bearer ' + accessToken,
+            'Content-Type': 'application/json',
+            'X-Goog-User-Project': env.FIREBASE_PROJECT_ID,
+        },
+        body: JSON.stringify({ email: [email] }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw { status: 502, msg: 'Firebase lookup: ' + ((data.error && data.error.message) || res.status) };
+    const u = data.users && data.users[0];
+    return u ? u.localId : null;
+}
+
+// Marca premium PERMANENTE (cortesía, sin pago) en KV. Sin campo `expira` => no
+// caduca nunca. Vive fuera del flujo de Stripe: como el usuario no paga, ningún
+// webhook lo sobrescribe.
+async function grantPremiumComp(env, uid) {
+    const record = {
+        premium: true,
+        status: 'comp',
+        plan: 'comp',
+        source: 'admin-grant',
+        granted_at: new Date().toISOString(),
+    };
+    await env.PREMIUM.put(uid, JSON.stringify(record));
+    return record;
+}
+
+// POST /api/admin/grant-premium  (público; autenticado por X-Admin-Secret, NO por
+// token Firebase — para poder concederlo desde la terminal/script del dueño).
+// Body: { email } o { uid }. Concede premium permanente sin pago.
+async function handleAdminGrant(request, env) {
+    const secret = request.headers.get('X-Admin-Secret') || '';
+    if (!env.ADMIN_SECRET || secret !== env.ADMIN_SECRET) throw { status: 403, msg: 'no autorizado' };
+    const body = await request.json().catch(() => ({}));
+    let uid = (body.uid || '').trim();
+    const email = (body.email || '').trim().toLowerCase();
+    if (!uid && email) uid = await lookupUidByEmail(env, email);
+    if (!uid) throw { status: 404, msg: email ? 'esa cuenta aún no existe (debe iniciar sesión una vez)' : 'falta uid o email' };
+    const record = await grantPremiumComp(env, uid);
+    return json(env, request, { ok: true, uid, email: email || null, record });
+}
+
 // ── Stripe (suscripciones premium) ───────────────────────────────────
 // El estado premium se sincroniza DESDE Stripe hacia KV PREMIUM vía webhook;
 // la app nunca decide sola si alguien es premium tras pagar.
@@ -1064,6 +1113,11 @@ export default {
             // Endpoint público (sin token): beacon de visitas (anónimo).
             if (path === '/api/track' && request.method === 'POST') {
                 return await handleTrack(request, env);
+            }
+            // Endpoint admin (sin token Firebase; autenticado por X-Admin-Secret):
+            // conceder premium permanente sin pago. `return await`: lanza { status }.
+            if (path === '/api/admin/grant-premium' && request.method === 'POST') {
+                return await handleAdminGrant(request, env);
             }
             // Endpoint público (sin token): ver una lista compartida (solo si es pública).
             const pub = path.match(/^\/api\/public\/playlist\/([A-Za-z0-9]+)$/);
