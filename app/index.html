@@ -652,7 +652,10 @@
         .fx-title-main{font-family:'Inter',sans-serif;font-size:.95rem;letter-spacing:.16em;font-weight:700;color:#fff}
         .fx-prem-badge{font-family:'Inter',sans-serif;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:#0d0d1a;background:linear-gradient(135deg,var(--gold-light),var(--gold-dark));padding:.4rem .7rem;border-radius:50px}
         /* Temporizador circular */
-        .fx-timer{position:relative;width:15rem;height:15rem;margin:.2rem 0}
+        .fx-timer{position:relative;width:15rem;height:15rem;margin:.2rem 0;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .2s}
+        .fx-timer:hover .fx-timer-glow{opacity:.45}
+        .fx-timer:active{transform:scale(.97)}
+        .fx-timer:focus-visible{outline:2px solid var(--gold-light);outline-offset:6px;border-radius:50%}
         .fx-timer-glow{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle,rgba(201,168,76,.3),transparent 70%);opacity:.25}
         .fx-timer-svg{position:relative;z-index:1;width:100%;height:100%}
         .fx-timer-ring{transition:stroke-dashoffset 1s linear}
@@ -709,8 +712,10 @@
         .fx-now-eyebrow{font-family:'Inter',sans-serif;font-size:.66rem;text-transform:uppercase;letter-spacing:.2em;color:rgba(255,255,255,.4);font-weight:700}
         .fx-now-title{font-family:'Inter',sans-serif;font-size:.95rem;color:#fff;font-weight:600;margin-top:.2rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
         .fx-now-eq{display:flex;align-items:flex-end;gap:3px;height:1.4rem;flex:none}
-        .fx-now-eq span{width:3px;background:var(--gold-light);border-radius:2px;height:40%;animation:fxEq 1s ease-in-out infinite}
+        .fx-now-eq span{width:3px;background:var(--gold-light);border-radius:2px;height:40%;animation:fxEq 1s ease-in-out infinite;animation-play-state:paused;opacity:.45}
         .fx-now-eq span:nth-child(2){animation-delay:.2s}.fx-now-eq span:nth-child(3){animation-delay:.4s}.fx-now-eq span:nth-child(4){animation-delay:.1s}
+        /* El ecualizador solo se mueve cuando hay música sonando */
+        .fx-now.playing .fx-now-eq span{animation-play-state:running;opacity:1}
         @keyframes fxEq{0%,100%{height:30%}50%{height:100%}}
         /* Detalle "más ambientes" */
         .fx-more{width:100%;border-top:1px solid rgba(255,255,255,.06);padding-top:.8rem}
@@ -2026,7 +2031,6 @@
     <audio id="ambientAudio" loop preload="none" playsinline controlsList="nodownload noplaybackrate" oncontextmenu="return false"></audio>
     <div class="focus-overlay" id="focusOverlay" aria-hidden="true" role="dialog" aria-label="Modo Enfoque">
         <div class="focus-aura" aria-hidden="true"><span></span><span></span><span></span></div>
-        <canvas class="focus-motes" id="focusMotes" aria-hidden="true"></canvas>
         <div class="focus-bg"></div>
         <!-- Entorno visual (estrellas / lluvia / nubes) -->
         <div class="fx-stars" id="fxStars" aria-hidden="true"></div>
@@ -2045,8 +2049,8 @@
             <div class="focus-ref" id="focusRef">Modo Enfoque</div>
             <div class="focus-streak" id="focusStreak" hidden></div>
 
-            <!-- ░░ Temporizador circular de sesión ░░ -->
-            <div class="fx-timer">
+            <!-- ░░ Temporizador circular de sesión — el círculo es el botón de play ░░ -->
+            <div class="fx-timer" id="fxTimer" role="button" tabindex="0" aria-label="Iniciar o pausar el temporizador" onclick="FocusTimer.toggle()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();FocusTimer.toggle()}">
                 <div class="fx-timer-glow"></div>
                 <svg class="fx-timer-svg" viewBox="0 0 200 200" aria-hidden="true">
                     <circle cx="100" cy="100" r="88" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="3"/>
@@ -2064,7 +2068,6 @@
             </div>
             <div class="fx-timer-ctrls">
                 <button onclick="FocusTimer.reset()" class="fx-ctrl" aria-label="Reiniciar"><svg viewBox="0 0 24 24"><path d="M1 4v6h6M3.5 9a9 9 0 1 1-.5 5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-                <button onclick="FocusTimer.toggle()" id="fxTimerBtn" class="fx-ctrl fx-ctrl-main" aria-label="Iniciar o pausar"><svg id="fxTimerBtnIcon" viewBox="0 0 24 24"><polygon points="6 4 20 12 6 20 6 4"/></svg></button>
                 <button onclick="FocusTimer.skip()" class="fx-ctrl" aria-label="Finalizar"><svg viewBox="0 0 24 24"><path d="M5 4l11 8-11 8V4zM19 5v14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
             </div>
             <div class="fx-presets" id="fxTimerPresets">
@@ -2087,7 +2090,6 @@
 
             <!-- ░░ Pantalla de versículos — solo Meditación ░░ -->
             <div class="focus-verse-wrap meditar-only" id="focusVerseWrap">
-                <div class="focus-packs" id="focusPacks"></div>
                 <p class="focus-verse-body" id="focusVerseBody"></p>
                 <div class="focus-verse-nav">
                     <button onclick="Focus.meditPrev()">‹ Anterior</button>
@@ -2100,6 +2102,12 @@
             <button class="focus-play voz-only" id="focusPlayBtn" onclick="togglePlay()" aria-label="Reproducir o pausar la narración">
                 <svg id="focusPlayIcon" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
                 <svg id="focusPauseIcon" viewBox="0 0 24 24" style="display:none"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+            </button>
+
+            <!-- ░░ Botón play/pausa música — solo Meditación ░░ -->
+            <button class="focus-play meditar-only" id="focusMusicBtn" onclick="Focus.toggleMusic()" aria-label="Reproducir o pausar la música">
+                <svg id="focusMusicPlayIcon" viewBox="0 0 24 24" style="display:none"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                <svg id="focusMusicPauseIcon" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
             </button>
 
             <!-- ░░ Música de Fondo (categorías) ░░ -->
@@ -2138,7 +2146,7 @@
             <div class="fx-divider"></div>
 
             <!-- ░░ Reproduciendo ahora ░░ -->
-            <div class="fx-now">
+            <div class="fx-now" id="fxNow">
                 <div class="fx-now-emblem" id="focusEmblem"><span class="focus-emblem-icon" id="focusEmblemIcon">🕊️</span></div>
                 <div class="fx-now-info">
                     <p class="fx-now-eyebrow">Reproduciendo ahora</p>
@@ -3184,12 +3192,17 @@
     }
 
     // ════════════════════════════════════════════════════════════════
-    // Fondo animado del Modo Enfoque: motas de luz que flotan en canvas.
-    // Liviano (≤58 partículas, dpr≤2), solo corre con el overlay abierto y
-    // se detiene al cerrar o con la pestaña en segundo plano (ahorra batería).
-    // Respeta prefers-reduced-motion. El color lo toma de --f-mote del overlay.
+    // Fondo del Modo Enfoque: DESACTIVADO el motor de "motas/luciérnagas".
+    // Saturaban el fondo y tapaban el entorno visual (estrellas/lluvia/nubes).
+    // Ahora el fondo es solo gradiente + aura suave + el entorno de FocusEnv.
+    // Se deja el módulo como no-op para no tocar sus llamadas (start/stop/…).
     // ════════════════════════════════════════════════════════════════
     const FocusFX = (function () {
+        const _mc = document.getElementById('focusMotes');
+        if (_mc) _mc.remove();
+        return { start(){}, stop(){}, retint(){}, theme(){} };
+    })();
+    const _FocusFX_dead = (function () {
         const canvas  = document.getElementById('focusMotes');
         const overlay = document.getElementById('focusOverlay');
         if (!canvas || !overlay) return { start(){}, stop(){}, retint(){}, theme(){} };
@@ -3728,6 +3741,30 @@
             markChips();
             updateShuffleBtn();
         }
+        // Refleja en la UI si hay música sonando: mueve el ecualizador de
+        // "Reproduciendo ahora" y cambia el icono del botón de música (meditación).
+        function _setMusicPlaying(on) {
+            const now = document.getElementById('fxNow');
+            if (now) now.classList.toggle('playing', !!on);
+            const pi = document.getElementById('focusMusicPlayIcon');
+            const pa = document.getElementById('focusMusicPauseIcon');
+            if (pi) pi.style.display = on ? 'none'  : 'block';
+            if (pa) pa.style.display = on ? 'block' : 'none';
+        }
+        // Pausa/reanuda la música (botón del modo Meditación). Si aún no hay
+        // ambiente, arranca uno al azar.
+        function toggleMusic() {
+            if (!currentAmbient) { pickRandomAmbient(); return; }
+            if (ambCur.paused) { ambCur.play().catch(() => {}); }
+            else { try { ambientEl.pause(); ambientElB.pause(); } catch (e) {} }
+        }
+        // El estado real de reproducción manda sobre la UI: escuchamos play/pause
+        // de ambos elementos de audio (cubre selección, crossfade, sueño y voz).
+        [ambientEl, ambientElB].forEach(el => {
+            el.addEventListener('play',  () => _setMusicPlaying(true));
+            el.addEventListener('pause', () => { if (ambientEl.paused && ambientElB.paused) _setMusicPlaying(false); });
+        });
+
         // Rotación automática entre variantes: fundir justo antes de que termine
         // la pista; si igual llega al final, saltar en seco como respaldo.
         [ambientEl, ambientElB].forEach(el => {
@@ -4112,7 +4149,7 @@
         function meditShuffle() { buildPool(); meditShow(0); _meditResetTimer(); }
 
         function _startMeditation() {
-            currentPack = _savedPack();
+            currentPack = 'todos';   // los packs de temas se retiraron del diseño
             renderPacks();
             buildPool();           // baraja el pool del pack guardado
             meditShow(0);          // ya viene barajado → empieza fresco
@@ -4294,7 +4331,7 @@
             stBusy = false;
         }
 
-        return { enter, exit, enterVoz, enterMeditar, selectAmbient, setVoz, setMusica, setSpeed, setTimer, setBg, onNarration, syncVerse, refreshGate, openTeaser, closeTeaser, closeSelector, useSbllVoice, startStreamTrack, tickStreamTrack, ambients, meditNext, meditPrev, meditShuffle };
+        return { enter, exit, enterVoz, enterMeditar, selectAmbient, toggleMusic, setVoz, setMusica, setSpeed, setTimer, setBg, onNarration, syncVerse, refreshGate, openTeaser, closeTeaser, closeSelector, useSbllVoice, startStreamTrack, tickStreamTrack, ambients, meditNext, meditPrev, meditShuffle };
     })();
     window.Focus = Focus;
 
