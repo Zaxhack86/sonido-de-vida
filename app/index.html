@@ -1059,7 +1059,7 @@
         <!-- Navegación de la WEB (oculta en la PWA instalada, donde manda la barra inferior) -->
         <ul class="nav-links" id="navLinks" role="tablist">
             <li><a href="#" data-navtab="inicio" onclick="showTab('inicio');return false;">Inicio</a></li>
-            <li><a href="#" data-navtab="explorar" onclick="showTab('explorar');return false;">Explorar</a></li>
+            <li><a href="/devocionales">Devocionales</a></li>
             <li><a href="#" data-navtab="biblia" onclick="showTab('biblia');return false;">Biblia</a></li>
             <li><a href="#" data-navtab="buscar" onclick="showTab('buscar');return false;">Buscar</a></li>
             <li><a href="#" data-navtab="yo" onclick="showTab('yo');return false;">Yo</a></li>
@@ -1747,7 +1747,7 @@
         <div class="footer-content">
             <div class="footer-logo">✝ Sonido de Vida</div>
             <p class="footer-text">"Lámpara es a mis pies tu palabra, y lumbrera a mi camino." — Salmo 119:105</p>
-            <div class="footer-links"><a href="#" onclick="showTab('explorar');return false;">Explorar</a><a href="#" onclick="showTab('biblia');return false;">Escuchar</a><a href="/devocionales">Devocionales</a><a href="/quienes-somos">Quiénes Somos</a><a href="/contacto">Contacto</a><a href="#" onclick="openShareModal();return false;">Compartir / QR</a><a href="/terminos_condiciones">Términos y Condiciones</a><a href="/privacidad">Política de Privacidad</a><a href="https://donate.stripe.com/28E6oG2C29yneiJ5k33F600" target="_blank" rel="noopener" style="color:var(--gold-light)">♡ Donar</a></div>
+            <div class="footer-links"><a href="#" onclick="showTab('biblia');return false;">Escuchar</a><a href="/devocionales">Devocionales</a><a href="#" onclick="if(window.Focus)Focus.enter();return false;">Modo Enfoque</a><a href="/quienes-somos">Quiénes Somos</a><a href="/contacto">Contacto</a><a href="#" onclick="openShareModal();return false;">Compartir / QR</a><a href="/terminos_condiciones">Términos y Condiciones</a><a href="/privacidad">Política de Privacidad</a><a href="https://donate.stripe.com/28E6oG2C29yneiJ5k33F600" target="_blank" rel="noopener" style="color:var(--gold-light)">♡ Donar</a></div>
             <div class="footer-divider"></div>
             <p class="footer-bottom">© 2026 Sonido de Vida · sonidodevida.com · La Palabra de Dios, libre para todos.</p>
         </div>
@@ -1758,7 +1758,7 @@
 
     <nav class="bottom-nav" id="bottomNav" role="tablist" aria-label="Navegación principal">
         <button class="bn-item active" data-bn="inicio" onclick="showTab('inicio')" role="tab" aria-label="Inicio"><span class="bn-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9.5 21v-6h5v6"/></svg></span><span class="bn-label">Inicio</span></button>
-        <button class="bn-item" data-bn="explorar" onclick="showTab('explorar')" role="tab" aria-label="Explorar"><span class="bn-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-5 2-2 5 5-2z"/></svg></span><span class="bn-label">Explorar</span></button>
+        <button class="bn-item" data-bn="devocionales" onclick="location.href='/devocionales'" role="tab" aria-label="Devocionales"><span class="bn-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5C4 4.7 4.7 4 5.5 4H18a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.5.5H6a2 2 0 0 1-2-2z"/><path d="M8 4v14"/><path d="M11.5 9.5h5"/><path d="M11.5 12.5h5"/></svg></span><span class="bn-label">Devocionales</span></button>
         <button class="bn-item" data-bn="biblia" onclick="showTab('biblia')" role="tab" aria-label="Biblia"><span class="bn-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.5C10.4 5 7.5 4.5 4 5v13c3.5-.5 6.4 0 8 1.5 1.6-1.5 4.5-2 8-1.5V5c-3.5-.5-6.4 0-8 1.5z"/><path d="M12 6.5V20"/></svg></span><span class="bn-label">Biblia</span></button>
         <button class="bn-item" data-bn="buscar" onclick="showTab('buscar')" role="tab" aria-label="Buscar"><span class="bn-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span><span class="bn-label">Buscar</span></button>
         <button class="bn-item" data-bn="yo" onclick="showTab('yo')" role="tab" aria-label="Yo"><span class="bn-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6"/></svg></span><span class="bn-label">Yo</span></button>
