@@ -5,12 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1847146837046506" crossorigin="anonymous"></script>
   <title>Devocionales Bíblicos en Español — Sonido de Vida</title>
-  <meta name="description" content="Devocionales bíblicos profundos en español. Reflexiones sobre los versículos más buscados de la Biblia: Salmos 23, Juan 3:16, Filipenses 4:13 y más. Con audio incluido.">
+  <meta name="description" content="Devocionales bíblicos profundos en español. Reflexiones sobre los versículos más buscados de la Biblia: Salmos 23, Juan 3:16, Filipenses 4:13 y más.">
   <link rel="canonical" href="https://sonidodevida.com/devocionales">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://sonidodevida.com/devocionales">
   <meta property="og:title" content="Devocionales Bíblicos en Español — Sonido de Vida">
-  <meta property="og:description" content="Devocionales profundos sobre los versículos más buscados de la Biblia, con audio incluido. Gratis.">
+  <meta property="og:description" content="Reflexiones profundas sobre los versículos más buscados de la Biblia. Gratis.">
   <meta property="og:image" content="https://sonidodevida.com/og-image.png">
   <meta property="og:site_name" content="Sonido de Vida">
   <script type="application/ld+json">
@@ -18,7 +18,7 @@
     "@context":"https://schema.org",
     "@type":"CollectionPage",
     "name":"Devocionales Bíblicos en Español",
-    "description":"Reflexiones profundas sobre versículos clave de la Biblia en español, con audio incluido.",
+    "description":"Reflexiones profundas sobre versículos clave de la Biblia en español.",
     "url":"https://sonidodevida.com/devocionales",
     "publisher":{"@type":"Organization","name":"Sonido de Vida","url":"https://sonidodevida.com"}
   }
@@ -27,68 +27,107 @@
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Lora:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
     *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-    :root{--gold:#c9a84c;--gold-light:#e8d48b;--gold-dark:#a07c2a;--deep-blue:#1a1a3e;--dark:#0d0d1a;--cream:#f5f0e8;--warm-white:#faf8f4;--text-dark:#2c2c3e;--text-light:#6b6b80}
-    body{font-family:'Inter',sans-serif;color:#f3eee2;
-      background:radial-gradient(1100px 620px at 50% -8%, rgba(201,168,76,.07), transparent 62%),
+    html{scroll-behavior:smooth}
+    :root{--gold:#c9a84c;--gold-light:#e8d48b;--gold-dark:#a07c2a;--deep-blue:#1a1a3e;--dark:#0d0d1a;--cream:#f5f0e8;--warm-white:#faf8f4;--text:#f3eee2;--muted:#a6abba}
+    body{font-family:'Inter',sans-serif;color:var(--text);
+      background:radial-gradient(1100px 620px at 50% -8%, rgba(201,168,76,.08), transparent 62%),
         linear-gradient(180deg,#070e20 0%, #0a1226 60%, #0b1430 100%);
-      background-attachment:fixed;min-height:100vh}
+      background-attachment:fixed;min-height:100vh;overflow-x:hidden}
 
-    nav{background:rgba(7,14,32,.78);backdrop-filter:blur(12px);border-bottom:1px solid rgba(201,168,76,.12);padding:.9rem 2rem;display:flex;justify-content:space-between;align-items:center}
+    /* ── Nav ── */
+    nav{position:sticky;top:0;z-index:50;background:rgba(7,14,32,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(201,168,76,.12);padding:.9rem 2rem;display:flex;justify-content:space-between;align-items:center}
     .nav-logo{font-family:'Cinzel',serif;font-size:1.3rem;font-weight:700;color:var(--gold-light);text-decoration:none;display:flex;align-items:center;gap:.5rem}
-    .nav-links{display:flex;gap:1.5rem;list-style:none}
+    .nav-links{display:flex;gap:1.6rem;list-style:none}
     .nav-links a{color:rgba(255,255,255,.75);text-decoration:none;font-size:.88rem;transition:color .2s}
-    .nav-links a:hover{color:var(--gold-light)}
+    .nav-links a:hover,.nav-links a.active{color:var(--gold-light)}
 
-    .hero{position:relative;background:
-        radial-gradient(820px 600px at 50% -12%, rgba(201,168,76,.12), transparent 60%),
-        radial-gradient(440px 440px at 20% 80%, rgba(201,168,76,.06), transparent 62%),
-        linear-gradient(180deg,#070e20 0%, #0b1430 55%, #0a1226 100%);
-      padding:5rem 2rem 4rem;text-align:center;border-bottom:1px solid rgba(201,168,76,.1)}
-    .hero-tag{display:inline-block;background:rgba(201,168,76,.15);border:1px solid rgba(201,168,76,.3);color:var(--gold-light);font-size:.78rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:.35rem 1rem;border-radius:50px;margin-bottom:1.5rem}
-    .hero h1{font-family:'Cinzel',serif;font-size:clamp(1.8rem,4vw,2.8rem);margin-bottom:1rem;line-height:1.25;
+    /* ── Hero ── */
+    .hero{max-width:1180px;margin:0 auto;padding:4.5rem 2rem 1rem}
+    .hero-greeting{font-size:.78rem;text-transform:uppercase;letter-spacing:.28em;color:var(--gold-light);font-weight:600;margin-bottom:1rem;opacity:.9}
+    .hero h1{font-family:'Cinzel',serif;font-size:clamp(2.2rem,6vw,4rem);line-height:1.05;letter-spacing:-.5px;font-weight:700;
       background:linear-gradient(180deg,#FAF7F0 0%,#C9B8A0 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
-    .hero h1 span{background:linear-gradient(135deg,#E6CE80,#C9A84C,#A8863A);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;color:transparent}
-    .hero p{font-family:'Lora',serif;font-size:1.1rem;color:#aab0bf;max-width:580px;margin:0 auto 2.5rem;line-height:1.7}
-    .hero-cta{display:inline-flex;align-items:center;gap:.6rem;background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:var(--dark);padding:.85rem 2rem;border-radius:50px;font-weight:700;font-size:.95rem;text-decoration:none;transition:transform .2s,box-shadow .2s;box-shadow:0 12px 32px -10px rgba(201,168,76,.55)}
-    .hero-cta:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(201,168,76,.4)}
+    .hero h1 span{display:block;background:linear-gradient(135deg,#E6CE80,#C9A84C,#A8863A);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+    .hero p{font-family:'Lora',serif;font-size:1.08rem;color:var(--muted);max-width:520px;margin-top:1.3rem;line-height:1.7}
 
-    .filter-bar{background:rgba(13,21,48,.55);backdrop-filter:blur(10px);border-bottom:1px solid rgba(201,168,76,.12);padding:1rem 2rem;display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center}
-    .filter-btn{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);color:#cfd3dd;padding:.4rem 1rem;border-radius:50px;font-size:.83rem;font-weight:500;cursor:pointer;transition:all .2s;font-family:inherit}
-    .filter-btn:hover{border-color:rgba(201,168,76,.4);color:#E6CE80}
+    /* ── Filtros ── */
+    .filter-bar{max-width:1180px;margin:2.4rem auto 0;padding:0 2rem;display:flex;gap:.6rem;flex-wrap:wrap}
+    .filter-btn{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);color:#cfd3dd;padding:.45rem 1.1rem;border-radius:50px;font-size:.83rem;font-weight:500;cursor:pointer;transition:all .2s;font-family:inherit}
+    .filter-btn:hover{border-color:rgba(201,168,76,.4);color:var(--gold-light)}
     .filter-btn.active{background:linear-gradient(135deg,#E6CE80,#C9A84C);color:#070e20;border-color:transparent;font-weight:700}
 
-    .grid-wrap{max-width:1100px;margin:0 auto;padding:3rem 2rem 5rem}
-    .grid-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem}
-    .grid-header h2{font-family:'Cinzel',serif;font-size:1.2rem;
-      background:linear-gradient(135deg,#E6CE80,#C9A84C,#A8863A);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
-    .grid-count{font-size:.85rem;color:#8b90a0}
+    /* ── Sección ── */
+    .section{max-width:1180px;margin:0 auto;padding:2.4rem 2rem 1rem}
+    .section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.4rem}
+    .section-head h2{font-family:'Cinzel',serif;font-size:.95rem;letter-spacing:.14em;text-transform:uppercase;
+      background:linear-gradient(135deg,#E6CE80,#C9A84C);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+    .grid-count{font-size:.82rem;color:#8b90a0}
 
-    .devocionales-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.5rem}
+    /* ── Grid ── */
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.4rem}
 
-    .card{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07);border-radius:16px;overflow:hidden;text-decoration:none;transition:transform .2s,box-shadow .2s,border-color .2s;display:flex;flex-direction:column;backdrop-filter:blur(14px)}
-    .card:hover{transform:translateY(-4px);box-shadow:0 22px 55px rgba(0,0,0,.45);border-color:rgba(201,168,76,.3)}
-    .card-top{background:radial-gradient(420px 200px at 20% 0%, rgba(201,168,76,.1), transparent 60%),linear-gradient(135deg,#0b1430,#0d1733);padding:1.5rem;position:relative;border-bottom:1px solid rgba(201,168,76,.12)}
-    .card-ref{font-family:'Cinzel',serif;font-size:.85rem;color:var(--gold-light);letter-spacing:.06em;margin-bottom:.5rem}
-    .card-verse{font-family:'Lora',serif;font-size:1rem;color:#f3eee2;line-height:1.55;font-style:italic}
-    .card-verse::before{content:'"';color:var(--gold-light)}
-    .card-verse::after{content:'"';color:var(--gold-light)}
+    /* ── Tarjeta ── */
+    .card{position:relative;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07);border-radius:18px;overflow:hidden;text-decoration:none;color:inherit;display:flex;flex-direction:column;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:transform .35s cubic-bezier(.25,1,.5,1),box-shadow .35s,border-color .35s}
+    .card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--gold-dark));transform:scaleX(0);transform-origin:left;transition:transform .4s ease}
+    .card:hover{transform:translateY(-6px);box-shadow:0 26px 60px rgba(0,0,0,.5);border-color:rgba(201,168,76,.34)}
+    .card:hover::after{transform:scaleX(1)}
+    .card-top{background:radial-gradient(420px 200px at 20% 0%, rgba(201,168,76,.12), transparent 60%),linear-gradient(135deg,#0b1430,#0d1733);padding:1.5rem;border-bottom:1px solid rgba(201,168,76,.12)}
+    .card-ref{font-family:'Cinzel',serif;font-size:.82rem;color:var(--gold-light);letter-spacing:.06em;margin-bottom:.55rem}
+    .card-verse{font-family:'Lora',serif;font-size:1rem;color:var(--text);line-height:1.55;font-style:italic}
+    .card-verse::before{content:'“';color:var(--gold-light)}
+    .card-verse::after{content:'”';color:var(--gold-light)}
     .card-body{padding:1.2rem 1.4rem;flex:1;display:flex;flex-direction:column}
-    .card-title{font-family:'Cinzel',serif;font-size:.95rem;color:#f0ead9;line-height:1.35;margin-bottom:.6rem}
-    .card-excerpt{font-family:'Lora',serif;font-size:.9rem;color:#a6abba;line-height:1.65;flex:1;margin-bottom:1.1rem}
+    .card-title{font-family:'Cinzel',serif;font-size:.98rem;color:#f0ead9;line-height:1.35;margin-bottom:.6rem}
+    .card-excerpt{font-family:'Lora',serif;font-size:.9rem;color:var(--muted);line-height:1.65;flex:1;margin-bottom:1.1rem}
     .card-footer{display:flex;justify-content:space-between;align-items:center}
     .card-tags{display:flex;gap:.4rem;flex-wrap:wrap}
     .card-tag{font-size:.72rem;color:var(--gold-light);background:rgba(201,168,76,.1);padding:.2rem .6rem;border-radius:50px;border:1px solid rgba(201,168,76,.22)}
-    .card-arrow{color:var(--gold);font-size:1.1rem;font-weight:600;flex-shrink:0}
+    .card-link{display:inline-flex;align-items:center;gap:.4rem;color:var(--gold);font-weight:600;font-size:.86rem;transition:gap .2s}
+    .card:hover .card-link{gap:.7rem}
 
-    .cta-section{background:radial-gradient(720px 360px at 50% 0%, rgba(201,168,76,.1), transparent 60%),linear-gradient(180deg,#0b1430,#0a1226);padding:4rem 2rem;text-align:center;margin-top:2rem;border-top:1px solid rgba(201,168,76,.12)}
-    .cta-section h2{font-family:'Cinzel',serif;font-size:1.5rem;color:var(--gold-light);margin-bottom:.75rem}
-    .cta-section p{font-family:'Lora',serif;color:#aab0bf;margin-bottom:1.8rem;font-size:1rem}
+    /* ── Destacado ── */
+    .card--featured{grid-column:1/-1;flex-direction:row;align-items:stretch}
+    .card--featured .card-top{flex:0 0 42%;display:flex;flex-direction:column;justify-content:center;border-bottom:none;border-right:1px solid rgba(201,168,76,.12);
+      background:radial-gradient(560px 320px at 10% 0%, rgba(201,168,76,.16), transparent 60%),linear-gradient(135deg,#0b1430,#0e1a3c);padding:2.4rem}
+    .card--featured .card-ref{font-size:.9rem}
+    .card--featured .card-verse{font-size:1.3rem;line-height:1.5}
+    .card--featured .card-body{padding:2.4rem;justify-content:center}
+    .card--featured .card-title{font-size:1.6rem;margin-bottom:.9rem}
+    .card--featured .card-excerpt{font-size:1.02rem}
+    .featured-badge{position:absolute;top:1.2rem;left:1.2rem;z-index:2;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:#070e20;background:linear-gradient(135deg,#E6CE80,#C9A84C);padding:.3rem .9rem;border-radius:50px}
 
-    @media(max-width:640px){
-      .devocionales-grid{grid-template-columns:1fr}
-      .hero{padding:3.5rem 1.5rem 3rem}
-      .grid-wrap{padding:2rem 1.25rem 4rem}
+    /* ── CTA inferior ── */
+    .cta{max-width:1180px;margin:3rem auto 0;padding:0 2rem}
+    .cta-inner{background:radial-gradient(720px 360px at 50% 0%, rgba(201,168,76,.12), transparent 60%),linear-gradient(135deg,#0b1430,#0a1226);border:1px solid rgba(201,168,76,.16);border-radius:22px;padding:3rem 2rem;text-align:center}
+    .cta-inner h2{font-family:'Cinzel',serif;font-size:1.4rem;color:var(--gold-light);margin-bottom:.7rem}
+    .cta-inner p{font-family:'Lora',serif;color:var(--muted);margin-bottom:1.6rem;font-size:1rem}
+    .btn-gold{display:inline-flex;align-items:center;gap:.6rem;background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#0d0d1a;padding:.85rem 2rem;border-radius:50px;font-weight:700;font-size:.95rem;text-decoration:none;transition:transform .2s,box-shadow .2s;box-shadow:0 12px 32px -10px rgba(201,168,76,.55)}
+    .btn-gold:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(201,168,76,.45)}
+
+    /* ── Footer mínimo ── */
+    footer{max-width:1180px;margin:3rem auto 0;padding:2.5rem 2rem 3rem;text-align:center;border-top:1px solid rgba(201,168,76,.1)}
+    .foot-quote{font-family:'Lora',serif;font-style:italic;color:var(--muted);font-size:.95rem;max-width:540px;margin:0 auto .4rem}
+    .foot-ref{font-size:.74rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-light);font-weight:600}
+    .foot-links{display:flex;gap:1.6rem;justify-content:center;margin-top:1.6rem;flex-wrap:wrap}
+    .foot-links a{font-size:.78rem;color:#8b90a0;text-decoration:none;transition:color .2s}
+    .foot-links a:hover{color:var(--gold-light)}
+    .foot-copy{font-size:.74rem;color:#5c6373;margin-top:1.4rem}
+
+    /* ── Animación de entrada ── */
+    .reveal{opacity:0;transform:translateY(22px);transition:opacity .7s cubic-bezier(.25,1,.5,1),transform .7s cubic-bezier(.25,1,.5,1)}
+    .reveal.in{opacity:1;transform:none}
+    @media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}}
+
+    @media(max-width:760px){
+      nav{padding:.8rem 1.2rem}
       .nav-links{display:none}
+      .grid{grid-template-columns:1fr}
+      .hero{padding:3rem 1.4rem 1rem}
+      .filter-bar,.section,.cta,footer{padding-left:1.4rem;padding-right:1.4rem}
+      .card--featured{flex-direction:column}
+      .card--featured .card-top{flex:none;border-right:none;border-bottom:1px solid rgba(201,168,76,.12);padding:3.2rem 1.8rem 1.8rem}
+      .card--featured .card-verse{font-size:1.1rem}
+      .card--featured .card-body{padding:1.8rem}
+      .card--featured .card-title{font-size:1.3rem}
     }
   </style>
 </head>
@@ -98,21 +137,19 @@
   <a href="/" class="nav-logo">♪ Sonido de Vida</a>
   <ul class="nav-links">
     <li><a href="/">Reproductor</a></li>
-    <li><a href="/devocionales">Devocionales</a></li>
+    <li><a href="/devocionales" class="active">Devocionales</a></li>
   </ul>
 </nav>
 
-<div class="hero">
-  <div class="hero-tag">✦ Devocionales</div>
-  <h1>Palabras que <span>alimentan el alma</span></h1>
-  <p>Reflexiones profundas sobre los versículos más buscados de la Biblia. Con cada devocional puedes escuchar el capítulo completo en audio.</p>
-  <a href="/" class="hero-cta">
-    <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none"/></svg>
-    Abrir el reproductor
-  </a>
-</div>
+<!-- ── Hero ── -->
+<header class="hero">
+  <p class="hero-greeting reveal" id="greeting">Bienvenido</p>
+  <h1 class="reveal">Explora la <span>Palabra</span></h1>
+  <p class="reveal">Reflexiones profundas sobre los versículos más buscados de la Biblia. Una lectura para encontrarte con Dios en cualquier momento del día.</p>
+</header>
 
-<div class="filter-bar">
+<!-- ── Filtros ── -->
+<div class="filter-bar reveal">
   <button class="filter-btn active" onclick="filterCards('todos',this)">Todos</button>
   <button class="filter-btn" onclick="filterCards('Salmos',this)">Salmos</button>
   <button class="filter-btn" onclick="filterCards('Nuevo Testamento',this)">Nuevo Testamento</button>
@@ -120,15 +157,18 @@
   <button class="filter-btn" onclick="filterCards('Sabiduría',this)">Sabiduría</button>
 </div>
 
-<div class="grid-wrap">
-  <div class="grid-header">
+<!-- ── Listado ── -->
+<section class="section">
+  <div class="section-head">
     <h2>Todos los devocionales</h2>
     <span class="grid-count" id="grid-count">19 devocionales</span>
   </div>
 
-  <div class="devocionales-grid" id="devocionales-grid">
+  <div class="grid" id="grid">
 
-    <a href="/devocional/lucas-15" class="card" data-category="Nuevo Testamento">
+    <!-- Destacado -->
+    <a href="/devocional/lucas-15" class="card card--featured reveal" data-category="Nuevo Testamento">
+      <span class="featured-badge">Destacado</span>
       <div class="card-top">
         <div class="card-ref">Lucas 15:20</div>
         <div class="card-verse">Y cuando aún estaba lejos, lo vio su padre, y fue movido a misericordia, y corrió.</div>
@@ -138,12 +178,12 @@
         <div class="card-excerpt">Que un padre anciano corriera era un escándalo en el mundo de Jesús. Por qué ese detalle cambia toda la parábola del hijo pródigo.</div>
         <div class="card-footer">
           <div class="card-tags"><span class="card-tag">Lucas</span><span class="card-tag">Gracia</span></div>
-          <span class="card-arrow">→</span>
+          <span class="card-link">Leer devocional →</span>
         </div>
       </div>
     </a>
 
-    <a href="/devocional/1-corintios-13" class="card" data-category="Nuevo Testamento">
+    <a href="/devocional/1-corintios-13" class="card reveal" data-category="Nuevo Testamento">
       <div class="card-top">
         <div class="card-ref">1 Corintios 13:4</div>
         <div class="card-verse">El amor es sufrido, es benigno; el amor no tiene envidia, no busca lo suyo.</div>
@@ -153,12 +193,12 @@
         <div class="card-excerpt">El himno al amor no se escribió para una boda, sino para una iglesia que se peleaba. Qué es el ágape y por qué el amor es un verbo.</div>
         <div class="card-footer">
           <div class="card-tags"><span class="card-tag">1 Corintios</span><span class="card-tag">Amor</span></div>
-          <span class="card-arrow">→</span>
+          <span class="card-link">Leer →</span>
         </div>
       </div>
     </a>
 
-    <a href="/devocional/josue-1-9" class="card" data-category="Antiguo Testamento">
+    <a href="/devocional/josue-1-9" class="card reveal" data-category="Antiguo Testamento">
       <div class="card-top">
         <div class="card-ref">Josué 1:9</div>
         <div class="card-verse">Esfuérzate y sé valiente: no temas ni desmayes, porque Jehová tu Dios será contigo.</div>
@@ -168,12 +208,12 @@
         <div class="card-excerpt">Se lo dijo a un hombre aterrado de reemplazar a Moisés. Por qué el valor bíblico es una orden anclada en una presencia, no una emoción.</div>
         <div class="card-footer">
           <div class="card-tags"><span class="card-tag">Josué</span><span class="card-tag">Valor</span></div>
-          <span class="card-arrow">→</span>
+          <span class="card-link">Leer →</span>
         </div>
       </div>
     </a>
 
-    <a href="/devocional/mateo-11-28" class="card" data-category="Nuevo Testamento">
+    <a href="/devocional/mateo-11-28" class="card reveal" data-category="Nuevo Testamento">
       <div class="card-top">
         <div class="card-ref">Mateo 11:28</div>
         <div class="card-verse">Venid a mí todos los que estáis trabajados y cargados, que yo os haré descansar.</div>
@@ -183,12 +223,12 @@
         <div class="card-excerpt">Hay un cansancio que dormir no cura. El yugo de Jesús, el descanso del alma y por qué su invitación empieza con «venid».</div>
         <div class="card-footer">
           <div class="card-tags"><span class="card-tag">Mateo</span><span class="card-tag">Descanso</span></div>
-          <span class="card-arrow">→</span>
+          <span class="card-link">Leer →</span>
         </div>
       </div>
     </a>
 
-    <a href="/devocional/salmos-46-10" class="card" data-category="Salmos">
+    <a href="/devocional/salmos-46-10" class="card reveal" data-category="Salmos">
       <div class="card-top">
         <div class="card-ref">Salmos 46:10</div>
         <div class="card-verse">Estad quietos, y conoced que yo soy Dios.</div>
@@ -198,12 +238,12 @@
         <div class="card-excerpt">No se escribió en calma, sino con el mundo cayéndose. Qué significa el hebreo raphah y por qué «estad quietos» es una orden de guerra.</div>
         <div class="card-footer">
           <div class="card-tags"><span class="card-tag">Salmos</span><span class="card-tag">Paz</span></div>
-          <span class="card-arrow">→</span>
+          <span class="card-link">Leer →</span>
         </div>
       </div>
     </a>
 
-    <a href="/devocional/hebreos-7" class="card" data-category="Nuevo Testamento">
+    <a href="/devocional/hebreos-7" class="card reveal" data-category="Nuevo Testamento">
       <div class="card-top">
         <div class="card-ref">Hebreos 7:3</div>
         <div class="card-verse">Sin padre, sin madre, sin genealogía; permanece sacerdote para siempre.</div>
@@ -213,12 +253,12 @@
         <div class="card-excerpt">Aparece en tres versículos, sin padre ni madre ni genealogía, y mil años después la Biblia lo vuelve a nombrar. Por qué apunta directamente a Jesús.</div>
         <div class="card-footer">
           <div class="card-tags"><span class="card-tag">Hebreos</span><span class="card-tag">Cristo</span></div>
-          <span class="card-arrow">→</span>
+          <span class="card-link">Leer →</span>
         </div>
       </div>
     </a>
 
-    <a href="/devocional/apocalipsis-3" class="card" data-category="Nuevo Testamento">
+    <a href="/devocional/apocalipsis-3" class="card reveal" data-category="Nuevo Testamento">
       <div class="card-top">
         <div class="card-ref">Apocalipsis 3:20</div>
         <div class="card-verse">He aquí que yo estoy a la puerta y llamo. Si alguien oye mi voz y abre la puerta, entraré a él.</div>
@@ -228,12 +268,12 @@
         <div class="card-excerpt">La indirecta más ingeniosa de la Biblia tiene sentido cuando conoces el agua de Laodicea. Qué significa ser tibio y cómo dejar de serlo.</div>
         <div class="card-footer">
           <div class="card-tags"><span class="card-tag">Apocalipsis</span><span class="card-tag">Entrega</span></div>
-          <span class="card-arrow">→</span>
+          <span class="card-link">Leer →</span>
         </div>
       </div>
     </a>
 
-    <a href="/devocional/juan-4" class="card" data-category="Nuevo Testamento">
+    <a href="/devocional/juan-4" class="card reveal" data-category="Nuevo Testamento">
       <div class="card-top">
         <div class="card-ref">Juan 4:14</div>
         <div class="card-verse">El agua que yo le daré se convertirá en él en una fuente de agua que salta hasta la vida eterna.</div>
@@ -243,12 +283,12 @@
         <div class="card-excerpt">Iba al pozo al mediodía para que nadie la viera. La conversación más larga de Jesús fue con una samaritana de pasado roto. Por qué te conoce del todo y se queda.</div>
         <div class="card-footer">
           <div class="card-tags"><span class="card-tag">Juan</span><span class="card-tag">Gracia</span></div>
-          <span class="card-arrow">→</span>
+          <span class="card-link">Leer →</span>
         </div>
       </div>
     </a>
 
-    <a href="/devocional/genesis-1-1" class="card" data-category="Antiguo Testamento">
+    <a href="/devocional/genesis-1-1" class="card reveal" data-category="Antiguo Testamento">
       <div class="card-top">
         <div class="card-ref">Génesis 1:1</div>
         <div class="card-verse">En el principio creó Dios los cielos y la tierra.</div>
@@ -258,12 +298,12 @@
         <div class="card-excerpt">Lo que la primera frase de la Biblia dice sobre tu valor, tu identidad y el significado de "bara" — la creación que solo Dios puede hacer.</div>
         <div class="card-footer">
           <div class="card-tags"><span class="card-tag">Génesis</span><span class="card-tag">Identidad</span></div>
-          <span class="card-arrow">→</span>
+          <span class="card-link">Leer →</span>
         </div>
       </div>
     </a>
 
-    <a href="/devocional/salmos-23" class="card" data-category="Salmos">
+    <a href="/devocional/salmos-23" class="card reveal" data-category="Salmos">
       <div class="card-top">
         <div class="card-ref">Salmos 23:1</div>
         <div class="card-verse">El Señor es mi pastor; nada me faltará.</div>
@@ -273,12 +313,12 @@
         <div class="card-excerpt">David lo escribió huyendo de su propio hijo. Por eso sus palabras de confianza no son teoría — son fe probada en el fuego más doloroso.</div>
         <div class="card-footer">
           <div class="card-tags"><span class="card-tag">Salmos</span><span class="card-tag">Confianza</span></div>
-          <span class="card-arrow">→</span>
+          <span class="card-link">Leer →</span>
         </div>
       </div>
     </a>
 
-    <a href="/devocional/salmos-91" class="card" data-category="Salmos">
+    <a href="/devocional/salmos-91" class="card reveal" data-category="Salmos">
       <div class="card-top">
         <div class="card-ref">Salmos 91:1</div>
         <div class="card-verse">El que habita al abrigo del Altísimo morará bajo la sombra del Omnipotente.</div>
@@ -288,12 +328,12 @@
         <div class="card-excerpt">Las promesas del Salmo 91 son reales — pero dependen de una condición en el primer versículo que casi nadie menciona. ¿Estás habitando o visitando?</div>
         <div class="card-footer">
           <div class="card-tags"><span class="card-tag">Salmos</span><span class="card-tag">Protección</span></div>
-          <span class="card-arrow">→</span>
+          <span class="card-link">Leer →</span>
         </div>
       </div>
     </a>
 
-    <a href="/devocional/proverbios-3-5" class="card" data-category="Sabiduría">
+    <a href="/devocional/proverbios-3-5" class="card reveal" data-category="Sabiduría">
       <div class="card-top">
         <div class="card-ref">Proverbios 3:5-6</div>
         <div class="card-verse">Confía en Jehová con todo tu corazón, y no te apoyes en tu propio entendimiento.</div>
@@ -303,12 +343,12 @@
         <div class="card-excerpt">Lo que la palabra hebrea "batach" revela sobre lo que significa confiar de verdad — no de respaldo, sino con todo el peso encima.</div>
         <div class="card-footer">
           <div class="card-tags"><span class="card-tag">Proverbios</span><span class="card-tag">Sabiduría</span></div>
-          <span class="card-arrow">→</span>
+          <span class="card-link">Leer →</span>
         </div>
       </div>
     </a>
 
-    <a href="/devocional/isaias-40-31" class="card" data-category="Profetas">
+    <a href="/devocional/isaias-40-31" class="card reveal" data-category="Profetas">
       <div class="card-top">
         <div class="card-ref">Isaías 40:31</div>
         <div class="card-verse">Los que esperan a Jehová tendrán nuevas fuerzas; levantarán alas como las águilas.</div>
@@ -318,12 +358,12 @@
         <div class="card-excerpt">El orden de las tres promesas (águilas, carrera, caminata) es descendente, no ascendente. La más difícil y más necesaria es la última.</div>
         <div class="card-footer">
           <div class="card-tags"><span class="card-tag">Isaías</span><span class="card-tag">Esperanza</span></div>
-          <span class="card-arrow">→</span>
+          <span class="card-link">Leer →</span>
         </div>
       </div>
     </a>
 
-    <a href="/devocional/jeremias-29-11" class="card" data-category="Profetas">
+    <a href="/devocional/jeremias-29-11" class="card reveal" data-category="Profetas">
       <div class="card-top">
         <div class="card-ref">Jeremías 29:11</div>
         <div class="card-verse">Pensamientos de paz y no de mal, para daros el fin que esperáis.</div>
@@ -333,12 +373,12 @@
         <div class="card-excerpt">Esta promesa fue escrita para personas en exilio que esperarían setenta años. El contexto lo hace más poderoso — y más exigente — de lo que parece en una taza de café.</div>
         <div class="card-footer">
           <div class="card-tags"><span class="card-tag">Jeremías</span><span class="card-tag">Esperanza</span></div>
-          <span class="card-arrow">→</span>
+          <span class="card-link">Leer →</span>
         </div>
       </div>
     </a>
 
-    <a href="/devocional/mateo-6-33" class="card" data-category="Nuevo Testamento">
+    <a href="/devocional/mateo-6-33" class="card reveal" data-category="Nuevo Testamento">
       <div class="card-top">
         <div class="card-ref">Mateo 6:33</div>
         <div class="card-verse">Buscad primeramente el reino de Dios y su justicia.</div>
@@ -348,12 +388,12 @@
         <div class="card-excerpt">Jesús habló a campesinos pobres que tenían razones concretas para afanarse. Lo que significa "buscar primero" en la vida real y desordenada.</div>
         <div class="card-footer">
           <div class="card-tags"><span class="card-tag">Mateo</span><span class="card-tag">Reino</span></div>
-          <span class="card-arrow">→</span>
+          <span class="card-link">Leer →</span>
         </div>
       </div>
     </a>
 
-    <a href="/devocional/juan-3-16" class="card" data-category="Nuevo Testamento">
+    <a href="/devocional/juan-3-16" class="card reveal" data-category="Nuevo Testamento">
       <div class="card-top">
         <div class="card-ref">Juan 3:16</div>
         <div class="card-verse">Porque de tal manera amó Dios al mundo, que ha dado a su Hijo unigénito.</div>
@@ -363,12 +403,12 @@
         <div class="card-excerpt">Dicho de noche a un experto religioso que no entendía lo más básico. "De tal manera" no habla de cuánto amó Dios — habla de cómo amó.</div>
         <div class="card-footer">
           <div class="card-tags"><span class="card-tag">Juan</span><span class="card-tag">Salvación</span></div>
-          <span class="card-arrow">→</span>
+          <span class="card-link">Leer →</span>
         </div>
       </div>
     </a>
 
-    <a href="/devocional/romanos-8-1" class="card" data-category="Nuevo Testamento">
+    <a href="/devocional/romanos-8-1" class="card reveal" data-category="Nuevo Testamento">
       <div class="card-top">
         <div class="card-ref">Romanos 8:1</div>
         <div class="card-verse">Ahora, pues, ninguna condenación hay para los que están en Cristo Jesús.</div>
@@ -378,12 +418,12 @@
         <div class="card-excerpt">Pablo acababa de confesar su fracaso más honesto. Y entonces: ninguna condenación. La diferencia entre lo que el juez declara y lo que el acusador susurra.</div>
         <div class="card-footer">
           <div class="card-tags"><span class="card-tag">Romanos</span><span class="card-tag">Libertad</span></div>
-          <span class="card-arrow">→</span>
+          <span class="card-link">Leer →</span>
         </div>
       </div>
     </a>
 
-    <a href="/devocional/romanos-8-28" class="card" data-category="Nuevo Testamento">
+    <a href="/devocional/romanos-8-28" class="card reveal" data-category="Nuevo Testamento">
       <div class="card-top">
         <div class="card-ref">Romanos 8:28</div>
         <div class="card-verse">A los que aman a Dios, todas las cosas les ayudan a bien.</div>
@@ -393,12 +433,12 @@
         <div class="card-excerpt">No dice que todo es bueno. Dice que Dios puede tomar cualquier cosa — incluso lo que usó el enemigo — y hacerla cooperar hacia un propósito de bien.</div>
         <div class="card-footer">
           <div class="card-tags"><span class="card-tag">Romanos</span><span class="card-tag">Sufrimiento</span></div>
-          <span class="card-arrow">→</span>
+          <span class="card-link">Leer →</span>
         </div>
       </div>
     </a>
 
-    <a href="/devocional/filipenses-4-13" class="card" data-category="Nuevo Testamento">
+    <a href="/devocional/filipenses-4-13" class="card reveal" data-category="Nuevo Testamento">
       <div class="card-top">
         <div class="card-ref">Filipenses 4:13</div>
         <div class="card-verse">Todo lo puedo en Cristo que me fortalece.</div>
@@ -408,48 +448,75 @@
         <div class="card-excerpt">"He aprendido a contentarme" — el verbo que lo cambia todo. El contentamiento no era natural para Pablo. Era aprendido. Y esa es la promesa real del versículo.</div>
         <div class="card-footer">
           <div class="card-tags"><span class="card-tag">Filipenses</span><span class="card-tag">Fortaleza</span></div>
-          <span class="card-arrow">→</span>
+          <span class="card-link">Leer →</span>
         </div>
       </div>
     </a>
 
   </div>
+</section>
+
+<!-- ── CTA inferior ── -->
+<div class="cta reveal">
+  <div class="cta-inner">
+    <h2>Y escucha la Biblia completa en audio</h2>
+    <p>Los 66 libros, capítulo por capítulo. Reina Valera 1909. Gratis y sin registro.</p>
+    <a href="/" class="btn-gold">
+      <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none"/></svg>
+      Abrir el reproductor
+    </a>
+  </div>
 </div>
 
-<div class="cta-section">
-  <h2>Escucha la Biblia completa en audio</h2>
-  <p>Los 66 libros, capítulo por capítulo. Reina Valera 1909. Gratis y sin registro.</p>
-  <a href="/" class="hero-cta">
-    <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none"/></svg>
-    Abrir el reproductor de audio
-  </a>
-</div>
+<!-- ── Footer mínimo ── -->
+<footer>
+  <p class="foot-quote">“Lámpara es a mis pies tu palabra, y lumbrera a mi camino.”</p>
+  <p class="foot-ref">Salmos 119:105</p>
+  <div class="foot-links">
+    <a href="/">Reproductor</a>
+    <a href="/devocionales">Devocionales</a>
+    <a href="/quienes-somos">Quiénes somos</a>
+    <a href="/contacto">Contacto</a>
+    <a href="/privacidad">Privacidad</a>
+  </div>
+  <p class="foot-copy">© 2026 Sonido de Vida · sonidodevida.com</p>
+</footer>
 
 <script>
-function filterCards(cat, btn) {
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+// Saludo según la hora
+(function(){
+  var h = new Date().getHours();
+  var g = h < 12 ? 'Buenos días' : (h < 19 ? 'Buenas tardes' : 'Buenas noches');
+  var el = document.getElementById('greeting');
+  if (el) el.textContent = g;
+})();
+
+// Filtro de categorías
+function filterCards(cat, btn){
+  document.querySelectorAll('.filter-btn').forEach(function(b){ b.classList.remove('active'); });
   btn.classList.add('active');
-  const cards = document.querySelectorAll('.card');
-  let visible = 0;
-  cards.forEach(card => {
-    const cardCat = card.dataset.category || '';
-    if (cat === 'todos') {
-      card.style.display = '';
-      visible++;
-    } else if (cat === 'Salmos' && cardCat === 'Salmos') {
-      card.style.display = ''; visible++;
-    } else if (cat === 'Nuevo Testamento' && cardCat === 'Nuevo Testamento') {
-      card.style.display = ''; visible++;
-    } else if (cat === 'Profetas' && cardCat === 'Profetas') {
-      card.style.display = ''; visible++;
-    } else if (cat === 'Sabiduría' && cardCat === 'Sabiduría') {
-      card.style.display = ''; visible++;
-    } else {
-      card.style.display = 'none';
-    }
+  var cards = document.querySelectorAll('.card');
+  var visible = 0;
+  cards.forEach(function(card){
+    var c = card.dataset.category || '';
+    var show = (cat === 'todos') || (c === cat);
+    card.style.display = show ? '' : 'none';
+    if (show) visible++;
   });
   document.getElementById('grid-count').textContent = visible + (visible === 1 ? ' devocional' : ' devocionales');
 }
+
+// Animación de entrada al hacer scroll
+(function(){
+  var els = document.querySelectorAll('.reveal');
+  if (!('IntersectionObserver' in window)) { els.forEach(function(e){ e.classList.add('in'); }); return; }
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if (en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); }
+    });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach(function(e, i){ e.style.transitionDelay = Math.min(i * 45, 360) + 'ms'; io.observe(e); });
+})();
 </script>
 
 </body>
