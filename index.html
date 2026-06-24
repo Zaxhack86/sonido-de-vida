@@ -490,6 +490,137 @@
         .search-result-text mark{background:rgba(201,168,76,.35);color:var(--gold-light);padding:0 .1em;border-radius:3px}
         .search-empty{text-align:center;color:rgba(255,255,255,.55);padding:3rem 1rem;font-family:'Lora',serif}
 
+        /* ════════ Buscar · Estudio Bíblico Profundo ════════ */
+        .sb-section{padding:5rem 1.2rem 4rem}
+        .sb-wrap{max-width:760px;margin:0 auto}
+        .sb-head{text-align:center;margin-bottom:1.8rem}
+        .sb-eyebrow{display:inline-flex;align-items:center;gap:.4rem;font-family:'Inter',sans-serif;font-size:.62rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-light);padding:.34rem .85rem;border-radius:999px;border:1px solid rgba(201,168,76,.32);background:rgba(201,168,76,.08);margin-bottom:1rem}
+        .sb-title{font-family:'Cinzel',serif;font-weight:600;font-size:clamp(2rem,6vw,3.4rem);line-height:1.04;color:#fff;letter-spacing:.01em;margin-bottom:.7rem}
+        .sb-title span{color:var(--gold)}
+        .sb-sub{font-family:'Lora',serif;color:rgba(255,255,255,.6);font-size:.98rem;max-width:30rem;margin:0 auto;line-height:1.5}
+        .sb-searchwrap{position:relative;margin-bottom:1rem}
+        .sb-searchbar{display:flex;align-items:center;gap:.6rem;background:rgba(255,255,255,.05);border:1px solid rgba(201,168,76,.22);border-radius:18px;padding:.55rem .7rem .55rem 1rem;transition:border-color .3s,box-shadow .3s}
+        .sb-searchbar:focus-within{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,.16),0 0 50px rgba(201,168,76,.07)}
+        .sb-mag{width:20px;height:20px;color:rgba(255,255,255,.4);flex-shrink:0}
+        .sb-input{flex:1;min-width:0;background:transparent;border:none;outline:none;color:#fff;font-family:'Inter',sans-serif;font-size:1rem;padding:.5rem 0}
+        .sb-input::placeholder{color:rgba(255,255,255,.38)}
+        .sb-mic{width:40px;height:40px;flex-shrink:0;border:none;background:transparent;color:rgba(255,255,255,.5);border-radius:12px;font-size:1.05rem;cursor:pointer;transition:background .25s,color .25s}
+        .sb-mic:hover{background:rgba(201,168,76,.12);color:var(--gold-light)}
+        .sb-mic.listening{background:rgba(220,70,70,.18);color:#ff7a7a;animation:sbPulse 1.1s ease-in-out infinite}
+        @keyframes sbPulse{0%,100%{box-shadow:0 0 0 0 rgba(220,70,70,.35)}50%{box-shadow:0 0 0 7px rgba(220,70,70,0)}}
+        .sb-go{flex-shrink:0;background:linear-gradient(135deg,var(--gold-light),var(--gold-dark));color:#1a1305;border:none;border-radius:13px;padding:.7rem 1.4rem;font-family:'Inter',sans-serif;font-weight:700;font-size:.82rem;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:transform .25s,filter .25s}
+        .sb-go:hover{transform:scale(1.04);filter:brightness(1.08)}
+        .sb-suggest{display:none;position:absolute;top:calc(100% + 8px);left:0;right:0;z-index:40;background:#191934;border:1px solid rgba(201,168,76,.18);border-radius:16px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.5)}
+        .sb-suggest.open{display:block}
+        .sb-sug{display:flex;align-items:center;gap:.7rem;padding:.8rem 1.1rem;cursor:pointer;color:rgba(255,255,255,.78);font-family:'Inter',sans-serif;font-size:.9rem;transition:background .15s}
+        .sb-sug:hover{background:rgba(201,168,76,.1)}
+        .sb-sug b{color:var(--gold-light);font-weight:600}
+        .sb-sug svg{width:15px;height:15px;color:rgba(255,255,255,.3);flex-shrink:0}
+        .sb-filters{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.6rem;margin-bottom:2.6rem;padding-bottom:.2rem}
+        .sb-tabs{display:flex;flex-wrap:wrap;align-items:center;gap:.1rem}
+        .sb-tab{background:none;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-size:.72rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:rgba(255,255,255,.45);padding:.5rem .7rem;border-bottom:2px solid transparent;transition:color .2s,border-color .2s}
+        .sb-tab:hover{color:var(--gold-light)}
+        .sb-tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+        .sb-tab-sep{width:1px;height:14px;background:rgba(255,255,255,.14);margin:0 .45rem}
+        .sb-version{font-family:'Inter',sans-serif;font-size:.7rem;font-weight:600;letter-spacing:.05em;color:rgba(255,255,255,.4);border:1px solid rgba(255,255,255,.12);border-radius:9px;padding:.35rem .7rem}
+        .sb-block{margin-bottom:2.6rem}
+        .sb-block-head{display:flex;align-items:center;gap:.7rem;margin-bottom:1.1rem}
+        .sb-block-ic{width:34px;height:34px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1rem;border-radius:11px;background:linear-gradient(135deg,rgba(201,168,76,.2),rgba(160,124,42,.08));border:1px solid rgba(201,168,76,.22)}
+        .sb-block-t{display:block;font-family:'Inter',sans-serif;font-size:.66rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:rgba(255,255,255,.55)}
+        .sb-block-s{display:block;font-family:'Lora',serif;font-size:.78rem;color:rgba(255,255,255,.38);margin-top:.1rem}
+        .sb-block-label{display:block;font-family:'Inter',sans-serif;font-size:.66rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:1rem}
+        .sb-intent-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.7rem}
+        @media(min-width:560px){.sb-intent-grid{grid-template-columns:repeat(4,1fr)}}
+        .sb-intent{text-align:left;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:1rem;cursor:pointer;transition:transform .3s cubic-bezier(.16,1,.3,1),border-color .3s,background .3s}
+        .sb-intent:hover{transform:translateY(-5px);border-color:rgba(201,168,76,.4);background:rgba(201,168,76,.05)}
+        .sb-intent-ic{font-size:1.5rem;display:block;margin-bottom:.5rem}
+        .sb-intent-t{display:block;font-family:'Inter',sans-serif;font-size:.82rem;font-weight:600;color:rgba(255,255,255,.85)}
+        .sb-intent-s{display:block;font-family:'Lora',serif;font-size:.7rem;color:rgba(255,255,255,.4);margin-top:.15rem}
+        .sb-topics{display:flex;flex-wrap:wrap;gap:.55rem}
+        .sb-topic{display:inline-flex;align-items:center;gap:.45rem;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:.55rem .95rem;cursor:pointer;font-family:'Inter',sans-serif;font-size:.82rem;color:rgba(255,255,255,.65);transition:transform .2s,border-color .2s,color .2s}
+        .sb-topic:hover{transform:translateY(-2px);border-color:rgba(201,168,76,.4);color:var(--gold-light)}
+        .sb-results-head{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:.3rem}
+        .sb-results-head #searchCount{font-family:'Inter',sans-serif;font-size:.86rem;color:rgba(255,255,255,.6)}
+        .sb-results-hint{font-family:'Lora',serif;font-size:.74rem;color:var(--gold-light);opacity:.7}
+        /* Resultado enriquecido */
+        .search-result .sr-meta{display:flex;align-items:center;flex-wrap:wrap;gap:.4rem;margin-bottom:.45rem}
+        .sr-badge{font-family:'Inter',sans-serif;font-size:.56rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;padding:.12rem .45rem;border-radius:999px}
+        .sr-badge.at{background:rgba(96,140,230,.16);color:#8fb0f0}
+        .sr-badge.nt{background:rgba(80,200,140,.16);color:#7fdcab}
+        .sr-tag{font-family:'Inter',sans-serif;font-size:.55rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:.12rem .45rem;border-radius:999px}
+        .tag-promesa{background:rgba(217,160,60,.16);color:#e6b860}
+        .tag-consuelo{background:rgba(96,140,230,.16);color:#8fb0f0}
+        .tag-fuerza{background:rgba(220,90,90,.15);color:#ee8f8f}
+        .tag-amor{background:rgba(225,110,170,.15);color:#f0a0c8}
+        .tag-fe{background:rgba(160,120,220,.16);color:#bda0ee}
+        .tag-salvacion,.tag-salvación{background:rgba(80,190,130,.15);color:#7fd6a5}
+        .tag-instruccion,.tag-instrucción{background:rgba(80,190,200,.15);color:#7fd2db}
+        .tag-sabiduria,.tag-sabiduría{background:rgba(130,140,225,.16);color:#a6abf0}
+        .tag-esperanza,.tag-confianza{background:rgba(90,195,180,.15);color:#7fd5c8}
+        .tag-generic{background:rgba(255,255,255,.07);color:rgba(255,255,255,.55)}
+        .search-result .sr-study{display:flex;align-items:center;gap:.4rem;margin-top:.7rem;font-family:'Inter',sans-serif;font-size:.7rem;color:var(--gold-light);opacity:.55;transition:opacity .2s}
+        .search-result:hover .sr-study{opacity:1}
+        .sr-study svg{width:13px;height:13px}
+        /* Panel de estudio (premium) */
+        .sb-overlay{position:fixed;inset:0;z-index:5400;background:rgba(0,0,0,.62);backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity .3s}
+        .sb-overlay.open{opacity:1;pointer-events:auto}
+        .sb-panel{position:fixed;top:0;right:0;bottom:0;z-index:5401;width:100%;max-width:640px;background:#10102a;border-left:1px solid rgba(201,168,76,.14);transform:translateX(100%);transition:transform .42s cubic-bezier(.16,1,.3,1);overflow-y:auto;display:flex;flex-direction:column}
+        .sb-panel.open{transform:translateX(0)}
+        .sb-panel-top{position:sticky;top:0;z-index:2;background:rgba(16,16,42,.96);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.06)}
+        .sb-panel-head{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 1.4rem .9rem}
+        .sb-panel-id{display:flex;align-items:center;gap:.7rem}
+        .sb-panel-icn{width:36px;height:36px;border-radius:11px;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.22);display:flex;align-items:center;justify-content:center;font-size:1rem}
+        .sb-panel-ref{display:block;font-family:'Cinzel',serif;font-size:1rem;color:#fff;font-weight:600}
+        .sb-panel-test{display:block;font-family:'Inter',sans-serif;font-size:.66rem;color:rgba(255,255,255,.45);margin-top:.1rem}
+        .sb-panel-x{width:38px;height:38px;border-radius:11px;border:1px solid rgba(255,255,255,.12);background:transparent;color:rgba(255,255,255,.6);font-size:1.1rem;cursor:pointer;transition:color .2s,border-color .2s}
+        .sb-panel-x:hover{color:#fff;border-color:rgba(255,255,255,.25)}
+        .sb-panel-tabs{display:flex;gap:.1rem;padding:0 1rem;overflow-x:auto;scrollbar-width:none}
+        .sb-panel-tabs::-webkit-scrollbar{display:none}
+        .sp-tab{flex-shrink:0;background:none;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-size:.72rem;font-weight:600;color:rgba(255,255,255,.5);padding:.75rem .8rem;border-bottom:2px solid transparent;white-space:nowrap;transition:color .2s,border-color .2s}
+        .sp-tab:hover{color:var(--gold-light)}
+        .sp-tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+        .sb-panel-body{padding:1.4rem;flex:1}
+        .sp-pane{display:none;animation:sbFade .35s ease}
+        .sp-pane.active{display:block}
+        @keyframes sbFade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+        .sp-verse{font-family:'Lora',serif;font-style:italic;font-size:1rem;line-height:1.65;color:rgba(255,255,255,.86);padding:1.1rem 1.2rem;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-left:3px solid var(--gold);border-radius:14px;margin-bottom:1.1rem}
+        .sp-tags{display:flex;flex-wrap:wrap;gap:.45rem;margin-bottom:1.2rem}
+        .sp-grid{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:.9rem}
+        .sp-cell{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:.75rem .85rem}
+        .sp-cell-l{display:block;font-family:'Inter',sans-serif;font-size:.58rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:.3rem}
+        .sp-cell-v{font-family:'Lora',serif;font-size:.86rem;color:rgba(255,255,255,.8)}
+        .sp-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:.95rem 1.05rem;margin-bottom:.7rem}
+        .sp-card-l{display:block;font-family:'Inter',sans-serif;font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-light);opacity:.8;margin-bottom:.5rem}
+        .sp-card-p{font-family:'Lora',serif;font-size:.88rem;line-height:1.6;color:rgba(255,255,255,.66)}
+        .sp-conn{display:flex;gap:.8rem;align-items:flex-start;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:.9rem 1rem;margin-bottom:.6rem;cursor:pointer;transition:border-color .2s,background .2s}
+        .sp-conn:hover{border-color:rgba(201,168,76,.3);background:rgba(201,168,76,.04)}
+        .sp-conn-n{width:30px;height:30px;flex-shrink:0;border-radius:9px;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.2);color:var(--gold-light);font-family:'Inter',sans-serif;font-size:.72rem;font-weight:700;display:flex;align-items:center;justify-content:center}
+        .sp-conn-ref{display:block;font-family:'Cinzel',serif;font-size:.82rem;color:var(--gold-light);margin-bottom:.25rem;font-weight:600}
+        .sp-conn-tx{font-family:'Lora',serif;font-size:.82rem;line-height:1.5;color:rgba(255,255,255,.6)}
+        .sp-word-top{display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem;margin-bottom:.55rem}
+        .sp-word-es{display:block;font-family:'Inter',sans-serif;font-weight:700;color:#fff;font-size:.92rem}
+        .sp-word-or{display:block;font-family:'Lora',serif;color:var(--gold-light);font-size:.82rem;margin-top:.15rem}
+        .sp-word-st{flex-shrink:0;font-family:'Inter',sans-serif;font-size:.58rem;font-weight:700;letter-spacing:.06em;background:rgba(255,255,255,.06);color:rgba(255,255,255,.5);padding:.18rem .5rem;border-radius:999px}
+        .sp-ver{border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:.85rem 1rem;margin-bottom:.55rem}
+        .sp-ver-l{display:block;font-family:'Inter',sans-serif;font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.42);margin-bottom:.4rem}
+        .sp-ver-t{font-family:'Lora',serif;font-style:italic;font-size:.9rem;line-height:1.55;color:rgba(255,255,255,.78)}
+        .sp-q{border-left:2px solid rgba(201,168,76,.3);border-radius:0 10px 10px 0;padding:.8rem 1rem;margin-bottom:.55rem;display:flex;gap:.7rem;align-items:flex-start;transition:border-color .2s,background .2s}
+        .sp-q:hover{border-left-color:var(--gold);background:rgba(201,168,76,.03)}
+        .sp-q-n{width:24px;height:24px;flex-shrink:0;border-radius:999px;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.2);color:var(--gold-light);font-family:'Inter',sans-serif;font-size:.66rem;font-weight:700;display:flex;align-items:center;justify-content:center}
+        .sp-q-t{font-family:'Lora',serif;font-size:.9rem;line-height:1.55;color:rgba(255,255,255,.8)}
+        .sp-note{background:linear-gradient(135deg,rgba(201,168,76,.06),transparent);border:1px solid rgba(201,168,76,.14);border-radius:16px;padding:1.1rem;margin-top:1rem}
+        .sp-note-h{display:flex;align-items:center;gap:.5rem;font-family:'Inter',sans-serif;font-size:.78rem;font-weight:600;color:var(--gold-light);margin-bottom:.7rem}
+        .sp-note textarea{width:100%;background:transparent;border:none;outline:none;resize:none;color:rgba(255,255,255,.82);font-family:'Lora',serif;font-size:.9rem;line-height:1.6;min-height:90px}
+        .sp-note textarea::placeholder{color:rgba(255,255,255,.32)}
+        .sp-note-foot{display:flex;align-items:center;justify-content:space-between;margin-top:.6rem}
+        .sp-note-foot span{font-family:'Inter',sans-serif;font-size:.66rem;color:rgba(255,255,255,.35)}
+        .sp-note-save{background:none;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-size:.74rem;font-weight:700;color:var(--gold-light);display:flex;align-items:center;gap:.35rem}
+        .sp-soon{text-align:center;padding:2.6rem 1rem;color:rgba(255,255,255,.45)}
+        .sp-soon-ic{font-size:2rem;display:block;margin-bottom:.6rem;opacity:.6}
+        .sp-soon p{font-family:'Lora',serif;font-size:.9rem}
+        .sp-soon small{display:block;font-family:'Inter',sans-serif;font-size:.74rem;color:rgba(255,255,255,.32);margin-top:.35rem}
+        .sp-hint{font-family:'Lora',serif;font-size:.8rem;color:rgba(255,255,255,.45);margin-bottom:1rem}
+
         /* ════════ Pestaña Yo ════════ */
         .yo-section{padding:4.5rem 1.5rem 3rem;background:linear-gradient(135deg,#14142e 0%,var(--dark) 100%);min-height:80vh}
         .yo-inner{max-width:640px;margin:0 auto}
@@ -1856,17 +1987,108 @@
     </section>
     -->
 
-    <section class="search-section" data-tab="buscar">
-        <div class="section-header"><h2>Buscar en la Biblia</h2><p>Escribe una palabra o frase y encuentra el versículo</p></div>
-        <div class="search-box-wrap">
-            <div class="search-input-row">
-                <input type="search" class="search-input" id="searchInput" placeholder="Ej: amor, fe, pastor, Jehová..." autocomplete="off" onkeydown="if(event.key==='Enter')runSearch()">
-                <button class="search-go-btn" onclick="runSearch()" aria-label="Buscar">🔍</button>
+    <section class="search-section sb-section" data-tab="buscar">
+        <div class="sb-wrap">
+            <div class="sb-head">
+                <span class="sb-eyebrow">✦ Modo Estudio</span>
+                <h2 class="sb-title">Estudio Bíblico <span>Profundo</span></h2>
+                <p class="sb-sub">Busca por palabra, referencia o describe lo que necesitas en tu corazón.</p>
             </div>
-            <p class="search-hint">Busca en la versión activa (RVA 1909 / SBLL 2026). Toca un resultado para escucharlo.</p>
-            <div class="search-results" id="searchResults"></div>
+
+            <div class="sb-searchwrap" id="searchContainer">
+                <div class="sb-searchbar">
+                    <svg class="sb-mag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <input type="search" class="sb-input" id="searchInput" placeholder="Ej: amor, Juan 3:16, o 'necesito paz interior'…" autocomplete="off" onkeydown="if(event.key==='Enter'){sbCloseSuggest();runSearch();}" oninput="sbSuggest()">
+                    <button class="sb-mic" id="voiceBtn" onclick="sbVoice()" aria-label="Búsqueda por voz">🎤</button>
+                    <button class="sb-go" onclick="sbCloseSuggest();runSearch()">Buscar</button>
+                </div>
+                <div class="sb-suggest" id="sbSuggestBox"></div>
+            </div>
+
+            <div class="sb-filters">
+                <div class="sb-tabs">
+                    <button class="sb-tab active" data-filter="all" onclick="sbFilter(this)">Toda</button>
+                    <button class="sb-tab" data-filter="at" onclick="sbFilter(this)">Antiguo Test.</button>
+                    <button class="sb-tab" data-filter="nt" onclick="sbFilter(this)">Nuevo Test.</button>
+                    <span class="sb-tab-sep"></span>
+                    <button class="sb-tab" data-filter="promesa" onclick="sbFilter(this)">Promesa</button>
+                    <button class="sb-tab" data-filter="consuelo" onclick="sbFilter(this)">Consuelo</button>
+                    <button class="sb-tab" data-filter="instruccion" onclick="sbFilter(this)">Instrucción</button>
+                </div>
+                <span class="sb-version" id="sbVersionLabel">RVA 1909</span>
+            </div>
+
+            <!-- Búsqueda por intención (gratis) -->
+            <div class="sb-block" id="sbDiscover">
+                <div class="sb-block-head">
+                    <span class="sb-block-ic">💛</span>
+                    <div><span class="sb-block-t">Búsqueda por intención</span><span class="sb-block-s">Describe lo que sientes o necesitas</span></div>
+                </div>
+                <div class="sb-intent-grid">
+                    <button class="sb-intent" onclick="sbIntention('temor')"><span class="sb-intent-ic">🌧️</span><span class="sb-intent-t">Estoy ansioso</span><span class="sb-intent-s">Encuentra calma</span></button>
+                    <button class="sb-intent" onclick="sbIntention('consolación')"><span class="sb-intent-ic">💧</span><span class="sb-intent-t">Necesito consuelo</span><span class="sb-intent-s">Dios te consuela</span></button>
+                    <button class="sb-intent" onclick="sbIntention('camino')"><span class="sb-intent-ic">🧭</span><span class="sb-intent-t">Busco dirección</span><span class="sb-intent-s">Guía divina</span></button>
+                    <button class="sb-intent" onclick="sbIntention('fortaleza')"><span class="sb-intent-ic">💪</span><span class="sb-intent-t">Necesito fuerza</span><span class="sb-intent-s">Poder en Cristo</span></button>
+                    <button class="sb-intent" onclick="sbIntention('perdón')"><span class="sb-intent-ic">🤲</span><span class="sb-intent-t">Necesito perdonar</span><span class="sb-intent-s">Sanidad interior</span></button>
+                    <button class="sb-intent" onclick="sbIntention('fe')"><span class="sb-intent-ic">🛡️</span><span class="sb-intent-t">Mi fe es débil</span><span class="sb-intent-s">Fortalece tu fe</span></button>
+                    <button class="sb-intent" onclick="sbIntention('voluntad')"><span class="sb-intent-ic">🎯</span><span class="sb-intent-t">Busco propósito</span><span class="sb-intent-s">Plan de Dios</span></button>
+                    <button class="sb-intent" onclick="sbIntention('gracias')"><span class="sb-intent-ic">🙏</span><span class="sb-intent-t">Quiero agradecer</span><span class="sb-intent-s">Alabanza y acción</span></button>
+                </div>
+            </div>
+
+            <!-- Temas populares (gratis) -->
+            <div class="sb-block">
+                <span class="sb-block-label">Temas populares</span>
+                <div class="sb-topics">
+                    <button class="sb-topic" onclick="sbTopic('amor')">❤️ Amor</button>
+                    <button class="sb-topic" onclick="sbTopic('fe')">🛡️ Fe</button>
+                    <button class="sb-topic" onclick="sbTopic('esperanza')">⚓ Esperanza</button>
+                    <button class="sb-topic" onclick="sbTopic('sabiduría')">💡 Sabiduría</button>
+                    <button class="sb-topic" onclick="sbTopic('paz')">🕊️ Paz</button>
+                    <button class="sb-topic" onclick="sbTopic('oración')">🙏 Oración</button>
+                    <button class="sb-topic" onclick="sbTopic('gracia')">🎁 Gracia</button>
+                    <button class="sb-topic" onclick="sbTopic('salvación')">🛟 Salvación</button>
+                </div>
+            </div>
+
+            <!-- Resultados -->
+            <div class="sb-results-area" id="sbResultsArea" style="display:none">
+                <div class="sb-results-head">
+                    <span id="searchCount"></span>
+                    <span class="sb-results-hint">Toca un versículo para estudio profundo ✦</span>
+                </div>
+                <div class="search-results" id="searchResults"></div>
+            </div>
         </div>
     </section>
+
+    <!-- ════ Panel de Estudio Profundo (premium) ════ -->
+    <div class="sb-overlay" id="studyOverlay" onclick="closeStudy()"></div>
+    <aside class="sb-panel" id="studyPanel" aria-hidden="true">
+        <div class="sb-panel-top">
+            <div class="sb-panel-head">
+                <div class="sb-panel-id">
+                    <span class="sb-panel-icn">📖</span>
+                    <div><span class="sb-panel-ref" id="spRef">—</span><span class="sb-panel-test" id="spTest">—</span></div>
+                </div>
+                <button class="sb-panel-x" onclick="closeStudy()" aria-label="Cerrar">✕</button>
+            </div>
+            <div class="sb-panel-tabs" id="spTabs">
+                <button class="sp-tab active" data-tab="contexto" onclick="sbStudyTab(this)">📍 Contexto</button>
+                <button class="sp-tab" data-tab="conexiones" onclick="sbStudyTab(this)">🔗 Conexiones</button>
+                <button class="sp-tab" data-tab="palabra" onclick="sbStudyTab(this)">🔤 Palabra original</button>
+                <button class="sp-tab" data-tab="versiones" onclick="sbStudyTab(this)">📚 Versiones</button>
+                <button class="sp-tab" data-tab="reflexion" onclick="sbStudyTab(this)">💭 Reflexión</button>
+            </div>
+        </div>
+        <div class="sb-panel-body">
+            <div class="sp-pane active" id="pane-contexto"></div>
+            <div class="sp-pane" id="pane-conexiones"></div>
+            <div class="sp-pane" id="pane-palabra"></div>
+            <div class="sp-pane" id="pane-versiones"></div>
+            <div class="sp-pane" id="pane-reflexion"></div>
+        </div>
+    </aside>
 
     <section class="yo-section" data-tab="yo">
         <div class="yo-inner">
@@ -6565,6 +6787,9 @@
             // 1. Menú móvil desplegable
             var nav = document.getElementById('navLinks');
             if (nav && nav.classList.contains('open')) { closeMenu(); return true; }
+            // 1b. Panel de Estudio Profundo (Buscar premium)
+            var sp = document.getElementById('studyPanel');
+            if (sp && sp.classList.contains('open') && window.closeStudy) { closeStudy(); return true; }
             // 2. Modal / ventana emergente
             var m = topModal();
             if (m) { m.classList.remove('visible'); document.body.style.overflow = ''; return true; }
@@ -6876,12 +7101,17 @@
         const input = document.getElementById('searchInput');
         const box   = document.getElementById('searchResults');
         const q = (input.value || '').trim();
-        if (q.length < 2) { box.innerHTML = '<div class=”search-empty”>Escribe al menos 2 letras para buscar.</div>'; return; }
+        const area = document.getElementById('sbResultsArea');
+        if (area) area.style.display = '';
+        if (typeof sbSyncVersion === 'function') sbSyncVersion();
+        const countEl = document.getElementById('searchCount');
+        if (q.length < 2) { if(countEl) countEl.textContent=''; box.innerHTML = '<div class="search-empty">Escribe al menos 2 letras para buscar.</div>'; return; }
 
-        box.innerHTML = '<div class=”search-empty”>Buscando…</div>';
+        if (countEl) countEl.textContent = '';
+        box.innerHTML = '<div class="search-empty">Buscando…</div>';
         try { await ensureBible(); } catch (e) {}
         const bible = getActiveBible();
-        if (!bible) { box.innerHTML = '<div class=”search-empty”>No se pudo cargar el texto bíblico.</div>'; return; }
+        if (!bible) { box.innerHTML = '<div class="search-empty">No se pudo cargar el texto bíblico.</div>'; return; }
 
         // Palabras clave: normaliza, filtra stopwords y palabras <2 chars.
         // “fiate de jehova con todo tu corazon” → [“fiate”,”jehova”,”corazon”]
@@ -6921,7 +7151,7 @@
             return out + text.slice(prev).replace(/</g, '&lt;');
         }
 
-        const results = [];
+        let results = [];
         const MAX = 60;
         let truncated = false;
         outer:
@@ -6944,10 +7174,23 @@
             }
         }
 
+        // Filtro por Testamento / clasificación espiritual (chips de la barra)
+        let filteredResults = results;
+        const _flt = (typeof sbCurrentFilter !== 'undefined') ? sbCurrentFilter : 'all';
+        if (_flt === 'at' || _flt === 'nt') {
+            filteredResults = results.filter(r => (NT_BOOKS.has(r.book) ? 'nt' : 'at') === _flt);
+        } else if (_flt === 'promesa' || _flt === 'consuelo' || _flt === 'instruccion') {
+            filteredResults = results.filter(r => {
+                const cur = CURATED[_sAccents(r.book + ' ' + r.chapter + ':' + r.verse).toLowerCase()];
+                return cur && cur.tags.some(t => _sAccents(t).toLowerCase() === _flt);
+            });
+        }
+        results = filteredResults;
+
         // Si no hay resultados en la traducción activa, buscar en la otra automáticamente
         let altResults = [];
         let altLabel = '';
-        if (!results.length) {
+        if (!results.length && _flt === 'all') {
             const altMode = translationMode === 'sbll' ? 'rva' : 'sbll';
             try { await ensureBible(altMode); } catch (e) {}
             const altBible = window[BIBLE_GLOBAL[altMode]];
@@ -6975,29 +7218,40 @@
         }
 
         if (!results.length && !altResults.length) {
-            box.innerHTML = '<div class=”search-empty”>Sin resultados para <em>”' + q.replace(/</g,'&lt;') + '”</em>.<br>Prueba con menos palabras, por ejemplo solo <em>”' + (keywords[0] || q).replace(/</g,'&lt;') + '”</em>.</div>';
+            const filterNote = (_flt === 'promesa' || _flt === 'consuelo' || _flt === 'instruccion')
+                ? '<br><span style="font-size:.85rem">Este filtro muestra solo versículos con estudio profundo curado. Quita el filtro o prueba <em>Toda</em>.</span>'
+                : '<br>Prueba con menos palabras, por ejemplo solo <em>"' + (keywords[0] || q).replace(/</g,'&lt;') + '"</em>.';
+            if (countEl) countEl.textContent = 'Sin resultados';
+            box.innerHTML = '<div class="search-empty">Sin resultados para <em>"' + q.replace(/</g,'&lt;') + '"</em>.' + filterNote + '</div>';
             return;
         }
 
+        const SR_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>';
         function buildCards(list) {
             const frag = document.createDocumentFragment();
             list.forEach(r => {
+                const ref = r.book + ' ' + r.chapter + ':' + r.verse;
+                const isNT = NT_BOOKS.has(r.book);
+                const cur = CURATED[_sAccents(ref).toLowerCase()];
                 const btn = document.createElement('button');
                 btn.className = 'search-result';
-                btn.onclick = () => openSearchResult(r.book, r.chapter);
-                const ref = document.createElement('div');
-                ref.className = 'search-result-ref';
-                ref.textContent = r.book + ' ' + r.chapter + ':' + r.verse;
-                const txt = document.createElement('div');
-                txt.className = 'search-result-text';
-                txt.innerHTML = highlight(r.text);
-                btn.appendChild(ref);
-                btn.appendChild(txt);
+                btn.onclick = () => openStudy(r.book, r.chapter, r.verse, r.text);
+                let tags = '';
+                if (cur) tags = cur.tags.slice(0,3).map(t =>
+                    '<span class="sr-tag tag-' + _sAccents(t).toLowerCase() + '">' + t + '</span>').join('');
+                btn.innerHTML =
+                    '<div class="sr-meta">' +
+                        '<span class="sr-badge ' + (isNT?'nt':'at') + '">' + (isNT?'N.T.':'A.T.') + '</span>' +
+                        '<span class="search-result-ref" style="margin:0">' + ref + '</span>' + tags +
+                    '</div>' +
+                    '<div class="search-result-text">' + highlight(r.text) + '</div>' +
+                    '<div class="sr-study">' + SR_SVG + ' Estudio profundo</div>';
                 frag.appendChild(btn);
             });
             return frag;
         }
 
+        if (countEl) countEl.textContent = results.length + (truncated?'+':'') + ' resultado' + (results.length!==1?'s':'');
         box.innerHTML = '';
         box.appendChild(buildCards(results));
         if (truncated) {
@@ -7018,6 +7272,228 @@
     function openSearchResult(book, chapter) {
         showTab('biblia');
         loadChapter({ book, chapter });
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       BUSCAR · Estudio Bíblico Profundo
+       Búsqueda real sobre toda la Biblia (gratis) + panel de estudio
+       profundo (premium). El estudio rico está curado por versículo;
+       para el resto se muestran las versiones reales (RVA/SBLL),
+       reflexión y "próximamente" en las pestañas que requieren curaduría.
+    ════════════════════════════════════════════════════════════════ */
+
+    // Libros del Nuevo Testamento (claves tal como aparecen en window.BIBLE)
+    const NT_BOOKS = new Set(['Mateo','Marcos','Lucas','Juan','Hechos','Romanos',
+        '1 Corintios','2 Corintios','Galatas','Efesios','Filipenses','Colosenses',
+        '1 Tesalonicenses','2 Tesalonicenses','1 Timoteo','2 Timoteo','Tito','Filemon',
+        'Hebreos','Santiago','1 Pedro','2 Pedro','1 Juan','2 Juan','3 Juan','Judas','Apocalipsis']);
+    const APP_BOOKS = (typeof BOOK_KEY !== 'undefined') ? Object.keys(BOOK_KEY) : [];
+    function sbResolveBook(name){
+        const n = _sAccents(String(name||'').trim()).toLowerCase();
+        return APP_BOOKS.find(b => _sAccents(b).toLowerCase() === n) || null;
+    }
+
+    // Estudio profundo curado (claves normalizadas: sin acentos, minúsculas).
+    // Se irá ampliando con el tiempo. Para versículos sin curaduría se usa
+    // el modo "próximamente" + versiones reales + reflexión.
+    const CURATED = {
+        'juan 3:16':{tags:['promesa','amor','salvación'],author:'Juan el apóstol',date:'c. 85-90 d.C.',audience:'Cristianos de Éfeso',location:'Éfeso',occasion:'Jesús hablando con Nicodemo, un fariseo que vino de noche. Este versículo resume todo el evangelio en una sola frase.',background:'Nicodemo era un líder religioso que reconocía que Jesús venía de Dios pero no entendía el nuevo nacimiento. Jesús le explica la necesidad del nacimiento espiritual y la magnitud del amor de Dios.',geo:'Jerusalén, en una casa donde Jesús se reunía con Nicodemo en secreto.',connections:[{ref:'Juan 1:12',text:'Mas a todos los que le recibieron, a los que creen en su nombre, les dio potestad de ser hechos hijos de Dios.'},{ref:'Romanos 5:8',text:'Mas Dios muestra su amor para con nosotros, en que siendo aún pecadores, Cristo murió por nosotros.'},{ref:'1 Juan 4:9',text:'En esto se mostró el amor de Dios para con nosotros, en que Dios envió a su Hijo unigénito al mundo, para que vivamos por él.'},{ref:'Romanos 6:23',text:'Porque la paga del pecado es muerte, mas la dádiva de Dios es vida eterna en Cristo Jesús Señor nuestro.'}],words:[{es:'amó',or:'ἀγαπάω (agapaō)',meaning:'Amor incondicional, sacrificial, de elección. No es amor emocional sino de voluntad. Es el amor más profundo del griego.',strong:'G25'},{es:'mundo',or:'κόσμος (kosmos)',meaning:'No solo el planeta sino el sistema humano caído, la humanidad en su estado de rebelión. Dios amó incluso a los que le rechazaban.',strong:'G2889'},{es:'unigénito',or:'μονογενής (monogenēs)',meaning:'Único de su clase. Indica una relación especial y exclusiva. No significa "único nacido" sino "único en su género".',strong:'G3439'}],questions:['¿Qué significa para ti que Dios amó "al mundo" entero, incluyendo a personas que podrían considerarse indignas?','Si creer en Jesús es la condición para la vida eterna, ¿qué significa realmente "creer" en tu vida diaria?','Jesús dijo esto a alguien con conocimiento religioso pero al que le faltaba algo esencial. ¿Puede el conocimiento religioso ser un obstáculo para la fe verdadera?']},
+        'salmos 23:1':{tags:['promesa','consuelo','confianza'],author:'Rey David',date:'c. 1000 a.C.',audience:'Congregación de Israel / devoción personal',location:'Judea',occasion:'David reflexiona sobre su experiencia como pastor de ovejas y aplica esa relación a Dios. Probablemente escrito en sus últimos años, mirando atrás a toda una vida de provisión divina.',background:'David conocía íntimamente el oficio del pastor: guiar a las ovejas a pastos verdes, protegerlas de depredadores, buscar las perdidas. Usa esta metáfora poderosa para describir el cuidado total de Dios.',geo:'Los campos de Judea, donde David pastoreaba las ovejas de su padre Isaí.',connections:[{ref:'Juan 10:11',text:'Yo soy el buen pastor; el buen pastor su vida da por las ovejas.'},{ref:'Isaias 40:11',text:'Como pastor apacentará su rebaño; en su brazo llevará los corderos, y en su seno los llevará.'},{ref:'Salmos 34:10',text:'Los leoncillos necesitan, y tienen hambre; pero los que buscan a Jehová no tendrán falta de ningún bien.'},{ref:'Filipenses 4:19',text:'Mi Dios, pues, suplirá todo lo que os falta conforme a sus riquezas en gloria en Cristo Jesús.'}],words:[{es:'Jehová',or:'יהוה (YHWH)',meaning:'El nombre personal de Dios, el nombre del pacto. Significa "YO SOY EL QUE SOY". Es el Dios que se relaciona personalmente con su pueblo.',strong:'H3068'},{es:'pastor',or:'רֹעִי (roʿi)',meaning:'El que pastorea, cuida y guía. Implica provisión total: alimento, protección, dirección, corrección. Es una relación íntima y personal.',strong:'H7462'},{es:'faltará',or:'חָסֵר (chaser)',meaning:'Faltar, carecer, disminuir. La negación absoluta "nada me faltará" es una declaración radical de confianza total en la provisión de Dios.',strong:'H2637'}],questions:['David dice "mi" pastor, no "el" pastor. ¿Cómo cambia tu perspectiva pasar de conocer a Dios como "el Señor" a conocerlo como "mi Señor"?','¿Hay áreas en tu vida donde sientes que te "falta" algo? ¿Qué afirma este versículo sobre esas áreas?','David escribió esto desde su experiencia como pastor. ¿Qué "trabajo de pastor" reconoces que Dios ha hecho en tu vida?']},
+        'isaias 41:10':{tags:['consuelo','promesa','fuerza'],author:'Profeta Isaías',date:'c. 700 a.C.',audience:'Israel ante el exilio en Babilonia',location:'Jerusalén / Babilonia',occasion:'Dios habla a Israel que enfrenta el exilio babilónico. El pueblo está aterrorizado ante las naciones poderosas. Dios les recuerda que Él está con ellos y es más poderoso que cualquier imperio.',background:'Isaías profetiza antes del exilio, preparando al pueblo para la crisis que viene. Este versículo es parte de un discurso de consolación donde Dios repite "no temas" múltiples veces.',geo:'Desde Jerusalén, mirando hacia el futuro exilio en Babilonia (actual Irak).',connections:[{ref:'Deuteronomio 31:6',text:'Esforzaos y cobrad ánimo; no temáis, ni tengáis miedo de ellos, porque Jehová tu Dios es el que va contigo.'},{ref:'Josue 1:9',text:'Mira que te mando que te esfuerces y seas valiente; no temas ni desmayes, porque Jehová tu Dios estará contigo dondequiera que vayas.'},{ref:'Mateo 28:20',text:'Yo estoy con vosotros todos los días, hasta el fin del mundo.'},{ref:'Hebreos 13:5',text:'No te desampararé, ni te dejaré.'}],words:[{es:'temas',or:'יָרֵא (yare)',meaning:'Temer, estar aterrorizado. Aquí es miedo paralizante, no reverencia. Dios ordena dejar de estar aterrorizado.',strong:'H3372'},{es:'estoy contigo',or:'עִמָּךְ (ʿimmak)',meaning:'Literalmente "contigo". Es la presencia personal de Dios. No está lejos observando: está al lado, en la trinchera.',strong:'H5973'},{es:'diestra',or:'יָמִין (yamin)',meaning:'La mano derecha, símbolo de poder, honor y fidelidad. La "diestra de justicia" significa que su poder está respaldado por su carácter justo.',strong:'H3225'}],questions:['Dios dice "no temas" y luego da razones. ¿Cuál de esas razones resuena más con tu situación actual?','¿Qué diferencia hay entre "no sentir miedo" y "no temer"? ¿Es posible no temer y aun así sentir miedo?','La frase "siempre te ayudaré": ¿puedes identificar momentos pasados donde ahora reconoces que Dios te sostuvo?']},
+        'romanos 8:28':{tags:['promesa','consuelo','fe'],author:'Apóstol Pablo',date:'c. 57 d.C.',audience:'Cristianos en Roma',location:'Corinto (escrito desde ahí)',occasion:'Pablo escribe a una iglesia con tensiones entre judíos y gentiles, y posible persecución. Este versículo es el clímax de una sección sobre el sufrimiento y la esperanza.',background:'Pablo no dice que "todas las cosas son buenas" sino que Dios obra EN todas las cosas para bien. Incluso el sufrimiento, la persecución y las dificultades son instrumentos en sus manos.',geo:'Escrito desde Corinto, enviado a Roma.',connections:[{ref:'Genesis 50:20',text:'Vosotros pensasteis mal contra mí, mas Dios lo encaminó a bien.'},{ref:'Jeremias 29:11',text:'Porque yo sé los pensamientos que tengo acerca de vosotros, dice Jehová, pensamientos de paz.'},{ref:'Filipenses 1:6',text:'El que comenzó en vosotros la buena obra, la perfeccionará hasta el día de Jesucristo.'},{ref:'2 Corintios 4:17',text:'Porque esta leve tribulación momentánea produce en nosotros un cada vez más excelente y eterno peso de gloria.'}],words:[{es:'sabemos',or:'οἴδαμεν (oidamen)',meaning:'No es "creemos" sino "sabemos". Es certeza, no esperanza. Pablo habla de una convicción firme basada en el carácter de Dios.',strong:'G1492'},{es:'todas las cosas',or:'πάντα (panta)',meaning:'Literalmente TODO. No solo lo bueno, también el dolor, la pérdida, la enfermedad. Nada queda fuera del alcance soberano de Dios.',strong:'G3956'},{es:'propósito',or:'πρόθεσις (prothesis)',meaning:'Plan determinado de antemano. No es improvisado sino un propósito eterno que Dios diseñó antes de la fundación del mundo.',strong:'G4286'}],questions:['¿Te cuesta creer que "todas las cosas" incluyen las experiencias dolorosas? ¿Qué te ayuda a confiar en eso?','Pablo dice "a los que aman a Dios". ¿Es una condición o una descripción?','¿Recuerdas una situación difícil que, mirando atrás, ves que Dios usó para bien?']},
+        'filipenses 4:13':{tags:['promesa','fuerza','fe'],author:'Apóstol Pablo',date:'c. 61 d.C.',audience:'Iglesia en Filipos',location:'Prisión en Roma',occasion:'Pablo escribe desde la cárcel, no sobre prosperidad sino sobre contentamiento en toda circunstancia. El versículo anterior dice "sé vivir humildemente y tener abundancia".',background:'Uno de los versículos más malinterpretados. No es un mantra de superación personal. Pablo habla de soportar hambre, necesidad y prisión. "Todo lo puedo" significa "puedo soportar cualquier cosa" en Cristo.',geo:'Desde una prisión romana, posiblemente bajo custodia militar.',connections:[{ref:'2 Corintios 12:9',text:'Bástate mi gracia; porque mi poder se perfecciona en la debilidad.'},{ref:'Juan 15:5',text:'Porque separados de mí nada podéis hacer.'},{ref:'Salmos 46:1',text:'Dios es nuestro amparo y fortaleza, nuestro pronto auxilio en las tribulaciones.'},{ref:'Isaias 40:29',text:'Da esfuerzo al cansado, y multiplica las fuerzas al que no tiene ningunas.'}],words:[{es:'puedo',or:'ἰσχύω (ischuō)',meaning:'Tener fuerza, ser capaz. No es capacidad humana sino poder disponible. La fuerza no viene de Pablo sino de Cristo actuando en él.',strong:'G2480'},{es:'fortalece',or:'ἐνδυναμόω (endunamoō)',meaning:'Literalmente "poner poder dentro". Es la raíz de "dinamita". Cristo infunde su poder en la debilidad humana.',strong:'G1743'}],questions:['Si Pablo escribió esto desde una prisión, ¿cambia el significado que le habías dado antes?','¿Qué significa en tu día a día que la fortaleza viene "de Cristo" y no de ti mismo?','¿Hay una situación donde necesites aplicar esto: no que tú puedes, sino que Cristo puede a través de ti?']},
+        'proverbios 3:5':{tags:['instrucción','sabiduría','fe'],author:'Rey Salomón (atribuido)',date:'c. 950 a.C.',audience:'Un joven aprendiz de sabiduría',location:'Jerusalén',occasion:'Un padre instruyendo a su hijo. Parte de una sección sobre los beneficios de la sabiduría. El "hijo" puede ser literal o todo creyente.',background:'Salomón, el hombre más sabio que existió, advierte contra confiar en la propia inteligencia. La sabiduría humana sin Dios es insuficiente. "Enderezará tus veredas" implica que sin Dios nuestros caminos se tuercen.',geo:'Jerusalén, en el contexto de la corte real.',connections:[{ref:'Jeremias 17:5',text:'Maldito el varón que confía en el hombre, y pone carne por su brazo.'},{ref:'Salmos 37:5',text:'Encomienda a Jehová tu camino, y confía en él; y él hará.'},{ref:'Isaias 30:21',text:'Y tus oídos oirán a tus espaldas palabra que diga: Este es el camino, andad por él.'},{ref:'Santiago 1:5',text:'Y si alguno de vosotros tiene falta de sabiduría, pídala a Dios.'}],words:[{es:'fíate',or:'בָּטַח (batach)',meaning:'Confiar con seguridad, sentirse a salvo. Es confianza que produce descanso, no ansiedad. Es apoyar todo tu peso en alguien.',strong:'H982'},{es:'corazón',or:'לֵב (leb)',meaning:'No solo las emociones sino la totalidad del ser interior: mente, voluntad, emociones. "Todo tu corazón" significa sin reservas.',strong:'H3820'},{es:'enderezará',or:'יָשַׁר (yashar)',meaning:'Hacer recto, enderezar. Nuestros caminos tienden a desviarse y Dios los corrige. Es una acción continua, no un momento único.',strong:'H3474'}],questions:['¿En qué áreas tiendes a apoyarte en tu "propia prudencia" en lugar de Dios?','¿Qué significa en la práctica reconocerlo en TODOS tus caminos, incluso en las decisiones pequeñas?','¿Has experimentado que Dios "enderezó" un camino que tú habías torcido?']},
+        'mateo 11:28':{tags:['consuelo','promesa','invitación'],author:'Mateo (recopilador)',date:'c. 50-70 d.C.',audience:'Multitudes que seguían a Jesús',location:'Galilea',occasion:'Jesús acaba de pronunciar juicio sobre ciudades que no se arrepintieron y luego hace esta invitación de gracia. El contraste es intencional: tras la justicia, la misericordia.',background:'"Trabajados y cargados" aludía a la carga de la religión farisaica con sus cientos de leyes, y también al cansancio de la vida. Jesús ofrece un yugo distinto: no la ausencia de yugo, sino uno ligero.',geo:'Galilea, probablemente cerca de Corazín y Betsaida.',connections:[{ref:'Salmos 55:22',text:'Echa sobre Jehová tu carga, y él te sustentará.'},{ref:'Isaias 28:12',text:'Este es el reposo; dad reposo al cansado.'},{ref:'1 Pedro 5:7',text:'Echando toda vuestra ansiedad sobre él, porque él tiene cuidado de vosotros.'},{ref:'Apocalipsis 22:17',text:'El que tiene sed, venga; y el que quiera, tome del agua de la vida gratuitamente.'}],words:[{es:'trabajados',or:'κοπιάω (kopiaō)',meaning:'Trabajar hasta el agotamiento. No es cansancio normal sino el agotamiento profundo de luchar sin resultado.',strong:'G2872'},{es:'cargados',or:'φορτίζω (phortizō)',meaning:'Cargar con un peso pesado. Se usaba para bestias de carga. Es una carga impuesta, no elegida.',strong:'G5412'},{es:'descansar',or:'ἀναπαύω (anapauō)',meaning:'Dar descanso, alivio, refrigerio. No es solo dejar de trabajar, sino una renovación profunda del alma.',strong:'G373'}],questions:['¿Qué "cargas" llevas hoy que necesitas llevar a Jesús?','Jesús no dice "quitaré la carga" sino "yo os haré descansar". ¿Qué diferencia ves?','¿Hay alguna carga que estás llevando tú mismo en lugar de dejársela a Dios?']},
+        'hebreos 11:1':{tags:['fe','instrucción','definición'],author:'Desconocido (¿Pablo, Apolo, Bernabé?)',date:'c. 60-70 d.C.',audience:'Cristianos judíos bajo persecución',location:'Desconocida',occasion:'El autor escribe a creyentes tentados a abandonar la fe y volver al judaísmo por la presión. Presenta una "galería de la fe" para mostrar que la fe siempre ha sido el camino de Dios.',background:'No es una definición académica sino práctica. La fe no es creer a ciegas, sino tener "evidencia" de lo invisible. Los héroes que siguen demuestran que la fe se basa en el carácter de Dios, no en las circunstancias visibles.',geo:'Posiblemente Roma o una ciudad con gran comunidad judía.',connections:[{ref:'Romanos 8:24',text:'Porque en esperanza fuimos salvos.'},{ref:'2 Corintios 5:7',text:'Porque por fe andamos, no por vista.'},{ref:'Romanos 1:17',text:'Mas el justo por la fe vivirá.'},{ref:'1 Juan 5:4',text:'Esta es la victoria que ha vencido al mundo, nuestra fe.'}],words:[{es:'fe',or:'πίστις (pistis)',meaning:'Fe, confianza, convicción. En el NT es tanto creer datos como confiar en una persona. Incluye fidelidad y lealtad, no solo asentimiento intelectual.',strong:'G4102'},{es:'certeza',or:'ὑπόστασις (hypostasis)',meaning:'Lo que está debajo: fundamento, sustancia, realidad. La fe es la "sustancia" de lo esperado; lo hace real en el presente.',strong:'G5287'},{es:'convicción',or:'ἔλεγχος (elegchos)',meaning:'Prueba, evidencia que persuade. No es un deseo sino una demostración. La fe tiene carácter probatorio.',strong:'G1650'}],questions:['Si la fe es "certeza" y "convicción" (no esperanza vaga), ¿qué te da esa certeza en tu vida?','¿Recuerdas algo que una vez fue "invisible" para ti y que la fe te ayudó a ver?','¿Cómo se diferencia la fe bíblica de "pensar positivo" o "desear con fuerza"?']}
+    };
+
+    // Términos sugeridos para el autocompletado.
+    const SUGGESTIONS = ['amor','fe','esperanza','paz','perdón','sabiduría','gracia','salvación',
+        'oración','fuerza','consuelo','propósito','descanso','temor','confianza','alabanza',
+        'Salmos 23','Juan 3:16','Proverbios 3:5','Romanos 8:28','Filipenses 4:13','Isaías 41:10','Mateo 11:28','Hebreos 11:1'];
+
+    let sbCurrentFilter = 'all';
+    let sbStudyData = null;
+    const SB_SUGSVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>';
+    const SB_ARROW  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;color:rgba(255,255,255,.3);flex-shrink:0"><path d="M7 17L17 7"/><path d="M9 7h8v8"/></svg>';
+
+    function sbVersionLabel(){ return (typeof translationMode!=='undefined' && translationMode==='sbll') ? 'SBLL 2026' : 'RVA 1909'; }
+    function sbSyncVersion(){ const v=document.getElementById('sbVersionLabel'); if(v) v.textContent=sbVersionLabel(); }
+
+    // ── Autocompletado ──
+    function sbSuggest(){
+        const inp=document.getElementById('searchInput'), box=document.getElementById('sbSuggestBox');
+        if(!inp||!box) return;
+        const v=inp.value.trim();
+        if(v.length<1){ box.classList.remove('open'); box.innerHTML=''; return; }
+        const vn=_sAccents(v.toLowerCase());
+        const f=SUGGESTIONS.filter(s=>_sAccents(s.toLowerCase()).includes(vn)).slice(0,6);
+        if(!f.length){ box.classList.remove('open'); box.innerHTML=''; return; }
+        const re=new RegExp('('+v.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','ig');
+        box.innerHTML=f.map(s=>{
+            const h=s.replace(re,'<b>$1</b>');
+            return '<div class="sb-sug" onmousedown="sbPickSuggest(this.dataset.q)" data-q="'+s.replace(/"/g,'&quot;')+'">'+SB_SUGSVG+'<span>'+h+'</span></div>';
+        }).join('');
+        box.classList.add('open');
+    }
+    function sbPickSuggest(s){ const inp=document.getElementById('searchInput'); if(inp) inp.value=s; sbCloseSuggest(); runSearch(); }
+    function sbCloseSuggest(){ const b=document.getElementById('sbSuggestBox'); if(b){ b.classList.remove('open'); b.innerHTML=''; } }
+    document.addEventListener('click',function(e){ const c=document.getElementById('searchContainer'); if(c && !c.contains(e.target)) sbCloseSuggest(); });
+    document.addEventListener('keydown',function(e){ if(e.key==='Escape'){ const sp=document.getElementById('studyPanel'); if(sp && sp.classList.contains('open')) closeStudy(); } });
+
+    // ── Filtros (Testamento / clasificación) ──
+    function sbFilter(el){
+        document.querySelectorAll('.sb-tab').forEach(t=>t.classList.remove('active'));
+        el.classList.add('active'); sbCurrentFilter=el.dataset.filter;
+        const inp=document.getElementById('searchInput');
+        if(inp && inp.value.trim().length>=2) runSearch();
+    }
+
+    // ── Lanzar búsquedas (intención / temas) ──
+    function sbRunQuery(q){
+        const inp=document.getElementById('searchInput'); if(inp) inp.value=q;
+        sbCloseSuggest(); runSearch();
+        const area=document.getElementById('sbResultsArea'); if(area) area.scrollIntoView({behavior:'smooth',block:'start'});
+    }
+    function sbIntention(w){ if(window.showToast) showToast('Buscando: '+w+' 💛'); sbRunQuery(w); }
+    function sbTopic(w){ sbRunQuery(w); }
+
+    // ── Búsqueda por voz ──
+    function sbVoice(){
+        const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+        if(!SR){ if(window.showToast) showToast('Tu navegador no soporta búsqueda por voz'); return; }
+        const btn=document.getElementById('voiceBtn'); const r=new SR();
+        r.lang='es-ES'; r.continuous=false; r.interimResults=false;
+        r.onstart=()=>{ if(btn)btn.classList.add('listening'); if(window.showToast) showToast('Escuchando… 🎤'); };
+        r.onresult=e=>{ const t=e.results[0][0].transcript; const inp=document.getElementById('searchInput'); if(inp)inp.value=t; runSearch(); };
+        r.onend=r.onerror=()=>{ if(btn)btn.classList.remove('listening'); };
+        try{ r.start(); }catch(e){}
+    }
+
+    // ── Panel de Estudio Profundo (premium) ──
+    function sbIsPremium(){ return !!(window.SDV_Auth && window.SDV_Auth.premium); }
+    async function openStudy(book, chapter, verse, text){
+        if(!sbIsPremium()){
+            if(window.Focus && Focus.openTeaser) Focus.openTeaser();
+            else if(window.showToast) showToast('El Estudio Profundo es una función premium ✨');
+            return;
+        }
+        sbStudyData={ book, chapter:+chapter, verse:+verse, text:text||'', ref:book+' '+chapter+':'+verse, versions:null };
+        document.getElementById('spRef').textContent=sbStudyData.ref;
+        document.getElementById('spTest').textContent=NT_BOOKS.has(book)?'Nuevo Testamento':'Antiguo Testamento';
+        document.querySelectorAll('.sp-tab').forEach(t=>t.classList.remove('active'));
+        const first=document.querySelector('.sp-tab[data-tab="contexto"]'); if(first) first.classList.add('active');
+        ['contexto','conexiones','palabra','versiones','reflexion'].forEach(sbRenderStudy);
+        document.querySelectorAll('.sp-pane').forEach(p=>p.classList.remove('active'));
+        document.getElementById('pane-contexto').classList.add('active');
+        document.getElementById('studyOverlay').classList.add('open');
+        document.getElementById('studyPanel').classList.add('open');
+        document.body.style.overflow='hidden';
+        sbLoadVersions();
+    }
+    function closeStudy(){
+        document.getElementById('studyOverlay').classList.remove('open');
+        document.getElementById('studyPanel').classList.remove('open');
+        document.body.style.overflow='';
+    }
+    function sbStudyTab(el){
+        document.querySelectorAll('.sp-tab').forEach(t=>t.classList.remove('active'));
+        el.classList.add('active');
+        document.querySelectorAll('.sp-pane').forEach(p=>p.classList.remove('active'));
+        document.getElementById('pane-'+el.dataset.tab).classList.add('active');
+    }
+    function sbEsc(s){ return String(s==null?'':s).replace(/</g,'&lt;'); }
+    function sbSoon(title){
+        return '<div class="sp-soon"><span class="sp-soon-ic">✦</span><p>'+title+'</p>'+
+            '<small>Estamos ampliando el estudio profundo versículo por versículo. Mientras tanto, revisa <b>Versiones</b> y <b>Reflexión</b>.</small></div>';
+    }
+    function sbRenderStudy(tab){
+        const d=sbStudyData; if(!d) return;
+        const cur=CURATED[_sAccents(d.ref).toLowerCase()];
+        const pane=document.getElementById('pane-'+tab); if(!pane) return;
+        if(tab==='contexto'){
+            let tags;
+            if(cur){ tags=cur.tags.map(t=>'<span class="sr-tag tag-'+_sAccents(t).toLowerCase()+'">'+t+'</span>').join(''); }
+            else { tags='<span class="sr-tag '+(NT_BOOKS.has(d.book)?'tag-fe':'tag-promesa')+'">'+(NT_BOOKS.has(d.book)?'Nuevo Testamento':'Antiguo Testamento')+'</span>'; }
+            let html='<div class="sp-verse">"'+sbEsc(d.text)+'"</div><div class="sp-tags">'+tags+'</div>';
+            if(cur){
+                html+='<div class="sp-grid">'+
+                    '<div class="sp-cell"><span class="sp-cell-l">Autor</span><span class="sp-cell-v">'+sbEsc(cur.author)+'</span></div>'+
+                    '<div class="sp-cell"><span class="sp-cell-l">Fecha</span><span class="sp-cell-v">'+sbEsc(cur.date)+'</span></div>'+
+                    '<div class="sp-cell"><span class="sp-cell-l">Destinatario</span><span class="sp-cell-v">'+sbEsc(cur.audience)+'</span></div>'+
+                    '<div class="sp-cell"><span class="sp-cell-l">Lugar</span><span class="sp-cell-v">'+sbEsc(cur.location)+'</span></div>'+
+                    '</div>'+
+                    '<div class="sp-card"><span class="sp-card-l">Ocasión</span><p class="sp-card-p">'+sbEsc(cur.occasion)+'</p></div>'+
+                    '<div class="sp-card"><span class="sp-card-l">Contexto histórico</span><p class="sp-card-p">'+sbEsc(cur.background)+'</p></div>'+
+                    '<div class="sp-card"><span class="sp-card-l">📍 Contexto geográfico</span><p class="sp-card-p">'+sbEsc(cur.geo)+'</p></div>';
+            } else {
+                html+=sbSoon('Contexto histórico y geográfico — próximamente');
+            }
+            pane.innerHTML=html;
+        }
+        else if(tab==='conexiones'){
+            if(cur){
+                pane.innerHTML='<p class="sp-hint">Versículos conectados temáticamente por referencia cruzada.</p>'+
+                    cur.connections.map((c,i)=>'<div class="sp-conn" onclick="sbOpenConnection(this.dataset.r)" data-r="'+c.ref.replace(/"/g,'&quot;')+'">'+
+                        '<span class="sp-conn-n">'+(i+1)+'</span>'+
+                        '<div style="flex:1;min-width:0"><span class="sp-conn-ref">'+sbEsc(c.ref)+'</span><p class="sp-conn-tx">"'+sbEsc(c.text)+'"</p></div>'+
+                        SB_ARROW+'</div>').join('');
+            } else { pane.innerHTML=sbSoon('Conexiones cruzadas — próximamente'); }
+        }
+        else if(tab==='palabra'){
+            if(cur){
+                pane.innerHTML='<p class="sp-hint">Estudio de palabras clave en su idioma original.</p>'+
+                    cur.words.map(w=>'<div class="sp-card"><div class="sp-word-top"><div><span class="sp-word-es">'+sbEsc(w.es)+'</span><span class="sp-word-or">'+sbEsc(w.or)+'</span></div><span class="sp-word-st">'+sbEsc(w.strong)+'</span></div><p class="sp-card-p">'+sbEsc(w.meaning)+'</p></div>').join('');
+            } else { pane.innerHTML=sbSoon('Palabra original (hebreo/griego) — próximamente'); }
+        }
+        else if(tab==='versiones'){
+            let html='<p class="sp-hint">El mismo versículo en las traducciones disponibles.</p>';
+            const vs=d.versions;
+            if(!vs){ html+='<div class="sp-soon"><span class="sp-soon-ic">⏳</span><p>Cargando versiones…</p></div>'; }
+            else {
+                if(vs.rva) html+='<div class="sp-ver"><span class="sp-ver-l">Reina-Valera Antigua 1909</span><p class="sp-ver-t">"'+sbEsc(vs.rva)+'"</p></div>';
+                if(vs.sbll) html+='<div class="sp-ver"><span class="sp-ver-l">SBLL 2026</span><p class="sp-ver-t">"'+sbEsc(vs.sbll)+'"</p></div>';
+                if(!vs.rva && !vs.sbll) html+=sbSoon('No se pudo cargar este versículo en las versiones.');
+            }
+            pane.innerHTML=html;
+        }
+        else if(tab==='reflexion'){
+            const qs=(cur && cur.questions) ? cur.questions : [
+                '¿Qué te dice este versículo sobre quién es Dios?',
+                '¿Hay algo que este pasaje te invita a cambiar, creer o agradecer hoy?',
+                '¿Cómo puedes aplicar esta verdad a una situación concreta de tu semana?'];
+            const key='sdv_refl_'+_sAccents(d.ref).toLowerCase().replace(/\s+/g,'_');
+            let saved=''; try{ saved=localStorage.getItem(key)||''; }catch(e){}
+            pane.innerHTML='<p class="sp-hint">Preguntas para meditación personal y aplicación práctica.</p>'+
+                qs.map((q,i)=>'<div class="sp-q"><span class="sp-q-n">'+(i+1)+'</span><p class="sp-q-t">'+sbEsc(q)+'</p></div>').join('')+
+                '<div class="sp-note"><div class="sp-note-h">✎ Espacio de reflexión</div>'+
+                '<textarea id="sbReflNote" placeholder="Escribe tus pensamientos, oraciones o lo que Dios te habló hoy…">'+sbEsc(saved)+'</textarea>'+
+                '<div class="sp-note-foot"><span>Tus notas se guardan en este dispositivo</span>'+
+                '<button class="sp-note-save" onclick="sbSaveReflection()">💾 Guardar</button></div></div>';
+        }
+    }
+    function sbSaveReflection(){
+        const d=sbStudyData; if(!d) return;
+        const ta=document.getElementById('sbReflNote'); if(!ta) return;
+        const key='sdv_refl_'+_sAccents(d.ref).toLowerCase().replace(/\s+/g,'_');
+        try{ localStorage.setItem(key, ta.value); if(window.showToast) showToast('Reflexión guardada ✓'); }catch(e){}
+    }
+    async function sbLoadVersions(){
+        const d=sbStudyData; if(!d) return;
+        const out={};
+        try{ await ensureBible('rva'); if(window.BIBLE){ const ch=(window.BIBLE[d.book]||[])[d.chapter-1]; if(ch) out.rva=ch[d.verse-1]; } }catch(e){}
+        try{ await ensureBible('sbll'); if(window.BIBLE_SBLL){ const ch=(window.BIBLE_SBLL[d.book]||[])[d.chapter-1]; if(ch) out.sbll=ch[d.verse-1]; } }catch(e){}
+        if(!out.rva && d.text) out.rva=d.text;
+        if(sbStudyData===d){ d.versions=out; sbRenderStudy('versiones'); }
+    }
+    function sbOpenConnection(ref){
+        const m=String(ref).match(/^(.+?)\s+(\d+):(\d+)/); if(!m){ if(window.showToast) showToast('Próximamente'); return; }
+        const book=sbResolveBook(m[1]); const ch=+m[2], vs=+m[3];
+        if(!book){ if(window.showToast) showToast('Estudio de '+ref+' próximamente ✦'); return; }
+        ensureBible().then(()=>{
+            let txt=''; try{ const c=(getActiveBible()[book]||[])[ch-1]; if(c) txt=c[vs-1]||''; }catch(e){}
+            openStudy(book, ch, vs, txt);
+        }).catch(()=>openStudy(book, ch, vs, ''));
     }
     </script>
 
