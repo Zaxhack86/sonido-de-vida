@@ -639,7 +639,31 @@
         .yo-menu li:hover{background:rgba(201,168,76,.12)}
         .yo-menu li .yo-ico{font-size:1.2rem;width:1.6rem;text-align:center}
         .yo-menu li .yo-arrow{margin-left:auto;color:var(--gold-light)}
-        .yo-cta{width:100%;background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:var(--dark);border:none;border-radius:14px;padding:1rem;font-size:1rem;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;margin-bottom:1.1rem}
+        .yo-cta{width:100%;background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:var(--dark);border:none;border-radius:14px;padding:1rem;font-size:1rem;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;margin-bottom:1.1rem;transition:transform .15s,box-shadow .15s}
+        .yo-cta:hover{transform:translateY(-1px);box-shadow:0 8px 22px rgba(201,168,76,.28)}
+        .yo-cta:active{transform:scale(.985)}
+        .yo-cta-ghost{background:rgba(255,255,255,.06);color:#fff;border:1px solid rgba(255,255,255,.18)}
+        .yo-cta-ghost:hover{box-shadow:0 8px 22px rgba(0,0,0,.3)}
+        /* ── Tarjeta de perfil premium (rediseño 2026-06-24) ── */
+        .yo-profile-card{position:relative;overflow:hidden;background:linear-gradient(150deg,rgba(255,255,255,.08),rgba(255,255,255,.04));border:1px solid rgba(255,255,255,.12);border-radius:24px;padding:1.6rem 1.5rem 1.4rem;margin-bottom:1.1rem;box-shadow:0 10px 36px rgba(0,0,0,.32);backdrop-filter:blur(14px)}
+        .yo-profile-card::before{content:"";position:absolute;top:-40%;right:-25%;width:220px;height:220px;background:radial-gradient(circle,rgba(201,168,76,.14),transparent 70%);pointer-events:none}
+        .yo-profile-top{position:relative;display:flex;align-items:center;gap:1rem}
+        .yo-avatar{flex-shrink:0;width:68px;height:68px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:1.4rem;font-weight:700;color:var(--dark);background:linear-gradient(135deg,var(--gold-light),var(--gold) 55%,var(--gold-dark));box-shadow:0 6px 18px rgba(201,168,76,.3);border:2px solid rgba(255,255,255,.15)}
+        .yo-profile-info{flex:1;min-width:0}
+        .yo-account-name{font-family:'Cinzel',serif;font-size:1.25rem;color:#fff;line-height:1.15;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+        .yo-account-mail{color:rgba(255,255,255,.55);font-size:.85rem;margin-top:.15rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+        .yo-plan-badge{display:inline-flex;align-items:center;gap:.35rem;margin-top:.55rem;padding:.28rem .7rem;border-radius:50px;font-size:.72rem;font-weight:700;letter-spacing:.04em;color:var(--gold-light);background:linear-gradient(90deg,rgba(201,168,76,.16),rgba(232,212,139,.1));border:1px solid rgba(201,168,76,.4)}
+        .yo-stats{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-top:1.3rem;padding-top:1.2rem;border-top:1px solid rgba(255,255,255,.1)}
+        .yo-stat{text-align:center}
+        .yo-stat:not(:last-child){border-right:1px solid rgba(255,255,255,.08)}
+        .yo-stat-num{display:block;font-family:'Cinzel',serif;font-size:1.3rem;font-weight:700;color:#fff;line-height:1}
+        .yo-stat-lbl{display:block;margin-top:.3rem;font-size:.66rem;font-weight:600;text-transform:uppercase;letter-spacing:.09em;color:rgba(255,255,255,.45)}
+        .yo-group-title{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.13em;color:rgba(255,255,255,.42);margin:1.6rem 0 .7rem;padding-left:.2rem}
+        .yo-verse-card{position:relative;overflow:hidden;background:linear-gradient(150deg,#161636,#0f0f24);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:1.5rem;margin-top:1.1rem}
+        .yo-verse-card::before{content:"";position:absolute;top:-30%;right:-15%;width:140px;height:140px;background:radial-gradient(circle,rgba(201,168,76,.12),transparent 70%);pointer-events:none}
+        .yo-verse-eyebrow{display:flex;align-items:center;gap:.4rem;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.11em;color:rgba(255,255,255,.45);margin-bottom:.8rem}
+        .yo-verse-text{position:relative;font-family:'Lora',serif;font-style:italic;font-size:1.05rem;line-height:1.6;color:rgba(255,255,255,.9)}
+        .yo-verse-ref{position:relative;margin-top:.7rem;font-size:.85rem;font-weight:600;color:var(--gold-light)}
         /* Mis descargas (offline) */
         .offline-panel{padding:1.2rem 1.3rem;margin-top:1.1rem}
         .offline-head{display:flex;justify-content:space-between;align-items:baseline;gap:.5rem;margin-bottom:.4rem;color:#fff;font-family:'Cinzel',serif;font-size:1.05rem}
@@ -2097,12 +2121,23 @@
                 <p>Tu rincón en Sonido de Vida</p>
             </div>
 
-            <div class="yo-card" id="yoLoggedIn" style="display:none">
-                <div class="yo-account-name" id="yoName">—</div>
-                <div class="yo-account-mail" id="yoMail"></div>
-                <div class="yo-account-plan" id="yoPlan" style="color:var(--gold-dark)">Cuenta gratuita</div>
-                <button class="yo-cta" id="yoUpgradeBtn" style="margin-top:.9rem;display:none" onclick="Focus.openTeaser();return false;">✨ Hazte Premium · 7 días gratis</button>
-                <button class="yo-cta" id="yoManageBtn" style="margin-top:.9rem;display:none;background:rgba(255,255,255,.06);color:#fff;border:1px solid rgba(255,255,255,.18)" onclick="Premium.manage();return false;">⚙️ Gestionar mi suscripción</button>
+            <!-- Tarjeta de perfil premium (datos reales de la sesión) -->
+            <div class="yo-profile-card" id="yoLoggedIn" style="display:none">
+                <div class="yo-profile-top">
+                    <div class="yo-avatar" id="yoAvatar">SV</div>
+                    <div class="yo-profile-info">
+                        <div class="yo-account-name" id="yoName">—</div>
+                        <div class="yo-account-mail" id="yoMail"></div>
+                        <span class="yo-plan-badge" id="yoPlan">Cuenta gratuita</span>
+                    </div>
+                </div>
+                <div class="yo-stats">
+                    <div class="yo-stat"><span class="yo-stat-num" id="yoStatDays">—</span><span class="yo-stat-lbl">Días</span></div>
+                    <div class="yo-stat"><span class="yo-stat-num" id="yoStatVerses">—</span><span class="yo-stat-lbl">Versículos</span></div>
+                    <div class="yo-stat"><span class="yo-stat-num" id="yoStatDl">—</span><span class="yo-stat-lbl">Descargas</span></div>
+                </div>
+                <button class="yo-cta" id="yoUpgradeBtn" style="margin-top:1.3rem;display:none" onclick="Focus.openTeaser();return false;">✨ Hazte Premium · 7 días gratis</button>
+                <button class="yo-cta yo-cta-ghost" id="yoManageBtn" style="margin-top:1.3rem;margin-bottom:0;display:none" onclick="Premium.manage();return false;">⚙️ Gestionar mi suscripción</button>
             </div>
 
             <div id="yoLoggedOut">
@@ -2118,6 +2153,7 @@
             <div id="yoMemberArea" style="display:none">
                 <div class="yo-listas" id="yoListasWrap" style="display:none"></div>
 
+                <h3 class="yo-group-title">Mi espacio</h3>
                 <ul class="yo-menu">
                     <li onclick="resumeListening()"><span class="yo-ico">📖</span> Seguir escuchando <span class="yo-arrow">›</span></li>
                     <li onclick="SDV_Account.open();return false;"><span class="yo-ico">🔖</span> Mis versículos <span class="yo-arrow">›</span></li>
@@ -2135,8 +2171,10 @@
                     <div id="offlineListItems"></div>
                 </div>
 
-                <div class="yo-card" style="text-align:center;margin-top:1.1rem">
-                    <p style="font-family:'Lora',serif;color:rgba(255,255,255,.6);font-size:.9rem;font-style:italic">"Lámpara es a mis pies tu palabra, y lumbrera a mi camino." — Salmo 119:105</p>
+                <div class="yo-verse-card">
+                    <div class="yo-verse-eyebrow">☀️ Versículo para tu día</div>
+                    <p class="yo-verse-text">"Lámpara es a mis pies tu palabra, y lumbrera a mi camino."</p>
+                    <p class="yo-verse-ref">Salmo 119:105</p>
                 </div>
             </div>
         </div>
@@ -7581,6 +7619,30 @@
             });
         };
 
+        // Rellena avatar + estadísticas reales de la tarjeta de perfil ("Yo").
+        function fillYoProfile(user) {
+            const av = $('yoAvatar');
+            if (av) {
+                const base = (user.displayName || user.email || 'SV').trim();
+                const parts = base.replace(/@.*/, '').split(/[\s._-]+/).filter(Boolean);
+                const ini = parts.length > 1 ? (parts[0][0] + parts[1][0]) : base.slice(0, 2);
+                av.textContent = (ini || 'SV').toUpperCase();
+            }
+            const d = $('yoStatDays');
+            if (d) {
+                const since = user.metadata && user.metadata.creationTime ? new Date(user.metadata.creationTime) : null;
+                d.textContent = (since && !isNaN(since)) ? Math.max(1, Math.floor((Date.now() - since.getTime()) / 86400000) + 1) : '—';
+            }
+            const dl = $('yoStatDl');
+            if (dl) { try { dl.textContent = (getOfflineList() || []).length; } catch (e) { dl.textContent = '0'; } }
+            const vv = $('yoStatVerses');
+            if (vv) {
+                vv.textContent = '…';
+                if (SDV_Auth.listVerses) SDV_Auth.listVerses().then(r => { vv.textContent = (r && r.length) || 0; }).catch(() => { vv.textContent = '0'; });
+                else vv.textContent = '0';
+            }
+        }
+
         function reflectSession(user) {
             const accBtn = $('navAccountBtn');
             if (accBtn) {
@@ -7607,7 +7669,8 @@
                 $('accountPlan').style.color = SDV_Auth.premium ? 'var(--gold-light,#e8d48b)' : 'rgba(255,255,255,.6)';
                 if ($('yoName')) $('yoName').textContent = user.displayName || '👋';
                 if ($('yoMail')) $('yoMail').textContent = user.email || '';
-                if ($('yoPlan')) $('yoPlan').textContent = SDV_Auth.premium ? '⭐ Premium' : 'Cuenta gratuita';
+                if ($('yoPlan')) $('yoPlan').textContent = SDV_Auth.premium ? '👑 Premium' : 'Cuenta gratuita';
+                fillYoProfile(user);
                 // Botones de Premium en "Yo": gestionar si ya es premium, o suscribirse si no.
                 if ($('yoUpgradeBtn')) $('yoUpgradeBtn').style.display = SDV_Auth.premium ? 'none' : '';
                 if ($('yoManageBtn'))  $('yoManageBtn').style.display  = SDV_Auth.premium ? '' : 'none';
