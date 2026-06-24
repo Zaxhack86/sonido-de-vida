@@ -3165,9 +3165,11 @@
         if (window.Ads) Ads.refresh();
     });
 
+    let swReg = null;
     function registerSW() {
         if (!('serviceWorker' in navigator)) return;
         navigator.serviceWorker.register('/sw.js').then(reg => {
+            swReg = reg;
             reg.update();   // fuerza comprobación de versión nueva al abrir la app
             reg.addEventListener('updatefound', () => {
                 const nw = reg.installing;
@@ -3178,11 +3180,25 @@
             });
         }).catch(() => {});
 
+        // Vuelve a comprobar si hay versión nueva cada vez que el usuario regresa a la pestaña.
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible' && swReg) { try { swReg.update(); } catch (e) {} }
+        });
+
+        // Auto-recarga cuando se activa una versión nueva. PERO sin cortar la
+        // reproducción: si hay audio sonando, espera a que el usuario pause o
+        // termine el capítulo para no interrumpir la Palabra.
         let refreshing = false;
         navigator.serviceWorker.addEventListener('controllerchange', () => {
             if (refreshing) return;
             refreshing = true;
-            window.location.reload();
+            const doReload = () => window.location.reload();
+            if (typeof audio !== 'undefined' && audio && audio.src && !audio.paused) {
+                audio.addEventListener('pause', doReload, { once: true });
+                audio.addEventListener('ended', doReload, { once: true });
+            } else {
+                doReload();
+            }
         });
     }
 
