@@ -84,13 +84,16 @@
         .nav-links a.active::after{transform:scaleX(1)}
         /* En la PWA instalada manda la barra inferior: ocultamos los enlaces de arriba */
         @media (display-mode: standalone){.nav-links{display:none}}
-        /* Web en móvil: navbar compacto, logo solo con el símbolo y enlaces más pequeños */
-        @media (max-width:600px) and (display-mode: browser){
-            #navbar{padding:.6rem .9rem}
-            .nav-logo .logo-text{display:none}
+        /* Móvil web: hamburguesa reemplaza los enlaces horizontales */
+        @media(max-width:700px) and (display-mode:browser){
+            .nav-links{position:absolute;top:100%;left:0;right:0;flex-direction:column;gap:0;padding:.5rem 0 1rem;background:rgba(9,9,18,.97);backdrop-filter:blur(24px);transform:translateY(-110%);opacity:0;pointer-events:none;transition:transform .35s cubic-bezier(.22,.61,.36,1),opacity .3s ease;border-bottom:1px solid rgba(201,168,76,.18);box-shadow:0 12px 40px rgba(0,0,0,.5);z-index:998}
+            .nav-links.open{transform:translateY(0);opacity:1;pointer-events:auto}
+            .nav-links li{width:100%}
+            .nav-links a{display:block;padding:.85rem 1.5rem;font-size:.95rem;letter-spacing:.03em;border-bottom:1px solid rgba(255,255,255,.05);color:rgba(255,255,255,.85)}
+            .nav-links a:hover,.nav-links a.active{background:rgba(201,168,76,.08);color:#E6CE80}
+            .mobile-menu-btn{display:flex}
             .nav-logo{font-size:1.1rem}
-            .nav-links{gap:1rem}
-            .nav-links a{font-size:.82rem}
+            #navbar{padding:.6rem 1rem}
         }
         .nav-cta{background:linear-gradient(135deg,var(--gold),var(--gold-dark))!important;color:var(--dark)!important;padding:.5rem 1.5rem;border-radius:50px;font-weight:600!important}
         .nav-right{display:flex;align-items:center;gap:1.5rem}
@@ -1213,12 +1216,23 @@
         <a href="/" class="nav-logo"><span class="logo-mark">✝</span><span class="logo-text">Sonido de Vida</span></a>
         <!-- Navegación de la WEB (oculta en la PWA instalada, donde manda la barra inferior) -->
         <ul class="nav-links" id="navLinks" role="tablist">
-            <li><a href="#" data-navtab="inicio" onclick="showTab('inicio');return false;">Inicio</a></li>
-            <li><a href="/devocionales">Devocionales</a></li>
-            <li><a href="#" data-navtab="biblia" onclick="showTab('biblia');return false;">Biblia</a></li>
-            <li><a href="#" data-navtab="buscar" onclick="showTab('buscar');return false;">Buscar</a></li>
-            <li><a href="#" data-navtab="yo" onclick="showTab('yo');return false;">Mi perfil</a></li>
+            <li><a href="#" data-navtab="inicio" onclick="showTab('inicio');closeMenu();return false;">Inicio</a></li>
+            <li><a href="/devocionales" onclick="closeMenu()">Devocionales</a></li>
+            <li><a href="#" data-navtab="biblia" onclick="showTab('biblia');closeMenu();return false;">Biblia</a></li>
+            <li><a href="#" data-navtab="buscar" onclick="showTab('buscar');closeMenu();return false;">Buscar</a></li>
+            <li id="navCrearCuentaItem"><a href="#" onclick="showTab('yo');closeMenu();return false;">Crear cuenta</a></li>
+            <li><a href="#" data-navtab="yo" onclick="showTab('yo');closeMenu();return false;">Mi perfil</a></li>
         </ul>
+        <div class="nav-right">
+            <div class="nav-actions" id="navActions">
+                <button class="nav-account-btn" id="navAccountBtn" onclick="showTab('yo')" style="display:none">
+                    <span id="navAccountLabel">Entrar</span>
+                </button>
+            </div>
+            <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleMobileMenu()" aria-label="Menú">
+                <div class="mb-bars"><span></span><span></span><span></span></div>
+            </button>
+        </div>
     </nav>
 
     <section class="hero" data-tab="inicio">
