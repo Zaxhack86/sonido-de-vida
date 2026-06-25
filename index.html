@@ -130,6 +130,83 @@
         .hero-scroll{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);z-index:10;animation:bounce 2s infinite}
         .hero-scroll svg{width:30px;height:30px;stroke:var(--gold-light);opacity:.6}
         @keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(10px)}}
+        /* ════════ Tira de versículos en movimiento (ticker) ════════ */
+        .verse-ticker{background:linear-gradient(180deg,var(--dark),var(--deep-blue));padding:1.15rem 0;border-top:1px solid rgba(201,168,76,.14);border-bottom:1px solid rgba(201,168,76,.14);overflow:hidden;position:relative;
+            -webkit-mask-image:linear-gradient(to right,transparent,#000 7%,#000 93%,transparent);mask-image:linear-gradient(to right,transparent,#000 7%,#000 93%,transparent)}
+        .ticker-track{display:flex;gap:3rem;white-space:nowrap;width:max-content;animation:tickerScroll 48s linear infinite}
+        .verse-ticker:hover .ticker-track{animation-play-state:paused}
+        @keyframes tickerScroll{to{transform:translateX(-50%)}}
+        .ticker-item{display:inline-flex;align-items:center;gap:.75rem;font-family:'Lora',serif;font-size:.92rem;color:rgba(255,255,255,.62);flex-shrink:0}
+        .ticker-item .tk-sep{color:rgba(201,168,76,.55)}
+        .ticker-item .tk-ref{font-family:'Inter',sans-serif;font-size:.74rem;font-weight:600;letter-spacing:.04em;color:var(--gold-light);background:rgba(201,168,76,.1);padding:.18rem .6rem;border-radius:50px}
+        @media (prefers-reduced-motion:reduce){.ticker-track{animation:none}}
+        /* ════════ Secciones de muestra del Inicio (showcase) ════════ */
+        .shw-section{padding:5.5rem 1.5rem;position:relative;background:linear-gradient(180deg,var(--dark),var(--deep-blue) 60%,var(--dark))}
+        .shw-section.alt{background:var(--dark)}
+        .shw-wrap{max-width:1100px;margin:0 auto}
+        .shw-head{text-align:center;margin-bottom:3rem}
+        .shw-kicker{font-family:'Inter',sans-serif;font-size:.72rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:.9rem}
+        .shw-title{font-family:'Cinzel',serif;font-size:clamp(1.8rem,4vw,2.8rem);color:#f4efe3;margin-bottom:.8rem;line-height:1.1}
+        .shw-sub{font-family:'Lora',serif;color:#9aa0b0;font-size:1rem;max-width:460px;margin:0 auto}
+        /* Reproductor de muestra */
+        .shw-player{max-width:680px;margin:0 auto;background:rgba(201,168,76,.04);border:1px solid rgba(201,168,76,.16);border-radius:20px;padding:1.8rem;backdrop-filter:blur(12px)}
+        .shw-wave{background:rgba(0,0,0,.3);border-radius:14px;padding:1rem;margin-bottom:1.4rem}
+        .shw-wave-bars{display:flex;align-items:center;justify-content:center;gap:2px;height:58px}
+        .shw-wb{width:3px;border-radius:2px;flex-shrink:0}
+        .shw-wb.on{background:var(--gold)}
+        .shw-wb.off{background:rgba(255,255,255,.08)}
+        .shw-wb.cur{background:var(--gold-light);box-shadow:0 0 8px rgba(232,212,139,.6)}
+        .shw-pinfo{display:flex;align-items:center;gap:1rem;margin-bottom:1.1rem}
+        .shw-picon{width:52px;height:52px;border-radius:14px;flex-shrink:0;background:rgba(201,168,76,.12);display:flex;align-items:center;justify-content:center;font-size:1.4rem}
+        .shw-ptrack{flex:1;min-width:0}
+        .shw-ptrack h4{font-family:'Inter',sans-serif;font-size:.95rem;font-weight:600;color:#f4efe3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .shw-ptrack p{font-size:.78rem;color:#8b90a0;margin-top:.15rem}
+        .shw-prog{width:100%;height:5px;background:rgba(255,255,255,.06);border-radius:5px;overflow:hidden}
+        .shw-prog-fill{height:100%;width:35%;border-radius:5px;background:linear-gradient(90deg,var(--gold),var(--gold-light))}
+        .shw-ptimes{display:flex;justify-content:space-between;margin-top:.5rem;font-size:.72rem;color:#8b90a0}
+        .shw-pctrl{display:flex;align-items:center;justify-content:center;gap:1.5rem;margin-top:1.3rem}
+        .shw-cbtn{background:none;border:none;color:#8b90a0;cursor:pointer;font-size:1.2rem;transition:color .2s}
+        .shw-cbtn:hover{color:#f4efe3}
+        .shw-playbtn{width:54px;height:54px;border-radius:50%;border:none;cursor:pointer;background:linear-gradient(135deg,var(--gold-light),var(--gold));color:var(--dark);display:flex;align-items:center;justify-content:center;transition:transform .2s,box-shadow .2s}
+        .shw-playbtn:hover{transform:scale(1.08);box-shadow:0 6px 26px rgba(201,168,76,.4)}
+        /* Tarjetas de versículos */
+        .shw-verses{display:flex;flex-direction:column;gap:1.4rem}
+        .shw-vcard{position:relative;overflow:hidden;border-radius:18px;padding:1.8rem;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);transition:transform .35s,box-shadow .35s}
+        .shw-vcard:hover{transform:translateY(-3px);box-shadow:0 16px 44px -12px rgba(201,168,76,.14)}
+        .shw-bigq{position:absolute;top:.4rem;right:1.2rem;font-family:'Cinzel',serif;font-size:4.5rem;line-height:1;color:rgba(255,255,255,.03);pointer-events:none}
+        .shw-vtext{font-family:'Lora',serif;font-size:1rem;line-height:1.7;color:rgba(255,255,255,.82)}
+        .shw-vtext .hl{color:var(--gold-light);font-weight:600}
+        .shw-vref{display:inline-flex;align-items:center;gap:.6rem;margin-top:1.3rem}
+        .shw-vbook{font-family:'Inter',sans-serif;font-size:.66rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);background:rgba(201,168,76,.1);padding:.25rem .7rem;border-radius:50px}
+        .shw-vchap{font-size:.8rem;color:#8b90a0}
+        .shw-grid2{display:grid;grid-template-columns:1fr;gap:1.4rem}
+        .shw-grid3{display:grid;grid-template-columns:1fr;gap:1.2rem}
+        .shw-featured{text-align:center;border-radius:22px;padding:3rem 2rem;background:linear-gradient(135deg,rgba(201,168,76,.07),rgba(13,13,26,.9) 50%,rgba(201,168,76,.04));border:1px solid rgba(201,168,76,.16)}
+        .shw-featured .shw-vtext{font-size:clamp(1.2rem,3vw,1.7rem);max-width:600px;margin:0 auto}
+        /* Libros */
+        .shw-books{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1.2rem}
+        .shw-book{border-radius:16px;padding:1.4rem;cursor:pointer;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);transition:transform .3s,border-color .3s}
+        .shw-book:hover{transform:translateY(-3px);border-color:rgba(201,168,76,.3)}
+        .shw-bcover{width:100%;aspect-ratio:1;border-radius:12px;background:rgba(201,168,76,.06);display:flex;align-items:center;justify-content:center;font-size:2.6rem;color:rgba(201,168,76,.35);margin-bottom:1rem;transition:all .3s}
+        .shw-book:hover .shw-bcover{color:rgba(232,212,139,.6);background:rgba(201,168,76,.1)}
+        .shw-book h4{font-family:'Inter',sans-serif;font-size:.95rem;font-weight:600;color:#f4efe3;margin-bottom:.25rem}
+        .shw-book p{font-size:.76rem;color:#8b90a0;margin-bottom:.8rem}
+        .shw-bprog{display:flex;align-items:center;gap:.5rem}
+        .shw-bprog-bar{flex:1;height:3px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden}
+        .shw-bprog-fill{height:100%;background:rgba(201,168,76,.5);border-radius:3px}
+        .shw-bprog span{font-size:.66rem;color:#8b90a0}
+        /* Características */
+        .shw-feats{display:grid;grid-template-columns:1fr;gap:1.2rem}
+        .shw-feat{border-radius:20px;padding:2rem;text-align:center;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);transition:transform .3s,border-color .3s}
+        .shw-feat:hover{transform:translateY(-3px);border-color:rgba(201,168,76,.2)}
+        .shw-feat-ic{width:54px;height:54px;border-radius:16px;background:rgba(201,168,76,.1);display:flex;align-items:center;justify-content:center;font-size:1.4rem;color:var(--gold);margin:0 auto 1.1rem}
+        .shw-feat h4{font-family:'Cinzel',serif;font-size:1.1rem;color:#f4efe3;margin-bottom:.5rem}
+        .shw-feat p{font-family:'Lora',serif;font-size:.86rem;color:#9aa0b0;line-height:1.65}
+        @media(min-width:640px){
+            .shw-grid2{grid-template-columns:1fr 1fr}
+            .shw-grid3{grid-template-columns:1fr 1fr 1fr}
+            .shw-feats{grid-template-columns:1fr 1fr 1fr}
+        }
         .stats-bar{background:white;padding:3rem 2rem;box-shadow:0 4px 20px rgba(0,0,0,.05)}
         .stats-grid{max-width:1000px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:2rem;text-align:center}
         .stat-item h3{font-family:'Cinzel',serif;font-size:2rem;color:var(--gold-dark);margin-bottom:.3rem}
@@ -1253,6 +1330,11 @@
         </div>
     </section>
 
+    <!-- Tira de versículos en movimiento -->
+    <div class="verse-ticker" data-tab="inicio" aria-hidden="true">
+        <div class="ticker-track" id="verseTickerTrack"></div>
+    </div>
+
     <section class="stats-bar" data-tab="inicio">
         <div class="stats-grid">
             <div class="stat-item"><h3>66</h3><p>Libros</p></div>
@@ -1943,6 +2025,91 @@
             </div>
           </div>
           <button id="playBtn" onclick="togglePlay()" style="display:none" aria-hidden="true">🔊 Escuchar</button>
+        </div>
+    </section>
+
+    <!-- ════════ Showcase: reproductor de muestra ════════ -->
+    <section class="shw-section" data-tab="inicio">
+        <div class="shw-wrap">
+            <div class="shw-head reveal">
+                <span class="shw-kicker">Ahora reproduciendo</span>
+                <h2 class="shw-title">Tu sonido de vida</h2>
+                <p class="shw-sub">Sumérgete en la narración más poderosa jamás contada.</p>
+            </div>
+            <div class="shw-player reveal">
+                <div class="shw-wave"><div class="shw-wave-bars" id="shwWaveBars"></div></div>
+                <div class="shw-pinfo">
+                    <div class="shw-picon">📖</div>
+                    <div class="shw-ptrack"><h4>Salmos 23 — El Señor es mi Pastor</h4><p>Antiguo Testamento · Salmo 23:1-6</p></div>
+                    <button class="shw-cbtn" aria-label="Me gusta">♡</button>
+                </div>
+                <div class="shw-prog"><div class="shw-prog-fill"></div></div>
+                <div class="shw-ptimes"><span>1:12</span><span>3:28</span></div>
+                <div class="shw-pctrl">
+                    <button class="shw-cbtn" aria-label="Anterior">⏮</button>
+                    <button class="shw-playbtn" onclick="showTab('biblia')" aria-label="Escuchar la Biblia">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+                    </button>
+                    <button class="shw-cbtn" aria-label="Siguiente">⏭</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ════════ Showcase: versículos que transforman ════════ -->
+    <section class="shw-section alt" data-tab="inicio">
+        <div class="shw-wrap">
+            <div class="shw-head reveal">
+                <span class="shw-kicker">Palabra viva</span>
+                <h2 class="shw-title">Versículos que transforman</h2>
+                <p class="shw-sub">Deja que cada palabra resuene en tu corazón.</p>
+            </div>
+            <div class="shw-verses reveal">
+                <div class="shw-vcard"><span class="shw-bigq">"</span><p class="shw-vtext" style="font-size:1.2rem">En el principio creó Dios los cielos y la tierra. Y la tierra estaba desordenada y vacía, y las tinieblas estaban sobre la faz del abismo.</p><div class="shw-vref"><span class="shw-vbook">Génesis</span><span class="shw-vchap">1:1-2</span></div></div>
+                <div class="shw-grid2">
+                    <div class="shw-vcard"><span class="shw-bigq">"</span><p class="shw-vtext">La fe es la certeza de lo que se espera, la convicción de lo que no se ve.</p><div class="shw-vref"><span class="shw-vbook">Hebreos</span><span class="shw-vchap">11:1</span></div></div>
+                    <div class="shw-vcard"><span class="shw-bigq">"</span><p class="shw-vtext">Porque de tal manera amó Dios al mundo, que ha dado a su Hijo unigénito, para que todo aquel que en él cree no se pierda, mas tenga vida eterna.</p><div class="shw-vref"><span class="shw-vbook">Juan</span><span class="shw-vchap">3:16</span></div></div>
+                </div>
+                <div class="shw-featured"><div style="font-size:2rem;color:rgba(201,168,76,.4);margin-bottom:1rem">✝</div><p class="shw-vtext">"El Señor es mi pastor, <span class="hl">nada me faltará.</span> En lugares de delicados pastos me hará descansar; junto a aguas de reposo me pastoreará."</p><div class="shw-vref" style="justify-content:center;margin-top:1.5rem"><span class="shw-vbook">Salmos</span><span class="shw-vchap">23:1-2</span></div></div>
+                <div class="shw-grid3">
+                    <div class="shw-vcard"><span class="shw-bigq">"</span><p class="shw-vtext" style="font-size:.9rem">Todo tiene su tiempo, y todo lo que se quiere debajo del cielo tiene su hora.</p><div class="shw-vref"><span class="shw-vbook">Ecl.</span><span class="shw-vchap">3:1</span></div></div>
+                    <div class="shw-vcard"><span class="shw-bigq">"</span><p class="shw-vtext" style="font-size:.9rem">Yo soy el camino, la verdad y la vida. Nadie viene al Padre sino por mí.</p><div class="shw-vref"><span class="shw-vbook">Juan</span><span class="shw-vchap">14:6</span></div></div>
+                    <div class="shw-vcard"><span class="shw-bigq">"</span><p class="shw-vtext" style="font-size:.9rem">No temas, porque yo estoy contigo; no desmayes, porque yo soy tu Dios.</p><div class="shw-vref"><span class="shw-vbook">Isaías</span><span class="shw-vchap">41:10</span></div></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ════════ Showcase: libros populares ════════ -->
+    <section class="shw-section" data-tab="inicio">
+        <div class="shw-wrap">
+            <div class="shw-head reveal">
+                <span class="shw-kicker">Biblioteca completa</span>
+                <h2 class="shw-title">Libros populares</h2>
+                <p class="shw-sub">Los más escuchados por nuestra comunidad.</p>
+            </div>
+            <div class="shw-books reveal">
+                <div class="shw-book" onclick="showTab('biblia')"><div class="shw-bcover">📖</div><h4>Génesis</h4><p>50 capítulos · 3h 22m</p><div class="shw-bprog"><div class="shw-bprog-bar"><div class="shw-bprog-fill" style="width:0%"></div></div><span>Nuevo</span></div></div>
+                <div class="shw-book" onclick="showTab('biblia')"><div class="shw-bcover">🎵</div><h4>Salmos</h4><p>150 capítulos · 4h 45m</p><div class="shw-bprog"><div class="shw-bprog-bar"><div class="shw-bprog-fill" style="width:42%"></div></div><span>42%</span></div></div>
+                <div class="shw-book" onclick="showTab('biblia')"><div class="shw-bcover">✝</div><h4>Mateo</h4><p>28 capítulos · 2h 38m</p><div class="shw-bprog"><div class="shw-bprog-bar"><div class="shw-bprog-fill" style="width:78%"></div></div><span>78%</span></div></div>
+                <div class="shw-book" onclick="showTab('biblia')"><div class="shw-bcover">🕊</div><h4>Juan</h4><p>21 capítulos · 1h 52m</p><div class="shw-bprog"><div class="shw-bprog-bar"><div class="shw-bprog-fill" style="width:15%"></div></div><span>15%</span></div></div>
+            </div>
+            <div class="reveal" style="text-align:center;margin-top:2.5rem"><button class="btn-secondary" onclick="showTab('biblia')" style="font-size:.9rem">Ver todos los 66 libros →</button></div>
+        </div>
+    </section>
+
+    <!-- ════════ Showcase: diseñado para ti ════════ -->
+    <section class="shw-section alt" data-tab="inicio">
+        <div class="shw-wrap">
+            <div class="shw-head reveal">
+                <span class="shw-kicker">¿Por qué Sonido de Vida?</span>
+                <h2 class="shw-title">Diseñado para ti</h2>
+            </div>
+            <div class="shw-feats reveal">
+                <div class="shw-feat"><div class="shw-feat-ic">🎧</div><h4>Audio profesional</h4><p>Narración de alta calidad para una experiencia inmersiva.</p></div>
+                <div class="shw-feat"><div class="shw-feat-ic">📱</div><h4>En cualquier lugar</h4><p>En el auto, en casa o en caminata. Compatible con todos tus dispositivos.</p></div>
+                <div class="shw-feat"><div class="shw-feat-ic">♥</div><h4>100% gratuito</h4><p>La Palabra de Dios accesible para todos, sin barreras.</p></div>
+            </div>
         </div>
     </section>
 
@@ -3134,6 +3301,8 @@
         initScrollAnimations();
         initTabLinks();
         initNavbar();
+        initVerseTicker();
+        initShowcaseWave();
         initAudioEvents();
         registerSW();
         initPWA();
@@ -5470,6 +5639,46 @@
 
     function initNavbar() {
         window.addEventListener('scroll', () => document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50));
+    }
+
+    // Tira de versículos en movimiento (se duplica para un bucle continuo)
+    function initVerseTicker() {
+        const track = document.getElementById('verseTickerTrack');
+        if (!track) return;
+        const verses = [
+            { t: 'El Señor es mi pastor, nada me faltará', r: 'Salmo 23:1' },
+            { t: 'La fe es la certeza de lo que se espera', r: 'Hebreos 11:1' },
+            { t: 'Porque de tal manera amó Dios al mundo', r: 'Juan 3:16' },
+            { t: 'Yo soy el camino, la verdad y la vida', r: 'Juan 14:6' },
+            { t: 'No temas, porque yo estoy contigo', r: 'Isaías 41:10' },
+            { t: 'La palabra de Dios es viva y eficaz', r: 'Hebreos 4:12' },
+            { t: 'Todo lo puedo en Cristo que me fortalece', r: 'Filipenses 4:13' },
+            { t: 'Confía en Jehová con todo tu corazón', r: 'Proverbios 3:5' },
+            { t: 'Conoceréis la verdad, y la verdad os libertará', r: 'Juan 8:32' },
+            { t: 'Deléitate asimismo en Jehová', r: 'Salmo 37:4' }
+        ];
+        let html = '';
+        for (let dup = 0; dup < 2; dup++) {
+            verses.forEach(v => {
+                html += '<span class="ticker-item"><span class="tk-sep">✦</span>“' + v.t + '”<span class="tk-ref">' + v.r + '</span></span>';
+            });
+        }
+        track.innerHTML = html;
+    }
+
+    // Onda de muestra del reproductor del Inicio (decorativa)
+    function initShowcaseWave() {
+        const c = document.getElementById('shwWaveBars');
+        if (!c) return;
+        const n = 90, prog = 0.35;
+        for (let i = 0; i < n; i++) {
+            const seed = Math.abs(Math.sin(i * 0.3) * 0.5 + Math.sin(i * 0.7) * 0.3 + Math.sin(i * 1.3) * 0.2);
+            const ratio = i / (n - 1);
+            const wb = document.createElement('div');
+            wb.className = 'shw-wb ' + (ratio < prog ? 'on' : (Math.abs(ratio - prog) < 0.012 ? 'cur' : 'off'));
+            wb.style.height = Math.max(4, seed * 48) + 'px';
+            c.appendChild(wb);
+        }
     }
 
     function toggleMobileMenu() {
