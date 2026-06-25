@@ -187,8 +187,14 @@
         .shw-books{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1.2rem}
         .shw-book{border-radius:16px;padding:1.4rem;cursor:pointer;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);transition:transform .3s,border-color .3s}
         .shw-book:hover{transform:translateY(-3px);border-color:rgba(201,168,76,.3)}
-        .shw-bcover{width:100%;aspect-ratio:1;border-radius:12px;background:rgba(201,168,76,.06);display:flex;align-items:center;justify-content:center;font-size:2.6rem;color:rgba(201,168,76,.35);margin-bottom:1rem;transition:all .3s}
-        .shw-book:hover .shw-bcover{color:rgba(232,212,139,.6);background:rgba(201,168,76,.1)}
+        .shw-bcover{position:relative;overflow:hidden;width:100%;aspect-ratio:3/4;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:3rem;margin-bottom:1rem;box-shadow:inset 0 1px 0 rgba(255,255,255,.08),inset 0 0 0 1px rgba(201,168,76,.12),0 14px 30px -14px rgba(0,0,0,.75);transition:transform .35s}
+        .shw-bcover::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 32%,rgba(255,255,255,.14),transparent 62%);pointer-events:none}
+        .shw-bcover .shw-bemoji{position:relative;z-index:1;filter:drop-shadow(0 5px 12px rgba(0,0,0,.55));opacity:.95}
+        .shw-bc-gen{background:linear-gradient(160deg,#24365e 0%,#0f1a38 52%,#3a2a12 100%)}
+        .shw-bc-sal{background:linear-gradient(160deg,#2e2558 0%,#15103a 52%,#42305c 100%)}
+        .shw-bc-mat{background:linear-gradient(160deg,#173a52 0%,#0e2236 52%,#23193a 100%)}
+        .shw-bc-jua{background:linear-gradient(160deg,#3e2f12 0%,#1d1632 52%,#0f1a38 100%)}
+        .shw-book:hover .shw-bcover{transform:scale(1.025)}
         .shw-book h4{font-family:'Inter',sans-serif;font-size:.95rem;font-weight:600;color:#f4efe3;margin-bottom:.25rem}
         .shw-book p{font-size:.76rem;color:#8b90a0;margin-bottom:.8rem}
         .shw-bprog{display:flex;align-items:center;gap:.5rem}
@@ -236,7 +242,7 @@
         .listen-btn{width:100%;padding:1rem;background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:var(--dark);border:none;border-radius:12px;font-size:1.05rem;font-weight:600;cursor:pointer;transition:all .3s;font-family:'Inter',sans-serif;display:flex;align-items:center;justify-content:center;gap:.5rem}
         .listen-btn:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(201,168,76,.3)}
         .listen-btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
-        .chapter-result{margin-top:2rem;display:none}
+        .chapter-result{margin:2rem auto 0;display:none;max-width:1080px}
         .chapter-result.visible{display:block;animation:fadeInUp .5s ease}
         .chapter-card{background:rgba(255,255,255,.06);border:1px solid rgba(201,168,76,.2);border-radius:16px;padding:2rem}
         .chapter-header{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:1.2rem;flex-wrap:wrap;gap:.5rem}
@@ -2089,10 +2095,10 @@
                 <p class="shw-sub">Los más escuchados por nuestra comunidad.</p>
             </div>
             <div class="shw-books reveal">
-                <div class="shw-book" onclick="showTab('biblia')"><div class="shw-bcover">📖</div><h4>Génesis</h4><p>50 capítulos · 3h 22m</p><div class="shw-bprog"><div class="shw-bprog-bar"><div class="shw-bprog-fill" style="width:0%"></div></div><span>Nuevo</span></div></div>
-                <div class="shw-book" onclick="showTab('biblia')"><div class="shw-bcover">🎵</div><h4>Salmos</h4><p>150 capítulos · 4h 45m</p><div class="shw-bprog"><div class="shw-bprog-bar"><div class="shw-bprog-fill" style="width:42%"></div></div><span>42%</span></div></div>
-                <div class="shw-book" onclick="showTab('biblia')"><div class="shw-bcover">✝</div><h4>Mateo</h4><p>28 capítulos · 2h 38m</p><div class="shw-bprog"><div class="shw-bprog-bar"><div class="shw-bprog-fill" style="width:78%"></div></div><span>78%</span></div></div>
-                <div class="shw-book" onclick="showTab('biblia')"><div class="shw-bcover">🕊</div><h4>Juan</h4><p>21 capítulos · 1h 52m</p><div class="shw-bprog"><div class="shw-bprog-bar"><div class="shw-bprog-fill" style="width:15%"></div></div><span>15%</span></div></div>
+                <div class="shw-book" onclick="showTab('biblia')"><div class="shw-bcover shw-bc-gen"><span class="shw-bemoji">📖</span></div><h4>Génesis</h4><p>50 capítulos · 3h 22m</p><div class="shw-bprog"><div class="shw-bprog-bar"><div class="shw-bprog-fill" style="width:0%"></div></div><span>Nuevo</span></div></div>
+                <div class="shw-book" onclick="showTab('biblia')"><div class="shw-bcover shw-bc-sal"><span class="shw-bemoji">🎵</span></div><h4>Salmos</h4><p>150 capítulos · 4h 45m</p><div class="shw-bprog"><div class="shw-bprog-bar"><div class="shw-bprog-fill" style="width:42%"></div></div><span>42%</span></div></div>
+                <div class="shw-book" onclick="showTab('biblia')"><div class="shw-bcover shw-bc-mat"><span class="shw-bemoji">✝️</span></div><h4>Mateo</h4><p>28 capítulos · 2h 38m</p><div class="shw-bprog"><div class="shw-bprog-bar"><div class="shw-bprog-fill" style="width:78%"></div></div><span>78%</span></div></div>
+                <div class="shw-book" onclick="showTab('biblia')"><div class="shw-bcover shw-bc-jua"><span class="shw-bemoji">🕊️</span></div><h4>Juan</h4><p>21 capítulos · 1h 52m</p><div class="shw-bprog"><div class="shw-bprog-bar"><div class="shw-bprog-fill" style="width:15%"></div></div><span>15%</span></div></div>
             </div>
             <div class="reveal" style="text-align:center;margin-top:2.5rem"><button class="btn-secondary" onclick="showTab('biblia')" style="font-size:.9rem">Ver todos los 66 libros →</button></div>
         </div>
