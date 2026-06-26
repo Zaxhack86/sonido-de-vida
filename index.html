@@ -647,6 +647,15 @@
         .search-result .sr-study{display:flex;align-items:center;gap:.4rem;margin-top:.7rem;font-family:'Inter',sans-serif;font-size:.7rem;color:var(--gold-light);opacity:.55;transition:opacity .2s}
         .search-result:hover .sr-study{opacity:1}
         .sr-study svg{width:13px;height:13px}
+        /* Surfacing curado */
+        .sb-curated-section{margin-bottom:.9rem}
+        .sb-curated-label{display:flex;align-items:center;gap:.4rem;font-family:'Cinzel',serif;font-size:.68rem;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.55rem}
+        .sb-curated-label svg{width:11px;height:11px;flex-shrink:0}
+        .search-result.curated{border-color:rgba(201,168,76,.35);background:linear-gradient(135deg,rgba(201,168,76,.09) 0%,rgba(13,27,62,.55) 100%)}
+        .search-result.curated .sr-study{color:var(--gold);opacity:.85}
+        .search-result.curated:hover .sr-study{opacity:1}
+        .sb-sep{display:flex;align-items:center;gap:.5rem;font-family:'Inter',sans-serif;font-size:.63rem;color:rgba(255,255,255,.28);letter-spacing:.07em;text-transform:uppercase;margin:.8rem 0 .6rem}
+        .sb-sep::before,.sb-sep::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.07)}
         /* Panel de estudio (premium) */
         .sb-overlay{position:fixed;inset:0;z-index:5400;background:rgba(0,0,0,.62);backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity .3s}
         .sb-overlay.open{opacity:1;pointer-events:auto}
@@ -7534,9 +7543,73 @@
             return frag;
         }
 
-        if (countEl) countEl.textContent = results.length + (truncated?'+':'') + ' resultado' + (results.length!==1?'s':'');
+        // ── Surfacing curado: versículos con estudio completo que coincidan por tag ──
+        const curatedHits = [];
+        const curatedKeySet = new Set();
+        const activeBible = getActiveBible();
+        if (activeBible) {
+            Object.entries(CURATED).forEach(([key, data]) => {
+                if (!data.tags) return;
+                const tagMatch = data.tags.some(t => keywords.some(kw => _sAccents(t).toLowerCase().includes(kw)));
+                if (!tagMatch) return;
+                const m = key.match(/^(.+)\s(\d+):(\d+)$/);
+                if (!m) return;
+                const bookNorm = m[1], ch = parseInt(m[2]), vs = parseInt(m[3]);
+                for (const bk of Object.keys(activeBible)) {
+                    if (_sAccents(bk).toLowerCase() === bookNorm) {
+                        const chapters = activeBible[bk];
+                        if (chapters && chapters[ch-1] && chapters[ch-1][vs-1]) {
+                            curatedHits.push({ book: bk, chapter: ch, verse: vs, text: chapters[ch-1][vs-1], _key: key });
+                            curatedKeySet.add(key);
+                            break;
+                        }
+                    }
+                }
+            });
+        }
+        // Dedup: quitar de resultados normales los que ya salen en curated
+        const mainResults = results.filter(r =>
+            !curatedKeySet.has(_sAccents(r.book + ' ' + r.chapter + ':' + r.verse).toLowerCase()));
+
+        const total = curatedHits.length + mainResults.length;
+        if (countEl) countEl.textContent = total + (truncated?'+':'') + ' resultado' + (total!==1?'s':'');
         box.innerHTML = '';
-        box.appendChild(buildCards(results));
+
+        if (curatedHits.length) {
+            const STAR_SVG = '<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
+            const sect = document.createElement('div');
+            sect.className = 'sb-curated-section';
+            const lbl = document.createElement('div');
+            lbl.className = 'sb-curated-label';
+            lbl.innerHTML = STAR_SVG + ' Estudio completo disponible';
+            sect.appendChild(lbl);
+            curatedHits.forEach(r => {
+                const ref = r.book + ' ' + r.chapter + ':' + r.verse;
+                const isNT = NT_BOOKS.has(r.book);
+                const data = CURATED[r._key];
+                const btn = document.createElement('button');
+                btn.className = 'search-result curated';
+                btn.onclick = () => openStudy(r.book, r.chapter, r.verse, r.text);
+                const tags = data.tags.slice(0,3).map(t =>
+                    '<span class="sr-tag tag-' + _sAccents(t).toLowerCase() + '">' + t + '</span>').join('');
+                btn.innerHTML =
+                    '<div class="sr-meta">' +
+                        '<span class="sr-badge ' + (isNT?'nt':'at') + '">' + (isNT?'N.T.':'A.T.') + '</span>' +
+                        '<span class="search-result-ref" style="margin:0">' + ref + '</span>' + tags +
+                    '</div>' +
+                    '<div class="search-result-text">' + highlight(r.text) + '</div>' +
+                    '<div class="sr-study">' + SR_SVG + ' Autor · Origen · Hebreo/Griego · Preguntas</div>';
+                sect.appendChild(btn);
+            });
+            box.appendChild(sect);
+            if (mainResults.length) {
+                const sep = document.createElement('div');
+                sep.className = 'sb-sep';
+                sep.textContent = 'Más resultados';
+                box.appendChild(sep);
+            }
+        }
+        box.appendChild(buildCards(mainResults));
         if (truncated) {
             const d = document.createElement('div');
             d.className = 'search-empty';
