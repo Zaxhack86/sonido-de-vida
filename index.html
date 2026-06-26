@@ -151,7 +151,7 @@
         /* Reproductor de muestra */
         .shw-player{max-width:680px;margin:0 auto;background:rgba(201,168,76,.04);border:1px solid rgba(201,168,76,.16);border-radius:20px;padding:1.8rem;backdrop-filter:blur(12px)}
         .shw-wave{background:rgba(0,0,0,.3);border-radius:14px;padding:1rem;margin-bottom:1.4rem}
-        .shw-wave-bars{display:flex;align-items:center;justify-content:center;gap:2px;height:58px}
+        .shw-wave-bars{display:flex;align-items:center;justify-content:center;gap:2px;height:58px;overflow:hidden;width:100%}
         .shw-wb{width:3px;border-radius:2px;flex-shrink:0}
         .shw-wb.on{background:var(--gold)}
         .shw-wb.off{background:rgba(255,255,255,.08)}
@@ -2211,7 +2211,7 @@
         <div class="sb-wrap">
             <div class="sb-head">
                 <span class="sb-eyebrow">✦ Modo Estudio</span>
-                <h2 class="sb-title">Estudio Bíblico <span>Profundo</span></h2>
+                <h2 class="sb-title">Estudio <span>Bíblico</span></h2>
                 <p class="sb-sub">Busca por palabra, referencia o describe lo que necesitas en tu corazón.</p>
             </div>
 
@@ -2275,7 +2275,7 @@
             <div class="sb-results-area" id="sbResultsArea" style="display:none">
                 <div class="sb-results-head">
                     <span id="searchCount"></span>
-                    <span class="sb-results-hint">Toca un versículo para estudio profundo ✦</span>
+                    <span class="sb-results-hint">Toca un versículo para estudio bíblico ✦</span>
                 </div>
                 <div class="search-results" id="searchResults"></div>
             </div>
@@ -7537,7 +7537,7 @@
                         '<span class="search-result-ref" style="margin:0">' + ref + '</span>' + tags +
                     '</div>' +
                     '<div class="search-result-text">' + highlight(r.text) + '</div>' +
-                    '<div class="sr-study">' + SR_SVG + ' Estudio profundo</div>';
+                    '<div class="sr-study">' + SR_SVG + ' Estudio bíblico</div>';
                 frag.appendChild(btn);
             });
             return frag;
@@ -7796,7 +7796,7 @@
     async function openStudy(book, chapter, verse, text){
         if(!sbIsPremium()){
             if(window.Focus && Focus.openTeaser) Focus.openTeaser();
-            else if(window.showToast) showToast('El Estudio Profundo es una función premium ✨');
+            else if(window.showToast) showToast('El Estudio Bíblico es una función premium ✨');
             return;
         }
         sbStudyData={ book, chapter:+chapter, verse:+verse, text:text||'', ref:book+' '+chapter+':'+verse, versions:null };
@@ -7826,7 +7826,7 @@
     function sbEsc(s){ return String(s==null?'':s).replace(/</g,'&lt;'); }
     function sbSoon(title){
         return '<div class="sp-soon"><span class="sp-soon-ic">✦</span><p>'+title+'</p>'+
-            '<small>Estamos ampliando el estudio profundo versículo por versículo. Mientras tanto, revisa <b>Versiones</b> y <b>Reflexión</b>.</small></div>';
+            '<small>Estamos ampliando el estudio bíblico versículo por versículo. Mientras tanto, revisa <b>Versiones</b> y <b>Reflexión</b>.</small></div>';
     }
     function sbRenderStudy(tab){
         const d=sbStudyData; if(!d) return;
