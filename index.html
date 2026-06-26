@@ -830,7 +830,7 @@
         .focus-overlay{--f-aura1:rgba(201,168,76,.26);--f-aura2:rgba(150,120,200,.15);--f-aura3:rgba(120,90,40,.20);--f-mote:201,168,76}
         .focus-overlay[data-cat="ambiente"]{--f-aura1:rgba(232,214,176,.26);--f-aura2:rgba(200,150,110,.15);--f-aura3:rgba(150,110,70,.20);--f-mote:232,214,176}
         .focus-overlay[data-cat="piano"]{--f-aura1:rgba(176,158,214,.26);--f-aura2:rgba(120,110,190,.15);--f-aura3:rgba(90,80,150,.20);--f-mote:201,182,224}
-        .focus-aura{position:fixed;inset:-20%;z-index:0;pointer-events:none;filter:blur(64px);opacity:.85}
+        .focus-aura{position:absolute;inset:-20%;z-index:0;pointer-events:none;filter:blur(64px);opacity:.85}
         .focus-aura span{position:absolute;border-radius:50%;mix-blend-mode:screen;will-change:transform}
         .focus-aura span:nth-child(1){width:55vmax;height:55vmax;left:-5%;top:-10%;background:radial-gradient(circle,var(--f-aura1),transparent 65%);animation:fAura1 26s ease-in-out infinite}
         .focus-aura span:nth-child(2){width:48vmax;height:48vmax;right:-10%;top:18%;background:radial-gradient(circle,var(--f-aura2),transparent 65%);animation:fAura2 32s ease-in-out infinite}
@@ -838,7 +838,7 @@
         @keyframes fAura1{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(8vmax,6vmax) scale(1.12)}}
         @keyframes fAura2{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-7vmax,4vmax) scale(1.08)}}
         @keyframes fAura3{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(5vmax,-7vmax) scale(1.14)}}
-        .focus-motes{position:fixed;inset:0;z-index:0;pointer-events:none}
+        .focus-motes{position:absolute;inset:0;z-index:0;pointer-events:none}
         @media(prefers-reduced-motion:reduce){.focus-aura span{animation:none}}
         /* ── Temas de fondo visual elegibles. Van DESPUÉS del tinte por categoría
            para que, en empate de especificidad, el tema elegido gane sobre el
@@ -1040,7 +1040,7 @@
         .fx-done-sec{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.7)}
         .fx-done-pri{background:linear-gradient(135deg,var(--gold),var(--gold-dark));border:none;color:#0d0d1a}
         /* ── Entorno visual: estrellas / lluvia / nubes ── */
-        .fx-stars,.fx-starglow,.fx-rain,.fx-clouds{position:fixed;inset:0;z-index:0;pointer-events:none}
+        .fx-stars,.fx-starglow,.fx-rain,.fx-clouds{position:absolute;inset:0;z-index:0;pointer-events:none}
         .fx-rain,.fx-clouds,.fx-starglow{display:none}
         .focus-overlay[data-env="rain"] .fx-rain{display:block}
         .focus-overlay[data-env="clouds"] .fx-clouds{display:block}
