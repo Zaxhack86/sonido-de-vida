@@ -2015,11 +2015,10 @@
                 <span class="bib-time bib-time-tot" id="bibTot">0:00</span>
               </div>
               <div class="bib-ctrl-row">
-                <div class="bib-speed" title="Velocidad de la voz">
-                  <button type="button" onclick="setReadSpeed(0.75,this)">0.75×</button>
+                <div class="bib-speed" title="Velocidad de la voz (SBLL 2026)">
+                  <button type="button" onclick="setReadSpeed(0.9,this)">0.9×</button>
                   <button type="button" class="active" onclick="setReadSpeed(1,this)">1×</button>
-                  <button type="button" onclick="setReadSpeed(1.25,this)">1.25×</button>
-                  <button type="button" onclick="setReadSpeed(1.5,this)">1.5×</button>
+                  <button type="button" onclick="setReadSpeed(1.2,this)">1.2×</button>
                 </div>
                 <div class="bib-transport">
                   <button class="bib-skip" type="button" onclick="goPrevChapter()" aria-label="Capítulo anterior"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="18 20 8 12 18 4 18 20"/><rect x="5" y="5" width="2" height="14" rx="1"/></svg></button>
@@ -2801,7 +2800,7 @@
                 <div class="focus-timer-opts fx-pill-row" id="focusSpeedOpts">
                     <button data-rate="0.9" onclick="Focus.setSpeed(0.9,this)">0.9×</button>
                     <button data-rate="1" class="active" onclick="Focus.setSpeed(1,this)">Normal</button>
-                    <button data-rate="1.25" onclick="Focus.setSpeed(1.25,this)">1.25×</button>
+                    <button data-rate="1.2" onclick="Focus.setSpeed(1.2,this)">1.2×</button>
                 </div>
                 <small class="focus-speed-hint" id="focusSpeedHint">🐢 La cámara lenta suena mejor con la voz <b>SBLL 2026</b>.<button type="button" onclick="Focus.useSbllVoice()">Usar voz 2026</button></small>
             </div>
@@ -4518,7 +4517,7 @@
             // aplicamos la velocidad en el mismo gesto. playbackSpeed se fija antes
             // de recargar para que el handler 'play' del audio nuevo lo reaplique.
             if (rate < 1 && translationMode !== 'sbll') {
-                playbackSpeed = Math.max(0.9, Math.min(1.25, rate));
+                playbackSpeed = Math.max(0.9, Math.min(1.2, rate));
                 if (window.setTranslation) setTranslation('sbll');   // async: recarga con la velocidad ya fijada
                 updateSpeedAvailability();
                 showToast('🎧 Voz SBLL 2026 + cámara lenta activadas');
@@ -4526,7 +4525,7 @@
                 if (btn) btn.classList.add('active');
                 return;
             }
-            playbackSpeed = Math.max(0.9, Math.min(1.25, rate));
+            playbackSpeed = Math.max(0.9, Math.min(1.2, rate));
             try { audioA.playbackRate = playbackSpeed; audioB.playbackRate = playbackSpeed; } catch (e) {}
             document.querySelectorAll('#focusSpeedOpts button').forEach(b => b.classList.remove('active'));
             if (btn) btn.classList.add('active');
@@ -8224,9 +8223,17 @@
         const pct = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
         audio.currentTime = pct * audio.duration;
     }
-    // Velocidad de lectura (0.75×–1.5×): aplica a ambos elementos <audio> y persiste en swaps
+    // Velocidad de lectura (0.9×–1.2×): aplica a ambos <audio> y persiste en swaps.
+    // Solo voz SBLL 2026: si el usuario baja de 1× se cambia automáticamente a esa voz.
     function setReadSpeed(rate, btn) {
-        try { playbackSpeed = rate; audioA.playbackRate = rate; audioB.playbackRate = rate; } catch (e) {}
+        rate = Math.max(0.9, Math.min(1.2, rate));
+        if (rate < 1 && translationMode !== 'sbll') {
+            playbackSpeed = rate;
+            if (window.setTranslation) setTranslation('sbll');
+            showToast('🎧 Voz SBLL 2026 activada para cámara lenta');
+        } else {
+            try { playbackSpeed = rate; audioA.playbackRate = rate; audioB.playbackRate = rate; } catch (e) {}
+        }
         document.querySelectorAll('#listen .bib-speed button').forEach(b => b.classList.remove('active'));
         if (btn) btn.classList.add('active');
     }
