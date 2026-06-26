@@ -4525,7 +4525,7 @@
 
         async function selectAmbient(id) {
             const a = ambients.find(x => x.id === id);
-            if (!a) return;
+            if (!a || !a.ids || !a.ids.length) return;
             if (currentAmbient === id) { stopAmbient(); return; }   // tocar de nuevo = apagar
             const my = ++ambToken;
             currentAmbient = id;
@@ -4538,6 +4538,12 @@
                 const url = await loadBlob(ambPlaylist[0]);
                 if (my !== ambToken) return;   // el usuario cambió de ambiente mientras descargaba
                 await crossfadeTo(url);
+                // Si la narración ya estaba corriendo cuando cargó el blob (inicio en Con voz),
+                // aseguramos que el ambiente siga sonando y cancelamos cualquier debounce de pausa.
+                if (focusNarration && !audio.paused && overlay.classList.contains('open')) {
+                    if (_pauseTimer) { clearTimeout(_pauseTimer); _pauseTimer = null; }
+                    ambCur.play().catch(() => {});
+                }
                 preloadNextVariant();
             } catch (e) {
                 if (my === ambToken) { currentAmbient = null; showToast('No se pudo cargar el ambiente'); }
@@ -4845,6 +4851,12 @@
         }
 
         function _openOverlay(mode) {
+            // iOS Safari: desbloquear los elementos de audio ambiente en el contexto
+            // de gesto de usuario (el click que abre el overlay). Sin esto, el blob
+            // llega después del gesto y .play() queda bloqueado por autoplay policy.
+            try { ambientEl.play().catch(() => {}); ambientEl.pause(); } catch(e) {}
+            try { ambientElB.play().catch(() => {}); ambientElB.pause(); } catch(e) {}
+
             overlay.dataset.mode = mode;
             overlay.dataset.bg = savedBg();
             _reflectBgBtns(overlay.dataset.bg);
@@ -5222,7 +5234,14 @@
             stBusy = false;
         }
 
-        return { enter, exit, enterVoz, enterMeditar, switchMode, toggleShuffleAuto, selectAmbient, toggleMusic, setVoz, setMusica, setSpeed, setTimer, setBg, onNarration, syncVerse, refreshGate, openTeaser, closeTeaser, closeSelector, useSbllVoice, startStreamTrack, tickStreamTrack, ambients, meditNext, meditPrev, meditShuffle };
+        // Para el FocusTimer: detiene narración + ambiente sin cerrar el overlay.
+        function stopAudio() {
+            try { audio.pause(); } catch(e) {}
+            stopAmbient();
+            _cancelSleep();
+        }
+
+        return { enter, exit, enterVoz, enterMeditar, switchMode, toggleShuffleAuto, selectAmbient, toggleMusic, setVoz, setMusica, setSpeed, setTimer, setBg, onNarration, syncVerse, refreshGate, openTeaser, closeTeaser, closeSelector, useSbllVoice, startStreamTrack, tickStreamTrack, ambients, meditNext, meditPrev, meditShuffle, stopAudio };
     })();
     window.Focus = Focus;
 
@@ -5233,12 +5252,15 @@
     //    reales del catálogo de Focus; al tocarla se elige uno al azar del grupo. ──
     const FocusCats = (function () {
         const CATS = [
-            { id:'piano',     emoji:'🎹', name:'Piano',         ids:['piano-romantico','piano-relajante','piano-meditacion','piano-instrumental','piano-naturaleza'] },
-            { id:'cuerdas',   emoji:'🎻', name:'Cuerdas',       ids:['cuerdas-terciopelo','orquesta-niebla'] },
-            { id:'paz',       emoji:'🕊️', name:'Paz y Quietud', ids:['calma','paz-abraza','paz-suspiros','seda-suave','aliento-agua','corrientes-calidas','luz-violeta','corazon-calma'] },
-            { id:'salmos',    emoji:'📜', name:'Salmos',        ids:['salmos-reposo','salmo-oracion','salmo-luz','salmos-oceano'] },
-            { id:'reposo',    emoji:'🌙', name:'Reposo',        ids:['meditacion','relajacion','medianoche-agua','deriva-umbral','cancion-cuna','flauta-serena','compas-agua','corriente-seda'] },
-            { id:'adoracion', emoji:'✨', name:'Adoración',     ids:['nube-segura','oceano-altares','incienso','incienso-sagrado','luz-oracion'] },
+            { id:'piano',         emoji:'🎹', name:'Piano',         ids:['piano-romantico','piano-relajante','piano-meditacion','piano-instrumental','piano-naturaleza'] },
+            { id:'cuerdas',       emoji:'🎻', name:'Cuerdas',       ids:['cuerdas-terciopelo','orquesta-niebla'] },
+            { id:'paz',           emoji:'🕊️', name:'Paz y Quietud', ids:['calma','paz-abraza','paz-suspiros','seda-suave','aliento-agua','corrientes-calidas','luz-violeta','corazon-calma'] },
+            { id:'salmos',        emoji:'📜', name:'Salmos',        ids:['salmos-reposo','salmo-oracion','salmo-luz','salmos-oceano'] },
+            { id:'reposo',        emoji:'🌙', name:'Reposo',        ids:['meditacion','relajacion','medianoche-agua','deriva-umbral','cancion-cuna','flauta-serena','compas-agua','corriente-seda'] },
+            { id:'adoracion',     emoji:'✨', name:'Adoración',     ids:['nube-segura','oceano-altares','incienso','incienso-sagrado','luz-oracion'] },
+            { id:'concentracion', emoji:'🧠', name:'Concentración', ids:['piano-instrumental','piano-naturaleza','piano-meditacion','seda-suave','corriente-seda'] },
+            { id:'trabajo',       emoji:'💻', name:'Trabajo',       ids:['piano-romantico','piano-relajante','cuerdas-terciopelo','orquesta-niebla','paz-abraza'] },
+            { id:'mañana',        emoji:'🌅', name:'Mañana',        ids:['luz-violeta','corrientes-calidas','aliento-agua','paz-abraza','piano-relajante'] },
         ];
         const grid = () => document.getElementById('fxCatGrid');
         function currentAmbient() {
@@ -5393,6 +5415,7 @@
         }
         function complete() {
             stop(); remaining = 0; draw(); setIcon(true); setLabel('¡Sesión completada!');
+            if (window.Focus) Focus.stopAudio();
             const o = $('fxDone'); if (o) { o.classList.add('show'); o.setAttribute('aria-hidden', 'false'); }
         }
         function skip() { complete(); }
