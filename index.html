@@ -4714,7 +4714,7 @@
                 _pauseTimer = setTimeout(() => {
                     _pauseTimer = null;
                     try { ambientEl.pause(); ambientElB.pause(); } catch (e) {}
-                }, 600);
+                }, 1200);
             }
         }
 
@@ -5066,7 +5066,7 @@
 
         // ── Salida ─────────────────────────────────────────────────────────────
         function exit() {
-            stActive = false;
+            stActive = false; stBusy = false;
             overlay.classList.remove('open');
             overlay.setAttribute('aria-hidden', 'true');
             overlay.removeAttribute('data-mode');
