@@ -214,6 +214,30 @@
             .shw-grid3{grid-template-columns:1fr 1fr 1fr}
             .shw-feats{grid-template-columns:1fr 1fr 1fr}
         }
+        /* ── FAQ ── */
+        .faq-section{padding:5rem 1.5rem;background:linear-gradient(180deg,var(--dark) 0%,var(--deep-blue) 100%)}
+        .faq-inner{max-width:780px;margin:0 auto}
+        .faq-eyebrow{font-family:'Cinzel',serif;font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);opacity:.75;text-align:center;margin-bottom:.6rem}
+        .faq-title{font-family:'Cinzel',serif;font-size:clamp(1.5rem,4vw,2.2rem);text-align:center;color:#f4efe3;margin-bottom:.5rem;font-weight:700}
+        .faq-sub{font-family:'Lora',serif;font-size:.95rem;color:#8a92a8;text-align:center;margin-bottom:3rem;line-height:1.6}
+        .faq-grid{display:grid;gap:1rem}
+        .faq-card{border:1px solid rgba(201,168,76,.15);border-radius:16px;background:rgba(255,255,255,.03);overflow:hidden;transition:border-color .25s,box-shadow .25s;cursor:pointer}
+        .faq-card.open{border-color:rgba(201,168,76,.5);box-shadow:0 0 0 1px rgba(201,168,76,.12),0 8px 32px rgba(0,0,0,.35)}
+        .faq-q{display:flex;align-items:center;gap:1rem;padding:1.15rem 1.4rem;user-select:none}
+        .faq-q-ic{width:36px;height:36px;border-radius:10px;background:rgba(201,168,76,.1);display:flex;align-items:center;justify-content:center;font-size:1.05rem;flex-shrink:0;transition:background .25s}
+        .faq-card.open .faq-q-ic{background:rgba(201,168,76,.22)}
+        .faq-q-text{flex:1;font-family:'Cinzel',serif;font-size:.9rem;color:#ddd6c8;line-height:1.4;font-weight:600}
+        .faq-card.open .faq-q-text{color:var(--gold-light)}
+        .faq-chevron{width:20px;height:20px;flex-shrink:0;color:rgba(201,168,76,.45);transition:transform .3s,color .25s}
+        .faq-card.open .faq-chevron{transform:rotate(180deg);color:var(--gold)}
+        .faq-a{max-height:0;overflow:hidden;transition:max-height .35s ease}
+        .faq-card.open .faq-a{max-height:600px}
+        .faq-a-inner{padding:0 1.4rem 1.4rem 1.4rem;padding-left:calc(1.4rem + 36px + 1rem);font-family:'Lora',serif;font-size:.9rem;color:#9aa0b0;line-height:1.75}
+        .faq-a-inner strong{color:#c8c0b0;font-weight:600}
+        .faq-a-inner ul{margin:.5rem 0 0 1rem;padding:0}
+        .faq-a-inner li{margin-bottom:.35rem}
+        .faq-a-inner .faq-tip{margin-top:.8rem;padding:.65rem .9rem;border-radius:10px;background:rgba(201,168,76,.07);border-left:3px solid rgba(201,168,76,.45);font-size:.84rem;color:#b8a98a}
+        /* ── / FAQ ── */
         .stats-bar{background:white;padding:3rem 2rem;box-shadow:0 4px 20px rgba(0,0,0,.05)}
         .stats-grid{max-width:1000px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:2rem;text-align:center}
         .stat-item h3{font-family:'Cinzel',serif;font-size:2rem;color:var(--gold-dark);margin-bottom:.3rem}
@@ -2247,6 +2271,155 @@
         </div>
     </section>
     -->
+
+    <!-- ── Preguntas Frecuentes ── -->
+    <section class="faq-section" data-tab="inicio">
+        <div class="faq-inner">
+            <p class="faq-eyebrow">✦ Ayuda</p>
+            <h2 class="faq-title">Preguntas Frecuentes</h2>
+            <p class="faq-sub">Todo lo que necesitas saber para aprovechar Sonido de Vida al máximo.</p>
+            <div class="faq-grid" id="faqGrid">
+
+                <div class="faq-card" onclick="faqToggle(this)">
+                    <div class="faq-q">
+                        <span class="faq-q-ic">📱</span>
+                        <span class="faq-q-text">¿Cómo instalo la app en mi celular?</span>
+                        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                    <div class="faq-a"><div class="faq-a-inner">
+                        Sonido de Vida es una <strong>PWA</strong> (app web progresiva): no necesitas descargarte nada de la tienda.<br><br>
+                        <strong>En Android (Chrome):</strong> abre sonidodevida.com, toca el menú ⋮ y selecciona <em>"Añadir a pantalla de inicio"</em>.<br>
+                        <strong>En iPhone (Safari):</strong> abre la página, toca el botón compartir <em>□↑</em> y elige <em>"Añadir a la pantalla de inicio"</em>.<br><br>
+                        Una vez instalada aparece como cualquier app y funciona en pantalla completa.
+                        <div class="faq-tip">💡 Si ya la tienes abierta en el navegador y ves un banner "Instalar app", solo tócalo.</div>
+                    </div></div>
+                </div>
+
+                <div class="faq-card" onclick="faqToggle(this)">
+                    <div class="faq-q">
+                        <span class="faq-q-ic">🎧</span>
+                        <span class="faq-q-text">¿Qué voces de audio están disponibles?</span>
+                        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                    <div class="faq-a"><div class="faq-a-inner">
+                        La app ofrece <strong>tres voces</strong> que puedes cambiar desde la pestaña Biblia:
+                        <ul>
+                            <li><strong>Voz humana (RVA 1909)</strong> — narración real grabada en estudio. Es la voz principal y la más recomendada.</li>
+                            <li><strong>RVA (TTS)</strong> — lectura sintética del texto Reina-Valera 1909.</li>
+                            <li><strong>SBLL (TTS)</strong> — otra traducción en voz sintetizada.</li>
+                        </ul>
+                        <div class="faq-tip">💡 La voz humana cubre los 1,189 capítulos completos de la Biblia.</div>
+                    </div></div>
+                </div>
+
+                <div class="faq-card" onclick="faqToggle(this)">
+                    <div class="faq-q">
+                        <span class="faq-q-ic">🌙</span>
+                        <span class="faq-q-text">¿Qué es el Modo Enfoque y para qué sirve?</span>
+                        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                    <div class="faq-a"><div class="faq-a-inner">
+                        El <strong>Modo Enfoque</strong> combina música de ambiente cristiana con la Palabra de Dios para crear una atmósfera de oración y concentración. Es una función <strong>premium</strong>.<br><br>
+                        Tiene dos submodos:
+                        <ul>
+                            <li><strong>Meditación</strong> — música instrumental + versículos curados que aparecen cada 25 segundos. Ideal para oración silenciosa o descanso.</li>
+                            <li><strong>Con Voz</strong> — música de fondo mientras escuchas la Biblia narrada. Perfecto para lecturas más profundas.</li>
+                        </ul>
+                        Puedes elegir entre 6 categorías de ambiente: Cuerdas, Paz, Salmos, Reposo, Adoración e Incienso.
+                    </div></div>
+                </div>
+
+                <div class="faq-card" onclick="faqToggle(this)">
+                    <div class="faq-q">
+                        <span class="faq-q-ic">✨</span>
+                        <span class="faq-q-text">¿Qué incluye el plan premium?</span>
+                        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                    <div class="faq-a"><div class="faq-a-inner">
+                        Con el plan premium desbloqueas:
+                        <ul>
+                            <li>🌙 <strong>Modo Enfoque completo</strong> (meditación + con voz)</li>
+                            <li>🚫 <strong>Sin anuncios</strong> en toda la app</li>
+                            <li>📖 Acceso a contenido y devocionales exclusivos</li>
+                        </ul>
+                        El plan gratuito incluye la Biblia completa en audio, búsqueda de versículos y devocionales del día, sin límites.
+                        <div class="faq-tip">💡 Puedes probar todo desde la pestaña <strong>Yo → Premium</strong>.</div>
+                    </div></div>
+                </div>
+
+                <div class="faq-card" onclick="faqToggle(this)">
+                    <div class="faq-q">
+                        <span class="faq-q-ic">🔍</span>
+                        <span class="faq-q-text">¿Cómo busco un versículo o tema bíblico?</span>
+                        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                    <div class="faq-a"><div class="faq-a-inner">
+                        Ve a la pestaña <strong>Buscar</strong> (ícono 🔍 en la barra inferior). Puedes buscar de tres formas:
+                        <ul>
+                            <li><strong>Por referencia</strong>: escribe "Juan 3:16" o "Salmos 23".</li>
+                            <li><strong>Por palabra clave</strong>: escribe "fe", "amor", "paz" y la app encuentra versículos relacionados.</li>
+                            <li><strong>Por intención</strong>: describe lo que sientes o necesitas, como "versículos de esperanza cuando estoy triste".</li>
+                        </ul>
+                        Al tocar un resultado puedes escucharlo directamente o ir al capítulo completo.
+                    </div></div>
+                </div>
+
+                <div class="faq-card" onclick="faqToggle(this)">
+                    <div class="faq-q">
+                        <span class="faq-q-ic">📖</span>
+                        <span class="faq-q-text">¿Cómo navego por la Biblia completa?</span>
+                        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                    <div class="faq-a"><div class="faq-a-inner">
+                        Toca la pestaña <strong>Biblia</strong> (ícono 📖). Desde ahí puedes:
+                        <ul>
+                            <li>Seleccionar cualquier libro del Antiguo o Nuevo Testamento.</li>
+                            <li>Elegir el capítulo y empezar a escuchar.</li>
+                            <li>Usar el modo <strong>"Escuchar todo"</strong> para reproducir el libro completo sin parar.</li>
+                            <li>Cambiar entre las tres voces disponibles.</li>
+                        </ul>
+                        <div class="faq-tip">💡 La app recuerda tu posición para que puedas continuar donde lo dejaste.</div>
+                    </div></div>
+                </div>
+
+                <div class="faq-card" onclick="faqToggle(this)">
+                    <div class="faq-q">
+                        <span class="faq-q-ic">👤</span>
+                        <span class="faq-q-text">¿Para qué necesito una cuenta?</span>
+                        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                    <div class="faq-a"><div class="faq-a-inner">
+                        La cuenta es <strong>gratuita</strong> y te permite:
+                        <ul>
+                            <li>Guardar tus versículos favoritos.</li>
+                            <li>Sincronizar tu progreso entre dispositivos.</li>
+                            <li>Acceder al plan premium si lo activas.</li>
+                        </ul>
+                        Sin cuenta puedes usar la Biblia en audio y el buscador sin restricciones. Para crear una cuenta ve a la pestaña <strong>Yo</strong>.
+                    </div></div>
+                </div>
+
+                <div class="faq-card" onclick="faqToggle(this)">
+                    <div class="faq-q">
+                        <span class="faq-q-ic">🔄</span>
+                        <span class="faq-q-text">La app no muestra los últimos cambios, ¿qué hago?</span>
+                        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                    <div class="faq-a"><div class="faq-a-inner">
+                        Sonido de Vida usa un <strong>caché inteligente</strong> para funcionar rápido. A veces puede mostrar una versión anterior.
+                        <br><br>Para forzar la actualización:
+                        <ul>
+                            <li>Cierra la app completamente y vuelve a abrirla.</li>
+                            <li>Si sigue igual, ve a los ajustes de tu navegador → "Borrar datos del sitio" para sonidodevida.com.</li>
+                        </ul>
+                        <div class="faq-tip">💡 Si instalaste la app como PWA, desinstálala y vuélvela a instalar desde el navegador.</div>
+                    </div></div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+    <!-- ── / Preguntas Frecuentes ── -->
 
     <section class="search-section sb-section" data-tab="buscar">
         <div class="sb-wrap">
@@ -5846,6 +6019,12 @@
     }
 
     // Onda de muestra del reproductor del Inicio (decorativa)
+    function faqToggle(card) {
+        const isOpen = card.classList.contains('open');
+        document.querySelectorAll('#faqGrid .faq-card.open').forEach(c => c.classList.remove('open'));
+        if (!isOpen) card.classList.add('open');
+    }
+
     function initShowcaseWave() {
         const c = document.getElementById('shwWaveBars');
         if (!c) return;
