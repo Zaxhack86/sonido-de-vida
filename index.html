@@ -1363,11 +1363,6 @@
             <li><a href="#" data-navtab="yo" onclick="showTab('yo');closeMenu();return false;">Mi perfil</a></li>
         </ul>
         <div class="nav-right">
-            <div class="nav-actions" id="navActions">
-                <button class="nav-account-btn" id="navAccountBtn" onclick="showTab('yo')" style="display:none">
-                    <span id="navAccountLabel">Entrar</span>
-                </button>
-            </div>
             <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleMobileMenu()" aria-label="Menú">
                 <div class="mb-bars"><span></span><span></span><span></span></div>
             </button>
@@ -8202,11 +8197,6 @@
         }
 
         function reflectSession(user) {
-            const accBtn = $('navAccountBtn');
-            if (accBtn) {
-                accBtn.style.display = '';
-                $('navAccountLabel').textContent = user ? 'Mi cuenta' : 'Entrar';
-            }
             // Ocultar la sección y el enlace de "crear cuenta" si ya inició sesión
             const promo = document.getElementById('cuenta');
             if (promo) promo.style.display = user ? 'none' : '';
