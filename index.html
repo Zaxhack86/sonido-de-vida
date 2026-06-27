@@ -1040,34 +1040,6 @@
         .fx-done-btns button{font-family:'Inter',sans-serif;font-size:.82rem;font-weight:700;padding:.65rem 1.4rem;border-radius:50px;cursor:pointer}
         .fx-done-sec{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.7)}
         .fx-done-pri{background:linear-gradient(135deg,var(--gold),var(--gold-dark));border:none;color:#0d0d1a}
-        /* ── Gestor de tracks ── */
-        .fx-track-mgr{position:absolute;inset:0;z-index:5000;background:rgba(5,4,9,.97);display:flex;flex-direction:column;overflow:hidden;opacity:0;pointer-events:none;transition:opacity .25s}
-        .fx-track-mgr.open{opacity:1;pointer-events:auto}
-        .fx-tm-header{display:flex;align-items:center;gap:.8rem;padding:1rem 1.2rem;border-bottom:1px solid rgba(255,255,255,.07);flex-shrink:0}
-        .fx-tm-title{flex:1;font-family:'Cinzel',serif;color:var(--gold-light);font-size:.98rem;letter-spacing:.07em}
-        .fx-tm-close{background:none;border:1px solid rgba(255,255,255,.16);color:rgba(255,255,255,.65);border-radius:50%;width:34px;height:34px;cursor:pointer;font-size:.95rem;flex-shrink:0}
-        .fx-tm-body{flex:1;overflow-y:auto;padding:.8rem 1rem;-webkit-overflow-scrolling:touch}
-        .fx-tm-group{margin-bottom:1.1rem}
-        .fx-tm-group-head{font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:.45rem;padding-left:.4rem}
-        .fx-tm-track{display:flex;align-items:center;gap:.6rem;padding:.4rem .5rem;border-radius:8px;transition:background .15s}
-        .fx-tm-track:hover{background:rgba(255,255,255,.04)}
-        .fx-tm-track.hidden-t{opacity:.38}
-        .fx-tm-id{font-family:'Inter',sans-serif;font-size:.7rem;color:rgba(201,168,76,.65);min-width:24px;text-align:right;font-weight:600;flex-shrink:0}
-        .fx-tm-name{flex:1;font-size:.84rem;color:rgba(255,255,255,.82);line-height:1.3}
-        .fx-tm-grp{font-size:.7rem;color:rgba(255,255,255,.3);display:block}
-        .fx-tm-tog{position:relative;width:34px;height:20px;flex-shrink:0;cursor:pointer}
-        .fx-tm-tog input{opacity:0;width:0;height:0;position:absolute}
-        .fx-tm-tog-pill{position:absolute;inset:0;border-radius:10px;background:rgba(255,255,255,.14);transition:background .2s}
-        .fx-tm-tog input:checked + .fx-tm-tog-pill{background:rgba(201,168,76,.65)}
-        .fx-tm-tog-pill::after{content:'';position:absolute;width:14px;height:14px;border-radius:50%;background:#fff;top:3px;left:3px;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.4)}
-        .fx-tm-tog input:checked + .fx-tm-tog-pill::after{left:17px}
-        .fx-tm-footer{padding:.75rem 1rem;border-top:1px solid rgba(255,255,255,.07);display:flex;gap:.6rem;flex-shrink:0}
-        .fx-tm-btn{flex:1;padding:.52rem;border-radius:50px;font-family:'Inter',sans-serif;font-size:.82rem;cursor:pointer;border:1px solid rgba(201,168,76,.32);color:var(--gold-light);background:transparent;transition:background .2s}
-        .fx-tm-btn:hover{background:rgba(201,168,76,.1)}
-        .fx-tm-btn.primary{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#0d0d1a;border-color:transparent;font-weight:700}
-        .fx-tracks-btn{position:absolute;bottom:1rem;right:1rem;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.38);border-radius:50%;width:28px;height:28px;font-size:.8rem;cursor:pointer;z-index:2;display:none;align-items:center;justify-content:center;transition:all .2s}
-        .fx-tracks-btn.show{display:flex}
-        .fx-tracks-btn:hover{background:rgba(201,168,76,.1);border-color:rgba(201,168,76,.35);color:var(--gold-light)}
         /* ── Entorno visual: estrellas / lluvia / nubes ── */
         .fx-stars,.fx-starglow,.fx-rain,.fx-clouds{position:absolute;inset:0;z-index:0;pointer-events:none}
         .fx-rain,.fx-clouds,.fx-starglow{display:none}
@@ -3016,21 +2988,6 @@
             </div>
         </div>
 
-        <!-- Botón de gestión de tracks (solo premium) -->
-        <button class="fx-tracks-btn" id="fxTracksMgrBtn" onclick="FocusTrackMgr.open()" title="Gestionar música" aria-label="Gestionar tracks de ambiente">⚙</button>
-
-        <!-- Panel gestor de tracks de ambiente -->
-        <div class="fx-track-mgr" id="fxTrackMgr" role="dialog" aria-label="Gestionar música de fondo">
-            <div class="fx-tm-header">
-                <span class="fx-tm-title">Gestionar Música</span>
-                <button class="fx-tm-close" onclick="FocusTrackMgr.close()" aria-label="Cerrar">✕</button>
-            </div>
-            <div class="fx-tm-body" id="fxTrackMgrBody"></div>
-            <div class="fx-tm-footer">
-                <button class="fx-tm-btn" onclick="FocusTrackMgr.reset()">Restaurar todo</button>
-                <button class="fx-tm-btn primary" onclick="FocusTrackMgr.close()">Listo</button>
-            </div>
-        </div>
     </div>
 
     <!-- ════════ Hub Podcast de Vida (overlay a pantalla completa) ════════ -->
@@ -4571,9 +4528,7 @@
             currentAmbient = id;
             rememberAmbient(id);
             setEmblem(a);
-            // Excluir tracks que el usuario ocultó en el gestor (localStorage)
-            const _hidden = window.FocusTrackMgr ? FocusTrackMgr.getHidden() : new Set();
-            const visibleIds = a.ids.filter(x => !_hidden.has(x));
+            const visibleIds = a.ids.slice();
             if (!visibleIds.length) {
                 currentAmbient = null;
                 showToast('⚠️ Todos los tracks de este ambiente están ocultos');
@@ -4924,9 +4879,6 @@
             document.getElementById('playerFocusBtn')?.classList.add('active');
             applyVolumes();
             if (!currentAmbient) { shuffleAuto = true; updateShuffleBtn(); pickRandomAmbient(); }
-            // Botón gestor de tracks: visible solo para usuarios premium
-            const _tmBtn = document.getElementById('fxTracksMgrBtn');
-            if (_tmBtn) _tmBtn.classList.toggle('show', premiumReady());
             // Racha diaria: cuenta la sesión de hoy y celebra con un aviso suave.
             const st = FocusStreak.mark();
             if (!st.sameDay) {
@@ -5352,81 +5304,6 @@
         return { render, refresh };
     })();
     window.FocusCats = FocusCats;
-
-    // ── Gestor de tracks de ambiente (premium): ocultar/mostrar tracks sin tocar el código ──
-    const FocusTrackMgr = (function () {
-        const LS_KEY = 'sdv-hidden-tracks';
-        const TRACK_NAMES = {
-            1:'Piano Romántico',2:'Piano Relajante',3:'Piano Suave',4:'Piano Instrumental',
-            9:'Ambiente en Calma',11:'Paz que Abraza',12:'Salmos del Océano',13:'Piano Ambiente',
-            14:'Piano de Fondo',15:'Piano Meditación 2',16:'Piano Meditación',17:'Piano Motivación',
-            18:'Piano y Naturaleza',32:'Abrigo de Nubes',33:'Aliento sobre el Agua 2',
-            34:'Aliento sobre el Agua',35:'Ancla en lo Profundo',36:'Calma 2',37:'Calma',
-            38:'Corrientes Cálidas 2',39:'Corrientes Cálidas',40:'Cuerdas de Terciopelo 2',
-            41:'Cuerdas de Terciopelo 3',42:'Cuerdas de Terciopelo 4',43:'Cuerdas de Terciopelo',
-            44:'Deriva al Umbral 2',45:'Deriva al Umbral',46:'Luz Violeta 2',47:'Luz Violeta',
-            49:'Medianoche sobre el Agua 2',50:'Medianoche sobre el Agua',51:'Meditación 2',
-            52:'Meditación',53:'Nube Segura 2',54:'Nube Segura',55:'Océano entre Altares 2',
-            56:'Océano entre Altares',57:'Orquesta de Niebla 2',58:'Orquesta de Niebla',
-            59:'Paz que Abraza 2',60:'Paz que se Expande',61:'Paz entre Suspiros 2',
-            62:'Paz entre Suspiros',63:'Relajación',64:'Relajante',65:'Seda Suave 2',
-            66:'Seda Suave',79:'Salmos de Reposo',80:'Salmos de Reposo 2',81:'Salmos de Reposo 3',
-            82:'Salmos de Reposo 4',83:'Salmo en Oración',84:'Salmo en Oración 2',
-            85:'Salmo de Luz',86:'Salmo de Luz 2',87:'Canción de Cuna',88:'Canción de Cuna 2',
-            89:'Flauta Serena',90:'Flauta Serena 2',91:'Compás del Agua',92:'Compás del Agua 2',
-            93:'Incienso',94:'Incienso 2',95:'Incienso Sagrado',96:'Incienso Sagrado 2',
-            97:'Luz de Oración',98:'Luz de Oración 2',99:'Corazón en Calma',100:'Corazón en Calma 2',
-            101:'Corriente de Seda',102:'Corriente de Seda 2'
-        };
-        const CAT_LABELS = { cuerdas:'🎻 Cuerdas', paz:'🕊️ Paz y Quietud', salmos:'📜 Salmos', reposo:'🌙 Reposo', adoracion:'✨ Adoración', incienso:'🪔 Incienso' };
-        const CAT_ORDER  = ['cuerdas','paz','salmos','reposo','adoracion','incienso'];
-
-        function getHidden() { try { return new Set(JSON.parse(localStorage.getItem(LS_KEY)||'[]')); } catch(e) { return new Set(); } }
-        function saveHidden(s) { try { localStorage.setItem(LS_KEY, JSON.stringify([...s])); } catch(e) {} }
-
-        function toggle(id, cb) {
-            const s = getHidden();
-            cb.checked ? s.delete(id) : s.add(id);
-            saveHidden(s);
-            const row = cb.closest('.fx-tm-track');
-            if (row) row.classList.toggle('hidden-t', !cb.checked);
-        }
-
-        function render() {
-            const body = document.getElementById('fxTrackMgrBody');
-            if (!body || !window.Focus) return;
-            const hidden = getHidden();
-            body.innerHTML = '';
-            CAT_ORDER.forEach(cat => {
-                const items = Focus.ambients.filter(a => a.cat === cat && a.ids && a.ids.length);
-                if (!items.length) return;
-                const grpEl = document.createElement('div');
-                grpEl.className = 'fx-tm-group';
-                const hd = document.createElement('div');
-                hd.className = 'fx-tm-group-head';
-                hd.textContent = CAT_LABELS[cat] || cat;
-                grpEl.appendChild(hd);
-                items.forEach(amb => {
-                    amb.ids.forEach(id => {
-                        const isHid = hidden.has(id);
-                        const row = document.createElement('div');
-                        row.className = 'fx-tm-track' + (isHid ? ' hidden-t' : '');
-                        const uid = 'tm-' + id;
-                        row.innerHTML = `<span class="fx-tm-id">${id}</span><span class="fx-tm-name">${TRACK_NAMES[id]||'Track '+id}<span class="fx-tm-grp">${amb.label}</span></span><label class="fx-tm-tog" aria-label="${isHid?'Activar':'Ocultar'} ${TRACK_NAMES[id]||id}"><input type="checkbox" id="${uid}"${isHid?'':' checked'} onchange="FocusTrackMgr.toggle(${id},this)"><span class="fx-tm-tog-pill"></span></label>`;
-                        grpEl.appendChild(row);
-                    });
-                });
-                body.appendChild(grpEl);
-            });
-        }
-
-        function open()  { render(); const p = document.getElementById('fxTrackMgr'); if (p) p.classList.add('open'); }
-        function close() { const p = document.getElementById('fxTrackMgr'); if (p) p.classList.remove('open'); }
-        function reset() { saveHidden(new Set()); render(); if (window.showToast) showToast('✅ Todos los tracks restaurados'); }
-
-        return { getHidden, toggle, open, close, reset };
-    })();
-    window.FocusTrackMgr = FocusTrackMgr;
 
     // ── Entorno visual: estrellas (con halo) / lluvia / nubes ──
     const FocusEnv = (function () {
