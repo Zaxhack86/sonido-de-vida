@@ -828,8 +828,9 @@
         .focus-overlay .focus-bg{position:absolute;inset:0;background:radial-gradient(60% 50% at 50% 38%,rgba(201,168,76,.10),transparent 70%);pointer-events:none}
         /* ── Fondo animado: aurora (CSS) + motas (canvas). Colores por ambiente. ── */
         .focus-overlay{--f-aura1:rgba(201,168,76,.26);--f-aura2:rgba(150,120,200,.15);--f-aura3:rgba(120,90,40,.20);--f-mote:201,168,76}
-        .focus-overlay[data-cat="ambiente"]{--f-aura1:rgba(232,214,176,.26);--f-aura2:rgba(200,150,110,.15);--f-aura3:rgba(150,110,70,.20);--f-mote:232,214,176}
-        .focus-overlay[data-cat="piano"]{--f-aura1:rgba(176,158,214,.26);--f-aura2:rgba(120,110,190,.15);--f-aura3:rgba(90,80,150,.20);--f-mote:201,182,224}
+        .focus-overlay[data-cat="ambiente"],.focus-overlay[data-cat="paz"],.focus-overlay[data-cat="adoracion"]{--f-aura1:rgba(232,214,176,.26);--f-aura2:rgba(200,150,110,.15);--f-aura3:rgba(150,110,70,.20);--f-mote:232,214,176}
+        .focus-overlay[data-cat="cuerdas"]{--f-aura1:rgba(176,158,214,.26);--f-aura2:rgba(120,110,190,.15);--f-aura3:rgba(90,80,150,.20);--f-mote:201,182,224}
+        .focus-overlay[data-cat="incienso"]{--f-aura1:rgba(214,176,120,.26);--f-aura2:rgba(180,130,80,.15);--f-aura3:rgba(140,90,50,.20);--f-mote:220,185,130}
         .focus-aura{position:absolute;inset:-20%;z-index:0;pointer-events:none;filter:blur(64px);opacity:.85}
         .focus-aura span{position:absolute;border-radius:50%;mix-blend-mode:screen;will-change:transform}
         .focus-aura span:nth-child(1){width:55vmax;height:55vmax;left:-5%;top:-10%;background:radial-gradient(circle,var(--f-aura1),transparent 65%);animation:fAura1 26s ease-in-out infinite}
@@ -1441,7 +1442,7 @@
                 <h2>Modo Enfoque</h2>
                 <p class="hf-lead">Convierte tu lectura en un momento de oración. Música y ambientes suaves <em>bajo</em> la narración de la Palabra — o versículos que reposan en tu corazón, uno a uno, sin distracción alguna.</p>
                 <ul class="hf-list">
-                    <li><span class="hf-ic">🎹</span> Decenas de ambientes: piano, cuerdas y adoración</li>
+                    <li><span class="hf-ic">🎻</span> Decenas de ambientes: cuerdas, salmos y adoración</li>
                     <li><span class="hf-ic">🎚️</span> Mezclador de voz y música a tu gusto</li>
                     <li><span class="hf-ic">⏱️</span> Temporizador de sueño y velocidad de la voz</li>
                     <li><span class="hf-ic">🕊️</span> Ambiente visual sereno para orar con la Palabra</li>
@@ -1454,7 +1455,7 @@
             <div class="hf-card">
                 <div class="hf-emblem">🕊️</div>
                 <div class="hf-title">Reposa en la Palabra</div>
-                <div class="hf-sub">Salmos 23 · ambiente piano</div>
+                <div class="hf-sub">Salmos 23 · ambiente incienso</div>
                 <div class="hero-eq" id="focusEq" style="margin-top:0;height:38px" aria-hidden="true"></div>
                 <div class="hf-modes">
                     <div class="hf-mode"><span class="hf-emoji">🌿</span><b>Meditación</b><small>Música + versículos</small></div>
@@ -2687,7 +2688,7 @@
             <div class="modal-title" id="teaserTitle">Modo Enfoque <span class="focus-premium-badge">✨ Premium</span></div>
             <div class="modal-subtitle">Convierte tu lectura en un momento de oración: música y ambientes suaves <em>bajo</em> la narración de la Palabra.</div>
             <ul class="teaser-list">
-                <li><span>🎹</span> Decenas de ambientes: piano, cuerdas y adoración</li>
+                <li><span>🎻</span> Decenas de ambientes: cuerdas, salmos y adoración</li>
                 <li><span>🎚️</span> Mezclador de voz y música a tu gusto</li>
                 <li><span>🕊️</span> Ambiente visual sereno para orar con la Palabra</li>
                 <li><span>⏱️</span> Temporizador de sueño y velocidad de la voz</li>
@@ -4321,41 +4322,36 @@
         // Al elegirlo se barajan y van rotando con un fundido suave, para que
         // nunca suene "una sola canción" en bucle.
         const ambients = [
-            { id:'piano-romantico', cat:'piano', label:'Piano Romántico', emoji:'🎹', ids:[1,3] },
-            { id:'piano-relajante', cat:'piano', label:'Piano Relajante', emoji:'🎹', ids:[2,13] },
-            { id:'piano-meditacion', cat:'piano', label:'Piano Sereno', emoji:'🎼', ids:[16,15] },
-            { id:'piano-instrumental', cat:'piano', label:'Piano Instrumental', emoji:'🎹', ids:[4,14] },
-            { id:'piano-naturaleza', cat:'piano', label:'Piano Suave', emoji:'🎹', ids:[18,17] },
-            { id:'calma', cat:'ambiente', label:'Paz y Quietud', emoji:'🕊️', ids:[37,36,9] },
-            { id:'paz-abraza', cat:'ambiente', label:'Paz que Abraza', emoji:'🤍', ids:[11,59] },
-            { id:'paz-suspiros', cat:'ambiente', label:'Aliento de Paz', emoji:'🌬️', ids:[62,61,60] },
-            { id:'cuerdas-terciopelo', cat:'ambiente', label:'Cuerdas Suaves', emoji:'🎻', ids:[43,40,41,42] },
-            { id:'seda-suave', cat:'ambiente', label:'Calma Profunda', emoji:'🌾', ids:[66,65] },
-            { id:'aliento-agua', cat:'ambiente', label:'Aguas Tranquilas', emoji:'💧', ids:[34,33] },
-            { id:'medianoche-agua', cat:'ambiente', label:'Noche Serena', emoji:'🌙', ids:[50,49,35] },
-            { id:'corrientes-calidas', cat:'ambiente', label:'Aguas Cálidas', emoji:'🌊', ids:[39,38] },
-            { id:'deriva-umbral', cat:'ambiente', label:'Niebla Suave', emoji:'🌫️', ids:[45,44] },
-            { id:'luz-violeta', cat:'ambiente', label:'Luz del Alba', emoji:'🌅', ids:[47,46] },
-            { id:'nube-segura', cat:'ambiente', label:'Bajo Sus Alas', emoji:'☁️', ids:[54,53] },
-            { id:'oceano-altares', cat:'ambiente', label:'Santuario', emoji:'✝️', ids:[56,55] },
-            { id:'orquesta-niebla', cat:'ambiente', label:'Cuerdas Celestiales', emoji:'🎶', ids:[58,57] },
-            { id:'meditacion', cat:'ambiente', label:'Reposo del Alma', emoji:'🕊️', ids:[52,51] },
-            { id:'salmos-oceano', cat:'ambiente', label:'Salmos en Calma', emoji:'📜', ids:[12,32] },
-            { id:'relajacion', cat:'ambiente', label:'Descanso', emoji:'🍃', ids:[63,64] },
-            { id:'salmos-reposo', cat:'salmos', label:'Salmos de Reposo', emoji:'📜', ids:[79,80,81,82] },
-            { id:'salmo-oracion', cat:'salmos', label:'Salmo en Oración', emoji:'🙏', ids:[83,84] },
-            { id:'salmo-luz', cat:'salmos', label:'Salmo de Luz', emoji:'✨', ids:[85,86] },
-            { id:'cancion-cuna', cat:'reposo', label:'Canción de Cuna', emoji:'🌙', ids:[87,88] },
-            { id:'flauta-serena', cat:'reposo', label:'Flauta Serena', emoji:'🎐', ids:[89,90] },
-            { id:'compas-agua', cat:'reposo', label:'Compás del Agua', emoji:'💧', ids:[91,92] },
-            { id:'incienso', cat:'reposo', label:'Incienso', emoji:'🕯️', ids:[93,94] },
-            { id:'incienso-sagrado', cat:'reposo', label:'Incienso Sagrado', emoji:'🪔', ids:[95,96] },
-            { id:'luz-oracion', cat:'reposo', label:'Luz de Oración', emoji:'💛', ids:[97,98] },
-            { id:'corazon-calma', cat:'reposo', label:'Corazón en Calma', emoji:'💗', ids:[99,100] },
-            { id:'corriente-seda', cat:'reposo', label:'Corriente de Seda', emoji:'🌊', ids:[101,102] },
+            { id:'cuerdas-terciopelo', cat:'cuerdas',  label:'Cuerdas Suaves',      emoji:'🎻', ids:[43,40,41,42] },
+            { id:'orquesta-niebla',    cat:'cuerdas',  label:'Cuerdas Celestiales', emoji:'🎶', ids:[58,57] },
+            { id:'calma',              cat:'paz',      label:'Paz y Quietud',        emoji:'🕊️', ids:[37,36,9] },
+            { id:'paz-abraza',         cat:'paz',      label:'Paz que Abraza',       emoji:'🤍', ids:[11,59] },
+            { id:'paz-suspiros',       cat:'paz',      label:'Aliento de Paz',       emoji:'🌬️', ids:[62,61,60] },
+            { id:'seda-suave',         cat:'paz',      label:'Calma Profunda',       emoji:'🌾', ids:[66,65] },
+            { id:'aliento-agua',       cat:'paz',      label:'Aguas Tranquilas',     emoji:'💧', ids:[34,33] },
+            { id:'corrientes-calidas', cat:'paz',      label:'Aguas Cálidas',        emoji:'🌊', ids:[39,38] },
+            { id:'luz-violeta',        cat:'paz',      label:'Luz del Alba',         emoji:'🌅', ids:[47,46] },
+            { id:'corazon-calma',      cat:'paz',      label:'Corazón en Calma',     emoji:'💗', ids:[99,100] },
+            { id:'salmos-reposo',      cat:'salmos',   label:'Salmos de Reposo',     emoji:'📜', ids:[79,80,81,82] },
+            { id:'salmo-oracion',      cat:'salmos',   label:'Salmo en Oración',     emoji:'🙏', ids:[83,84] },
+            { id:'salmo-luz',          cat:'salmos',   label:'Salmo de Luz',         emoji:'✨', ids:[85,86] },
+            { id:'salmos-oceano',      cat:'salmos',   label:'Salmos en Calma',      emoji:'📜', ids:[12,32] },
+            { id:'meditacion',         cat:'reposo',   label:'Reposo del Alma',      emoji:'🕊️', ids:[52,51] },
+            { id:'relajacion',         cat:'reposo',   label:'Descanso',             emoji:'🍃', ids:[63,64] },
+            { id:'medianoche-agua',    cat:'reposo',   label:'Noche Serena',         emoji:'🌙', ids:[50,49,35] },
+            { id:'deriva-umbral',      cat:'reposo',   label:'Niebla Suave',         emoji:'🌫️', ids:[45,44] },
+            { id:'compas-agua',        cat:'reposo',   label:'Compás del Agua',      emoji:'💧', ids:[91,92] },
+            { id:'corriente-seda',     cat:'reposo',   label:'Corriente de Seda',    emoji:'🌊', ids:[101,102] },
+            { id:'nube-segura',        cat:'adoracion',label:'Bajo Sus Alas',        emoji:'☁️', ids:[54,53] },
+            { id:'oceano-altares',     cat:'adoracion',label:'Santuario',            emoji:'✝️', ids:[56,55] },
+            { id:'incienso',           cat:'incienso', label:'Incienso',             emoji:'🕯️', ids:[93,94] },
+            { id:'incienso-sagrado',   cat:'incienso', label:'Incienso Sagrado',     emoji:'🪔', ids:[95,96] },
+            { id:'luz-oracion',        cat:'incienso', label:'Luz de Oración',       emoji:'💛', ids:[97,98] },
+            { id:'cancion-cuna',       cat:'incienso', label:'Canción de Cuna',      emoji:'🌙', ids:[87,88] },
+            { id:'flauta-serena',      cat:'incienso', label:'Flauta Serena',        emoji:'🎐', ids:[89,90] },
         ];
-        const CAT_LABELS = { piano: '🎹 Piano', salmos: '📜 Salmos', reposo: '🕯️ Reposo Profundo', ambiente: '🙏 Adoración / Reposo' };
-        const CAT_ORDER  = ['piano', 'salmos', 'reposo', 'ambiente'];
+        const CAT_LABELS = { cuerdas:'🎻 Cuerdas', paz:'🕊️ Paz y Quietud', salmos:'📜 Salmos', reposo:'🌙 Reposo', adoracion:'✨ Adoración', incienso:'🪔 Incienso' };
+        const CAT_ORDER  = ['cuerdas', 'paz', 'salmos', 'reposo', 'adoracion', 'incienso'];
 
         // Segundo elemento de audio para fundir entre variantes/ambientes sin silencio.
         const ambientElB = document.createElement('audio');
@@ -5307,15 +5303,12 @@
     //    reales del catálogo de Focus; al tocarla se elige uno al azar del grupo. ──
     const FocusCats = (function () {
         const CATS = [
-            { id:'piano',         emoji:'🎹', name:'Piano',         ids:['piano-romantico','piano-relajante','piano-meditacion','piano-instrumental','piano-naturaleza'] },
-            { id:'cuerdas',       emoji:'🎻', name:'Cuerdas',       ids:['cuerdas-terciopelo','orquesta-niebla'] },
-            { id:'paz',           emoji:'🕊️', name:'Paz y Quietud', ids:['calma','paz-abraza','paz-suspiros','seda-suave','aliento-agua','corrientes-calidas','luz-violeta','corazon-calma'] },
-            { id:'salmos',        emoji:'📜', name:'Salmos',        ids:['salmos-reposo','salmo-oracion','salmo-luz','salmos-oceano'] },
-            { id:'reposo',        emoji:'🌙', name:'Reposo',        ids:['meditacion','relajacion','medianoche-agua','deriva-umbral','cancion-cuna','flauta-serena','compas-agua','corriente-seda'] },
-            { id:'adoracion',     emoji:'✨', name:'Adoración',     ids:['nube-segura','oceano-altares','incienso','incienso-sagrado','luz-oracion'] },
-            { id:'concentracion', emoji:'🧠', name:'Concentración', ids:['piano-instrumental','piano-naturaleza','piano-meditacion','seda-suave','corriente-seda'] },
-            { id:'trabajo',       emoji:'💻', name:'Trabajo',       ids:['piano-romantico','piano-relajante','cuerdas-terciopelo','orquesta-niebla','paz-abraza'] },
-            { id:'mañana',        emoji:'🌅', name:'Mañana',        ids:['luz-violeta','corrientes-calidas','aliento-agua','paz-abraza','piano-relajante'] },
+            { id:'cuerdas',   emoji:'🎻', name:'Cuerdas',       ids:['cuerdas-terciopelo','orquesta-niebla'] },
+            { id:'paz',       emoji:'🕊️', name:'Paz y Quietud', ids:['calma','paz-abraza','paz-suspiros','seda-suave','aliento-agua','corrientes-calidas','luz-violeta','corazon-calma'] },
+            { id:'salmos',    emoji:'📜', name:'Salmos',        ids:['salmos-reposo','salmo-oracion','salmo-luz','salmos-oceano'] },
+            { id:'reposo',    emoji:'🌙', name:'Reposo',        ids:['meditacion','relajacion','medianoche-agua','deriva-umbral','compas-agua','corriente-seda'] },
+            { id:'adoracion', emoji:'✨', name:'Adoración',     ids:['nube-segura','oceano-altares'] },
+            { id:'incienso',  emoji:'🪔', name:'Incienso',      ids:['incienso','incienso-sagrado','luz-oracion','cancion-cuna','flauta-serena'] },
         ];
         const grid = () => document.getElementById('fxCatGrid');
         function currentAmbient() {
@@ -5385,8 +5378,8 @@
             97:'Luz de Oración',98:'Luz de Oración 2',99:'Corazón en Calma',100:'Corazón en Calma 2',
             101:'Corriente de Seda',102:'Corriente de Seda 2'
         };
-        const CAT_LABELS = { piano:'🎹 Piano', salmos:'📜 Salmos', reposo:'🕯️ Reposo Profundo', ambiente:'🙏 Adoración / Reposo' };
-        const CAT_ORDER  = ['piano','salmos','reposo','ambiente'];
+        const CAT_LABELS = { cuerdas:'🎻 Cuerdas', paz:'🕊️ Paz y Quietud', salmos:'📜 Salmos', reposo:'🌙 Reposo', adoracion:'✨ Adoración', incienso:'🪔 Incienso' };
+        const CAT_ORDER  = ['cuerdas','paz','salmos','reposo','adoracion','incienso'];
 
         function getHidden() { try { return new Set(JSON.parse(localStorage.getItem(LS_KEY)||'[]')); } catch(e) { return new Set(); } }
         function saveHidden(s) { try { localStorage.setItem(LS_KEY, JSON.stringify([...s])); } catch(e) {} }
