@@ -5412,7 +5412,30 @@
             _cancelSleep();
         }
 
-        return { enter, exit, enterVoz, enterMeditar, switchMode, toggleShuffleAuto, selectAmbient, toggleMusic, setVoz, setMusica, setSpeed, setTimer, setBg, onNarration, syncVerse, refreshGate, openTeaser, closeTeaser, closeSelector, useSbllVoice, startStreamTrack, tickStreamTrack, ambients, meditNext, meditPrev, meditShuffle, stopAudio };
+        // Fundido de salida suave al terminar una sesión del temporizador circular.
+        // Reutiliza el motor `sleepGain` (mismo que el sleep timer): baja narración
+        // Y música a 0 con reloj real (sigue con la pantalla bloqueada) y al final
+        // pausa todo. Si no hay nada sonando, corta sin más.
+        function fadeOutAndStop(ms) {
+            ms = ms || 8000;
+            if (sleepFadeTimer) { clearTimeout(sleepFadeTimer); sleepFadeTimer = null; }
+            if (sleepFadeInt)   { clearInterval(sleepFadeInt); sleepFadeInt = null; }
+            const sonando = (audio && !audio.paused) || sleepGain < 1 || ambCur?.src;
+            if (!sonando) { stopAudio(); return; }
+            const t0 = performance.now();
+            sleepFadeInt = setInterval(() => {
+                const k = Math.min(1, (performance.now() - t0) / ms);
+                sleepGain = 1 - k; applyVolumes();
+                if (k >= 1) {
+                    clearInterval(sleepFadeInt); sleepFadeInt = null;
+                    try { audio.pause(); } catch (e) {}
+                    stopAmbient();
+                    sleepGain = 1; applyVolumes();   // restaura para la próxima sesión
+                }
+            }, 100);
+        }
+
+        return { enter, exit, enterVoz, enterMeditar, switchMode, toggleShuffleAuto, selectAmbient, toggleMusic, setVoz, setMusica, setSpeed, setTimer, setBg, onNarration, syncVerse, refreshGate, openTeaser, closeTeaser, closeSelector, useSbllVoice, startStreamTrack, tickStreamTrack, ambients, meditNext, meditPrev, meditShuffle, stopAudio, fadeOutAndStop };
     })();
     window.Focus = Focus;
 
@@ -5581,12 +5604,12 @@
         function reset() {
             stop(); remaining = duration; draw(); setLabel('Listo para empezar'); setIcon(true);
         }
-        function complete() {
+        function complete(fadeMs) {
             stop(); remaining = 0; draw(); setIcon(true); setLabel('¡Sesión completada!');
-            if (window.Focus) Focus.stopAudio();
+            if (window.Focus) { Focus.fadeOutAndStop ? Focus.fadeOutAndStop(fadeMs) : Focus.stopAudio(); }
             const o = $('fxDone'); if (o) { o.classList.add('show'); o.setAttribute('aria-hidden', 'false'); }
         }
-        function skip() { complete(); }
+        function skip() { complete(2500); }   // "Finalizar": fundido corto, no corte seco
         function closeDone() { const o = $('fxDone'); if (o) { o.classList.remove('show'); o.setAttribute('aria-hidden', 'true'); } }
         return { set, toggle, start, pause, reset, skip, stop, closeDone };
     })();
