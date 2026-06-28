@@ -735,6 +735,9 @@
     </a>
 <!-- GEN:END -->
   </div>
+  <div style="text-align:center;margin-top:2.4rem">
+    <button id="loadMore" class="btn-gold" type="button" onclick="loadMore()" style="border:none;cursor:pointer;font-family:inherit;display:none">Ver más devocionales</button>
+  </div>
 </section>
 
 <!-- ── CTA inferior ── -->
@@ -772,20 +775,44 @@
   if (el) el.textContent = g;
 })();
 
-// Filtro de categorías
+// Filtro de categorías + paginación (10 por tanda, botón "Ver más")
+var PAGE_SIZE = 10;
+var currentCat = 'todos';
+var shownLimit = PAGE_SIZE;
+
+function applyView(){
+  var cards = document.querySelectorAll('#grid .card');
+  var total = 0, shownNow = 0;
+  cards.forEach(function(card){
+    var c = card.dataset.category || '';
+    if (currentCat !== 'todos' && c !== currentCat){ card.style.display = 'none'; return; }
+    total++;
+    if (total <= shownLimit){ card.style.display = ''; shownNow++; }
+    else card.style.display = 'none';
+  });
+  document.getElementById('grid-count').textContent = total + (total === 1 ? ' devocional' : ' devocionales');
+  var more = document.getElementById('loadMore');
+  if (more){
+    var remaining = total - shownNow;
+    more.style.display = remaining > 0 ? '' : 'none';
+    more.textContent = 'Ver más devocionales (' + remaining + ')';
+  }
+}
+
 function filterCards(cat, btn){
   document.querySelectorAll('.filter-btn').forEach(function(b){ b.classList.remove('active'); });
   btn.classList.add('active');
-  var cards = document.querySelectorAll('.card');
-  var visible = 0;
-  cards.forEach(function(card){
-    var c = card.dataset.category || '';
-    var show = (cat === 'todos') || (c === cat);
-    card.style.display = show ? '' : 'none';
-    if (show) visible++;
-  });
-  document.getElementById('grid-count').textContent = visible + (visible === 1 ? ' devocional' : ' devocionales');
+  currentCat = cat;
+  shownLimit = PAGE_SIZE;
+  applyView();
 }
+
+function loadMore(){
+  shownLimit += PAGE_SIZE;
+  applyView();
+}
+
+applyView();
 
 // Animación de entrada al hacer scroll
 (function(){
