@@ -436,4 +436,455 @@ ARTICLES = [
   ],
 },
 
+# ── LOTE 2 ──────────────────────────────────────────────────────────────────
+{
+  "slug": "genesis-50-20",
+  "ref": "Génesis 50:20", "ref_book": "Génesis", "libro": "Génesis", "cap": 50,
+  "hero_verse": "Vosotros pensasteis hacerme mal; mas Dios lo encaminó á bien.",
+  "title": "Génesis 50:20: La Frase de Perdón que Escribió un Hombre Vendido por Sus Hermanos",
+  "description": "«Vosotros pensasteis hacerme mal, mas Dios lo encaminó a bien.» Devocional sobre Génesis 50:20, la frase de perdón más poderosa del Antiguo Testamento y por qué el sufrimiento puede ser el instrumento del propósito de Dios.",
+  "date_iso": "2026-06-27", "date_label": "27 de junio, 2026",
+  "meta_tags": ["Génesis", "Perdón", "Propósito"], "read": 5, "category": "Antiguo Testamento",
+  "card_verse": "Vosotros pensasteis hacerme mal; mas Dios lo encaminó á bien.",
+  "card_title": "Génesis 50:20: La Frase de Perdón de un Hombre Vendido por Sus Hermanos",
+  "card_excerpt": "José no dijo «no fue para mal». Dijo que lo que ellos planearon para destruirle, Dios lo trazó para bien. El mismo hecho, dos agentes, un propósito que ninguno de los dos vio venir.",
+  "card_tags": ["Génesis", "Propósito"],
+  "body": """    <p>Es el final de la historia más larga del Génesis. José, vendido por sus propios hermanos como esclavo cuando tenía diecisiete años, acusado falsamente, olvidado en prisión, convertido luego en el segundo hombre más poderoso de Egipto, se sienta frente a esos mismos hermanos. Ellos tiemblan. Y José abre la boca.</p>
+    <p>No dice lo que ellos esperaban. No dice lo que cualquier hombre con poder y una cuenta pendiente diría. Dice algo que lleva siglos desconcertando a los lectores: <strong>«Vosotros pensasteis hacerme mal; mas Dios lo encaminó a bien.»</strong> En esas palabras cabe una teología del sufrimiento entera.</p>
+
+    <h2 class="section-title">Dos agentes, un mismo hecho</h2>
+    <p>La frase no absuelve a los hermanos. No dice «en realidad no fue para mal». No minimiza el dolor ni reescribe la historia con una versión bonita. José dice con claridad: <em>vosotros pensasteis hacerme mal</em>. El verbo hebreo es <strong>hashav</strong> —trazar, calcular, idear con intención—. Sus hermanos planearon hacerle daño deliberadamente. El crimen fue real.</p>
+    <p>Pero a continuación introduce un segundo sujeto: <strong>Dios lo encaminó a bien.</strong> Hashav aparece dos veces en el hebreo original: ellos lo tramaron para mal; Dios lo tramó para bien. El mismo hecho, dos intenciones, dos autores. Dios no hizo desaparecer la maldad del plan de los hermanos. La tomó y la convirtió en instrumento de un propósito que ninguno de ellos podía ver desde dentro del pozo.</p>
+
+    <div class="verse-block">
+      <p>Vosotros pensasteis hacerme mal; mas Dios lo encaminó á bien, para hacer como vemos hoy, para conservar la vida de mucho pueblo.</p>
+      <cite>— Génesis 50:20, Reina Valera 1909</cite>
+    </div>
+
+    <h2 class="section-title">El propósito que José no veía desde el pozo</h2>
+    <p>Cuando sus hermanos lo arrojaron al pozo y lo vendieron por veinte piezas de plata, José no sabía el resto de la historia. Nadie lo sabe desde dentro del pozo. Y eso importa, porque mucha gente lee Génesis 50:20 como si el propósito de Dios debería ser visible durante el sufrimiento. Pero José vivió años —no días— sin ver nada que pareciera «el plan de Dios». Hubo momentos donde lo único visible era la injusticia. El copero que olvidó mencionarlo durante dos años más.</p>
+    <p>Creer que Dios puede escribir recto con renglones torcidos no es una emoción que se sostiene sola. Es una convicción que se practica en la oscuridad, sin ver el siguiente capítulo.</p>
+
+    <div class="insight-box">
+      <span class="insight-label">Para reflexionar</span>
+      <p>Nota lo que José <strong>no</strong> dice. No dice «todo lo que me pasó fue bueno». El dolor no era bueno. La traición no era buena. Lo que dice es que Dios —sin borrar el mal— lo usó para un bien mayor. La redención no reescribe el pasado: lo transforma. Si hoy estás en la parte de la historia donde solo ves el pozo, este versículo no te pide que llames bueno al dolor. Te pide confiar en el que puede tomar lo que dolió y convertirlo en lo que salva.</p>
+    </div>
+
+    <h2 class="section-title">El perdón que solo puede nacer de esta convicción</h2>
+    <p>El perdón de José no es un acto de voluntad heroica. Es el resultado lógico de haber entendido algo sobre Dios. No se perdonan las traiciones profundas a fuerza de voluntad; se perdonan cuando se ve que el que te traicionó fue, sin saberlo, un instrumento en las manos de Alguien más grande. Eso no quita la responsabilidad de quien hizo el daño. Pero le quita a su maldad el poder de definir tu historia.</p>
+    <p>Si hay algo en tu vida que alguien hizo para hacerte daño, Génesis 50:20 no te promete que todo tendrá sentido esta semana. Te promete que hay un Autor que puede escribir capítulos buenos con páginas que parecían arrancadas para siempre. Eso es lo que José vio al final. Y lo que le permitió decirles a los que temblaban frente a él: no me venguen con el miedo. Ya entendí lo que Dios estaba haciendo.</p>""",
+  "prayer": "Señor, hay cosas en mi historia que personas decidieron para hacerme daño. No sé cómo llamarlas buenas, y tú no me pides eso. Solo te pido lo que tuvo José: poder ver que tú puedes escribir recto con lo que ellos torcieron. Ayúdame a confiar en tu propósito en los años donde no veo el final. Y donde el perdón aún cuesta, dame la convicción antes que la emoción. Amén.",
+  "faqs": [
+    ("¿Qué significa Génesis 50:20?", "Significa que Dios puede tomar lo que alguien planeó para hacerte daño y convertirlo en instrumento de bien mayor, sin borrar la responsabilidad de quien actuó mal. El verbo hebreo hashav aparece dos veces: ellos tramaron para mal; Dios lo tramó para bien. El mismo hecho, dos intenciones, dos autores, un Dios soberano."),
+    ("¿En qué contexto dijo José estas palabras?", "Al final de su historia: vendido como esclavo por sus hermanos a los 17 años, falsamente acusado, preso en Egipto, luego elevado a segundo hombre del imperio. Cuando sus hermanos temieron su venganza, José respondió con esta declaración que resume toda su teología del sufrimiento: el mismo hecho que ellos trazaron para mal, Dios lo trazó para bien."),
+    ("¿Cómo aplica Génesis 50:20 al sufrimiento hoy?", "No pide llamar bueno al dolor ni minimizar la traición. Pide confiar en que el mismo Dios que tomó el sufrimiento de José —años después, no días— puede transformar lo de tu historia también. La redención no reescribe el pasado; lo transforma. La parte más difícil es confiar cuando solo ves el pozo, sin ver el propósito."),
+    ("¿Ayuda este versículo a perdonar a quien nos hizo daño?", "Sí, pero el perdón que describe no es un acto de fuerza de voluntad pura. Es el resultado de una convicción sobre Dios: cuando entiendes que quien te traicionó fue parte de una historia que Dios escribe, ya no tiene el poder de definirte. Eso no absuelve al culpable, pero sí libera al que perdonó."),
+  ],
+},
+
+{
+  "slug": "galatas-5-22",
+  "ref": "Gálatas 5:22-23", "ref_book": "Gálatas", "libro": "Gálatas", "cap": 5,
+  "hero_verse": "Mas el fruto del Espíritu es: caridad, gozo, paz, tolerancia, benignidad, bondad, fe, mansedumbre, templanza.",
+  "title": "Gálatas 5:22-23: Por Qué el Fruto del Espíritu No es una Lista de Metas que Cumplir",
+  "description": "«El fruto del Espíritu es amor, gozo, paz…» Devocional sobre Gálatas 5:22-23, la diferencia entre fruto y obras, y por qué la transformación cristiana empieza con permanecer, no con esforzarse.",
+  "date_iso": "2026-06-28", "date_label": "28 de junio, 2026",
+  "meta_tags": ["Gálatas", "Espíritu Santo", "Carácter"], "read": 5, "category": "Nuevo Testamento",
+  "card_verse": "Mas el fruto del Espíritu es: caridad, gozo, paz, tolerancia, benignidad, bondad, fe, mansedumbre, templanza.",
+  "card_title": "Gálatas 5:22-23: Por Qué el Fruto del Espíritu No es una Lista que Cumplir",
+  "card_excerpt": "Pablo no dijo «obras del Espíritu»: dijo fruto. La diferencia lo cambia todo. El árbol no se esfuerza en ser manzana; permanece conectado y la manzana sale. Eso es exactamente lo que pide.",
+  "card_tags": ["Gálatas", "Espíritu Santo"],
+  "body": """    <p>Cuando lees «amor, gozo, paz, paciencia» en Gálatas 5, el impulso natural es convertirlo en una lista de verificación. Sé más amoroso. Sé más paciente. Trabaja tu mansedumbre. Y si eres honesto, en algún momento has intentado hacerlo así, y en algún momento has fallado, y la lista te ha hecho sentir peor que antes de intentarlo.</p>
+    <p>Pablo usa una sola palabra que lo explica todo: <strong>fruto</strong>. No «obras» —ese es el vocabulario del capítulo anterior, para las cosas que la carne produce—. Fruto. Y la diferencia es enorme.</p>
+
+    <h2 class="section-title">La diferencia entre producir y brotar</h2>
+    <p>Una obra la fabricas. Un fruto lo das. El fruto no nace porque el árbol se esfuerza en mañana ser una manzana; nace porque el árbol está conectado a la raíz, recibe lo que necesita y, en el momento correcto, lo que hay adentro sale afuera. El esfuerzo va en la conexión, no en la producción.</p>
+    <p>Pablo usa dos términos griegos que son casi opuestos. Las «obras de la carne» son <em>erga</em> —las lista: inmoralidad, enemistad, envidia—. Luego presenta el fruto del Espíritu con <em>karpós</em> en singular, con muchas dimensiones: un solo fruto con facetas distintas. Lo que el Espíritu produce es un carácter integrado, no virtudes sueltas que puedes desarrollar por separado.</p>
+
+    <div class="verse-block">
+      <p>Mas el fruto del Espíritu es: caridad, gozo, paz, tolerancia, benignidad, bondad, fe, mansedumbre, templanza: contra tales cosas no hay ley.</p>
+      <cite>— Gálatas 5:22-23, Reina Valera 1909</cite>
+    </div>
+
+    <h2 class="section-title">El amor primero, y no por accidente</h2>
+    <p>La lista no es arbitraria. Empieza con <strong>amor</strong> —en griego, <em>agápe</em>— porque es el tronco del que brotan las demás ramas. El gozo es amor que descansa. La paz es amor que no pelea contra la realidad. La paciencia es amor que espera sin querer controlar. La mansedumbre es amor que no necesita ganar. Cada virtud que sigue es la misma raíz expresándose en una situación diferente.</p>
+    <p>Y nota lo que Pablo dice al final: <em>«contra tales cosas no hay ley»</em>. La ley puede prohibir actos, pero no puede producir carácter. No existe mandamiento que te fuerce a tener genuina paciencia; la ley dice qué hacer, no quién ser. Por eso el Espíritu hace lo que la ley no puede: transforma desde adentro.</p>
+
+    <div class="insight-box">
+      <span class="insight-label">Para reflexionar</span>
+      <p>Jesús lo dijo de otra manera en Juan 15: «Yo soy la vid; vosotros los pámpanos. El que permanece en mí y yo en él, ese lleva mucho fruto.» El secreto del fruto no es el esfuerzo del pámpano; es la calidad de la conexión con la vid. Cuando alguien lucha por ser más paciente o más amable sin ver avance, casi siempre la pregunta no es «¿me estoy esforzando suficiente?» sino «¿estoy permaneciendo?». El fruto es la evidencia de una relación, no el resultado de una técnica.</p>
+    </div>
+
+    <h2 class="section-title">Qué significa entonces esforzarse</h2>
+    <p>Esto no quiere decir que los frutos lleguen sin cooperar. Lo que cambia es la dirección del esfuerzo. En lugar de fabricar paciencia a fuerza de morderte la lengua, la pregunta es: ¿estoy en la Palabra, en la oración, en comunidad, dejando al Espíritu hacer su trabajo? La vid no le dice al pámpano «esfuérzate más en ser uva». Le dice «permanece en mí».</p>
+    <p>El fruto del Espíritu es la evidencia de que algo está creciendo adentro, no un estándar que mides con regla. Si hoy te sientes lejos de esa lista, la respuesta no es intentarlo más fuerte. Es volver a la raíz: tiempo con Dios, honestidad sobre lo que estás absorbiendo, y la confianza de que el que comenzó la obra en ti tiene intención de terminarla.</p>""",
+  "prayer": "Espíritu Santo, dejo de intentar fabricar lo que solo tú puedes brotar en mí. No me mandes a producir paciencia ni a forzar amor; mantenme cerca de ti, conectado a la vid. Tú eres el que transforma desde adentro. Haz en mí lo que la ley no puede: cambia quién soy, no solo lo que hago. Amén.",
+  "faqs": [
+    ("¿Cuál es el fruto del Espíritu según Gálatas 5:22-23?", "Amor, gozo, paz, tolerancia, benignidad, bondad, fe, mansedumbre y templanza. Pablo lo llama «fruto» en singular —no «frutos»— porque es un carácter integrado que el Espíritu produce, no una lista de virtudes separadas que se desarrollan por cuenta propia."),
+    ("¿Cuál es la diferencia entre el fruto del Espíritu y las obras de la carne?", "Las obras de la carne (erga) las fabrica el esfuerzo humano; el fruto (karpós) brota de una relación. Como la fruta del árbol no nace porque el árbol se esfuerce más, sino porque está conectado a sus raíces. Por eso Pablo opone las obras —lo que produce la carne sin Dios— al fruto —lo que produce el Espíritu cuando permaneces en Cristo."),
+    ("¿Por qué el amor encabeza el fruto del Espíritu?", "Porque el amor (agápe) es el tronco del que brotan todas las demás ramas. El gozo es amor que descansa; la paz, amor que no pelea contra la realidad; la paciencia, amor que espera sin controlar; la mansedumbre, amor que no necesita ganar. Cada virtud siguiente es la misma raíz expresada en una situación diferente."),
+    ("¿Cómo se desarrolla el fruto del Espíritu en mi vida?", "El esfuerzo va en la conexión, no en la producción. Jesús lo explicó en Juan 15: 'el que permanece en mí y yo en él, lleva mucho fruto'. Cultivar tiempo en la Palabra, la oración y la comunidad mantiene el pámpano unido a la vid. El fruto viene de la relación, no de la técnica."),
+  ],
+},
+
+{
+  "slug": "santiago-1-2",
+  "ref": "Santiago 1:2-4", "ref_book": "Santiago", "libro": "Santiago", "cap": 1,
+  "hero_verse": "Tened, hermanos míos, por sumo gozo cuando os halléis en diversas tentaciones.",
+  "title": "Santiago 1:2-4: «Tened por Sumo Gozo» — Por Qué Santiago Manda lo que Parece Imposible",
+  "description": "«Tened por sumo gozo cuando os halléis en diversas pruebas.» Devocional sobre Santiago 1:2-4, qué significa peirasmos en griego, y por qué la prueba produce algo que no puedes conseguir de ninguna otra manera.",
+  "date_iso": "2026-06-29", "date_label": "29 de junio, 2026",
+  "meta_tags": ["Santiago", "Pruebas", "Perseverancia"], "read": 5, "category": "Nuevo Testamento",
+  "card_verse": "Tened, hermanos míos, por sumo gozo cuando os halléis en diversas tentaciones.",
+  "card_title": "Santiago 1:2-4: El Mandato Más Desconcertante del Nuevo Testamento",
+  "card_excerpt": "No pide fingir que no duele. Pide alegrarse «sabiendo» algo: que la prueba produce lo que nada más en el mundo puede producir. Y no hay atajo para llegar ahí.",
+  "card_tags": ["Santiago", "Pruebas"],
+  "body": """    <p>Es el mandato más desconcertante del Nuevo Testamento. No dice «persevera». No dice «aguanta». Dice: <strong>«Tened por sumo gozo cuando os halléis en diversas pruebas.»</strong> No gozo a medias. Sumo gozo. El más alto. Y dice <em>cuando</em>, no <em>si</em>: da por hecho que las pruebas van a llegar.</p>
+    <p>Si se lo dijera un hombre sin heridas, sonaría cruel. Pero Santiago no era un teórico. Escribía desde Jerusalén, a creyentes esparcidos por la persecución, a gente que había perdido trabajos, familias y seguridad por su fe. Y desde ahí les manda alegrarse. Para entender por qué no es masoquismo, hay que entender lo que está diciendo exactamente.</p>
+
+    <h2 class="section-title">Peirasmos — no es lo que suena</h2>
+    <p>La palabra griega que traducimos «prueba» o «tentación» aquí es <strong>peirasmos</strong>. No es específicamente la tentación al pecado; es cualquier presión, dificultad o prueba que pone a prueba tu resistencia. Una enfermedad, una pérdida, una traición, una espera que se alarga demasiado. Peirasmos es el peso que cae sobre ti que no puedes levantar solo.</p>
+    <p>Y Santiago no manda alegrarse <em>por</em> el peso. Manda alegrarse <em>sabiendo</em> algo: sabiendo qué produce el peso cuando la fe lo recibe. La alegría no nace de la circunstancia, sino del conocimiento de lo que Dios hace con la circunstancia.</p>
+
+    <div class="verse-block">
+      <p>Tened, hermanos míos, por sumo gozo cuando os halléis en diversas tentaciones; sabiendo que la prueba de vuestra fe obra paciencia. Mas tenga la paciencia su obra cumplida, para que seáis perfectos y cabales, sin que en ninguna cosa os falte.</p>
+      <cite>— Santiago 1:2-4, Reina Valera 1909</cite>
+    </div>
+
+    <h2 class="section-title">Lo que produce lo que nada más puede producir</h2>
+    <p>Santiago describe un proceso en cadena: la prueba produce <em>paciencia</em> —en griego, <strong>hupomone</strong>, que no es paciencia pasiva sino resistencia activa, la capacidad de permanecer bajo el peso sin derrumbarse, literalmente «quedarse debajo»—. Y la hupomone, cuando llega a su obra completa, produce algo que solo puede nacer de ese camino: la madurez, la integridad de carácter.</p>
+    <p>La palabra griega <strong>téleios</strong> (traducida «perfectos») no significa sin defecto; significa completo, maduro, llegado a la meta para la que fue diseñado. La prueba produce el material del que está hecho el carácter que no se quiebra bajo presión. Y no hay atajo para llegar ahí: no se puede comprar, no se puede heredar, no se puede conseguir leyendo un libro. Viene de haber atravesado el fuego y salido al otro lado.</p>
+
+    <div class="insight-box">
+      <span class="insight-label">Para reflexionar</span>
+      <p>El gozo que manda Santiago no es negar que duele. Es una visión larga: saber que esto —cualquier cosa que sea— no es el capítulo final, sino el proceso que está formando en ti algo que no existía antes. Si hoy estás en la prueba, no necesitas fingir que no duele. Necesitas saber que el Artesano no tira el barro cuando está en la rueda. Lo está formando.</p>
+    </div>
+
+    <h2 class="section-title">La promesa del otro lado</h2>
+    <p>Santiago añade: «sin que en ninguna cosa os falte». Es la imagen de un ser humano completo, sin huecos de carácter que el viento pueda cruzar. Eso es lo que la prueba sostiene y madura. No el golpe en sí, sino el permanecer debajo del golpe confiando en Dios.</p>
+    <p>Si estás hoy en el medio de una peirasmos que no pediste y no entiendes, este texto no te pide que la llames buena. Te pide algo más pequeño y más real: saber que hay un propósito en el peso. Y que el Dios que lo permite también da sabiduría generosamente a quien la pide —precisamente lo que dice el versículo siguiente: «Y si alguno de vosotros tiene falta de sabiduría, demándela á Dios.» No te abandona en el examen. Está disponible para ayudarte a atravesarlo.</p>""",
+  "prayer": "Señor, no pido pruebas, pero cuando llegan, necesito más que aguante. Dame la visión larga: saber que lo que duele está formando en mí algo que nada más puede producir. No me pidas que finja que no duele; dame la sabiduría de saber lo que estás haciendo mientras lo haces. Y cuando ya no pueda más, sigue formándome de todas formas. Amén.",
+  "faqs": [
+    ("¿Qué significa «tened por sumo gozo cuando os halléis en diversas pruebas»?", "Significa que el gozo cristiano ante las pruebas no es negar que duelen, sino saber lo que Dios produce a través de ellas. La palabra griega peirasmos no es solo tentación al pecado; es cualquier presión o dificultad que prueba tu resistencia. Santiago manda alegrarse no por el dolor sino sabiendo su propósito."),
+    ("¿Qué es la paciencia (hupomone) en Santiago 1:3?", "No es paciencia pasiva. En griego, hupomone significa literalmente 'quedarse debajo', resistencia activa bajo el peso sin derrumbarse. Es la capacidad de permanecer firme en la prueba, no la ausencia de lucha. Es el carácter que solo puede forjarse bajo presión, no puede simularse ni acelerarse."),
+    ("¿Qué significa «perfectos y cabales» en Santiago 1:4?", "La palabra griega téleios no significa sin defecto moral, sino completo, maduro, llegado a la meta para la que fue diseñado. Santiago describe un ser humano íntegro, sin huecos de carácter que el viento pueda cruzar. Es lo que produce la prueba sostenida con fe: una madurez que solo viene de haber atravesado el fuego."),
+    ("¿Cómo puedo tener gozo en medio del sufrimiento?", "Santiago da la clave: 'sabiendo'. El gozo viene del conocimiento de lo que Dios hace con la prueba, no de negar que duele. También promete un recurso inmediato: quien le falta sabiduría puede pedirla a Dios, que la da sin reprochar. No estás solo en el examen; el que lo permite está disponible para ayudarte a atravesarlo."),
+  ],
+},
+
+{
+  "slug": "efesios-2-8",
+  "ref": "Efesios 2:8-9", "ref_book": "Efesios", "libro": "Efesios", "cap": 2,
+  "hero_verse": "Porque por gracia sois salvos por la fe; y esto no de vosotros, pues es don de Dios.",
+  "title": "Efesios 2:8-9: La Salvación que No te Costó Nada es la que Más le Costó a Alguien",
+  "description": "«Por gracia sois salvos por la fe; y esto no de vosotros, pues es don de Dios.» Devocional sobre Efesios 2:8-9, qué es la gracia en griego, y por qué no puedes ganarte lo que Dios ya pagó.",
+  "date_iso": "2026-06-30", "date_label": "30 de junio, 2026",
+  "meta_tags": ["Efesios", "Gracia", "Salvación"], "read": 5, "category": "Nuevo Testamento",
+  "card_verse": "Porque por gracia sois salvos por la fe; y esto no de vosotros, pues es don de Dios.",
+  "card_title": "Efesios 2:8-9: La Salvación que No te Costó Nada es la que Más Costó",
+  "card_excerpt": "Todas las religiones dicen qué debes hacer para llegar a Dios. Efesios 2:8-9 dice lo contrario: ya llegaste, porque Dios vino a ti, y no fue por lo que hiciste.",
+  "card_tags": ["Efesios", "Gracia"],
+  "body": """    <p>Si hay un versículo que divide la religión de la fe cristiana, es este. Todas las religiones del mundo tienen en común algo: te dicen lo que debes <em>hacer</em> para llegar a Dios. Efesios 2:8-9 dice exactamente lo contrario: ya llegaste —porque Dios vino a ti— y no fue por lo que hiciste.</p>
+    <p>Para mucha gente ese mensaje es demasiado bueno para ser verdad. Nos resulta más natural creer que hay que ganarse el favor de Dios, que la salvación es el premio al desempeño espiritual. Y Pablo viene a desmantelar eso con tres palabras en griego que cambian todo.</p>
+
+    <h2 class="section-title">Charis — mucho más que bondad</h2>
+    <p>La palabra <strong>gracia</strong> en el original es <em>charis</em>. En el mundo grecolatino describía el regalo que daba un rey a alguien sin que ese alguien pudiera devolverlo ni merecerlo. No es solo «bondad» o «amabilidad»; es favor inmerecido de alguien que tiene el poder de darlo. Lo importante de charis es que, por definición, no puede ganarse: en el momento en que lo mereces, deja de ser gracia y se convierte en salario.</p>
+    <p>Por eso Pablo añade la frase que más incomoda: <em>«y esto no de vosotros».</em> No hay manera de que aportes algo al precio de tu salvación. Dios no necesita tu contribución —y eso es exactamente lo que hace tan libre la relación.</p>
+
+    <div class="verse-block">
+      <p>Porque por gracia sois salvos por la fe; y esto no de vosotros, pues es don de Dios: No de obras, para que nadie se gloríe.</p>
+      <cite>— Efesios 2:8-9, Reina Valera 1909</cite>
+    </div>
+
+    <h2 class="section-title">El don que incluye la fe</h2>
+    <p>Hay un debate clásico sobre a qué se refiere «esto» cuando dice «y esto no de vosotros»: ¿a la fe o a toda la salvación? Gramaticalmente el «esto» es neutro en griego y no puede referirse solo a «fe» (que es femenino). Se refiere al paquete completo: fe, salvación, todo el sistema es don de Dios. Ni siquiera la fe con que recibes la salvación la fabricaste desde cero: es la respuesta que Dios despertó en ti.</p>
+    <p>Eso no te hace pasivo. Pero sí cambia la motivación. Cuando obedeces porque quieres pagarte la salvación, vives con miedo constante de no haber cumplido suficiente. Cuando obedeces porque ya eres salvo, la obediencia se vuelve gratitud.</p>
+
+    <div class="insight-box">
+      <span class="insight-label">Para reflexionar</span>
+      <p>Pablo escribe esto después de describir el estado anterior de los destinatarios: muertos en delitos, hijos de desobediencia, por naturaleza hijos de ira (Ef 2:1-3). No estaban mal calificados para la gracia: estaban muertos. Y Dios no esperó a que mejoraran. Los vivificó mientras estaban muertos. La salvación que no te costó nada fue la más cara de la historia: costó la vida del Hijo de Dios, quien murió y resucitó victorioso. Lo que recibiste gratis fue pagado al precio máximo posible.</p>
+    </div>
+
+    <h2 class="section-title">Hechura suya — y para algo</h2>
+    <p>El versículo que casi siempre se olvida es el 10: «Porque somos hechura suya, creados en Cristo Jesús para buenas obras.» La gracia no es el final de la historia: es el comienzo. Dios no te salva para que no hagas nada. Te salva para que hagas lo que siempre fuiste diseñado a hacer —solo que ahora desde un lugar radicalmente diferente: no para ganarte nada, sino porque ya lo tienes todo.</p>
+    <p>¿Cansado de intentar ganarte lo que no puedes comprar? Efesios 2:8-9 es la puerta a un descanso que no habías podido darte: el de quien ya sabe que la cuenta fue saldada por alguien más, y solo tiene que vivir en consecuencia.</p>""",
+  "prayer": "Padre, me rindo al intento de ganarme lo que tú ya pagaste. Gracias porque tu gracia no depende de mi desempeño sino de tu carácter. Recibo hoy lo que no merezco y no puedo comprar: tu salvación, tu vida en mí, tu propósito sobre mí. Que lo que haga de hoy en adelante nazca del agradecimiento, no del miedo. Amén.",
+  "faqs": [
+    ("¿Qué significa «por gracia sois salvos» en Efesios 2:8?", "Significa que la salvación es un regalo inmerecido de Dios (charis en griego), no el resultado del esfuerzo humano. Charis en la cultura griega describía el favor que un rey daba sin que el receptor pudiera devolverlo ni merecerlo. Por definición, lo que se merece deja de ser gracia y se convierte en salario."),
+    ("¿Qué significa «esto no de vosotros, pues es don de Dios»?", "El «esto» en griego es neutro y no puede referirse solo a 'la fe'. Se refiere al paquete completo: la salvación, la fe y todo el sistema es don de Dios. Ni la fe misma la fabricamos desde cero; Dios la despertó en nosotros. No hay nada que el ser humano aporte al precio de su salvación."),
+    ("¿Por qué «no de obras, para que nadie se gloríe»?", "Porque si la salvación se ganara por obras, el salvador sería el que más obras acumulara, y la gloria sería suya. Dios diseñó la gracia de modo que el único que puede jactarse de la salvación es Dios mismo. Así nadie puede comparar su desempeño espiritual con el de otro como medida de valor ante Dios."),
+    ("Si la salvación es gratis, ¿para qué vivir bien?", "Efesios 2:10 da la respuesta: somos «hechura suya, creados para buenas obras». La gracia no anula la obediencia, cambia su motivación. Cuando obedeces para ganarte la salvación, vives con miedo de nunca cumplir suficiente. Cuando obedeces porque ya eres salvo, la obediencia se vuelve gratitud, no deuda."),
+  ],
+},
+
+{
+  "slug": "salmos-34-18",
+  "ref": "Salmos 34:18", "ref_book": "Salmos", "libro": "Salmos", "cap": 34,
+  "hero_verse": "Cercano está Jehová á los quebrantados de corazón; Y salvará á los contritos de espíritu.",
+  "title": "Salmos 34:18: El Versículo que David Escribió Después de Fingir Estar Loco",
+  "description": "«Cercano está Jehová a los quebrantados de corazón.» Devocional sobre Salmos 34:18, escrito en el momento más humillante de la vida de David, y por qué Dios no se aleja del dolor sino que se acerca a él.",
+  "date_iso": "2026-07-01", "date_label": "1 de julio, 2026",
+  "meta_tags": ["Salmos", "Dolor", "Presencia de Dios"], "read": 5, "category": "Salmos",
+  "card_verse": "Cercano está Jehová á los quebrantados de corazón; Y salvará á los contritos de espíritu.",
+  "card_title": "Salmos 34:18: El Versículo que David Escribió Después de Fingir Estar Loco",
+  "card_excerpt": "David escribió este salmo desde la humillación, no desde el trono. Y desde ahí dice que Dios se acerca a los quebrantados. No observa de lejos: qarov — al lado, como el pariente que tiene obligación de estar.",
+  "card_tags": ["Salmos", "Dolor"],
+  "body": """    <p>El encabezado de este salmo dice algo que casi nadie recuerda: «Salmo de David, cuando mudó su semblante delante de Abimelec, y él lo echó, y se fue.» David escribió este salmo después de haber fingido estar loco —babeando, arañando las puertas— para escapar de un rey filisteo. No exactamente la situación más digna de la historia.</p>
+    <p>Y es desde ahí, desde la humillación y el miedo que lo llevó a ese extremo, que David escribe: <em>«Cercano está Jehová a los quebrantados de corazón.»</em> No desde un trono. No desde la victoria. Desde el piso de la vergüenza.</p>
+
+    <h2 class="section-title">Quebrantado de corazón — shavar lev</h2>
+    <p>En hebreo, <strong>shavar</strong> es el verbo para romper algo sólido. No para doblar, sino para partir. El alfarero usa este verbo cuando una vasija se rompe. El leñador lo usa cuando parte un tronco. No es tristeza; es <em>fractura</em>. Quebrantado de corazón no es estar triste; es estar partido.</p>
+    <p>Y la promesa dice que Jehová no se aleja del partido. Se <strong>acerca</strong>. La palabra hebrea para «cercano» —<em>qarov</em>— se usa para describir al pariente más próximo, al goel, el redentor obligado por parentesco a ayudarte. Dios en el salmo no observa el dolor desde lejos, compasivo pero distante. Se pone al lado, como un familiar que tiene obligación de estar.</p>
+
+    <div class="verse-block">
+      <p>Cercano está Jehová á los quebrantados de corazón; Y salvará á los contritos de espíritu.</p>
+      <cite>— Salmos 34:18, Reina Valera 1909</cite>
+    </div>
+
+    <h2 class="section-title">Contritos de espíritu — daka ruach</h2>
+    <p>La segunda mitad añade otra imagen: «contritos de espíritu». En hebreo, <em>daka</em> es pulverizar, triturar hasta que queda polvo. No solo roto, sino molido. Y Dios dice que salva precisamente a esos. No a los que tienen suficiente espíritu propio para sostenerse, sino a los que ya no tienen nada que ofrecer, ni siquiera su propia fortaleza.</p>
+    <p>Hay una paradoja en esto. El mundo te dice que Dios ayuda a los que tienen algo con qué colaborar: fe suficiente, actitud correcta, esfuerzo visible. El Salmo 34 dice que cuando ya no tienes nada —cuando estás pulverizado— es cuando la promesa de Dios se activa con más claridad. No porque Dios esperara que cayeras, sino porque ahí ya no hay nada que interponer entre tú y él.</p>
+
+    <div class="insight-box">
+      <span class="insight-label">Para reflexionar</span>
+      <p>Dios no promete aquí quitar el dolor rápido. Promete algo más permanente: su presencia <em>dentro</em> del dolor. Hay una diferencia enorme entre un Dios que promete rescatarte de la tormenta en cuanto pueda y un Dios que entra en la tormenta a sentarse contigo. El primero tranquiliza cuando todo va a salir bien. El segundo es el único que sirve cuando no sabes si va a salir bien. El Salmo 34:18 promete el segundo.</p>
+    </div>
+
+    <h2 class="section-title">Para el que hoy está partido</h2>
+    <p>No importa lo que te partió: una pérdida, un diagnóstico, una traición, un sueño que no llegó. El salmo no pregunta cómo ocurrió ni si lo merecías. Solo describe dónde está Dios cuando estás ahí: cerca. No observando de lejos con lástima, sino qarov: al lado, como el pariente que tiene obligación de estar.</p>
+    <p>Y el salmo lo escribió alguien que supo lo que era llegar al límite de la dignidad y salir vivo. No porque la situación se resolviera bonita, sino porque Dios estuvo cerca también en eso. Lo mismo que eso promete para ti.</p>""",
+  "prayer": "Señor, hay partes de mí que están partidas y no sé cómo arreglarlas. No vengo con fortaleza, vengo quebrantado. Y según tu promesa, eso es suficiente para que te acerques. Ven cerca, Señor. No te pido que quites el dolor antes de llegar; te pido que estés aquí, dentro de él, mientras dure. Amén.",
+  "faqs": [
+    ("¿Qué significa «cercano está Jehová a los quebrantados de corazón»?", "El hebreo shavar (quebrantado) significa partir algo sólido, como el alfarero que rompe una vasija. No es tristeza; es fractura profunda. Y qarov (cercano) es el término para el goel, el pariente redentor obligado por parentesco a estar al lado. Dios no observa el dolor desde lejos: se pone al lado como familiar que tiene obligación de estar."),
+    ("¿En qué situación escribió David el Salmo 34?", "El encabezado dice que lo escribió cuando fingió estar loco ante el rey Abimelec para escapar —babeando y arañando las puertas— y fue echado. No desde la victoria ni el trono, sino desde la humillación y el miedo. Eso hace la promesa más genuina: no es teología de sillón, es fe desde el piso."),
+    ("¿Qué significa «contritos de espíritu» en Salmos 34:18?", "La palabra hebrea daka significa pulverizar, triturar hasta que queda polvo. Más que roto: molido. La promesa dice que Dios salva precisamente a los que ya no tienen nada que ofrecer, ni siquiera su propia fortaleza. Es la paradoja del evangelio: donde termina el recurso propio, la promesa de Dios se activa más claramente."),
+    ("¿Promete el Salmo 34:18 que Dios quitará el dolor?", "No específicamente. Promete algo distinto y más sólido: su presencia dentro del dolor. Hay una diferencia entre un Dios que promete rescatarte de la tormenta pronto y un Dios que entra en la tormenta a acompañarte. El Salmo 34:18 promete el segundo, que es el único que sirve cuando no sabes si la situación va a mejorar."),
+  ],
+},
+
+{
+  "slug": "mateo-19-26",
+  "ref": "Mateo 19:26", "ref_book": "Mateo", "libro": "Mateo", "cap": 19,
+  "hero_verse": "Para los hombres esto es imposible; mas para Dios todo es posible.",
+  "title": "Mateo 19:26: «Para los Hombres es Imposible, Mas Para Dios Todo es Posible»",
+  "description": "«Para los hombres esto es imposible; mas para Dios todo es posible.» Devocional sobre Mateo 19:26, dicho tras el joven rico que se fue triste, y por qué la imposibilidad humana es la puerta exacta de la gracia de Dios.",
+  "date_iso": "2026-07-02", "date_label": "2 de julio, 2026",
+  "meta_tags": ["Mateo", "Gracia", "Imposible"], "read": 5, "category": "Nuevo Testamento",
+  "card_verse": "Para los hombres esto es imposible; mas para Dios todo es posible.",
+  "card_title": "Mateo 19:26: Por Qué la Imposibilidad Humana es la Puerta de la Gracia",
+  "card_excerpt": "Nació de la pregunta más honesta de los discípulos: «¿quién podrá, pues, ser salvo?». Jesús no respondió 'esfuérzate más'. Cambió de agente. El que hace lo imposible no eres tú.",
+  "card_tags": ["Mateo", "Imposible"],
+  "body": """    <p>Este versículo nació de una escena que no termina bien. Un joven rico —buena persona, observante de la ley, sincero— se acercó a Jesús preguntando qué le faltaba para tener vida eterna. Jesús le dijo una sola cosa: vende todo y sígueme. Y el joven se fue triste, porque tenía muchas posesiones. Fue el único encuentro en los evangelios donde Jesús hace una invitación y la persona se va sin aceptarla.</p>
+    <p>Los discípulos quedaron desconcertados. Si ese hombre, con toda su virtud y su sinceridad, no podía entrar al reino, ¿quién podía? Y su pregunta detonó la frase más esperanzadora del capítulo: <em>«Para los hombres esto es imposible; mas para Dios todo es posible.»</em></p>
+
+    <h2 class="section-title">La pregunta que no esperabas</h2>
+    <p>«¿Quién podrá, pues, ser salvo?» No es la pregunta de alguien desesperado. Es la pregunta de personas que acaban de entender algo: que si la salvación depende del esfuerzo humano —aunque sea el mejor esfuerzo humano— no alcanza. Los discípulos habían seguido a Jesús convencidos de que los religiosos serios llegarían. Y Jesús acababa de decir que incluso esos no llegan por su propia fuerza.</p>
+    <p>La respuesta de Jesús no consuela diciendo «puedes lograrlo si te esfuerzas más». Dice algo radicalmente diferente: cambia de agente. El que hace lo imposible no eres tú. Es Dios.</p>
+
+    <div class="verse-block">
+      <p>Y mirándolos Jesús, les dijo: Para los hombres esto es imposible; mas para Dios todo es posible.</p>
+      <cite>— Mateo 19:26, Reina Valera 1909</cite>
+    </div>
+
+    <h2 class="section-title">«Para Dios» — la preposición que lo cambia todo</h2>
+    <p>En griego, la frase es <em>para tō theō</em>. <strong>Para</strong> aquí no significa «para el beneficio de» sino «al lado de», «en la esfera de». Lo imposible que no puede ocurrir en el ámbito humano sí puede ocurrir en el ámbito en que Dios opera. No es que Dios sea un superhéroe que hace lo mismo que tú pero más fuerte. Es que el territorio en que Dios actúa obedece reglas distintas a las que tú conoces.</p>
+    <p>La salvación no es un logro humano que Dios mejora. Es una obra que pertenece enteramente al territorio de Dios. Por eso Jesús no le dijo al joven rico «inténtalo más fuerte»; le dijo «sígueme», que es exactamente lo que un ser humano sí puede hacer: soltar el control y seguir al que puede lo que él no puede.</p>
+
+    <div class="insight-box">
+      <span class="insight-label">Para reflexionar</span>
+      <p>Este versículo no es un cheque en blanco para pedir cualquier cosa y esperar un milagro. El contexto es muy específico: la salvación del alma humana, que es imposible por esfuerzo propio y posible porque Dios lo hace. Pero el principio se extiende: hay cosas en tu vida que llevas intentando resolver con tus propios recursos, y no avanzan. A veces el primer paso es admitir que son imposibles para ti —no como derrota, sino como apertura al único que puede hacerlo.</p>
+    </div>
+
+    <h2 class="section-title">El que se fue triste y el que puede quedarse</h2>
+    <p>El joven rico no pudo quedarse porque sus posesiones no eran solo externas: eran la seguridad en que confiaba. Jesús le pedía que transfiriera esa confianza. Esa es la imposibilidad que Dios puede hacer: no solo cambiar circunstancias, sino cambiar en qué confías. Esa transformación no puedes producírtela a ti mismo.</p>
+    <p>Si hoy hay algo en tu vida que llevas declarando imposible —una relación restaurada, un corazón que cambia, una fe que parece muerta— este versículo no te invita a confiar en el milagro más fuerte. Te invita a transferir la confianza de tus manos a las manos de quien opera en un territorio donde «imposible» no existe.</p>""",
+  "prayer": "Señor, hay cosas en mi vida que ya declaro imposibles para mí. Y hoy te las entrego no para que las hagas según mis plazos, sino porque tú operas en un territorio donde esa palabra no existe. Cambia en mí lo que yo no puedo cambiar. Y donde me aferre a mis propias seguridades, ayúdame a soltar y seguirte. Amén.",
+  "faqs": [
+    ("¿Qué significa «para los hombres es imposible, mas para Dios todo es posible»?", "En el contexto inmediato, Jesús habla de la salvación del alma, que ningún ser humano puede lograr por esfuerzo propio. La frase usa la preposición griega para (παρά) que significa 'en la esfera de', 'junto a': lo que es imposible en el territorio humano sí ocurre en el territorio en que Dios opera."),
+    ("¿En qué situación dijo Jesús Mateo 19:26?", "Justo después de que un joven rico se fuera triste al no poder soltar sus posesiones. Los discípulos, desconcertados, preguntaron '¿quién podrá, pues, ser salvo?'. Jesús no respondió con 'inténtalo más fuerte', sino cambiando el agente: lo imposible para el hombre es posible para Dios."),
+    ("¿Es Mateo 19:26 un cheque en blanco para pedir milagros?", "No. El contexto específico es la salvación del alma, no cualquier petición. El principio se extiende a situaciones donde los recursos humanos han llegado a su límite, pero no garantiza que cualquier cosa pedida ocurrirá. Lo que sí garantiza es que el ámbito de lo posible para Dios es más amplio que el ámbito de lo posible para el hombre."),
+    ("¿Qué debía soltar el joven rico?", "No solo sus bienes materiales, sino la confianza depositada en ellos como seguridad. Jesús le pedía una transferencia de confianza: de sus posesiones a Dios. Ese cambio de en qué confías es la imposibilidad humana que Dios puede hacer, porque ningún ser humano puede producirse a sí mismo una fe que desplace la confianza en sí mismo."),
+  ],
+},
+
+{
+  "slug": "colosenses-3-23",
+  "ref": "Colosenses 3:23", "ref_book": "Colosenses", "libro": "Colosenses", "cap": 3,
+  "hero_verse": "Y todo lo que hagáis, hacedlo de corazón, como para el Señor y no para los hombres.",
+  "title": "Colosenses 3:23: La Frase que Transforma Cualquier Trabajo en Algo con Dignidad",
+  "description": "«Todo lo que hagáis, hacedlo de corazón, como para el Señor y no para los hombres.» Devocional sobre Colosenses 3:23, escrita originalmente a esclavos, y por qué cambiar la audiencia para la que trabajas lo cambia todo.",
+  "date_iso": "2026-07-03", "date_label": "3 de julio, 2026",
+  "meta_tags": ["Colosenses", "Trabajo", "Vocación"], "read": 5, "category": "Nuevo Testamento",
+  "card_verse": "Y todo lo que hagáis, hacedlo de corazón, como para el Señor y no para los hombres.",
+  "card_title": "Colosenses 3:23: La Frase que Transforma Cualquier Trabajo en Vocación",
+  "card_excerpt": "Pablo escribió esto a esclavos, no a ejecutivos. Si aplica al trabajo menos elegido del mundo, aplica al tuyo. El secreto no está en el tipo de trabajo, sino en para quién lo haces.",
+  "card_tags": ["Colosenses", "Trabajo"],
+  "body": """    <p>Antes de aplicar este versículo a una reunión del lunes por la mañana, hay que saber a quién se lo escribió Pablo originalmente. No a ejecutivos. No a artistas creativos con trabajo significativo. Lo escribió a <strong>esclavos</strong>. El versículo está en una sección donde Pablo da instrucciones a amos y siervos, y el que tenía el trabajo menos digno y menos elegido del mundo recibe este consejo: hazlo de corazón, como para el Señor.</p>
+    <p>Eso le quita cualquier sabor a motivación de cartel de oficina. Si aplica a un esclavo que no eligió su trabajo, aplica en cualquier trabajo, incluyendo el que más te aburre, el que sientes que no merecías, el que nadie valora.</p>
+
+    <h2 class="section-title">Ek psyches — desde el alma</h2>
+    <p>La frase «de corazón» traduce el griego <em>ek psyches</em>, literalmente «desde el alma», «desde adentro». No es una instrucción de actitud superficial: «sé positivo en el trabajo». Es una orientación de quién eres mientras trabajas. Trabajar ek psyches significa que lo que sale en el trabajo viene de algo más profundo que la obligación o el sueldo: viene de quien eres, de lo que crees que vale la pena.</p>
+    <p>Pablo no pide que el esclavo finja disfrutar su situación. Pide que la manera en que trabaja sea la expresión de algo verdadero en su interior, no solo la respuesta al ojo del amo.</p>
+
+    <div class="verse-block">
+      <p>Y todo lo que hagáis, hacedlo de corazón, como para el Señor y no para los hombres; sabiendo que del Señor recibiréis la recompensa de la herencia, porque á Cristo el Señor servís.</p>
+      <cite>— Colosenses 3:23-24, Reina Valera 1909</cite>
+    </div>
+
+    <h2 class="section-title">El cambio de audiencia</h2>
+    <p>El corazón del versículo está en la preposición: «<em>como para el Señor y no para los hombres</em>». Pablo no dice que ignores a las personas a las que sirves. Dice que cambies tu audiencia principal. Y cambiar la audiencia lo cambia todo.</p>
+    <p>Cuando trabajas para los hombres —para el jefe, para los clientes, para el reconocimiento—, tu desempeño depende de si te ven. Si nadie nota lo que hiciste, la motivación se evapora. Si el jefe no aprueba, el trabajo pierde sentido. Pero cuando la audiencia es el Señor, el trabajo tiene un testigo constante al que le importa la calidad incluso cuando nadie más mira.</p>
+
+    <div class="insight-box">
+      <span class="insight-label">Para reflexionar</span>
+      <p>Martín Lutero revolucionó la comprensión del trabajo ordinario cuando enseñó que el zapatero que hace buenos zapatos honra a Dios tanto como el predicador que da buenos sermones. La dignidad no la da el tipo de trabajo, sino el <em>para quién</em> del trabajo. Si hoy tu trabajo te parece invisible, poco valorado, o muy por debajo de lo que mereces —la pregunta que este versículo te hace no es «¿cuándo te van a reconocer?» sino «¿para quién estás realmente trabajando?»</p>
+    </div>
+
+    <h2 class="section-title">La recompensa que nadie puede quitarte</h2>
+    <p>El siguiente versículo añade por qué esta audiencia importa: «sabiendo que del Señor recibiréis la recompensa de la herencia». Al esclavo que no podía heredar nada legalmente, Pablo le dice que tiene una herencia garantizada —no de su amo terreno, sino del Señor. La recompensa no depende de que te vean, de que te paguen bien, de que te reconozcan. Viene de una fuente diferente y no puede arrebatársela ningún sistema injusto.</p>
+    <p>Eso no resuelve las injusticias del mundo laboral, ni normaliza el abuso. Pero le da a quien trabaja en condiciones difíciles una dignidad que nadie le puede quitar: la dignidad de trabajar, hoy, en este momento, como si el Señor estuviera mirando. Porque está mirando.</p>""",
+  "prayer": "Señor, hoy tomo mi trabajo —cualquier cosa que sea, aunque parezca pequeña— y cambio de audiencia. No lo hago para que me vean, para que me valoren, para el sueldo que viene. Lo hago para ti. Dame esa orientación desde el alma que transforma cualquier tarea en algo con dignidad. Y cuando nadie más lo note, recuérdame que tú sí. Amén.",
+  "faqs": [
+    ("¿Qué significa «hacedlo de corazón» en Colosenses 3:23?", "El original griego dice ek psyches, literalmente 'desde el alma', 'desde adentro'. No es una instrucción de actitud superficial ('sé positivo'), sino una orientación de quién eres mientras trabajas. Trabajar ek psyches significa que lo que produces sale de algo más profundo que la obligación: sale de quien eres y de lo que crees que vale la pena."),
+    ("¿A quién le escribió Pablo Colosenses 3:23?", "A esclavos. El versículo está en una sección de instrucciones a amos y siervos, y Pablo dirige este consejo al que tenía el trabajo menos elegido y menos digno del mundo. Eso le quita cualquier sabor a motivación de cartel de oficina: si aplica a un esclavo, aplica en cualquier trabajo, incluyendo el que más aburre o el que nadie valora."),
+    ("¿Qué significa trabajar 'como para el Señor y no para los hombres'?", "Es un cambio de audiencia principal. Cuando trabajas para los hombres, tu motivación depende del reconocimiento ajeno: si nadie nota tu trabajo o el jefe no aprueba, el sentido se evapora. Cuando la audiencia es el Señor, el trabajo tiene un testigo constante que valora la calidad incluso cuando nadie más mira."),
+    ("¿Qué recompensa promete Colosenses 3:23-24?", "La 'recompensa de la herencia' del Señor, no del amo terreno. Al esclavo que legalmente no podía heredar nada, Pablo le garantiza una herencia que no depende de que lo vean ni de que lo paguen bien. Ningún sistema injusto puede arrebatarla. Eso no normaliza el abuso, pero da una dignidad que nadie puede quitarte."),
+  ],
+},
+
+{
+  "slug": "apocalipsis-21-4",
+  "ref": "Apocalipsis 21:4", "ref_book": "Apocalipsis", "libro": "Apocalipsis", "cap": 21,
+  "hero_verse": "Enjugará Dios toda lágrima de los ojos de ellos; y la muerte no será más.",
+  "title": "Apocalipsis 21:4: La Promesa Más Tierna del Libro Más Oscuro de la Biblia",
+  "description": "«Enjugará Dios toda lágrima de los ojos de ellos.» Devocional sobre Apocalipsis 21:4, por qué Dios mismo hace este gesto, y qué significan las cuatro cosas que dejarán de existir para siempre.",
+  "date_iso": "2026-07-04", "date_label": "4 de julio, 2026",
+  "meta_tags": ["Apocalipsis", "Esperanza", "Cielo"], "read": 5, "category": "Nuevo Testamento",
+  "card_verse": "Enjugará Dios toda lágrima de los ojos de ellos; y la muerte no será más.",
+  "card_title": "Apocalipsis 21:4: La Imagen Más Tierna del Libro Más Oscuro de la Biblia",
+  "card_excerpt": "En el libro más perturbador de la Biblia, en medio de bestias y juicio, aparece de pronto la imagen más íntima: Dios secando personalmente las lágrimas de sus hijos. No un ángel. Él mismo.",
+  "card_tags": ["Apocalipsis", "Esperanza"],
+  "body": """    <p>El Apocalipsis es el libro más perturbador de la Biblia: bestias, plagas, guerras, juicio. Y sin embargo, en el capítulo 21, en medio de toda esa arquitectura de lo terrible, aparece de pronto la imagen más íntima y más tierna de toda la Escritura: <strong>Dios secando personalmente las lágrimas de sus hijos.</strong></p>
+    <p>No un ángel. No un intermediario. Dios mismo. La imagen es pequeñísima comparada con el tamaño de lo que el capítulo describe —un cielo nuevo, una tierra nueva, la ciudad santa bajando del cielo—. Y sin embargo es la primera cosa específica que Dios hace en esa nueva realidad: inclinarse a secar lo que lloraste.</p>
+
+    <h2 class="section-title">Exaleiphó — borrar, no solo limpiar</h2>
+    <p>La palabra griega que se traduce «enjugará» o «limpiará» es <strong>exaleiphó</strong>. En el mundo antiguo describía borrar completamente algo de un registro escrito —la deuda cancelada, la acusación quitada, el renglón en blanco—. No es solo secar las lágrimas del momento; es borrar el rastro de todo lo que las causó. No se trata de que te sequen la cara y sigas recordando el dolor: es que el origen del dolor queda eliminado.</p>
+    <p>Exaleiphó aparece también en Colosenses 2:14 cuando Pablo dice que Dios borró el «acta de los decretos» que nos era contraria. El mismo verbo para la deuda quitada y para las lágrimas quitadas. No es coincidencia: el mismo Dios que canceló lo que te condenaba, cancelará lo que te hizo llorar.</p>
+
+    <div class="verse-block">
+      <p>Enjugará Dios toda lágrima de los ojos de ellos; y la muerte no será más; y no habrá más llanto, ni clamor, ni dolor; porque las primeras cosas pasaron.</p>
+      <cite>— Apocalipsis 21:4, Reina Valera 1909</cite>
+    </div>
+
+    <h2 class="section-title">Los cuatro «noes» que se van para siempre</h2>
+    <p>El versículo tiene cuatro negaciones que merece leer despacio: <em>no más muerte, no más llanto, no más clamor, no más dolor.</em> Cuatro cosas que conocemos desde el Génesis capítulo tres, cuatro consecuencias del primer desgarramiento entre la humanidad y Dios, cuatro palabras que describen la experiencia de vivir en un mundo roto. Y el versículo dice que las cuatro pasan. No se moderan. No se manejan mejor. <strong>Pasan.</strong> La razón: «porque las primeras cosas pasaron».</p>
+    <p>Lo que termina no es solo el sufrimiento puntual: es la era del sufrimiento. La categoría entera queda eliminada, como un modo que se apaga y no vuelve a encenderse.</p>
+
+    <div class="insight-box">
+      <span class="insight-label">Para reflexionar</span>
+      <p>Este versículo no minimiza el dolor de hoy. No dice «no importa lo que sufras porque después estará bien». Dice algo más verdadero: que lo que sufres hoy es real, y tiene un Dios que lo registra tan seriamente que ha prometido borrarlo —no de tu memoria, sino de la realidad misma. El consuelo más grande de Apocalipsis 21:4 no es que el dolor pasará. Es que Dios mismo se encargará de limpiarlo con sus propias manos.</p>
+    </div>
+
+    <h2 class="section-title">Para el que hoy llora</h2>
+    <p>No es un versículo para ignorar el presente. Es un versículo para sostener el presente. Cuando el duelo es demasiado grande para palabras, cuando la pérdida es demasiado real para el consuelo habitual, cuando la vida parece haber acumulado más dolor del que un ser humano debería cargar, este capítulo dice que hay alguien que lo sabe, que lo ha registrado, y que ya tiene planeado el día en que se inclina y lo seca.</p>
+    <p>Dios no es indiferente a tus lágrimas. Las tiene contadas —«Pon mis lágrimas en tu redoma» dice el salmista—. Y ha prometido borrarlas. No porque el dolor no importara, sino porque importó tanto que la solución tenía que ser definitiva.</p>""",
+  "prayer": "Señor, hoy traigo las lágrimas que no he podido secar yo solo. Tú las conoces, las tienes contadas. Gracias porque la promesa no es solo 'aguanta, después mejora', sino que tú mismo, personalmente, las secarás. Mientras llega ese día, dame la fortaleza de saber que lo que duele hoy lo tienes registrado, y que tu respuesta a ello es definitiva. Amén.",
+  "faqs": [
+    ("¿Qué significa que Dios enjugará toda lágrima en Apocalipsis 21:4?", "El verbo griego exaleiphó no solo significa secar: significa borrar completamente, como se borraba una deuda de un registro escrito. No es secar la cara y seguir recordando el dolor; es eliminar el origen de todo lo que causó las lágrimas. Es el mismo verbo que Pablo usa en Colosenses 2:14 para la deuda cancelada."),
+    ("¿Cuáles son las cuatro cosas que desaparecerán según Apocalipsis 21:4?", "Muerte, llanto, clamor y dolor. Las cuatro consecuencias del primer desgarramiento entre la humanidad y Dios desde Génesis 3. No se moderan ni se manejan mejor: pasan, porque 'las primeras cosas pasaron'. La era del sufrimiento como categoría queda eliminada, no solo sus episodios puntuales."),
+    ("¿Por qué dice que Dios mismo enjugará las lágrimas?", "No un ángel ni un intermediario: Dios mismo. Es la imagen más pequeña e íntima de todo el capítulo 21, en medio de una descripción cósmica de cielos nuevos y tierra nueva. Que sea Dios quien lo haga dice algo sobre el valor que asigna a cada lágrima individual: lo suficientemente importante para que él mismo se encargue."),
+    ("¿Cómo ayuda Apocalipsis 21:4 cuando uno está en el dolor hoy?", "No minimiza el presente con un 'después todo estará bien'. Valida el dolor —tan seriamente que Dios prometió borrarlo—, y da a quien sufre la certeza de que hay un Dios que lo registra y que ya tiene planeada la respuesta definitiva. Es un ancla para el presente, no solo esperanza abstracta para el futuro."),
+  ],
+},
+
+{
+  "slug": "juan-10-10",
+  "ref": "Juan 10:10", "ref_book": "Juan", "libro": "Juan", "cap": 10,
+  "hero_verse": "Yo he venido para que tengan vida, y para que la tengan en abundancia.",
+  "title": "Juan 10:10: «Vida en Abundancia» — Qué Prometió Jesús Exactamente",
+  "description": "«Yo he venido para que tengan vida, y para que la tengan en abundancia.» Devocional sobre Juan 10:10, la diferencia entre bios y zoé en griego, y por qué la abundancia que prometió Jesús no es lo que casi nadie cree.",
+  "date_iso": "2026-07-05", "date_label": "5 de julio, 2026",
+  "meta_tags": ["Juan", "Vida Abundante", "Cristo"], "read": 5, "category": "Nuevo Testamento",
+  "card_verse": "Yo he venido para que tengan vida, y para que la tengan en abundancia.",
+  "card_title": "Juan 10:10: «Vida en Abundancia» — Qué Prometió Jesús Exactamente",
+  "card_excerpt": "El versículo más citado sobre prosperidad usa en griego una palabra para 'vida' que no significa bienes materiales. Bios y zoé son dos cosas muy distintas. Lo que Jesús prometió es cualitativamente diferente.",
+  "card_tags": ["Juan", "Vida Abundante"],
+  "body": """    <p>Si hay un versículo que se usa mal con más frecuencia, es probablemente este. Se cita para prometer que Dios quiere que tengas más dinero, más salud, más éxito, más de todo. Y cuando la vida no entrega eso, la gente siente que Dios no cumplió. Antes de pedir lo que el versículo promete, conviene entender exactamente qué prometió.</p>
+    <p>Juan 10:10 está en la enseñanza del Buen Pastor. El contexto no es un sermón sobre prosperidad material: es Jesús contrastando su propio papel con el del ladrón que roba y del salariado que huye. Lo que Jesús ofrece es radicalmente diferente. Y la diferencia está en la palabra que usa para «vida».</p>
+
+    <h2 class="section-title">Bios vs. Zoé — dos palabras para vida</h2>
+    <p>El griego tiene dos palabras principales para «vida». <strong>Bios</strong> es la vida biológica, la existencia física, el tiempo que tienes antes de morir. Es la vida que el ladrón viene a robar —quitártela, acortarla, arrebatarla. <strong>Zoé</strong> es otra cosa: es la vida en el sentido más pleno posible, la vida que no se interrumpe con la muerte, la vida que viene de Dios y es de la naturaleza de Dios.</p>
+    <p>Jesús dice «yo he venido para que tengan <em>zoé</em>». No viene a darte más bios —más años, más salud, más bienes. Viene a darte el tipo de vida que él mismo tiene: indestructible, que tiene una fuente que las circunstancias no pueden tocar.</p>
+
+    <div class="verse-block">
+      <p>El ladrón no viene sino para hurtar y matar y destruir: yo he venido para que tengan vida, y para que la tengan en abundancia.</p>
+      <cite>— Juan 10:10, Reina Valera 1909</cite>
+    </div>
+
+    <h2 class="section-title">Perissón — abundancia que desborda</h2>
+    <p>Y luego añade «en abundancia». La palabra es <strong>perissón</strong>: desbordante, que sobra, que está por encima de lo necesario. En el evangelio de Juan, la misma raíz aparece cuando los doce canastos sobraron después de alimentar a cinco mil, o cuando Jesús promete agua que salta para vida eterna. No es la abundancia de quien tiene cuentas bancarias llenas; es la abundancia del que tiene una fuente que no se agota.</p>
+    <p>La zoé en abundancia es una vida tan plena que desborda hacia afuera: paz que alcanza al que está a tu lado, gozo que no depende del clima de las circunstancias, amor que da aunque no reciba. Eso no lo garantiza la cuenta bancaria. Solo lo produce una fuente interior.</p>
+
+    <div class="insight-box">
+      <span class="insight-label">Para reflexionar</span>
+      <p>¿Por qué el ladrón roba, mata y destruye? Porque el contrafalsificador siempre imita la moneda real. El enemigo no ofrece algo completamente distinto a lo que Jesús ofrece; ofrece una imitación de vida —placer sin paz, éxito sin propósito, más bios pero sin zoé. El desafío de Juan 10:10 no es elegir entre algo bueno y algo malo, sino entre la vida real y una falsificación convincente. La abundancia que prometió Jesús no se parece a lo que el mundo llama abundancia.</p>
+    </div>
+
+    <h2 class="section-title">El Buen Pastor paga el precio</h2>
+    <p>Unas líneas después, Jesús añade por qué puede hacer esta promesa: «yo soy el buen pastor; el buen pastor su vida da por las ovejas» (v.11). La zoé en abundancia no llega gratis. Costó la vida del Pastor, quien murió y resucitó victorioso para que la vida que ofrece sea la suya propia: indestructible, real, eterna. Lo que Jesús ofrece en Juan 10:10 no es un beneficio adicional a tu vida actual; es un intercambio: tu bios vacío por su zoé abundante.</p>
+    <p>Si hoy sientes que tu vida, aunque funcione externamente, está vacía por adentro, este versículo es exactamente para ti. Jesús no vino a rellenar tu bios con más cosas. Vino a darte algo cualitativamente diferente: su propia vida, desbordante, dentro de ti.</p>""",
+  "prayer": "Jesús, buen pastor, no quiero más bios vacío. Quiero la zoé que solo tú tienes. Entra y desborda en mí: paz que no depende de lo que pase, gozo que no se agota, amor que da aunque no reciba. Tú diste tu vida y resucitaste para que yo pudiera tener la tuya. No quiero una imitación de abundancia; quiero la real. Amén.",
+  "faqs": [
+    ("¿Qué significa «vida en abundancia» en Juan 10:10?", "La palabra griega es zoé, no bios. Bios es la vida biológica que el ladrón puede robar; zoé es la vida en sentido pleno, la vida de la naturaleza de Dios que no depende de circunstancias externas. Y perissón (abundancia) significa desbordante, por encima de lo necesario. Jesús no promete más bios (más dinero, salud, bienes), sino zoé que desborda desde adentro."),
+    ("¿Por qué el ladrón 'roba, mata y destruye'?", "Porque el contrafalsificador siempre imita la moneda real. El enemigo ofrece una imitación de vida: placer sin paz, éxito sin propósito, más bios pero sin zoé. El pasaje invita a distinguir entre la vida real que Cristo ofrece y las falsificaciones convincentes que parecen abundancia pero no la son."),
+    ("¿Es Juan 10:10 una promesa de prosperidad material?", "No. El contexto es la enseñanza del Buen Pastor, contrastando a Jesús con el ladrón y el salariado. La vida que promete es zoé, cualitativamente diferente a los bienes materiales. Siempre en Juan el agua que salta para vida eterna, el pan de vida, la zoé es una fuente interior inagotable, no un beneficio material externo."),
+    ("¿Por qué puede Jesús prometer vida en abundancia?", "Porque él mismo la pagó: 'el buen pastor su vida da por las ovejas' (v.11). Cristo murió y resucitó, y la zoé que ofrece es la suya propia, indestructible. No es un beneficio adicional a tu vida actual; es un intercambio: tu existencia vacía por su vida desbordante. Por eso la abundancia que promete no depende de la economía ni de la salud."),
+  ],
+},
+
+{
+  "slug": "lamentaciones-3-22",
+  "ref": "Lamentaciones 3:22-23", "ref_book": "Lamentaciones", "libro": "Lamentaciones", "cap": 3,
+  "hero_verse": "Nuevas son cada mañana: grande es tu fidelidad.",
+  "title": "Lamentaciones 3:22-23: «Nuevas Son Cada Mañana» — Escrito entre las Ruinas",
+  "description": "«Nuevas son cada mañana: grande es tu fidelidad.» Devocional sobre Lamentaciones 3:22-23, el versículo de esperanza que nació en el libro más oscuro de la Biblia, y qué significa que las misericordias de Dios sean literalmente inagotables.",
+  "date_iso": "2026-07-06", "date_label": "6 de julio, 2026",
+  "meta_tags": ["Lamentaciones", "Esperanza", "Misericordia"], "read": 5, "category": "Profetas",
+  "card_verse": "Nuevas son cada mañana: grande es tu fidelidad.",
+  "card_title": "Lamentaciones 3:22-23: El Versículo de Esperanza Escrito entre las Ruinas",
+  "card_excerpt": "El libro más oscuro de la Biblia contiene el versículo de mayor esperanza. Jeremías lo escribió después de ver Jerusalén destruida. Y desde ahí declaró algo que no tiene fondo: las misericordias de Dios nunca se acaban.",
+  "card_tags": ["Lamentaciones", "Esperanza"],
+  "body": """    <p>El versículo favorito de muchos calendarios devocionales fue escrito entre escombros. Lamentaciones es el libro que el profeta Jeremías compuso después de ver Jerusalén destruida, el templo quemado y su pueblo llevado cautivo. Es el libro más lleno de dolor del Antiguo Testamento. Y en el centro exacto de ese libro —capítulo 3, el capítulo del medio— está el versículo de mayor esperanza de toda la Biblia.</p>
+    <p>Eso no es un accidente literario. Es la declaración de que la fe más real no nace en los momentos donde todo va bien, sino en el momento donde alguien rodeado de ruinas decide hacer un inventario de lo que Dios todavía es, aunque todo lo demás haya caído.</p>
+
+    <h2 class="section-title">Hesed — misericordias en plural</h2>
+    <p>La palabra hebrea que traducimos «misericordias» es <strong>hesed</strong>, y viene en plural: <em>hasdé Jehová</em>. Hesed es uno de los conceptos más ricos del Antiguo Testamento: describe el amor leal, el amor de alianza, el amor que no se retira cuando lo merecerías por retirarlo. No es el amor que sientes cuando todo va bien; es el amor que se mantiene cuando todo va mal.</p>
+    <p>Y viene en plural porque hay una hesed nueva cada día. No es la misma misericordia reciclada: es una provisión fresca para cada mañana que Dios saca de una reserva que no tiene fondo.</p>
+
+    <div class="verse-block">
+      <p>Las misericordias de Jehová que no hemos sido consumidos, porque nunca decayeron sus misericordias. Nuevas son cada mañana: grande es tu fidelidad.</p>
+      <cite>— Lamentaciones 3:22-23, Reina Valera 1909</cite>
+    </div>
+
+    <h2 class="section-title">«No hemos sido consumidos» — lo que Jeremías vio primero</h2>
+    <p>Antes de decir que las misericordias son nuevas, el versículo 22 dice algo más descarnado: <em>«que no hemos sido consumidos»</em>. No empieza con un himno de alabanza efusiva. Empieza con un reconocimiento de mínimos: todavía estoy vivo. Todavía estoy de pie. En medio de la destrucción total, el primer inventario de la gracia de Dios es simplemente: no me consumió.</p>
+    <p>Cuando estás en el peor momento de tu vida, esa es a veces la única oración que cabe: «todavía estoy aquí». Y el profeta dice que eso ya es evidencia de la misericordia de Dios.</p>
+
+    <div class="insight-box">
+      <span class="insight-label">Para reflexionar</span>
+      <p>La palabra hebrea para «no decayeron» usa el verbo <strong>tamam</strong>, que significa consumirse, agotarse, terminarse del todo. Las misericordias de Jehová son lo único en el universo que tiene como característica definitoria que nunca se acaban. No se gastan con el uso. No disminuyen por tus fallas. Cada mañana hay las mismas que el día anterior, y también nuevas. No porque Dios sea inagotable en abstracto, sino porque eligió comprometerse contigo de manera inquebrantable.</p>
+    </div>
+
+    <h2 class="section-title">Cada mañana — la promesa de ritmo diario</h2>
+    <p>«Nuevas son cada mañana.» La misericordia de Dios no llega en un paquete único para toda la vida que luego se va gastando. Llega en dosis diarias, frescas, según la necesidad del día. El maná en el desierto seguía ese mismo patrón: no podías acumular para mañana, porque mañana habría más. Dios no te da más hesed del que necesitas hoy, porque sabe que mañana habrá otra vez.</p>
+    <p>Si anoche fue un mal final de día, si esta mañana parece la continuación de todo lo que salió mal, el versículo de Jeremías dice que hay algo que no continuó: la provisión de Dios se renovó mientras dormías. Sus misericordias llegaron frescas esta mañana sin que hicieras nada para merecerlas, exactamente igual que cada mañana anterior, y como será cada mañana que venga. Grande es tu fidelidad.</p>""",
+  "prayer": "Señor, a veces lo único que puedo decir es «todavía estoy aquí». Y según tu Palabra, eso ya es evidencia de tu misericordia. Gracias porque tus hesed no se gastan, no disminuyen, no te los acabo yo con mis fallas. Cada mañana llegan frescas. Esta mañana las recibo, no porque las merezca, sino porque eres fiel. Grande es tu fidelidad. Amén.",
+  "faqs": [
+    ("¿Qué significa «nuevas son cada mañana» en Lamentaciones 3:23?", "Que la misericordia de Dios no llega como un paquete único que se va gastando, sino renovada diariamente. Como el maná en el desierto, la hesed (amor leal de pacto) de Dios se entrega en dosis frescas ajustadas a la necesidad de cada día. No hay acumulación ni agotamiento: mañana habrá tanto como hoy."),
+    ("¿En qué contexto se escribió Lamentaciones 3:22-23?", "El profeta Jeremías lo escribió después de ver Jerusalén destruida, el templo quemado y el pueblo llevado a cautiverio. Es el libro más oscuro del Antiguo Testamento. El versículo de mayor esperanza está en su capítulo central, declarado desde las ruinas: la fe más real no espera mejores circunstancias para nombrar lo que Dios todavía es."),
+    ("¿Qué es el hesed de Dios?", "Hesed en hebreo describe el amor leal de alianza: firme, constante, que no se retira cuando el destinatario lo merecería por retirarlo. No es el amor que sientes cuando todo va bien; es el amor que se mantiene cuando todo va mal. El verbo tamam (agotarse, consumirse) aparece negado: las misericordias de Dios son lo único que tiene como característica definitoria que nunca se acaban."),
+    ("¿Por qué el versículo empieza diciendo «que no hemos sido consumidos»?", "Porque Jeremías no empieza con alabanza efusiva, sino con un inventario de mínimos: todavía estoy vivo, todavía estoy de pie. Reconocer que todavía estás aquí, aunque todo lo demás haya caído, ya es evidencia de la misericordia de Dios. A veces la única oración que cabe en el peor momento es 'todavía estoy aquí', y ese reconocimiento es suficiente para comenzar."),
+  ],
+},
+
 ]
