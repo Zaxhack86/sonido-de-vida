@@ -886,6 +886,8 @@
         /* Presets favoritos de mezcla */
         .focus-presets{display:flex;flex-wrap:wrap;gap:.5rem;width:100%;max-width:520px;justify-content:flex-start}
         .focus-preset-chip{display:inline-flex;align-items:center;border:1px solid rgba(201,168,76,.3);background:rgba(201,168,76,.07);border-radius:50px;overflow:hidden}
+        .focus-preset-chip.factory{background:rgba(201,168,76,.14);border-color:rgba(201,168,76,.45)}
+        .focus-preset-chip.factory .fp-apply{padding-right:.9rem}
         .focus-preset-chip .fp-apply{background:none;border:none;color:rgba(255,255,255,.85);font-family:'Inter',sans-serif;font-size:.84rem;padding:.5rem .5rem .5rem .9rem;cursor:pointer}
         .focus-preset-chip .fp-del{background:none;border:none;color:rgba(255,255,255,.4);font-size:.76rem;padding:.5rem .7rem .5rem .3rem;cursor:pointer}
         .focus-preset-chip .fp-del:hover{color:#ff7b7b}
@@ -1014,6 +1016,7 @@
         /* Secciones + etiquetas */
         .fx-section{width:100%}
         .fx-label{font-family:'Inter',sans-serif;font-size:.74rem;text-transform:uppercase;letter-spacing:.2em;color:rgba(255,255,255,.5);font-weight:700;text-align:center;margin-bottom:.9rem}
+        .fx-sublabel{font-family:'Inter',sans-serif;font-size:.78rem;color:rgba(255,255,255,.45);text-align:center;margin:-.6rem 0 .9rem;line-height:1.4}
         /* Grid de categorías de música */
         .fx-cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem}
         .fx-cat{display:flex;flex-direction:column;align-items:center;gap:.55rem;padding:1rem .5rem;border-radius:.9rem;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);color:rgba(255,255,255,.65);cursor:pointer;transition:all .25s;font-family:'Inter',sans-serif}
@@ -1445,8 +1448,9 @@
                 <p class="hf-lead">Convierte tu lectura en un momento de oración. Música y ambientes suaves <em>bajo</em> la narración de la Palabra — o versículos que reposan en tu corazón, uno a uno, sin distracción alguna.</p>
                 <ul class="hf-list">
                     <li><span class="hf-ic">🎻</span> Decenas de ambientes: cuerdas, salmos y adoración</li>
-                    <li><span class="hf-ic">🎚️</span> Mezclador de voz y música a tu gusto</li>
-                    <li><span class="hf-ic">⏱️</span> Temporizador de sueño y velocidad de la voz</li>
+                    <li><span class="hf-ic">🎚️</span> Mezclas listas — para dormir, orar o concentrarte — o crea la tuya</li>
+                    <li><span class="hf-ic">🫁</span> Versículos que respiran: inhala y exhala con la Palabra</li>
+                    <li><span class="hf-ic">⏱️</span> Temporizador de sueño con desvanecido suave</li>
                     <li><span class="hf-ic">🕊️</span> Ambiente visual sereno para orar con la Palabra</li>
                 </ul>
                 <div class="hf-cta-row">
@@ -3113,9 +3117,10 @@
                 <button class="fx-shuffle-btn" id="fxShuffleBtn" onclick="Focus.toggleShuffleAuto()">🔀 Aleatorio · empieza siempre distinto</button>
             </div>
 
-            <!-- ░░ Mi mezcla preferida (guardar / aplicar) ░░ -->
+            <!-- ░░ Tu mezcla (mezclas de fábrica + guardar / aplicar las propias) ░░ -->
             <div class="fx-section">
-                <p class="fx-label">Mi mezcla preferida</p>
+                <p class="fx-label">Tu mezcla</p>
+                <p class="fx-sublabel">Combina voz, música y ambiente a tu gusto · toca una para empezar</p>
                 <div class="focus-presets" id="focusPresets"></div>
             </div>
 
@@ -5000,8 +5005,14 @@
             renderPresets();
             showToast(`⭐ Mezcla "${preset.nombre}" guardada`);
         }
-        function applyPreset(name) {
-            const p = loadPresets().find(x => x.nombre === name);
+        // Mezclas de fábrica: vienen cargadas para que el usuario vea ejemplos
+        // listos en vez de una sección vacía. Un toque aplica toda la combinación.
+        const FACTORY_PRESETS = [
+            { id:'f-dormir',  nombre:'Para dormir',      emoji:'🌙', ambiente:'medianoche-agua',  musica:45, voz:70,  velocidad:0.9, fondo:'noche',  timer:30 },
+            { id:'f-orar',    nombre:'Para orar',        emoji:'🙏', ambiente:'salmo-oracion',     musica:40, voz:100, velocidad:0.9, fondo:'vela',   timer:0  },
+            { id:'f-enfocar', nombre:'Para concentrarte',emoji:'🎻', ambiente:'cuerdas-terciopelo',musica:60, voz:100, velocidad:1,   fondo:'aurora', timer:0  },
+        ];
+        function _applyPresetObj(p) {
             if (!p) return;
             if (p.ambiente) selectAmbient(p.ambiente);
             const vm = document.getElementById('volMusica'); if (vm) vm.value = p.musica; setMusica(p.musica);
@@ -5011,6 +5022,8 @@
             setTimer(p.timer || 0, document.querySelector(`#focusTimerOpts button[data-min="${p.timer || 0}"]`));
             showToast(`⭐ Mezcla "${p.nombre}" aplicada`);
         }
+        function applyPreset(name) { _applyPresetObj(loadPresets().find(x => x.nombre === name)); }
+        function applyFactory(id)  { _applyPresetObj(FACTORY_PRESETS.find(x => x.id === id)); }
         function deletePreset(name) {
             storePresets(loadPresets().filter(p => p.nombre !== name));
             renderPresets();
@@ -5019,6 +5032,15 @@
             const box = document.getElementById('focusPresets');
             if (!box) return;
             box.innerHTML = '';
+            FACTORY_PRESETS.forEach(p => {
+                const chip = document.createElement('span');
+                chip.className = 'focus-preset-chip factory';
+                const apply = document.createElement('button');
+                apply.className = 'fp-apply'; apply.textContent = p.emoji + ' ' + p.nombre;
+                apply.onclick = () => applyFactory(p.id);
+                chip.appendChild(apply);
+                box.appendChild(chip);
+            });
             loadPresets().forEach(p => {
                 const chip = document.createElement('span');
                 chip.className = 'focus-preset-chip';
