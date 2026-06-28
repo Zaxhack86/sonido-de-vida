@@ -956,14 +956,21 @@
         .focus-verse-nav button:hover{border-color:rgba(201,168,76,.5);color:var(--gold-light)}
 
         /* ── Versículos que respiran (guía de respiración 4s inhala / 6s exhala) ── */
-        .fx-breath{position:relative;display:flex;align-items:center;justify-content:center;height:10rem;width:10rem;margin:.2rem auto .4rem}
-        .fx-breath[hidden]{display:none}
+        .fx-breath{position:relative;display:flex;align-items:center;justify-content:center;height:10rem;width:10rem;margin:.2rem auto .4rem;transition:height .35s,width .35s,opacity .35s}
+        .fx-breath.breath-inactive{height:5.5rem;width:5.5rem;opacity:.42}
+        .fx-breath.breath-inactive .fx-breath-ring{transform:scale(.38)!important;box-shadow:none}
+        .fx-breath.breath-inactive .fx-breath-word{display:none}
         .fx-breath-ring{width:100%;height:100%;border-radius:50%;background:radial-gradient(circle,rgba(201,168,76,.30),rgba(201,168,76,.05) 70%);border:1px solid rgba(201,168,76,.45);box-shadow:0 0 45px rgba(201,168,76,.22);transform:scale(.55);will-change:transform}
         .fx-breath-word{position:absolute;font-family:'Inter',sans-serif;font-size:.7rem;letter-spacing:.3em;text-transform:uppercase;color:rgba(255,255,255,.78);font-weight:600;pointer-events:none}
-        .fx-breath-toggle{margin-top:.2rem;padding:.4rem 1.1rem;border-radius:50px;border:1px solid rgba(201,168,76,.35);background:transparent;color:rgba(255,255,255,.7);font-family:'Inter',sans-serif;font-size:.8rem;cursor:pointer;transition:all .2s}
-        .fx-breath-toggle:hover{border-color:rgba(201,168,76,.55);color:var(--gold-light)}
-        .fx-breath-toggle.active{background:rgba(201,168,76,.2);border-color:rgba(201,168,76,.6);color:var(--gold-light)}
+        .fx-breath-toggle{width:100%;padding:.75rem 1.2rem;border-radius:.85rem;border:1px solid rgba(201,168,76,.38);background:linear-gradient(135deg,rgba(201,168,76,.1),rgba(201,168,76,.03));color:var(--gold-light);font-family:'Inter',sans-serif;font-size:.88rem;font-weight:600;cursor:pointer;transition:all .22s;display:flex;align-items:center;justify-content:center;gap:.5rem;margin-bottom:.5rem;letter-spacing:.01em}
+        .fx-breath-toggle:hover{border-color:rgba(201,168,76,.62);background:linear-gradient(135deg,rgba(201,168,76,.18),rgba(201,168,76,.07))}
+        .fx-breath-toggle.active{background:linear-gradient(135deg,rgba(201,168,76,.24),rgba(201,168,76,.1));border-color:rgba(201,168,76,.72);box-shadow:0 4px 18px rgba(201,168,76,.2);color:#fff}
         .focus-verse-wrap.breathing-on .focus-verse-body{font-size:1.08rem;opacity:.92}
+        /* ── Selector de Biblia dentro del Modo Enfoque ── */
+        .fx-bible-switch{display:flex;gap:.25rem;padding:.25rem;border-radius:50px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);width:100%}
+        .fx-bible-switch button{flex:1;padding:.45rem .6rem;border-radius:50px;border:none;background:transparent;color:rgba(255,255,255,.5);font-family:'Inter',sans-serif;font-size:.78rem;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap}
+        .fx-bible-switch button:hover{color:rgba(255,255,255,.85)}
+        .fx-bible-switch button.active{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#0d0d1a;box-shadow:0 2px 10px rgba(201,168,76,.25)}
         @media(prefers-reduced-motion:reduce){.fx-breath-ring{transform:scale(.82)!important}}
 
         /* ── Show / hide por modo ── */
@@ -3085,7 +3092,8 @@
 
             <!-- ░░ Pantalla de versículos — solo Meditación ░░ -->
             <div class="focus-verse-wrap meditar-only" id="focusVerseWrap">
-                <div class="fx-breath" id="fxBreath" hidden aria-hidden="true">
+                <button class="fx-breath-toggle" id="fxBreathToggle" onclick="Focus.toggleBreath()">🫁 Respirar con la Palabra</button>
+                <div class="fx-breath breath-inactive" id="fxBreath" aria-hidden="true">
                     <div class="fx-breath-ring" id="fxBreathRing"></div>
                     <span class="fx-breath-word" id="fxBreathWord">Inhala</span>
                 </div>
@@ -3095,7 +3103,6 @@
                     <button onclick="Focus.meditShuffle()">🎲</button>
                     <button onclick="Focus.meditNext()">Siguiente ›</button>
                 </div>
-                <button class="fx-breath-toggle" id="fxBreathToggle" onclick="Focus.toggleBreath()">🫁 Respirar con la Palabra</button>
             </div>
 
             <!-- ░░ Botón play/pausa narración — solo Con voz ░░ -->
@@ -3139,6 +3146,16 @@
                     <button data-rate="1.2" onclick="Focus.setSpeed(1.2,this)">1.2×</button>
                 </div>
                 <small class="focus-speed-hint" id="focusSpeedHint">🐢 La cámara lenta suena mejor con la voz <b>SBLL 2026</b>.<button type="button" onclick="Focus.useSbllVoice()">Usar voz 2026</button></small>
+            </div>
+
+            <!-- ░░ Versión de la Biblia — solo Con voz ░░ -->
+            <div class="fx-section voz-only">
+                <p class="fx-label">Versión de la Biblia</p>
+                <div class="fx-bible-switch" id="fxBibleSwitch">
+                    <button id="fxBibleReal" onclick="setTranslation('real')" class="active">🎙️ Humana RVA</button>
+                    <button id="fxBibleRva"  onclick="setTranslation('rva')">🔊 RVA 1909</button>
+                    <button id="fxBibleSbll" onclick="setTranslation('sbll')">📖 SBLL 2026</button>
+                </div>
             </div>
 
             <!-- ░░ Entorno Visual ░░ -->
@@ -3408,6 +3425,7 @@
         const sub = document.getElementById('playerSub');
         if (sub) sub.textContent = `${getTranslationLabel()} · Sonido de Vida`;
         showToast(`Traducción: ${getTranslationLabel()}`);
+        if (window.Focus) Focus.syncBibleSelector(mode);
     }
 
     // Mapeo: nombre del libro en BIBLE → clave normalizada en R2
@@ -5085,6 +5103,7 @@
             document.getElementById('playerFocusBtn')?.classList.add('active');
             applyVolumes();
             if (!currentAmbient) { shuffleAuto = true; updateShuffleBtn(); pickRandomAmbient(); }
+            syncBibleSelector(translationMode || 'real');
             // Racha diaria: cuenta la sesión de hoy y celebra con un aviso suave.
             const st = FocusStreak.mark();
             if (!st.sameDay) {
@@ -5191,7 +5210,7 @@
             document.getElementById('fxBreathToggle')?.classList.toggle('active', breathOn);
             document.getElementById('focusVerseWrap')?.classList.toggle('breathing-on', breathOn);
             const wrap = document.getElementById('fxBreath');
-            if (wrap) { wrap.hidden = !breathOn; wrap.setAttribute('aria-hidden', String(!breathOn)); }
+            if (wrap) { wrap.classList.toggle('breath-inactive', !breathOn); wrap.setAttribute('aria-hidden', String(!breathOn)); }
             if (breathOn) {
                 breathStart = performance.now(); breathCycles = 0;
                 if (meditTimer) { clearTimeout(meditTimer); meditTimer = null; }
@@ -5269,7 +5288,7 @@
             if (meditTimer) { clearTimeout(meditTimer); meditTimer = null; }
             if (breathRAF) { cancelAnimationFrame(breathRAF); breathRAF = null; }
             breathOn = false;
-            const wrap = document.getElementById('fxBreath'); if (wrap) { wrap.hidden = true; wrap.setAttribute('aria-hidden', 'true'); }
+            const wrap = document.getElementById('fxBreath'); if (wrap) { wrap.classList.add('breath-inactive'); wrap.setAttribute('aria-hidden', 'true'); }
             document.getElementById('fxBreathToggle')?.classList.remove('active');
             document.getElementById('focusVerseWrap')?.classList.remove('breathing-on');
         }
@@ -5516,7 +5535,13 @@
             }, 100);
         }
 
-        return { enter, exit, enterVoz, enterMeditar, switchMode, toggleShuffleAuto, selectAmbient, toggleMusic, setVoz, setMusica, setSpeed, setTimer, setBg, onNarration, syncVerse, refreshGate, openTeaser, closeTeaser, closeSelector, useSbllVoice, startStreamTrack, tickStreamTrack, ambients, meditNext, meditPrev, meditShuffle, stopAudio, fadeOutAndStop, toggleBreath };
+        function syncBibleSelector(mode) {
+            document.getElementById('fxBibleReal')?.classList.toggle('active', mode === 'real');
+            document.getElementById('fxBibleRva')?.classList.toggle('active',  mode === 'rva');
+            document.getElementById('fxBibleSbll')?.classList.toggle('active', mode === 'sbll');
+        }
+
+        return { enter, exit, enterVoz, enterMeditar, switchMode, toggleShuffleAuto, selectAmbient, toggleMusic, setVoz, setMusica, setSpeed, setTimer, setBg, onNarration, syncVerse, refreshGate, openTeaser, closeTeaser, closeSelector, useSbllVoice, startStreamTrack, tickStreamTrack, ambients, meditNext, meditPrev, meditShuffle, stopAudio, fadeOutAndStop, toggleBreath, syncBibleSelector };
     })();
     window.Focus = Focus;
 
