@@ -1,0 +1,1282 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="description" content="11 Días, 11 Áreas: Renueva tu mente con la Palabra. Un camino guiado de audio y reflexión bíblica.">
+  <link rel="canonical" href="https://sonidodevida.com/reto">
+  <meta property="og:title" content="11 Días, 11 Áreas · Sonido de Vida">
+  <meta property="og:description" content="Renueva tu mente con la Palabra: un recorrido guiado de 11 días con audio y reflexión bíblica.">
+  <meta property="og:image" content="https://sonidodevida.com/og-image.png">
+  <meta property="og:url" content="https://sonidodevida.com/reto">
+  <meta property="og:type" content="website">
+  <title>11 Días, 11 Áreas · SonidoDeVida</title>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    html { background: #0c1824; }
+    body {
+      background: linear-gradient(170deg, #1a2e4a 0%, #0c1824 100%);
+      background-attachment: fixed;
+      min-height: 100vh;
+      font-family: Georgia, 'Times New Roman', serif;
+      color: #f0ead8;
+      position: relative;
+      overflow-x: hidden;
+    }
+    body::before, body::after {
+      content:''; position:fixed; border-radius:50%; filter:blur(90px);
+      opacity:0.16; pointer-events:none; z-index:0;
+    }
+    body::before { width:520px; height:520px; background:#c9a84c; top:-180px; left:-200px; }
+    body::after  { width:620px; height:620px; background:#3a5a8c; bottom:-220px; right:-220px; }
+    #app {
+      max-width: 480px; margin: 0 auto; position: relative; z-index:1;
+      min-height: 100vh; padding-bottom: 70px;
+    }
+    @media (min-width:700px){
+      body{ padding:36px 0; }
+      #app{
+        max-width:600px; min-height:auto; border-radius:24px; overflow:hidden;
+        border:1px solid rgba(201,168,76,0.18);
+        box-shadow:0 40px 100px rgba(0,0,0,0.5);
+      }
+      .topbar{ border-radius:24px 24px 0 0; }
+      .screen, .screen-center{ padding-left:36px; padding-right:36px; }
+    }
+
+    /* ---------- SIDE VERSE TICKERS (solo escritorio ancho) ---------- */
+    .side-ticker {
+      display:none; position:fixed; top:0; bottom:0; overflow:hidden;
+      pointer-events:none; z-index:0;
+      -webkit-mask-image:linear-gradient(to bottom, transparent, black 12%, black 88%, transparent);
+      mask-image:linear-gradient(to bottom, transparent, black 12%, black 88%, transparent);
+    }
+    .side-ticker-left  { left:0; width:calc(50% - 320px); text-align:right; }
+    .side-ticker-right { right:0; width:calc(50% - 320px); text-align:left; }
+    .side-ticker-track { position:absolute; top:0; left:0; width:100%; animation:sideScroll 140s linear infinite; }
+    .side-ticker-right .side-ticker-track { animation-direction:reverse; }
+    .side-ticker-item { padding:20px 22px; font-size:12px; line-height:1.55; color:rgba(201,168,76,0.32); font-style:italic; }
+    .side-ticker-item b { display:block; color:rgba(201,168,76,0.5); font-style:normal; font-weight:bold; font-size:11px; letter-spacing:.5px; margin-bottom:3px; }
+    @keyframes sideScroll { from{ transform:translateY(0); } to{ transform:translateY(-50%); } }
+    @media (min-width:1000px){ .side-ticker{ display:block; } }
+
+    /* ---------- TOP PROGRESS BAR ---------- */
+    .topbar {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(12,24,36,0.92); backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(201,168,76,0.18);
+      padding: 10px 16px;
+    }
+    .topbar-row { display: flex; justify-content: space-between; align-items: center; font-size: 11px; color:#7a8ea8; letter-spacing:1px; text-transform:uppercase; margin-bottom:6px; }
+    .topbar-row .brand { color:#c9a84c; font-weight:bold; letter-spacing:1.5px; }
+    .topbar-row .day { color:#f0ead8; }
+    .progress-track { height:3px; background:rgba(255,255,255,0.08); border-radius:2px; overflow:hidden; }
+    .progress-fill { height:100%; background:linear-gradient(90deg,#c9a84c,#e8c870); transition:width .5s ease; }
+
+    /* ---------- SCREENS ---------- */
+    .screen { min-height: calc(100vh - 60px); padding: 24px 16px 30px; }
+    .screen-center {
+      min-height: calc(100vh - 60px); display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center; padding: 32px 24px;
+    }
+
+    /* ---------- CARDS ---------- */
+    .card    { background:rgba(255,255,255,0.05); border:1px solid rgba(201,168,76,0.2);  border-radius:14px; padding:16px; margin-bottom:14px; }
+    .card-r  { background:rgba(200,60,60,0.15);  border:1px solid rgba(200,80,80,0.3);   border-radius:14px; padding:16px; margin-bottom:14px; }
+    .card-g  { background:rgba(60,160,80,0.15);  border:1px solid rgba(60,200,80,0.3);   border-radius:14px; padding:16px; margin-bottom:14px; }
+    .card-au { background:rgba(201,168,76,0.12); border:1px solid rgba(201,168,76,0.2);  border-radius:14px; padding:20px; text-align:center; margin-bottom:20px; }
+
+    /* ---------- BUTTONS ---------- */
+    button { font-family: Georgia, serif; cursor: pointer; }
+    .btn-start {
+      background:linear-gradient(135deg,#c9a84c,#8c6010); color:#1a0e00;
+      border:none; border-radius:50px; padding:16px 48px;
+      font-size:17px; font-weight:bold; box-shadow:0 4px 22px rgba(201,168,76,0.4);
+    }
+    .btn-gold {
+      background:linear-gradient(135deg,#c9a84c,#8c6010); color:#1a0e00;
+      border:none; border-radius:50px; padding:16px; width:100%;
+      font-size:16px; font-weight:bold; display:block; margin-top:4px;
+    }
+    .btn-gold:disabled { background:rgba(255,255,255,0.08); color:#7a8ea8; cursor:not-allowed; box-shadow:none; }
+    .btn-ghost {
+      background:rgba(255,255,255,0.06); color:#f0ead8;
+      border:1px solid rgba(201,168,76,0.2); border-radius:50px;
+      padding:14px; width:100%; font-size:15px; display:block;
+    }
+    .btn-outline {
+      background:transparent; color:#c9a84c;
+      border:1px solid rgba(201,168,76,0.4); border-radius:50px;
+      padding:12px 18px; font-size:14px; display:inline-block;
+    }
+    .btn-back { background:none; border:none; color:#7a8ea8; font-size:26px; padding:0; line-height:1; }
+    .area-btn {
+      background:rgba(255,255,255,0.05); border:1px solid rgba(201,168,76,0.2);
+      border-radius:14px; padding:15px 18px; width:100%;
+      text-align:left; display:flex; align-items:center; gap:14px;
+      margin-bottom:10px; color:#f0ead8;
+    }
+    .area-btn.done { background:rgba(60,140,60,0.15); border-color:rgba(60,200,60,0.3); cursor:default; }
+    .area-btn.locked { opacity:0.5; cursor:not-allowed; }
+    .opt {
+      background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1);
+      border-radius:12px; padding:14px 16px; width:100%;
+      text-align:left; color:#7a8ea8; font-size:15px; line-height:1.5;
+      display:block; margin-bottom:10px;
+    }
+    .opt.sel { background:rgba(201,168,76,0.14); border:2px solid rgba(201,168,76,0.55); color:#f0ead8; }
+    textarea {
+      width:100%; background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.15);
+      border-radius:10px; padding:12px 14px; color:#f0ead8; font-size:15px;
+      font-family:Georgia,serif; line-height:1.6; resize:vertical; min-height:90px; outline:none; display:block;
+    }
+    textarea::placeholder { color:#7a8ea8; }
+    input[type=email] {
+      width:100%; background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.15);
+      border-radius:10px; padding:12px 14px; color:#f0ead8; font-size:15px;
+      font-family:Georgia,serif; outline:none; display:block;
+    }
+    input[type=email]::placeholder { color:#7a8ea8; }
+
+    /* ---------- TYPOGRAPHY ---------- */
+    .lbl { font-size:11px; font-weight:bold; letter-spacing:1.2px; text-transform:uppercase; display:block; margin-bottom:8px; }
+    .gold { color:#c9a84c; } .muted { color:#7a8ea8; } .cream { color:#f0ead8; }
+    .v-ref { color:#c9a84c; font-size:14px; font-weight:bold; margin-bottom:3px; }
+    .v-txt { color:#9aa8b8; font-size:14px; font-style:italic; line-height:1.55; margin-bottom:12px; }
+    .v-row { display:flex; gap:8px; align-items:flex-start; margin-bottom:14px; }
+    .v-text-col { flex:1; }
+    .app-line { border-top:1px solid rgba(60,200,80,0.2); padding-top:12px; margin-top:12px; color:#90e090; font-size:14px; font-style:italic; }
+    .s-card { background:rgba(255,255,255,0.05); border:1px solid rgba(201,168,76,0.2); border-radius:14px; padding:14px 16px; margin-bottom:14px; }
+    .s-belief { color:#ff9090; font-size:13px; margin-bottom:10px; line-height:1.45; }
+    .s-verse  { color:#7a8ea8; font-size:13px; font-style:italic; line-height:1.45; }
+    .s-ref-box { background:rgba(255,255,255,0.04); border-left:3px solid rgba(255,255,255,0.15); border-radius:8px; padding:8px 12px; margin-bottom:10px; }
+    .s-dec-box { background:rgba(201,168,76,0.12); border-left:3px solid #c9a84c; border-radius:8px; padding:10px 12px; margin-top:10px; }
+    .hint { color:#7a8ea8; font-size:12px; margin-top:5px; }
+    .center { text-align:center; }
+    .info-list { color:#7a8ea8; font-size:14px; line-height:2.1; text-align:left; margin-top:14px; }
+
+    /* ---------- AUDIO PLAYER ---------- */
+    .audio-card {
+      background:linear-gradient(135deg, rgba(201,168,76,0.10), rgba(201,168,76,0.04));
+      border:1px solid rgba(201,168,76,0.3); border-radius:14px;
+      padding:18px 16px; margin-bottom:16px;
+    }
+    .audio-head { display:flex; align-items:center; gap:12px; margin-bottom:14px; }
+    .audio-cover {
+      width:48px; height:48px; border-radius:10px; flex-shrink:0;
+      background:linear-gradient(135deg,#c9a84c,#8c6010);
+      display:flex; align-items:center; justify-content:center; font-size:22px;
+      box-shadow:0 4px 14px rgba(201,168,76,0.3);
+    }
+    .audio-meta { flex:1; min-width:0; }
+    .audio-title { color:#f0ead8; font-size:14px; font-weight:bold; margin-bottom:2px; }
+    .audio-sub { color:#7a8ea8; font-size:12px; }
+    .audio-controls { display:flex; align-items:center; gap:12px; }
+    .audio-play {
+      width:42px; height:42px; border-radius:50%; flex-shrink:0;
+      background:linear-gradient(135deg,#c9a84c,#8c6010); border:none; color:#1a0e00;
+      font-size:16px; cursor:pointer; box-shadow:0 3px 12px rgba(201,168,76,0.4);
+      display:flex; align-items:center; justify-content:center;
+    }
+    .audio-play:disabled { background:rgba(255,255,255,0.1); color:#7a8ea8; box-shadow:none; cursor:not-allowed; }
+    .audio-progress {
+      flex:1; height:24px; display:flex; align-items:center; cursor:pointer;
+    }
+    .audio-bar { flex:1; height:4px; background:rgba(255,255,255,0.1); border-radius:2px; position:relative; overflow:hidden; }
+    .audio-bar-fill { position:absolute; left:0; top:0; height:100%; width:0%; background:#c9a84c; border-radius:2px; transition:width .1s linear; }
+    .audio-time { color:#7a8ea8; font-size:11px; font-family:monospace; margin-left:8px; min-width:70px; text-align:right; }
+    .audio-status { color:#7a8ea8; font-size:11px; margin-top:10px; font-style:italic; }
+    .audio-status.live { color:#90e090; }
+
+    /* ---------- VERSE AUDIO CHIPS ---------- */
+    .verse-chip {
+      display:inline-flex; align-items:center; gap:6px;
+      background:rgba(201,168,76,0.10); border:1px solid rgba(201,168,76,0.25);
+      color:#c9a84c; font-size:11px; padding:4px 10px; border-radius:20px;
+      cursor:pointer; margin-left:8px; vertical-align:middle;
+    }
+    .verse-chip:hover { background:rgba(201,168,76,0.2); }
+    .verse-chip.playing { background:#c9a84c; color:#1a0e00; }
+
+    /* ---------- VOICE RECORDER ---------- */
+    .recorder {
+      background:rgba(255,255,255,0.05); border:1px dashed rgba(201,168,76,0.3);
+      border-radius:12px; padding:16px; text-align:center;
+    }
+    .rec-btn {
+      width:64px; height:64px; border-radius:50%; border:none;
+      background:radial-gradient(circle at 30% 30%, #d85858, #8c2020);
+      color:#fff; font-size:22px; cursor:pointer; margin:0 auto 10px;
+      display:flex; align-items:center; justify-content:center;
+      box-shadow:0 4px 18px rgba(200,60,60,0.4);
+      transition:transform .2s;
+    }
+    .rec-btn.recording { animation:pulse 1.3s infinite; }
+    @keyframes pulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.08);} }
+    .rec-play-row { display:flex; gap:8px; justify-content:center; margin-top:10px; }
+    .rec-play-row button {
+      background:rgba(201,168,76,0.15); border:1px solid rgba(201,168,76,0.3);
+      color:#c9a84c; padding:8px 14px; border-radius:20px; font-size:12px; cursor:pointer;
+    }
+    .rec-timer { color:#c9a84c; font-family:monospace; font-size:14px; margin-top:6px; }
+
+    /* ---------- TOAST ---------- */
+    #toast {
+      position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
+      background:rgba(20,32,46,0.96); border:1px solid rgba(201,168,76,0.4);
+      color:#f0ead8; padding:12px 20px; border-radius:30px; font-size:13px;
+      z-index:200; opacity:0; transition:opacity .3s, bottom .3s; pointer-events:none;
+      max-width:90vw; text-align:center;
+    }
+    #toast.show { opacity:1; bottom:30px; }
+
+    /* ---------- DAY BADGE ---------- */
+    .day-badge {
+      display:inline-block; background:rgba(201,168,76,0.15);
+      border:1px solid rgba(201,168,76,0.3); color:#c9a84c;
+      font-size:11px; padding:3px 10px; border-radius:20px; letter-spacing:1px;
+      text-transform:uppercase; font-weight:bold; margin-bottom:8px;
+    }
+
+    /* ---------- SHARE / EMAIL ---------- */
+    .share-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px; }
+    .share-btn {
+      background:rgba(255,255,255,0.05); border:1px solid rgba(201,168,76,0.2);
+      border-radius:12px; padding:14px 10px; color:#f0ead8; font-size:13px;
+      cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:6px;
+    }
+    .share-btn .ic { font-size:22px; }
+  </style>
+</head>
+<body>
+<div id="app"></div>
+<div id="toast"></div>
+
+<script>
+/* ============================================================
+   11 DÍAS, 11 ÁREAS — SONIDODEVIDA.COM
+   Versión audio-first + PDF + localStorage + voice recorder
+   Los audios apuntan a rutas que aún no existen; el player
+   degrada con elegancia mostrando "Audio en preparación".
+   ============================================================ */
+
+const AREAS=[
+  {id:'tierra',icon:'🌍',title:'Tierra Extranjera',subtitle:'Vivir lejos de casa',
+   audio:'https://sonido-de-vida-audio.sonidodevida.workers.dev/reto11/dia-01-tierra-extranjera.mp3', dur:'3:24',
+   question:'¿Cuál de estas frases describe más tu sentir en este país?',
+   options:['"Estoy solo aquí, sin apoyo real"','"Si me pasa algo malo, no tengo a nadie"','"Me siento desconectado de Dios aquí"','"Todo depende únicamente de mí"'],
+   belief:'La creencia de que la distancia física de tu familia equivale a distancia de Dios y falta de protección.',
+   truth:'José fue llevado a Egipto contra su voluntad — tierra completamente extranjera. Sin embargo, Génesis 39:2 dice con claridad: "Jehová estaba con José." Eliseo en 2 Reyes 6 oró para que su siervo viera los ejércitos de Dios que los rodeaban — invisibles pero reales. Dios no tiene límites geográficos. Tu dirección postal no determina Su presencia.',
+   application:'La pregunta no es ¿dónde estás? sino ¿con quién estás?',appIcon:'📍',
+   action:'Esta semana: identifica a una persona en tu misma situación (otro migrante, otro creyente solo) y ofrécele compañía. Dios suele confirmar Su presencia a través de otros.',
+   prayer:'Padre, gracias porque tu presencia no tiene fronteras. Donde estoy ahora, Tú estás conmigo. Abre mis ojos para ver los ejércitos que me rodean. Ayúdame a confiar que esta tierra extranjera también es suelo sagrado bajo tu cuidado. En el nombre de Jesús, amén.',
+   verses:[
+     {ref:'Génesis 39:2',text:'"Jehová estaba con José, y fue varón próspero."'},
+     {ref:'Salmos 139:9-10',text:'"Si tomara las alas del alba... aun allí me guiará tu mano."'},
+     {ref:'Josué 1:9',text:'"No te desampararé ni te dejaré. Sé fuerte y valiente."'},
+     {ref:'Deuteronomio 31:6',text:'"No temas, es tu Dios quien va contigo; no te dejará ni te desamparará."'},
+     {ref:'Mateo 28:20',text:'"He aquí yo estoy con vosotros todos los días, hasta el fin del mundo."'}
+   ]},
+  {id:'familia',icon:'🤝',title:'Familia Separada',subtitle:'Los que están lejos',
+   audio:'https://sonido-de-vida-audio.sonidodevida.workers.dev/reto11/dia-02-familia-separada.mp3', dur:'3:41',
+   question:'¿Qué pensamiento aparece cuando piensas en tu familia lejos?',
+   options:['"No puedo protegerlos desde aquí"','"Salir fue un error que los perjudicó"','"Nunca podré ayudarlos de verdad"','"Dios los olvidó porque están allá"'],
+   belief:'La creencia de que la separación de tu familia es un fracaso tuyo o un abandono de Dios hacia ellos.',
+   truth:'José fue vendido y separado de su familia más de veinte años. Al reencontrarse dijo: "No fuisteis vosotros los que me enviasteis acá, sino Dios" (Génesis 45:8). También Noemí — perdió todo en tierra extranjera, pero Dios usó ese proceso para traer a Rut, bisabuela del rey David. Lo que parece ruptura, Dios lo convierte en puente de provisión.',
+   application:'Tu separación de ellos puede ser parte del camino que Dios usa para bendecirlos.',appIcon:'🌉',
+   action:'Esta semana: llama o videollama a alguien de tu familia lejana. Antes de colgar, ora por ellos en voz alta. Tu voz orando cruzará la distancia.',
+   prayer:'Señor, tú ves a mi familia aunque yo no pueda estar con ellos. Cuida sus pasos. Que mi ausencia física no sea ausencia espiritual. Úsame desde aquí como puente de bendición. Confío que Tú los tienes en Tus manos. Amén.',
+   verses:[
+     {ref:'Génesis 45:7-8',text:'"Dios me envió delante de vosotros para preservaros."'},
+     {ref:'Romanos 8:28',text:'"Todas las cosas ayudan a bien a los que aman a Dios."'},
+     {ref:'Salmo 68:6',text:'"Dios hace habitar en familia a los desamparados."'},
+     {ref:'Isaías 49:15-16',text:'"En las palmas de las manos te tengo esculpida."'},
+     {ref:'Jeremías 32:27',text:'"He aquí que yo soy el Señor. ¿Habrá algo que sea difícil para mí?"'}
+   ]},
+  {id:'finanzas',icon:'💸',title:'Finanzas y Deudas',subtitle:'La carga económica',
+   audio:'https://sonido-de-vida-audio.sonidodevida.workers.dev/reto11/dia-03-finanzas-deudas.mp3', dur:'4:08',
+   question:'¿Cuál de estas creencias sobre dinero reconoces más en ti?',
+   options:['"Nunca voy a salir de estas deudas"','"Dios puede con todo menos con esto"','"Mis errores económicos me tienen atado para siempre"','"La prosperidad no es para mí"'],
+   belief:'La creencia de que tus deudas tienen más poder que las promesas de Dios sobre provisión.',
+   truth:'En 2 Reyes 4, una viuda estaba a punto de perder a sus hijos por deuda. Eliseo multiplicó su aceite y le dijo: "Ve, vende el aceite y paga a tus acreedores." Dios no solo perdonó la deuda — proveyó el recurso. En Lucas 7:41-43, un acreedor perdonó deudas impagables por pura gracia. Tu deuda tiene un número específico. El poder de Dios no tiene límite.',
+   application:'La pregunta de fe es: ¿en cuál de los dos estás enfocando tu mirada hoy?',appIcon:'⚖️',
+   action:'Esta semana: escribe tu deuda total en una hoja. Al lado, escribe Filipenses 4:19. Ora mirando ambos números. Luego da un primer paso concreto: llama a un acreedor, haz un presupuesto, busca consejo.',
+   prayer:'Dios, Tú eres Jehová Jireh, mi proveedor. Reconozco que he puesto más fe en el tamaño de mi deuda que en el tamaño de tu poder. Enséñame a administrar con sabiduría. Abre puertas de provisión que yo no puedo abrir. Confío que suplirás todo lo que me falta. Amén.',
+   verses:[
+     {ref:'Deuteronomio 8:18',text:'"Él te da el poder para hacer las riquezas."'},
+     {ref:'Filipenses 4:19',text:'"Mi Dios suplirá todo lo que os falta conforme a sus riquezas en gloria."'},
+     {ref:'2 Reyes 4:7',text:'"Ve, vende el aceite y paga a tus acreedores."'},
+     {ref:'Malaquías 3:10',text:'"Probadme ahora en esto... si no os abriré las ventanas de los cielos."'},
+     {ref:'Lucas 7:42',text:'"No teniendo ellos con qué pagar, perdonó a ambos."'}
+   ]},
+  {id:'ansiedad',icon:'🌊',title:'Ansiedad',subtitle:'Miedos y preocupaciones',
+   audio:'https://sonido-de-vida-audio.sonidodevida.workers.dev/reto11/dia-04-ansiedad.mp3', dur:'3:52',
+   question:'¿Qué pensamiento suele disparar más tu ansiedad?',
+   options:['"Las cosas pueden salir muy mal y no podré manejarlo"','"No tengo control sobre nada importante"','"Dios no llega a tiempo cuando lo necesito"','"Siempre viene algo malo después de algo bueno"'],
+   belief:'La creencia de que el futuro es una amenaza que necesitas controlar o de la que debes protegerte.',
+   truth:'Pedro caminó sobre el agua hasta que miró las olas. La ansiedad no es debilidad — es fe puesta en dirección equivocada. El profeta Elías, tras su mayor victoria, entró en ansiedad severa y pidió morirse (1 Reyes 19). Dios no lo reprendió — le dio comida, agua y descanso. Dios entiende tu humanidad. Lléale cada pensamiento uno por uno.',
+   application:'La ansiedad te dice que mires las olas. La fe te dice que mires a Cristo.',appIcon:'🌊',
+   action:'Esta semana: cada vez que sientas ansiedad, detente 60 segundos. Respira hondo 4 veces. Di en voz alta Filipenses 4:6-7. Escribe el pensamiento ansioso y al lado la verdad que lo contradice.',
+   prayer:'Padre de paz, te traigo mis pensamientos desordenados. Tú no me pides controlar el futuro, solo confiar en Ti hoy. Lleva mi carga. Reemplaza mi ansiedad con tu paz que sobrepasa todo entendimiento. Guarda mi corazón y mi mente en Cristo. Amén.',
+   verses:[
+     {ref:'Filipenses 4:6-7',text:'"Por nada estéis afanosos... la paz de Dios guardará vuestros corazones."'},
+     {ref:'2 Corintios 10:5',text:'"Llevando cautivo todo pensamiento a la obediencia de Cristo."'},
+     {ref:'Isaías 41:10',text:'"No temas, porque yo estoy contigo; no desmayes, porque yo soy tu Dios."'},
+     {ref:'1 Pedro 5:7',text:'"Echando toda vuestra ansiedad sobre él, porque él tiene cuidado de vosotros."'},
+     {ref:'Juan 14:27',text:'"La paz os dejo, mi paz os doy... No se turbe vuestro corazón, ni tenga miedo."'}
+   ]},
+  {id:'acceso',icon:'🚪',title:'Acceso a Dios',subtitle:'Gracia y errores pasados',
+   audio:'https://sonido-de-vida-audio.sonidodevida.workers.dev/reto11/dia-05-acceso-dios.mp3', dur:'3:18',
+   question:'¿Cuál de estas frases has pensado sobre acercarte a Dios?',
+   options:['"No puedo pedirle nada porque estoy fallando"','"Ya abusé demasiado de Su gracia"','"Tengo que estar bien primero para orar"','"Él oye a otros más que a mí por mis errores"'],
+   belief:'La creencia de que el acceso a Dios depende de tu comportamiento actual, no de Su gracia.',
+   truth:'En 2 Reyes 3, el rey de Israel no estaba bien con Dios — pero fue a buscar al profeta y Dios respondió y dio la victoria. El hijo pródigo volvió sucio, en harapos. La parábola no dice que llegó limpio. Dice que el padre lo vio "cuando todavía estaba lejos" y corrió a recibirlo. Hebreos 4:16 no dice "cuando estés listo" — dice "confiadamente, ahora." Y ese trono está abierto porque Cristo no solo murió por ti: resucitó y vive para siempre para interceder por ti (Hebreos 7:25). Un Salvador muerto no podría recibirte hoy; uno vivo, sí.',
+   application:'La puerta no se cierra por tus caídas. Cristo la abrió con Su sangre y, resucitado, vive para mantenerla abierta por gracia.',appIcon:'🚪',
+   action:'Esta semana: ora al despertar, antes de sentirte "listo". Llega tal como estás. Esa es exactamente la manera en que el Padre te quiere recibir.',
+   prayer:'Señor, vengo tal como soy. No esperes perfección de mí — Tú sabes que no la tengo. Gracias porque la sangre de Cristo abrió un camino, y porque Él resucitó y vive, ese camino nunca se cierra. Hoy me acerco confiadamente al trono de tu gracia. Amén.',
+   verses:[
+     {ref:'Hebreos 4:16',text:'"Acerquémonos, pues, confiadamente al trono de la gracia."'},
+     {ref:'Romanos 5:8',text:'"Siendo aún pecadores, Cristo murió por nosotros."'},
+     {ref:'Lucas 15:20',text:'"Cuando aún estaba lejos, lo vio su padre y fue movido a misericordia."'},
+     {ref:'2 Reyes 3:18',text:'"Esto es cosa ligera en los ojos de Jehová."'},
+     {ref:'Hebreos 7:25',text:'"Puede también salvar perpetuamente a los que por él se acercan a Dios."'}
+   ]},
+  {id:'identidad',icon:'🪞',title:'Identidad y Autoestima',subtitle:'Tu valor como persona',
+   audio:'https://sonido-de-vida-audio.sonidodevida.workers.dev/reto11/dia-06-identidad.mp3', dur:'3:46',
+   question:'¿Cuál de estas creencias sobre ti mismo reconoces?',
+   options:['"No soy suficientemente bueno para lo que quiero lograr"','"Mis resultados prueban que soy un fracasado"','"Hay algo fundamentalmente malo en mí"','"No merezco cosas buenas en mi vida"'],
+   belief:'La creencia de que tu valor como persona está determinado por tus logros, tus errores o la opinión de otros.',
+   truth:'La psicología llama a esto "valía condicional" — creer que vales según lo que produces. La Biblia lo rompe desde el principio: fuiste creado a imagen de Dios (Génesis 1:27) antes de lograr absolutamente nada. Tu valor fue establecido antes de tu primer logro y sobrevive a tu peor fracaso. El Salmo 139 describe a un Dios que conoce cada detalle de tu diseño y lo llama formidable.',
+   application:'Tu valor no lo determinan tus resultados. Lo determinó el precio que Dios pagó por ti.',appIcon:'🪞',
+   action:'Esta semana: cada mañana, mírate al espejo y di en voz alta: "Soy hechura de Dios, creado a Su imagen, redimido por Cristo." No es vanidad — es verdad.',
+   prayer:'Padre, gracias por crearme a Tu imagen. Mi valor no depende de mis logros ni de la opinión de otros. Lo determinó el precio que pagaste por mí en la cruz y confirmaste al resucitar. Renuevo mi mente hoy con esta verdad. Soy Tu hijo, amado y aceptado. Amén.',
+   verses:[
+     {ref:'Salmo 139:14',text:'"Formidable, maravillosa es tu obra. Estoy maravillado, y mi alma lo sabe muy bien."'},
+     {ref:'Génesis 1:27',text:'"Y creó Dios al hombre a su imagen, a imagen de Dios lo creó."'},
+     {ref:'Efesios 2:10',text:'"Somos hechura suya, creados en Cristo Jesús para buenas obras."'},
+     {ref:'1 Pedro 2:9',text:'"Vosotros sois linaje escogido, real sacerdocio, nación santa, pueblo adquirido."'},
+     {ref:'Romanos 8:37',text:'"En todas estas cosas somos más que vencedores por medio de aquel que nos amó."'}
+   ]},
+  {id:'pasado',icon:'⛓️',title:'El Pasado y la Culpa',subtitle:'Errores que siguen pesando',
+   audio:'https://sonido-de-vida-audio.sonidodevida.workers.dev/reto11/dia-07-pasado-culpa.mp3', dur:'4:12',
+   question:'¿Cuál de estas frases describe tu relación con tu pasado?',
+   options:['"Mis errores pasados me definen para siempre"','"Hice algo tan malo que Dios no puede usarme"','"No puedo avanzar porque lo pasado me marcó"','"Me arrepentí pero sigo sintiéndome culpable"'],
+   belief:'La creencia de que el pasado tiene más poder sobre tu futuro que la gracia de Dios.',
+   truth:'David cometió adulterio y mandó a matar a Urías. Moisés mató a un egipcio. Pedro negó a Jesús tres veces. Pablo persiguió y ejecutó cristianos. Todos fueron restaurados y usados poderosamente. La psicología llama "fusión cognitiva" a identificarte con tus acciones pasadas como si fueran tu identidad permanente. La gracia rompe esa fusión. Dios no te recuerda por el peor momento de tu vida.',
+   application:'El pasado explica dónde estuviste. La gracia determina a dónde puedes ir.',appIcon:'⛓️',
+   action:'Esta semana: escribe en una hoja el error que más te pesa. Debajo, escribe 2 Corintios 5:17. Ora entregándolo a Dios. Luego rompe la hoja físicamente como símbolo de lo que Él ya hizo.',
+   prayer:'Señor, te entrego el peso de mi pasado. Lo que yo no puedo deshacer, Tú ya lo perdonaste en la cruz, y Tu resurrección es la prueba de que quedó saldado. Renuncio a identificarme con mis errores. Soy nueva criatura en Cristo vivo. Las cosas viejas pasaron; todas son hechas nuevas. Amén.',
+   verses:[
+     {ref:'Isaías 43:18-19',text:'"No os acordéis de las cosas pasadas... He aquí que yo hago cosa nueva."'},
+     {ref:'2 Corintios 5:17',text:'"Si alguno está en Cristo, nueva criatura es; las cosas viejas pasaron."'},
+     {ref:'Salmo 103:12',text:'"Cuanto está lejos el oriente del occidente, hizo alejar de nosotros nuestras rebeliones."'},
+     {ref:'Miqueas 7:19',text:'"Él volverá a tener misericordia; sepultará nuestras iniquidades en lo profundo del mar."'},
+     {ref:'Lamentaciones 3:22-23',text:'"Por la misericordia de Jehová no hemos sido consumidos... nuevas son cada mañana."'}
+   ]},
+  {id:'relaciones',icon:'💔',title:'Relaciones y Confianza',subtitle:'Miedos en vínculos con otros',
+   audio:'https://sonido-de-vida-audio.sonidodevida.workers.dev/reto11/dia-08-relaciones-confianza.mp3', dur:'3:35',
+   question:'¿Cuál de estas creencias aparece en tus relaciones?',
+   options:['"Las personas siempre me fallan al final"','"Si alguien me ama bien, algo malo viene después"','"No puedo confiar en nadie de verdad"','"No merezco una relación sana y estable"'],
+   belief:'La creencia de que las relaciones son intrínsecamente peligrosas o que el amor genuino siempre trae sufrimiento.',
+   truth:'Esta creencia suele nacer de heridas reales — y Dios las toma en serio. El Salmo 147:3 dice que Él "sana a los quebrantados de corazón y venda sus heridas." La psicología llama "hipervigilancia de amenaza" a cuando el sistema nervioso aprende a detectar peligro donde antes hubo daño. Esa respuesta tiene sentido, pero no es una profecía del futuro. Rut perdió a su esposo y fue a tierra extranjera — y Dios le dio a Boaz.',
+   application:'Que alguien te haya fallado no significa que todos lo harán. Dios es el modelo del amor que no falla.',appIcon:'💔',
+   action:'Esta semana: identifica a una persona sana en tu vida (aunque sea solo una). Agradécele su presencia con un mensaje sincero. Empieza a reentrenar tu corazón a reconocer el amor bueno.',
+   prayer:'Padre, Tú sanas los corazones quebrantados. Mis heridas son reales, pero no son mi destino. Enséñame a confiar de nuevo, con sabiduría y sin temor. Muéstrame el amor que no falla, del que Tú eres la fuente. Amén.',
+   verses:[
+     {ref:'Salmo 147:3',text:'"Él sana a los quebrantados de corazón y venda sus heridas."'},
+     {ref:'Salmo 27:10',text:'"Aunque mi padre y mi madre me dejaran, Jehová me recogerá."'},
+     {ref:'Jeremías 31:3',text:'"Con amor eterno te he amado; por tanto, te prolongué mi misericordia."'},
+     {ref:'1 Corintios 13:8',text:'"El amor nunca deja de ser."'},
+     {ref:'Sofonías 3:17',text:'"Jehová está en medio de ti, poderoso... se regocijará sobre ti con alegría."'}
+   ]},
+  {id:'proposito',icon:'🌱',title:'Propósito y Llamado',subtitle:'Tu misión en esta vida',
+   audio:'https://sonido-de-vida-audio.sonidodevida.workers.dev/reto11/dia-09-proposito-llamado.mp3', dur:'3:58',
+   question:'¿Cuál de estas frases sobre tu propósito reconoces?',
+   options:['"Ya es demasiado tarde para mí"','"No tengo dones ni talentos especiales"','"El propósito de Dios es para otros, no tanto para mí"','"Estoy en el lugar equivocado haciendo lo incorrecto"'],
+   belief:'La creencia de que el propósito de Dios tiene fecha de vencimiento o depende de circunstancias perfectas.',
+   truth:'Abraham recibió la promesa a los 75 años. Moisés fue llamado al ministerio a los 80. Sara tuvo su hijo prometido a los 90. El reloj humano dice "ya es tarde." El reloj de Dios dice "el tiempo cumplido." Efesios 2:10 dice que las buenas obras para las que fuiste creado "Dios las preparó de antemano" — eso incluye exactamente el lugar donde estás ahora.',
+   application:'No hay "demasiado tarde" en el calendario de Dios. Estás exactamente donde Él puede usarte.',appIcon:'🌱',
+   action:'Esta semana: lista 3 cosas que sabes hacer bien, aunque te parezcan pequeñas. Ora: "Señor, ¿cómo quieres usar esto donde estoy hoy?" La respuesta suele ser más simple de lo que imaginas.',
+   prayer:'Dios, Tú me creaste con propósito. Las obras que preparaste para mí ya están listas — solo necesito caminar en ellas. No es demasiado tarde. Estoy donde estoy por razón. Ábreme los ojos para ver tu llamado en mi cotidiano. Amén.',
+   verses:[
+     {ref:'Jeremías 29:11',text:'"Porque yo sé los pensamientos que tengo... de paz y no de mal, para daros el fin que esperáis."'},
+     {ref:'Efesios 2:10',text:'"Creados en Cristo Jesús para buenas obras, las cuales Dios preparó de antemano."'},
+     {ref:'Filipenses 1:6',text:'"El que comenzó en vosotros la buena obra, la perfeccionará hasta el día de Jesucristo."'},
+     {ref:'Salmo 138:8',text:'"Jehová cumplirá su propósito en mí; eterna es tu misericordia."'},
+     {ref:'Romanos 8:30',text:'"A los que predestinó, a estos también llamó; y a los que llamó, a estos también justificó."'}
+   ]},
+  {id:'perdon',icon:'🕊️',title:'Perdón y Restauración',subtitle:'Perdonar y sentirse perdonado',
+   audio:'https://sonido-de-vida-audio.sonidodevida.workers.dev/reto11/dia-10-perdon-restauracion.mp3', dur:'4:22',
+   question:'¿Con cuál de estas luchas te identificas más?',
+   options:['"No puedo perdonarme por lo que hice"','"No puedo perdonar a quien me hizo daño"','"Sé que Dios perdona pero no me siento perdonado"','"Si perdono significa que lo que hicieron estuvo bien"'],
+   belief:'La creencia de que el perdón es imposible, peligroso o equivale a justificar el daño recibido.',
+   truth:'El perdón bíblico no borra lo que pasó ni justifica el daño — lo pone en manos de Dios. En Génesis 50:19-20, José dijo a sus hermanos que lo vendieron: "¿Acaso estoy yo en lugar de Dios?" Perdonar es soltar el peso de ser el juez. La investigación del Dr. Everett Worthington demuestra que el resentimiento sostenido genera daño físico real al que lo porta — no al ofensor. Y 1 Juan 1:9 no dice "si mereces" — dice "si confiesas."',
+   application:'Perdonar no es liberar al otro. Es liberarte tú de la prisión del resentimiento.',appIcon:'🕊️',
+   action:'Esta semana: escribe el nombre de quien necesitas perdonar (incluyéndote a ti). Ora: "Señor, suelto este caso en Tus manos. No lo justifico, te lo entrego." Repite cuantas veces sea necesario.',
+   prayer:'Padre, ayúdame a perdonar como Tú me perdonaste en Cristo. No quiero cargar más la prisión del resentimiento. Pongo a _____ en Tus manos. Sana mi corazón. Y donde no puedo perdonarme a mí mismo, recuerdo que Tu sí lo hiciste. Amén.',
+   verses:[
+     {ref:'1 Juan 1:9',text:'"Si confesamos nuestros pecados, él es fiel y justo para perdonar y limpiar toda maldad."'},
+     {ref:'Efesios 4:32',text:'"Perdonándoos unos a otros, como Dios también os perdonó en Cristo."'},
+     {ref:'Génesis 50:20',text:'"Vosotros pensasteis mal contra mí, mas Dios lo encaminó a bien."'},
+     {ref:'Salmo 32:5',text:'"Mi pecado te declaré... y tú perdonaste la maldad de mi pecado."'},
+     {ref:'Romanos 12:19',text:'"No os venguéis vosotros mismos... mía es la venganza, yo pagaré, dice el Señor."'}
+   ]},
+  {id:'esperanza',icon:'🌅',title:'Esperanza en la Espera',subtitle:'Cuando parece que nada cambia',
+   audio:'https://sonido-de-vida-audio.sonidodevida.workers.dev/reto11/dia-11-esperanza-espera.mp3', dur:'3:48',
+   question:'¿Cuál de estas frases describe tu relación con el futuro?',
+   options:['"Las cosas nunca cambian para mí"','"Llevo años creyendo y no veo resultados"','"Dios responde a otros pero a mí me tiene esperando"','"Ya no tengo fuerzas para seguir creyendo"'],
+   belief:'La creencia de que el silencio de Dios o la demora en las respuestas significa abandono o rechazo.',
+   truth:'Abraham esperó 25 años para ver cumplida la promesa. José esperó 13 años en esclavitud y prisión antes de ser exaltado. La higuera de Marcos 11 fue maldita un día y al siguiente estaba seca desde la raíz — el milagro ocurrió de noche, invisible. Dios actúa frecuentemente en lo invisible antes de manifestarse en lo visible. La espera no es inactividad de Dios. Es Su trabajo no visto.',
+   application:'El silencio de Dios no es ausencia. Es trabajo invisible que precede a la manifestación.',appIcon:'🌅',
+   action:'Esta semana: lleva un "diario de espera". Cada noche anota una señal pequeña de la fidelidad de Dios que viste hoy. La fe crece cuando se recuerda.',
+   prayer:'Señor, en la espera confío en Ti. Tú trabajas en lo invisible aunque mis ojos no vean. Renuevo mi esperanza hoy. No desfallezco porque Tú no te canses de mí. En Tu tiempo, harás brotar lo que sembraste. Amén.',
+   verses:[
+     {ref:'Habacuc 2:3',text:'"Aunque la visión tardará aún por un tiempo... espérala, porque sin duda vendrá."'},
+     {ref:'Isaías 40:31',text:'"Los que esperan en Jehová tendrán nuevas fuerzas; levantarán alas como las águilas."'},
+     {ref:'Salmo 37:7',text:'"Guarda silencio ante Jehová y espera en él; no te alteres."'},
+     {ref:'Romanos 4:18',text:'"Él creyó en esperanza contra esperanza, para llegar a ser padre de muchas gentes."'},
+     {ref:'Lamentaciones 3:25-26',text:'"Bueno es Jehová a los que en él esperan... bueno es esperar en silencio la salvación."'}
+   ]}
+];
+
+/* ============================================================
+   STATE + PERSISTENCE
+   ============================================================ */
+const STORAGE_KEY = 'sdv_11dias_v2';
+
+function defaultState(){
+  return {screen:'welcome',areaIdx:null,option:null,done:[],results:[],notes:{},email:'',startedDate:null,currentDay:1};
+}
+let S = loadState();
+
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return defaultState();
+    const parsed = JSON.parse(raw);
+    return Object.assign(defaultState(), parsed);
+  }catch(e){ return defaultState(); }
+}
+function saveState(){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(S)); }catch(e){}
+}
+
+function note(id,f,v){
+  if(v!==undefined){
+    if(!S.notes[id]) S.notes[id]={};
+    S.notes[id][f]=v;
+    saveState();
+  }
+  return (S.notes[id]||{})[f]||'';
+}
+
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._tm);
+  t._tm = setTimeout(()=>t.classList.remove('show'), 2600);
+}
+
+/* ============================================================
+   AUDIO PLAYER (degrades gracefully when file is missing)
+   ============================================================ */
+const audioCache = {};
+let currentAudio = null;
+
+function makeAudioPlayer(src, title, subtitle){
+  const id = 'ap_' + Math.random().toString(36).slice(2,9);
+  setTimeout(()=>{
+    const el = document.getElementById(id);
+    if(!el) return;
+    const playBtn = el.querySelector('.audio-play');
+    const bar = el.querySelector('.audio-bar-fill');
+    const timeEl = el.querySelector('.audio-time');
+    const statusEl = el.querySelector('.audio-status');
+
+    let audio = audioCache[src];
+    if(!audio){
+      audio = new Audio();
+      audio.preload = 'none';
+      audio.src = src;
+      audioCache[src] = audio;
+    }
+
+    // Probe if file exists
+    audio.addEventListener('error', ()=>{
+      playBtn.disabled = true;
+      statusEl.textContent = '🎧 Audio en preparación — disponible pronto';
+      statusEl.classList.remove('live');
+    });
+    audio.addEventListener('loadedmetadata', ()=>{
+      statusEl.textContent = '🎧 Disponible · ' + (audio.duration?formatTime(audio.duration):'');
+      statusEl.classList.add('live');
+    });
+
+    playBtn.addEventListener('click', ()=>{
+      if(audio.paused){
+        // stop any other playing audio
+        if(currentAudio && currentAudio !== audio){ currentAudio.pause(); }
+        currentAudio = audio;
+        audio.play().catch(()=>{});
+      } else {
+        audio.pause();
+      }
+    });
+
+    audio.addEventListener('play', ()=>{ playBtn.textContent = '⏸'; });
+    audio.addEventListener('pause', ()=>{ playBtn.textContent = '▶'; });
+    audio.addEventListener('ended', ()=>{ playBtn.textContent = '▶'; bar.style.width='0%'; timeEl.textContent='0:00'; });
+    audio.addEventListener('timeupdate', ()=>{
+      if(!audio.duration) return;
+      const pct = (audio.currentTime/audio.duration)*100;
+      bar.style.width = pct+'%';
+      timeEl.textContent = formatTime(audio.currentTime) + ' / ' + formatTime(audio.duration);
+    });
+
+    // seek
+    const track = el.querySelector('.audio-progress');
+    track.addEventListener('click', (e)=>{
+      if(!audio.duration) return;
+      const rect = track.getBoundingClientRect();
+      const ratio = (e.clientX-rect.left)/rect.width;
+      audio.currentTime = audio.duration*ratio;
+    });
+  }, 30);
+
+  return `<div class="audio-card" id="${id}">
+    <div class="audio-head">
+      <div class="audio-cover">🎧</div>
+      <div class="audio-meta">
+        <div class="audio-title">${esc(title)}</div>
+        <div class="audio-sub">${esc(subtitle)}</div>
+      </div>
+    </div>
+    <div class="audio-controls">
+      <button class="audio-play">▶</button>
+      <div class="audio-progress"><div class="audio-bar"><div class="audio-bar-fill"></div></div></div>
+      <div class="audio-time">0:00</div>
+    </div>
+    <div class="audio-status">Cargando…</div>
+  </div>`;
+}
+
+function formatTime(sec){
+  if(!sec || isNaN(sec)) return '0:00';
+  const m = Math.floor(sec/60);
+  const s = Math.floor(sec%60);
+  return m+':'+(s<10?'0':'')+s;
+}
+
+/* ============================================================
+   VOICE RECORDER
+   ============================================================ */
+let mediaRecorder = null;
+let recChunks = [];
+let recTimer = null;
+let recStart = 0;
+
+function makeRecorder(areaId){
+  const id = 'rec_' + areaId;
+  setTimeout(()=>{
+    const el = document.getElementById(id);
+    if(!el) return;
+    const btn = el.querySelector('.rec-btn');
+    const timerEl = el.querySelector('.rec-timer');
+    const playRow = el.querySelector('.rec-play-row');
+
+    // Load existing recording if any
+    const existing = localStorage.getItem('sdv_rec_'+areaId);
+    if(existing){
+      showRecPlayback(playRow, existing, areaId);
+    }
+
+    btn.addEventListener('click', async ()=>{
+      if(mediaRecorder && mediaRecorder.state === 'recording'){
+        mediaRecorder.stop();
+        return;
+      }
+      try{
+        const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+        recChunks = [];
+        mediaRecorder = new MediaRecorder(stream);
+        mediaRecorder.ondataavailable = e=>{ if(e.data.size>0) recChunks.push(e.data); };
+        mediaRecorder.onstop = ()=>{
+          const blob = new Blob(recChunks, {type:'https://sonido-de-vida-audio.sonidodevida.workers.dev/reto11/webm'});
+          const reader = new FileReader();
+          reader.onload = ()=>{
+            const dataUrl = reader.result;
+            try{ localStorage.setItem('sdv_rec_'+areaId, dataUrl); }catch(e){ toast('Grabación demasiado larga para guardar localmente'); }
+            showRecPlayback(playRow, dataUrl, areaId);
+          };
+          reader.readAsDataURL(blob);
+          stream.getTracks().forEach(t=>t.stop());
+          btn.textContent = '🎤';
+          btn.classList.remove('recording');
+          clearInterval(recTimer);
+          timerEl.textContent = '✓ Grabación guardada';
+          toast('Declaración grabada ✓');
+        };
+        mediaRecorder.start();
+        btn.textContent = '⏹';
+        btn.classList.add('recording');
+        recStart = Date.now();
+        timerEl.textContent = '0:00';
+        recTimer = setInterval(()=>{
+          const sec = Math.floor((Date.now()-recStart)/1000);
+          timerEl.textContent = formatTime(sec);
+        }, 1000);
+      }catch(e){
+        toast('No se pudo acceder al micrófono');
+      }
+    });
+  }, 30);
+
+  return `<div class="recorder" id="${id}">
+    <button class="rec-btn" title="Grabar mi declaración">🎤</button>
+    <div class="rec-timer muted" style="font-size:12px">Toca para grabar tu declaración en tu propia voz</div>
+    <div class="rec-play-row"></div>
+    <div class="muted" style="font-size:11px;margin-top:10px;line-height:1.5">🔒 Se guarda solo en este dispositivo. Nunca sube a la nube ni se comparte.</div>
+  </div>`;
+}
+
+function showRecPlayback(container, dataUrl, areaId){
+  container.innerHTML = '';
+  const playBtn = document.createElement('button');
+  playBtn.textContent = '▶ Escuchar mi declaración';
+  const delBtn = document.createElement('button');
+  delBtn.textContent = '🗑 Borrar';
+  const audio = new Audio(dataUrl);
+  playBtn.addEventListener('click', ()=>{
+    if(audio.paused){ audio.play(); playBtn.textContent='⏸ Pausa'; }
+    else { audio.pause(); playBtn.textContent='▶ Escuchar mi declaración'; }
+  });
+  audio.addEventListener('ended', ()=>{ playBtn.textContent='▶ Escuchar mi declaración'; });
+  delBtn.addEventListener('click', ()=>{
+    localStorage.removeItem('sdv_rec_'+areaId);
+    container.innerHTML = '';
+    toast('Grabación borrada');
+  });
+  container.appendChild(playBtn);
+  container.appendChild(delBtn);
+}
+
+/* ============================================================
+   PDF EXPORT
+   ============================================================ */
+function exportPDF(){
+  if(S.results.length === 0){
+    toast('Completa al menos un área primero');
+    return;
+  }
+  try{
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({unit:'pt', format:'a4'});
+    const W = doc.internal.pageSize.getWidth();
+    const H = doc.internal.pageSize.getHeight();
+    const M = 50;
+
+    // Cover
+    doc.setFillColor(12,24,36);
+    doc.rect(0,0,W,H,'F');
+    doc.setTextColor(201,168,76);
+    doc.setFont('times','bold');
+    doc.setFontSize(28);
+    doc.text('Mi Plan de Renovación', W/2, H/2-40, {align:'center'});
+    doc.setTextColor(240,234,216);
+    doc.setFontSize(13);
+    doc.setFont('times','italic');
+    doc.text('11 Días, 11 Áreas · SonidoDeVida', W/2, H/2-10, {align:'center'});
+    doc.setFontSize(11);
+    doc.setTextColor(122,142,168);
+    doc.text('Generado el ' + new Date().toLocaleDateString('es-ES', {day:'numeric',month:'long',year:'numeric'}), W/2, H/2+20, {align:'center'});
+    doc.setFontSize(10);
+    doc.text('"No os conforméis a este siglo, sino transformaos por medio de la', W/2, H/2+80, {align:'center'});
+    doc.text('renovación de vuestro entendimiento." — Romanos 12:2', W/2, H/2+95, {align:'center'});
+
+    // Pages for each area
+    S.results.forEach((r, idx)=>{
+      doc.addPage();
+      doc.setFillColor(12,24,36);
+      doc.rect(0,0,W,H,'F');
+
+      let y = M;
+      doc.setTextColor(201,168,76);
+      doc.setFont('times','bold');
+      doc.setFontSize(20);
+      doc.text((idx+1)+'. '+pdfClean(r.area.title), M, y);
+      y += 26;
+
+      doc.setFontSize(11);
+      doc.setFont('times','italic');
+      doc.setTextColor(122,142,168);
+      doc.text(r.area.subtitle, M, y);
+      y += 28;
+
+      // Belief
+      doc.setTextColor(255,138,138);
+      doc.setFont('times','bold');
+      doc.setFontSize(12);
+      doc.text('CREENCIA IDENTIFICADA', M, y); y+=19;
+      doc.setFont('times','normal');
+      doc.setTextColor(255,200,200);
+      doc.setFontSize(13);
+      y = wrapText(doc, r.area.belief, M, y, W-2*M, 17);
+      y += 14;
+
+      // Experience
+      if(r.ref){
+        doc.setTextColor(201,168,76);
+        doc.setFont('times','bold');
+        doc.setFontSize(12);
+        doc.text('MI EXPERIENCIA', M, y); y+=19;
+        doc.setFont('times','italic');
+        doc.setTextColor(200,200,210);
+        doc.setFontSize(13);
+        y = wrapText(doc, r.ref, M, y, W-2*M, 17);
+        y += 14;
+      }
+
+      // Truth
+      doc.setTextColor(112,224,112);
+      doc.setFont('times','bold');
+      doc.setFontSize(12);
+      doc.text('LA VERDAD BÍBLICA', M, y); y+=19;
+      doc.setFont('times','normal');
+      doc.setTextColor(240,234,216);
+      doc.setFontSize(13);
+      y = wrapText(doc, r.area.truth, M, y, W-2*M, 17);
+      y += 14;
+
+      // Application
+      doc.setTextColor(144,224,144);
+      doc.setFont('times','italic');
+      doc.setFontSize(13);
+      y = wrapText(doc, pdfClean(r.area.application), M, y, W-2*M, 17);
+      y += 16;
+
+      // Verses
+      doc.setTextColor(201,168,76);
+      doc.setFont('times','bold');
+      doc.setFontSize(12);
+      doc.text('VERSÍCULOS PARA DECLARAR', M, y); y+=19;
+      r.area.verses.forEach(v=>{
+        if(y > H-M-70){ doc.addPage(); doc.setFillColor(12,24,36); doc.rect(0,0,W,H,'F'); y=M; }
+        doc.setTextColor(201,168,76);
+        doc.setFont('times','bold');
+        doc.setFontSize(11.5);
+        doc.text(v.ref, M, y); y+=16;
+        doc.setTextColor(154,168,184);
+        doc.setFont('times','italic');
+        doc.setFontSize(11.5);
+        y = wrapText(doc, v.text, M, y, W-2*M, 15);
+        y += 8;
+      });
+
+      // Declaration
+      if(r.dec){
+        y += 8;
+        if(y > H-M-95){ doc.addPage(); doc.setFillColor(12,24,36); doc.rect(0,0,W,H,'F'); y=M; }
+        doc.setDrawColor(201,168,76);
+        doc.setFillColor(201,168,76,0.12);
+        doc.roundedRect(M, y-4, W-2*M, 72, 6, 6, 'FD');
+        doc.setTextColor(201,168,76);
+        doc.setFont('times','bold');
+        doc.setFontSize(11);
+        doc.text('MI DECLARACIÓN', M+14, y+14);
+        doc.setTextColor(240,234,216);
+        doc.setFont('times','italic');
+        doc.setFontSize(12.5);
+        wrapText(doc, r.dec, M+14, y+32, W-2*M-28, 16);
+      }
+
+      if(r.hasVoice){
+        y += 92;
+        doc.setTextColor(201,168,76);
+        doc.setFont('times','italic');
+        doc.setFontSize(10.5);
+        doc.text('Declaración también grabada en audio dentro de la app', M, y);
+      }
+    });
+
+    // Final page
+    doc.addPage();
+    doc.setFillColor(12,24,36);
+    doc.rect(0,0,W,H,'F');
+    doc.setTextColor(201,168,76);
+    doc.setFont('times','bold');
+    doc.setFontSize(22);
+    doc.text('Sigue tu camino', W/2, H/2-40, {align:'center'});
+    doc.setTextColor(240,234,216);
+    doc.setFontSize(12);
+    doc.setFont('times','italic');
+    doc.text('Revisa este plan cada semana.', W/2, H/2, {align:'center'});
+    doc.text('Escucha los devocionales en sonidodevida.com', W/2, H/2+20, {align:'center'});
+    doc.text('Y declara cada versículo en voz alta.', W/2, H/2+40, {align:'center'});
+    doc.setTextColor(201,168,76);
+    doc.setFontSize(14);
+    doc.text('sonidodevida.com', W/2, H/2+90, {align:'center'});
+
+    doc.save('mi-plan-de-renovacion-sonidodevida.pdf');
+    toast('PDF descargado ✓');
+  }catch(e){
+    console.error(e);
+    toast('No se pudo generar el PDF');
+  }
+}
+
+function pdfClean(s){
+  // Las fuentes estándar de jsPDF (Times/Helvetica) no soportan emoji: al
+  // pasarlos a doc.text() se dibujan como bytes corruptos ("Ø<ß"). Se
+  // eliminan aquí antes de escribir en el PDF.
+  return String(s==null?'':s)
+    .replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}\u{2190}-\u{21FF}\u{2B00}-\u{2BFF}️‍]/gu,'')
+    .replace(/\s+/g,' ').trim();
+}
+
+function wrapText(doc, text, x, y, maxW, lineH){
+  const words = String(text).split(/\s+/);
+  let line = '';
+  for(const w of words){
+    const test = line ? line+' '+w : w;
+    if(doc.getTextWidth(test) > maxW){
+      doc.text(line, x, y);
+      y += lineH;
+      line = w;
+    } else {
+      line = test;
+    }
+  }
+  if(line){ doc.text(line, x, y); y += lineH; }
+  return y;
+}
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+function render(){
+  const app = document.getElementById('app');
+  const screen = S.screen;
+  let html = '';
+
+  // Top bar everywhere except welcome
+  if(screen !== 'welcome'){
+    const pct = Math.round((S.done.length/AREAS.length)*100);
+    const dayNum = S.done.length + (screen==='summary'?0:1);
+    html += `<div class="topbar">
+      <div class="topbar-row">
+        <span class="brand">✝ SONIDODEVIDA</span>
+        <span class="day">${S.done.length}/${AREAS.length} áreas · ${pct}%</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
+    </div>`;
+  }
+
+  const fn = {welcome:rWelcome, areas:rAreas, question:rQuestion, result:rResult, summary:rSummary}[screen] || rWelcome;
+  html += fn();
+  app.innerHTML = html;
+
+  // Restore textareas
+  const rta = document.getElementById('rta');
+  const dta = document.getElementById('dta');
+  if(rta && S.areaIdx!==null) rta.value = note(AREAS[S.areaIdx].id,'r');
+  if(dta && S.areaIdx!==null) dta.value = note(AREAS[S.areaIdx].id,'d');
+
+  // Restore email
+  const emailInp = document.getElementById('emailInp');
+  if(emailInp && S.email) emailInp.value = S.email;
+
+  window.scrollTo(0,0);
+}
+
+function rWelcome(){
+  const resume = S.done.length>0 && S.startedDate;
+  return `<div class="screen-center">
+<span style="font-size:52px;display:block;margin-bottom:16px">✝️</span>
+<span class="day-badge">11 Días · 11 Áreas</span>
+<h1 class="gold" style="font-size:24px;line-height:1.35;margin-bottom:12px">Renueva tu mente<br>con la Palabra</h1>
+<p class="muted" style="font-size:14px;font-style:italic;line-height:1.7;margin-bottom:24px">"Fíate de Jehová de todo tu corazón,<br>y no te apoyes en tu propia prudencia."<br><span class="gold">— Proverbios 3:5</span></p>
+
+<div class="audio-card" style="max-width:360px;width:100%;margin-bottom:24px">
+  ${makeAudioPlayer('https://sonido-de-vida-audio.sonidodevida.workers.dev/reto11/intro-11-dias.mp3','Bienvenida al recorrido','1:18 · Escucha antes de comenzar')}
+</div>
+
+<div class="card" style="max-width:360px;text-align:left;margin-bottom:24px">
+  <p class="cream" style="font-size:15px;line-height:1.7;margin-bottom:14px">Un camino guiado de <b>11 días</b>. Cada día: un área de tu vida, un audio devocional, una verdad bíblica, y tu declaración personal.</p>
+  <div class="info-list">
+    <div>🎧 Audio devocional (3–4 min)</div>
+    <div>📖 5 versículos con audio por área</div>
+    <div>✍️ Tu experiencia escrita</div>
+    <div>🎤 Tu declaración en tu propia voz</div>
+    <div>📄 Plan final descargable en PDF</div>
+  </div>
+</div>
+
+${resume ? `<button class="btn-ghost" style="max-width:340px;margin-bottom:12px" data-a="resume">↩ Continuar (día ${S.done.length+1} de 11)</button>` : ''}
+<button class="btn-start" data-a="start">${resume?'Reiniciar recorrido':'Comenzar los 11 días'}</button>
+<p class="muted" style="font-size:11px;margin-top:14px;max-width:300px">Tu progreso se guarda automáticamente en este dispositivo.</p>
+</div>`;
+}
+
+function rAreas(){
+  const btns = AREAS.map((ar,idx)=>{
+    const done = S.done.includes(ar.id);
+    const locked = !done && idx>0 && !S.done.includes(AREAS[idx-1].id);
+    return `<button class="area-btn${done?' done':''}${locked?' locked':''}" data-a="area" data-idx="${idx}"${locked?' disabled':''}>
+<span style="font-size:24px">${done?'✅':ar.icon}</span>
+<div style="flex:1">
+  <div style="font-size:11px;color:#c9a84c;letter-spacing:1px;text-transform:uppercase">Día ${idx+1}</div>
+  <div style="font-size:15px;font-weight:bold;color:${done?'#70cc70':'#f0ead8'}">${esc(ar.title)}</div>
+  <div class="muted" style="font-size:13px;margin-top:2px">${done?'Completado':esc(ar.subtitle)}</div>
+</div>
+${!done?'<span style="color:#c9a84c;font-size:22px;margin-left:auto">›</span>':''}
+</button>`;
+  }).join('');
+
+  return `<div class="screen">
+<div class="center" style="margin-bottom:20px">
+  <span class="day-badge">Día ${Math.min(S.done.length+1,11)} de 11</span>
+  <h2 class="gold" style="margin-bottom:4px">Elige tu Área</h2>
+  <p class="muted" style="font-size:13px">${S.done.length} de ${AREAS.length} áreas completadas</p>
+</div>
+${btns}
+${S.done.length===AREAS.length?'<button class="btn-gold" style="margin-top:14px" data-a="summary">📄 Ver mi Plan de Renovación →</button>':''}
+${S.done.length>0 && S.done.length<AREAS.length?`<button class="btn-ghost" style="margin-top:14px" data-a="summary">📄 Descargar PDF parcial (${S.done.length} áreas)</button>`:''}
+</div>`;
+}
+
+function rQuestion(){
+  if(S.areaIdx===null) return '';
+  const ar = AREAS[S.areaIdx];
+  const opts = ar.options.map((o,i)=>`<button class="opt${S.option===o?' sel':''}" data-a="opt" data-i="${i}">${esc(o)}</button>`).join('');
+  const refBlock = S.option ? `<div style="margin-bottom:20px">
+<span class="lbl gold">✍️ Mi Experiencia Personal</span>
+<p class="muted" style="font-size:13px;line-height:1.5;margin-bottom:8px">Describe con tus palabras cómo se manifiesta esto en tu vida. Cuándo aparece, en qué situaciones.</p>
+<textarea id="rta" rows="4" placeholder="Escribe aquí... (opcional)"></textarea>
+<p class="hint">Este espacio es solo tuyo. Se guarda en tu dispositivo y en tu PDF final.</p></div>` : '';
+  return `<div class="screen">
+<div style="display:flex;align-items:center;gap:12px;margin-bottom:18px">
+<button class="btn-back" data-a="back">←</button>
+<div><div style="font-size:11px;color:#c9a84c;letter-spacing:1px;text-transform:uppercase">Día ${S.areaIdx+1} de 11</div><div class="gold" style="font-size:17px">${ar.icon} ${esc(ar.title)}</div><div class="muted" style="font-size:12px">${esc(ar.subtitle)}</div></div>
+</div>
+<div class="card" style="margin-bottom:18px"><p class="cream" style="font-size:17px;line-height:1.65">${esc(ar.question)}</p></div>
+<div style="margin-bottom:22px">${opts}</div>
+${refBlock}
+<button class="btn-gold" data-a="reveal"${!S.option?' disabled':''}>Ver la Verdad Bíblica →</button>
+</div>`;
+}
+
+function rResult(){
+  if(S.areaIdx===null) return '';
+  const ar = AREAS[S.areaIdx];
+  const isLast = S.done.length === AREAS.length-1;
+  const vv = ar.verses.map((v,i)=>{
+    return `<div class="v-row">
+  <div class="v-text-col">
+    <div class="v-ref">${esc(v.ref)} <span class="verse-chip" data-a="verse" data-verse="${i}">▶ escuchar</span></div>
+    <div class="v-txt">${esc(v.text)}</div>
+  </div>
+</div>`;
+  }).join('');
+
+  return `<div class="screen">
+<div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+<button class="btn-back" data-a="back">←</button>
+<span class="muted" style="font-size:12px">Salir y terminar esta área después</span>
+</div>
+<div class="center" style="margin-bottom:16px">
+  <span class="day-badge">Día ${S.areaIdx+1} de 11</span>
+  <span style="font-size:40px;display:block;margin-bottom:6px">${ar.icon}</span>
+  <div class="gold" style="font-size:19px">${esc(ar.title)}</div>
+</div>
+
+<div class="audio-card">
+  ${makeAudioPlayer(ar.audio, 'Devocional · '+ar.title, ar.dur+' · SonidoDeVida')}
+</div>
+
+<div class="card-r"><span class="lbl" style="color:#ff8a8a">🔍 Creencia Identificada</span><p style="color:#ffc0c0;font-size:15px;line-height:1.65">${esc(ar.belief)}</p></div>
+
+<div class="card-g">
+  <span class="lbl" style="color:#70e070">✨ La Verdad Bíblica</span>
+  <p class="cream" style="font-size:15px;line-height:1.7;margin-bottom:12px">${esc(ar.truth)}</p>
+  <div class="app-line">${ar.appIcon} ${esc(ar.application)}</div>
+</div>
+
+<div class="card">
+  <span class="lbl gold">📖 Versículos para Declarar</span>
+  ${vv}
+</div>
+
+<div class="card">
+  <span class="lbl" style="color:#90e090">🎯 Acción de la Semana</span>
+  <p class="cream" style="font-size:14px;line-height:1.65">${esc(ar.action)}</p>
+</div>
+
+<div class="card">
+  <span class="lbl gold">🙏 Oración Guiada</span>
+  ${makeAudioPlayer('https://sonido-de-vida-audio.sonidodevida.workers.dev/reto11/oracion-'+ar.id+'.mp3','Oración · '+ar.title,'~1 min · Escucha y ora con nosotros')}
+  <p class="muted" style="font-size:13px;line-height:1.65;font-style:italic;margin-top:10px">${esc(ar.prayer)}</p>
+</div>
+
+<div style="margin-bottom:24px">
+  <span class="lbl gold">🙏 Mi Declaración Personal</span>
+  <p class="muted" style="font-size:13px;line-height:1.5;margin-bottom:8px">Basado en la verdad bíblica, escribe lo que quieres declarar.</p>
+  <textarea id="dta" rows="5" placeholder='Ej: "Yo declaro que Dios está conmigo aunque esté lejos..."'></textarea>
+  <p class="hint">Tu declaración se guardará en tu PDF final.</p>
+
+  <div style="margin-top:14px">
+    <span class="lbl gold">🎤 O grábala en tu propia voz</span>
+    ${makeRecorder(ar.id)}
+  </div>
+</div>
+
+<button class="btn-gold" data-a="next">${isLast?'🙌 Ver Mi Plan de Renovación':'Siguiente Área →'}</button>
+</div>`;
+}
+
+function rSummary(){
+  const cards = S.results.map(r=>{
+    const short = r.area.belief.length>90 ? r.area.belief.slice(0,90)+'...' : r.area.belief;
+    const refH = r.ref ? `<div class="s-ref-box"><div class="lbl" style="color:#7a8ea8;margin-bottom:4px">Mi Experiencia</div><div style="color:#c0c8d8;font-size:13px;line-height:1.5">${esc(r.ref)}</div></div>` : '';
+    const decH = r.dec ? `<div class="s-dec-box"><div class="lbl gold" style="margin-bottom:4px">Mi Declaración</div><div class="cream" style="font-size:13px;line-height:1.6;font-style:italic">${esc(r.dec)}</div></div>` : '';
+    const voiceH = r.hasVoice ? `<div style="color:#c9a84c;font-size:12px;margin-top:6px">🎤 Declaración grabada en audio</div>` : '';
+    return `<div class="s-card"><div class="gold" style="font-size:15px;margin-bottom:8px">${r.area.icon} ${esc(r.area.title)}</div>${refH}<div class="s-belief">⚠️ ${esc(short)}</div><div class="s-verse">📖 ${esc(r.area.verses[0].ref)} — ${esc(r.area.verses[0].text)}</div>${decH}${voiceH}</div>`;
+  }).join('');
+
+  const completed = S.done.length === AREAS.length;
+
+  return `<div class="screen">
+${!completed ? `<div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+<button class="btn-back" data-a="toAreas">←</button>
+<span class="muted" style="font-size:13px">Volver a mis áreas (sin perder mi progreso)</span>
+</div>` : ''}
+<div class="center" style="margin-bottom:20px">
+  <span style="font-size:44px;display:block;margin-bottom:8px">${completed?'🙌':'📋'}</span>
+  <h2 class="gold" style="margin-bottom:6px">${completed?'Tu Plan de Renovación':'Tu Plan Parcial'}</h2>
+  <p class="muted" style="font-size:13px">${S.done.length} de ${AREAS.length} áreas · ${completed?'Recorrido completo':'Continúa cuando quieras'}</p>
+</div>
+
+<div style="margin-bottom:16px">
+  <button class="btn-gold" data-a="pdf">📄 Descargar mi Plan en PDF</button>
+</div>
+
+${cards}
+
+<div class="card-au"><p class="cream" style="font-size:15px;line-height:1.75;margin-bottom:8px">"No os conforméis a este siglo, sino transformaos por medio de la renovación de vuestro entendimiento."</p><p class="gold" style="font-size:14px">— Romanos 12:2</p></div>
+
+${completed ? `<div class="card">
+  <span class="lbl gold">Recibe un versículo diario por 11 días más</span>
+  <p class="muted" style="font-size:13px;line-height:1.5;margin-bottom:10px">Profundiza cada área con un versículo ancla cada mañana en tu correo.</p>
+  <input type="email" id="emailInp" placeholder="tu@correo.com">
+  <button class="btn-gold" style="margin-top:10px" data-a="email">✉ Suscribirme</button>
+</div>` : ''}
+
+<div class="card">
+  <span class="lbl gold">Comparte tu plan</span>
+  <div class="share-grid">
+    <button class="share-btn" data-a="share-wa"><span class="ic">💬</span>WhatsApp</button>
+    <button class="share-btn" data-a="share-link"><span class="ic">🔗</span>Copiar enlace</button>
+  </div>
+</div>
+
+<div class="card center">
+  <p class="gold" style="font-size:15px;margin-bottom:6px">🎧 Sigue escuchando</p>
+  <p class="muted" style="font-size:13px;line-height:1.6;margin-bottom:12px">Más devocionales, audios de la Biblia y series en sonidodevida.com</p>
+  <a href="https://sonidodevida.com" class="btn-outline" target="_blank" rel="noopener">Visitar sonidodevida.com →</a>
+</div>
+
+<button class="btn-ghost" data-a="restart" style="margin-top:8px">↩ Reiniciar recorrido</button>
+</div>`;
+}
+
+/* ============================================================
+   EVENTS
+   ============================================================ */
+function saveTAs(){
+  const rta = document.getElementById('rta');
+  const dta = document.getElementById('dta');
+  if(rta && S.areaIdx!==null) note(AREAS[S.areaIdx].id,'r',rta.value);
+  if(dta && S.areaIdx!==null) note(AREAS[S.areaIdx].id,'d',dta.value);
+}
+
+document.addEventListener('click', function(e){
+  const el = e.target.closest('[data-a]');
+  if(!el) return;
+  const a = el.dataset.a;
+
+  switch(a){
+    case 'start':
+      if(confirm('¿Iniciar un nuevo recorrido de 11 días? Se perderá tu progreso actual.')){
+        S = defaultState();
+        S.startedDate = new Date().toISOString();
+        saveState();
+        S.screen='areas';
+        render();
+      }
+      break;
+    case 'resume':
+      S.screen='areas';
+      render();
+      break;
+    case 'area':{
+      const idx = parseInt(el.dataset.idx);
+      if(S.done.includes(AREAS[idx].id)) break;
+      S.areaIdx = idx;
+      const savedOptIdx = note(AREAS[idx].id,'optIdx');
+      S.option = savedOptIdx ? AREAS[idx].options[savedOptIdx-1] : null;
+      S.screen = 'question';
+      render();
+      break;
+    }
+    case 'opt':{
+      saveTAs();
+      const i = parseInt(el.dataset.i);
+      S.option = AREAS[S.areaIdx].options[i];
+      note(AREAS[S.areaIdx].id,'optIdx', i+1);
+      render();
+      break;
+    }
+    case 'reveal':
+      if(!S.option) break;
+      saveTAs();
+      S.screen='result';
+      render();
+      break;
+    case 'next':{
+      saveTAs();
+      const ar = AREAS[S.areaIdx];
+      if(!S.done.includes(ar.id)){
+        S.done = [...S.done, ar.id];
+      }
+      // update or add result
+      const existingIdx = S.results.findIndex(r=>r.area.id===ar.id);
+      const hasVoice = !!localStorage.getItem('sdv_rec_'+ar.id);
+      const newResult = {
+        area: ar,
+        answer: S.option,
+        ref: note(ar.id,'r'),
+        dec: note(ar.id,'d'),
+        hasVoice: hasVoice
+      };
+      if(existingIdx>=0) S.results[existingIdx] = newResult;
+      else S.results = [...S.results, newResult];
+      S.screen = S.done.length>=AREAS.length ? 'summary' : 'areas';
+      saveState();
+      render();
+      toast('Área guardada ✓');
+      break;
+    }
+    case 'back':
+      saveTAs();
+      S.screen='areas';
+      render();
+      break;
+    case 'summary':
+      S.screen='summary';
+      render();
+      break;
+    case 'toAreas':
+      S.screen='areas';
+      render();
+      break;
+    case 'pdf':
+      exportPDF();
+      break;
+    case 'email':{
+      const inp = document.getElementById('emailInp');
+      const btn = document.querySelector('[data-a="email"]');
+      const v = (inp.value||'').trim();
+      if(!v || !/^[^@]+@[^@]+\.[^@]+$/.test(v)){ toast('Ingresa un correo válido'); return; }
+      S.email = v;
+      saveState();
+      if(btn){ btn.disabled = true; btn.textContent = 'Enviando...'; }
+      fetch('https://sonido-de-vida-api.sonidodevida.workers.dev/api/reto11/subscribe', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({email: v})
+      }).then(r => { if(!r.ok) throw new Error(); toast('¡Inscrito! Recibirás un versículo diario por 11 días 🎉'); })
+        .catch(() => toast('No se pudo inscribir, intenta de nuevo'))
+        .finally(() => { if(btn){ btn.disabled = false; btn.textContent = '✉ Suscribirme'; } });
+      break;
+    }
+    case 'share-wa':{
+      const txt = 'Estoy renovando mi mente con la Palabra en 11 días. Únete al reto aquí: '+location.href+' 🙌';
+      window.open('https://wa.me/?text='+encodeURIComponent(txt), '_blank');
+      break;
+    }
+    case 'share-link':{
+      const url = location.href;
+      navigator.clipboard?.writeText(url).then(()=>toast('Enlace copiado ✓')).catch(()=>toast('Copia manualmente: '+url));
+      break;
+    }
+    case 'restart':
+      if(confirm('¿Reiniciar todo el recorrido? Se perderá tu progreso, notas y grabaciones.')){
+        // clear all rec data
+        AREAS.forEach(ar=>localStorage.removeItem('sdv_rec_'+ar.id));
+        localStorage.removeItem(STORAGE_KEY);
+        S = defaultState();
+        render();
+      }
+      break;
+  }
+
+  // Verse chip click
+  if(el.dataset.verse !== undefined && el.classList.contains('verse-chip')){
+    const idx = parseInt(el.dataset.verse);
+    const ar = AREAS[S.areaIdx];
+    const v = ar.verses[idx];
+    const src = 'https://sonido-de-vida-audio.sonidodevida.workers.dev/reto11/verso-'+ar.id+'-'+(idx+1)+'.mp3';
+    if(currentAudio){ currentAudio.pause(); }
+    document.querySelectorAll('.verse-chip.playing').forEach(c=>c.classList.remove('playing'));
+    let audio = audioCache[src];
+    if(!audio){
+      audio = new Audio();
+      audio.preload = 'none';
+      audio.src = src;
+      audioCache[src] = audio;
+    }
+    audio.addEventListener('play', ()=>el.classList.add('playing'));
+    audio.addEventListener('pause', ()=>el.classList.remove('playing'));
+    audio.addEventListener('ended', ()=>el.classList.remove('playing'));
+    audio.addEventListener('error', ()=>toast('Audio del versículo en preparación'));
+    currentAudio = audio;
+    audio.play().catch(()=>toast('Audio en preparación'));
+  }
+});
+
+document.addEventListener('input', function(e){
+  if(S.areaIdx===null) return;
+  const ar = AREAS[S.areaIdx];
+  if(e.target.id==='rta') note(ar.id,'r',e.target.value);
+  if(e.target.id==='dta') note(ar.id,'d',e.target.value);
+});
+
+window.addEventListener('beforeunload', saveState);
+
+/* ============================================================
+   SIDE VERSE TICKERS — decoración tipo "créditos" en el espacio
+   vacío lateral de pantallas anchas. Puramente visual (aria-hidden).
+   ============================================================ */
+function buildSideTickers(){
+  const allVerses = AREAS.flatMap(a=>a.verses);
+  const itemsHtml = list => list.concat(list).map(v =>
+    `<div class="side-ticker-item"><b>${esc(v.ref)}</b>${esc(v.text)}</div>`
+  ).join('');
+  const holder = document.createElement('div');
+  holder.innerHTML =
+    `<div class="side-ticker side-ticker-left" aria-hidden="true"><div class="side-ticker-track">${itemsHtml(allVerses)}</div></div>` +
+    `<div class="side-ticker side-ticker-right" aria-hidden="true"><div class="side-ticker-track">${itemsHtml(allVerses.slice().reverse())}</div></div>`;
+  while(holder.firstChild) document.body.appendChild(holder.firstChild);
+}
+buildSideTickers();
+
+render();
+</script>
+</body>
+</html>
