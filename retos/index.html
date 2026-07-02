@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Retos — Sonido de Vida</title>
+  <meta name="description" content="Recorridos guiados de varios días para renovar tu mente con la Palabra: audio, oración y reflexión bíblica, a tu ritmo.">
+  <link rel="canonical" href="https://sonidodevida.com/retos">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://sonidodevida.com/retos">
+  <meta property="og:title" content="Retos — Sonido de Vida">
+  <meta property="og:description" content="Recorridos guiados de varios días para renovar tu mente con la Palabra.">
+  <meta property="og:image" content="https://sonidodevida.com/og-image.png">
+  <meta property="og:site_name" content="Sonido de Vida">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Lora:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    :root{--gold:#c9a84c;--gold-light:#e8d48b;--gold-dark:#a07c2a;--text:#f3eee2;--muted:#a6abba}
+    body{font-family:'Inter',sans-serif;color:var(--text);
+      background:radial-gradient(1100px 620px at 50% -8%, rgba(201,168,76,.08), transparent 62%),
+        linear-gradient(180deg,#070e20 0%, #0a1226 60%, #0b1430 100%);
+      background-attachment:fixed;min-height:100vh;overflow-x:hidden}
+
+    nav{position:sticky;top:0;z-index:50;background:rgba(7,14,32,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(201,168,76,.12);padding:.9rem 2rem;display:flex;justify-content:space-between;align-items:center}
+    .nav-logo{font-family:'Cinzel',serif;font-size:1.3rem;font-weight:700;color:var(--gold-light);text-decoration:none;display:flex;align-items:center;gap:.5rem}
+    .nav-back{color:rgba(255,255,255,.75);text-decoration:none;font-size:.85rem;transition:color .2s}
+    .nav-back:hover{color:var(--gold-light)}
+
+    .hero{max-width:900px;margin:0 auto;padding:4rem 1.5rem 1rem;text-align:center}
+    .hero-tag{display:inline-flex;align-items:center;gap:.4rem;background:rgba(201,168,76,.14);border:1px solid rgba(201,168,76,.4);color:var(--gold-light);font-size:.75rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:.35rem .9rem;border-radius:20px;margin-bottom:1.3rem}
+    .hero h1{font-family:'Cinzel',serif;font-size:clamp(2rem,6vw,3rem);line-height:1.15;font-weight:700;
+      background:linear-gradient(180deg,#FAF7F0 0%,#C9B8A0 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;margin-bottom:1rem}
+    .hero p{font-family:'Lora',serif;font-size:1.05rem;color:var(--muted);max-width:560px;margin:0 auto;line-height:1.7}
+
+    .grid-wrap{max-width:900px;margin:0 auto;padding:3rem 1.5rem 5rem}
+    .card{position:relative;display:block;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08);border-radius:20px;overflow:hidden;text-decoration:none;color:inherit;backdrop-filter:blur(14px);transition:transform .35s cubic-bezier(.25,1,.5,1),box-shadow .35s,border-color .35s}
+    .card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--gold-dark));transform:scaleX(0);transform-origin:left;transition:transform .4s ease}
+    .card:hover{transform:translateY(-6px);box-shadow:0 26px 60px rgba(0,0,0,.5);border-color:rgba(201,168,76,.34)}
+    .card:hover::after{transform:scaleX(1)}
+    .card-body{padding:2rem;display:flex;gap:1.5rem;align-items:center}
+    .card-days{flex:none;width:64px;height:64px;border-radius:16px;background:rgba(201,168,76,.14);border:1px solid rgba(201,168,76,.35);display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--gold-light);font-family:'Cinzel',serif}
+    .card-days b{font-size:1.35rem;line-height:1}
+    .card-days span{font-size:.6rem;letter-spacing:.05em;text-transform:uppercase;opacity:.85}
+    .card-txt{flex:1;min-width:0}
+    .card-eyebrow{font-size:.72rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--gold-light);margin-bottom:.4rem;display:flex;align-items:center;gap:.5rem}
+    .card-eyebrow .pill{background:linear-gradient(135deg,var(--gold-light),var(--gold));color:#0d0d1a;font-size:.6rem;padding:.1rem .5rem;border-radius:20px}
+    .card h2{font-family:'Cinzel',serif;font-size:1.3rem;color:#fff;margin-bottom:.5rem}
+    .card p{font-family:'Lora',serif;color:var(--muted);font-size:.92rem;line-height:1.6}
+    .card-cta{margin-top:1rem;display:inline-flex;align-items:center;gap:.4rem;color:var(--gold-light);font-size:.85rem;font-weight:700}
+
+    .coming{margin-top:1.4rem;text-align:center;color:var(--muted);font-family:'Lora',serif;font-style:italic;font-size:.9rem}
+
+    @media(max-width:640px){
+      nav{padding:.75rem 1.1rem}
+      .card-body{flex-direction:column;text-align:center;padding:1.6rem}
+      .card-eyebrow{justify-content:center}
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="/" class="nav-logo"><span>✝</span> Sonido de Vida</a>
+    <a href="/" class="nav-back">← Volver al inicio</a>
+  </nav>
+
+  <section class="hero">
+    <span class="hero-tag">🆕 Nuevo contenido</span>
+    <h1>Retos para renovar tu mente</h1>
+    <p>Recorridos guiados de varios días, con audio, oración y reflexión bíblica. Avanza a tu ritmo, un día a la vez.</p>
+  </section>
+
+  <section class="grid-wrap">
+    <a href="/reto" class="card">
+      <div class="card-body">
+        <div class="card-days"><b>11</b><span>días</span></div>
+        <div class="card-txt">
+          <div class="card-eyebrow">Reto activo <span class="pill">NUEVO</span></div>
+          <h2>11 Días, 11 Áreas</h2>
+          <p>Renueva tu mente con la Palabra: un área distinta cada día (ansiedad, finanzas, identidad, perdón y más), con audio devocional, oración y versículos.</p>
+          <span class="card-cta">Comenzar el reto →</span>
+        </div>
+      </div>
+    </a>
+    <p class="coming">Más retos en camino, uno nuevo cada semana.</p>
+  </section>
+</body>
+</html>

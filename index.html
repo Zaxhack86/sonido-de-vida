@@ -1398,6 +1398,12 @@
         /* Badge "NUEVO" en el menú (Retos) */
         .badge-new{display:inline-block;margin-left:.4rem;padding:.1rem .45rem;font-size:.62rem;font-weight:800;letter-spacing:.04em;color:#0d0d1a;background:linear-gradient(135deg,var(--gold-light),var(--gold));border-radius:20px;vertical-align:2px;animation:pulse 2s infinite}
 
+        /* Aviso de Retos siempre visible en la barra móvil (fuera del menú hamburguesa) */
+        .nav-mobile-retos{display:none}
+        @media(max-width:700px) and (display-mode:browser){
+            .nav-mobile-retos{display:inline-flex;align-items:center;gap:.3rem;background:rgba(201,168,76,.14);border:1px solid rgba(201,168,76,.45);color:var(--gold-light);text-decoration:none;font-size:.72rem;font-weight:700;padding:.35rem .65rem;border-radius:50px;white-space:nowrap;animation:pulse 2.4s infinite}
+        }
+
         /* Promo Retos en Inicio */
         .shw-retos{margin:0 auto;max-width:1100px;padding:2.5rem 1.5rem}
         .shw-retos-card{position:relative;display:flex;align-items:center;gap:2rem;background:linear-gradient(135deg,rgba(201,168,76,.14),rgba(13,27,62,.55));border:1px solid rgba(201,168,76,.32);border-radius:20px;padding:2rem;overflow:hidden}
@@ -1425,7 +1431,7 @@
         <!-- Navegación de la WEB (oculta en la PWA instalada, donde manda la barra inferior) -->
         <ul class="nav-links" id="navLinks" role="tablist">
             <li><a href="#" data-navtab="inicio" onclick="showTab('inicio');closeMenu();return false;">Inicio</a></li>
-            <li><a href="/reto" onclick="closeMenu()">Retos <span class="badge-new">NUEVO</span></a></li>
+            <li><a href="/retos" onclick="closeMenu()">Retos <span class="badge-new">NUEVO</span></a></li>
             <li><a href="/devocionales" onclick="closeMenu()">Devocionales</a></li>
             <li><a href="#" data-navtab="biblia" onclick="showTab('biblia');closeMenu();return false;">Biblia</a></li>
             <li><a href="#" data-navtab="buscar" onclick="showTab('buscar');closeMenu();return false;">Buscar</a></li>
@@ -1433,6 +1439,7 @@
             <li><a href="#" data-navtab="yo" onclick="showTab('yo');closeMenu();return false;">Mi perfil</a></li>
         </ul>
         <div class="nav-right">
+            <a href="/retos" class="nav-mobile-retos" aria-label="Nuevo: Retos">🆕 Retos</a>
             <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleMobileMenu()" aria-label="Menú">
                 <div class="mb-bars"><span></span><span></span><span></span></div>
             </button>
@@ -1475,7 +1482,7 @@
     <section class="shw-retos" data-tab="inicio">
         <div class="shw-retos-card">
             <div class="shw-retos-txt">
-                <span class="shw-retos-tag">✨ Nuevo · Reto gratis</span>
+                <span class="shw-retos-tag">🆕 Nuevo contenido: Retos</span>
                 <h2>11 Días, 11 Áreas: renueva tu mente con la Palabra</h2>
                 <p>Un recorrido guiado con audio, oración y versículos para sanar las áreas que más te cuestan: ansiedad, finanzas, identidad, perdón y más. Un correo cada día, a tu ritmo.</p>
                 <a href="/reto" class="shw-retos-btn">🌱 Comenzar el reto</a>
