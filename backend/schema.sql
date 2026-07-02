@@ -93,6 +93,16 @@ CREATE TABLE IF NOT EXISTS content_items (
   creado_en  TEXT    NOT NULL DEFAULT (datetime('now'))
 );
 
+-- ── Reto "11 Días, 11 Áreas" (drip diario por correo, vía Brevo) ──────
+CREATE TABLE IF NOT EXISTS reto11_subscribers (
+  email        TEXT    PRIMARY KEY,
+  current_day  INTEGER NOT NULL DEFAULT 1,  -- próximo día pendiente de enviar (1-11)
+  started_at   TEXT    NOT NULL DEFAULT (datetime('now')),
+  last_sent_at TEXT,
+  active       INTEGER NOT NULL DEFAULT 1,
+  unsub_token  TEXT    NOT NULL
+);
+
 -- ── Después (mismo molde scoped por uid; descomentar al construir cada fase) ──
 -- CREATE TABLE user_notes      ( id INTEGER PRIMARY KEY AUTOINCREMENT, uid TEXT NOT NULL, libro TEXT, capitulo INTEGER, versiculo INTEGER, texto TEXT NOT NULL, creado_en TEXT NOT NULL DEFAULT (datetime('now')) );
 -- CREATE TABLE user_progress   ( uid TEXT NOT NULL, libro TEXT NOT NULL, capitulo INTEGER NOT NULL, posicion REAL DEFAULT 0, actualizado_en TEXT NOT NULL DEFAULT (datetime('now')), PRIMARY KEY (uid, libro) );

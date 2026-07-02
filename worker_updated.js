@@ -176,6 +176,22 @@ const worker_default = {
         const parts = pathname.split("/");
         const mode = url.searchParams.get("modo") || "continuar";
 
+        // Reto 11 Días, 11 Áreas: /reto11/{archivo}.mp3 (passthrough directo a R2)
+        if (parts[0] === "reto11" && parts.length === 2 && /^[\w-]+\.mp3$/.test(parts[1])) {
+            const obj = await env.AUDIO_BUCKET.get(`reto11/${parts[1]}`).catch(() => null);
+            if (!obj) {
+                return new Response(JSON.stringify({ error: "Audio no encontrado", file: parts[1] }),
+                    { status: 404, headers: { ...CORS, "Content-Type": "application/json" } });
+            }
+            const headers = new Headers(CORS);
+            headers.set("Content-Type", obj.httpMetadata?.contentType || "audio/mpeg");
+            headers.set("Accept-Ranges", "bytes");
+            headers.set("Cache-Control", "public, max-age=86400");
+            if (obj.size) headers.set("Content-Length", String(obj.size));
+            if (obj.httpEtag) headers.set("ETag", obj.httpEtag);
+            return new Response(obj.body, { status: 200, headers });
+        }
+
         // Detectar /stream/...
         if (parts[0] === "stream") {
             let prefix = VOICE_PREFIX.rva;

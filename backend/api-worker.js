@@ -890,6 +890,120 @@ async function handleMagicLink(request, env) {
     return json(env, request, { ok: true });
 }
 
+// ── Reto "11 Días, 11 Áreas" (drip diario por correo, vía Brevo) ─────
+// Suscripción pública (sin login): guarda el correo en D1 y manda el día 1
+// al instante. El cron diario (scheduled(), 07:00 UTC) manda el resto, uno
+// por día, hasta el día 11. Audio servido por el worker de audio público:
+// https://sonido-de-vida-audio.sonidodevida.workers.dev/reto11/{archivo}.mp3
+
+const RETO11_AUDIO_BASE = 'https://sonido-de-vida-audio.sonidodevida.workers.dev/reto11';
+const RETO11_SITE_URL = 'https://sonidodevida.com/reto';
+
+const RETO11_DAYS = [
+    { titulo: 'Tierra Extranjera', archivo: 'dia-01-tierra-extranjera.mp3', refVerso: 'Génesis 39:2', verso: 'Jehová estaba con José, y fue varón próspero.' },
+    { titulo: 'Familia Separada', archivo: 'dia-02-familia-separada.mp3', refVerso: 'Génesis 45:8', verso: 'No fuisteis vosotros los que me enviasteis acá, sino Dios.' },
+    { titulo: 'Finanzas y Deudas', archivo: 'dia-03-finanzas-deudas.mp3', refVerso: 'Filipenses 4:19', verso: 'Mi Dios, pues, suplirá todo lo que os falta conforme a sus riquezas en gloria.' },
+    { titulo: 'Ansiedad', archivo: 'dia-04-ansiedad.mp3', refVerso: 'Filipenses 4:6-7', verso: 'Por nada estéis afanosos... y la paz de Dios, que sobrepasa todo entendimiento, guardará vuestros corazones.' },
+    { titulo: 'Acceso a Dios', archivo: 'dia-05-acceso-dios.mp3', refVerso: 'Hebreos 4:16', verso: 'Acerquémonos, pues, confiadamente al trono de la gracia.' },
+    { titulo: 'Identidad', archivo: 'dia-06-identidad.mp3', refVerso: 'Efesios 2:10', verso: 'Porque somos hechura suya, creados en Cristo Jesús para buenas obras.' },
+    { titulo: 'El Pasado y la Culpa', archivo: 'dia-07-pasado-culpa.mp3', refVerso: '2 Corintios 5:17', verso: 'Si alguno está en Cristo, nueva criatura es; las cosas viejas pasaron; he aquí todas son hechas nuevas.' },
+    { titulo: 'Relaciones y Confianza', archivo: 'dia-08-relaciones-confianza.mp3', refVerso: 'Salmo 147:3', verso: 'Él sana a los quebrantados de corazón, y venda sus heridas.' },
+    { titulo: 'Propósito y Llamado', archivo: 'dia-09-proposito-llamado.mp3', refVerso: 'Jeremías 29:11', verso: 'Yo sé los pensamientos que tengo acerca de vosotros, pensamientos de paz, y no de mal.' },
+    { titulo: 'Perdón y Restauración', archivo: 'dia-10-perdon-restauracion.mp3', refVerso: 'Efesios 4:32', verso: 'Perdonándoos unos a otros, como Dios también os perdonó a vosotros en Cristo.' },
+    { titulo: 'Esperanza en la Espera', archivo: 'dia-11-esperanza-espera.mp3', refVerso: 'Isaías 40:31', verso: 'Los que esperan a Jehová tendrán nuevas fuerzas; levantarán alas como las águilas.' },
+];
+
+function reto11Token() {
+    return bytesToB64url(crypto.getRandomValues(new Uint8Array(18)));
+}
+
+function reto11Email(day, unsubToken) {
+    const info = RETO11_DAYS[day - 1];
+    const audioUrl = `${RETO11_AUDIO_BASE}/${info.archivo}`;
+    const unsubUrl = `${RETO11_SITE_URL.replace(/\/reto$/, '')}/api/reto11/unsubscribe?token=${encodeURIComponent(unsubToken)}`;
+    const html = `<!doctype html><html lang="es"><body style="margin:0;background:#0f0d0a;font-family:Arial,Helvetica,sans-serif;color:#e8e2d6">
+  <div style="max-width:480px;margin:0 auto;padding:32px 24px">
+    <p style="font-size:13px;letter-spacing:1px;color:#d9b66b;margin:0 0 6px;text-transform:uppercase">Día ${day} de 11</p>
+    <h1 style="font-size:22px;color:#d9b66b;margin:0 0 16px">${info.titulo}</h1>
+    <p style="font-size:15px;line-height:1.6;color:#e8e2d6;margin:0 0 20px">Hoy le toca a esta área. Tómate unos minutos para escuchar el audio de hoy.</p>
+    <p style="text-align:center;margin:28px 0">
+      <a href="${audioUrl}" style="background:#d9b66b;color:#1a1610;text-decoration:none;font-weight:bold;font-size:16px;padding:14px 28px;border-radius:10px;display:inline-block">Escuchar el día ${day}</a>
+    </p>
+    <blockquote style="border-left:3px solid #d9b66b;margin:24px 0;padding:4px 0 4px 16px;color:#c9c2b4;font-style:italic;font-size:14px">"${info.verso}"<br><span style="color:#7e9bd1;font-style:normal">${info.refVerso}</span></blockquote>
+    <hr style="border:none;border-top:1px solid #2a261f;margin:28px 0">
+    <p style="font-size:12px;line-height:1.6;color:#7c766b;margin:0">Sonido de Vida — Reto 11 Días, 11 Áreas</p>
+    <p style="font-size:11px;line-height:1.6;color:#5c574e;margin:16px 0 0"><a href="${unsubUrl}" style="color:#5c574e">Dejar de recibir estos correos</a></p>
+  </div>
+</body></html>`;
+    const text = `Día ${day} de 11 — ${info.titulo}\n\nEscucha el audio de hoy: ${audioUrl}\n\n"${info.verso}" (${info.refVerso})\n\nSonido de Vida\n\nDejar de recibir: ${unsubUrl}`;
+    return { html, text, subject: `Día ${day}/11 — ${info.titulo}` };
+}
+
+async function sendReto11Email(env, toEmail, day, unsubToken) {
+    if (!env.BREVO_API_KEY) throw new Error('falta BREVO_API_KEY');
+    const { html, text, subject } = reto11Email(day, unsubToken);
+    const res = await fetch('https://api.brevo.com/v3/smtp/email', {
+        method: 'POST',
+        headers: { 'api-key': env.BREVO_API_KEY, 'Content-Type': 'application/json', 'accept': 'application/json' },
+        body: JSON.stringify({
+            sender: { name: 'Sonido de Vida', email: env.SENDER_EMAIL || 'noreply@sonidodevida.com' },
+            to: [{ email: toEmail }],
+            subject,
+            htmlContent: html,
+            textContent: text,
+        }),
+    });
+    if (!res.ok) {
+        const t = await res.text().catch(() => '');
+        throw new Error('Brevo: ' + res.status + ' ' + t.slice(0, 200));
+    }
+}
+
+async function handleReto11Subscribe(request, env) {
+    let body;
+    try { body = await request.json(); } catch { throw { status: 400, msg: 'JSON inválido' }; }
+    const email = String(body.email || '').trim().toLowerCase();
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) throw { status: 400, msg: 'Correo inválido' };
+
+    const existing = await env.DB.prepare('SELECT email, active FROM reto11_subscribers WHERE email = ?').bind(email).first();
+    if (existing) {
+        if (!existing.active) await env.DB.prepare('UPDATE reto11_subscribers SET active = 1 WHERE email = ?').bind(email).run();
+        return json(env, request, { ok: true, ya_inscrito: true });
+    }
+
+    const token = reto11Token();
+    await sendReto11Email(env, email, 1, token);
+    await env.DB.prepare(
+        'INSERT INTO reto11_subscribers (email, current_day, started_at, last_sent_at, active, unsub_token) VALUES (?, 2, datetime(\'now\'), datetime(\'now\'), 1, ?)'
+    ).bind(email, token).run();
+
+    return json(env, request, { ok: true });
+}
+
+async function handleReto11Unsubscribe(env, request, token) {
+    await env.DB.prepare('UPDATE reto11_subscribers SET active = 0 WHERE unsub_token = ?').bind(token).run();
+    return new Response('Listo, no recibirás más correos del reto.', { status: 200, headers: { ...corsHeaders(env, request), 'Content-Type': 'text/plain; charset=utf-8' } });
+}
+
+// Cron diario: manda el siguiente día a quien ya le toca (>= 1 día desde el último envío).
+async function sendReto11DailyEmails(env) {
+    if (!env.BREVO_API_KEY) return; // sin llave configurada, no hace nada
+    const { results } = await env.DB.prepare(
+        `SELECT email, current_day, unsub_token FROM reto11_subscribers
+         WHERE active = 1 AND current_day BETWEEN 1 AND 11
+         AND julianday('now') - julianday(last_sent_at) >= 1`
+    ).all();
+    for (const row of results || []) {
+        try {
+            await sendReto11Email(env, row.email, row.current_day, row.unsub_token);
+            const next = row.current_day + 1;
+            await env.DB.prepare(
+                'UPDATE reto11_subscribers SET current_day = ?, last_sent_at = datetime(\'now\'), active = CASE WHEN ? > 11 THEN 0 ELSE 1 END WHERE email = ?'
+            ).bind(next, next, row.email).run();
+        } catch (e) { console.warn('reto11 email a', row.email, ':', e.message); }
+    }
+}
+
 // ── Métricas: analytics propio (visitas + embudo) y SEO ──────────────
 // Todo best-effort: un fallo de métrica NUNCA debe romper la app del usuario.
 
@@ -1089,6 +1203,7 @@ export default {
         ctx.waitUntil((async () => {
             try { await runSeoSync(env); } catch (e) { console.warn('SEO sync:', e.message); }
             try { await pruneOldMetrics(env); } catch { /* */ }
+            try { await sendReto11DailyEmails(env); } catch (e) { console.warn('reto11 cron:', e.message); }
         })());
     },
 
@@ -1113,6 +1228,14 @@ export default {
             // Endpoint público (sin token): beacon de visitas (anónimo).
             if (path === '/api/track' && request.method === 'POST') {
                 return await handleTrack(request, env);
+            }
+            // Endpoints públicos (sin token): Reto 11 Días, 11 Áreas (drip por correo).
+            if (path === '/api/reto11/subscribe' && request.method === 'POST') {
+                return await handleReto11Subscribe(request, env);
+            }
+            if (path === '/api/reto11/unsubscribe' && request.method === 'GET') {
+                const token = url.searchParams.get('token') || '';
+                return await handleReto11Unsubscribe(env, request, token);
             }
             // Endpoint admin (sin token Firebase; autenticado por X-Admin-Secret):
             // conceder premium permanente sin pago. `return await`: lanza { status }.
