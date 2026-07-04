@@ -742,6 +742,7 @@
         .sp-hint{font-family:'Lora',serif;font-size:.8rem;color:rgba(255,255,255,.45);margin-bottom:1rem}
         /* ── Enseñanza (exposición del versículo) ── */
         .sp-refline{font-family:'Inter',sans-serif;font-size:.66rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(201,168,76,.7);margin:-.6rem 0 1.2rem}
+        .sp-authorline{font-family:'Lora',serif;font-style:italic;font-size:.74rem;color:rgba(255,255,255,.38);margin:-.9rem 0 1.2rem;letter-spacing:.01em}
         .sp-bigidea{background:linear-gradient(135deg,rgba(201,168,76,.12),rgba(201,168,76,.03));border:1px solid rgba(201,168,76,.22);border-radius:16px;padding:1rem 1.15rem;margin-bottom:1.3rem}
         .sp-bigidea-l{display:block;font-family:'Inter',sans-serif;font-size:.6rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-light);margin-bottom:.4rem}
         .sp-bigidea p{font-family:'Lora',serif;font-size:.98rem;line-height:1.55;color:rgba(255,255,255,.9);font-style:italic}
@@ -8414,6 +8415,9 @@
         if(tab==='ensenanza'){
             let html='<div class="sp-verse">"'+sbEsc(d.text)+'"</div>'+
                 '<div class="sp-refline">'+sbEsc(d.ref)+' · Reina-Valera 1909</div>';
+            if(cur && (cur.author||cur.date)){
+                html+='<div class="sp-authorline">✒ '+[cur.author,cur.date].filter(Boolean).map(sbEsc).join(' · ')+'</div>';
+            }
             if(cur && cur.bigIdea){
                 html+='<div class="sp-bigidea"><span class="sp-bigidea-l">La idea central</span><p>'+sbEsc(cur.bigIdea)+'</p></div>';
             }
