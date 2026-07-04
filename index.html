@@ -740,6 +740,20 @@
         .sp-soon p{font-family:'Lora',serif;font-size:.9rem}
         .sp-soon small{display:block;font-family:'Inter',sans-serif;font-size:.74rem;color:rgba(255,255,255,.32);margin-top:.35rem}
         .sp-hint{font-family:'Lora',serif;font-size:.8rem;color:rgba(255,255,255,.45);margin-bottom:1rem}
+        /* ── Enseñanza (exposición del versículo) ── */
+        .sp-refline{font-family:'Inter',sans-serif;font-size:.66rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(201,168,76,.7);margin:-.6rem 0 1.2rem}
+        .sp-bigidea{background:linear-gradient(135deg,rgba(201,168,76,.12),rgba(201,168,76,.03));border:1px solid rgba(201,168,76,.22);border-radius:16px;padding:1rem 1.15rem;margin-bottom:1.3rem}
+        .sp-bigidea-l{display:block;font-family:'Inter',sans-serif;font-size:.6rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-light);margin-bottom:.4rem}
+        .sp-bigidea p{font-family:'Lora',serif;font-size:.98rem;line-height:1.55;color:rgba(255,255,255,.9);font-style:italic}
+        .sp-teach p{font-family:'Lora',serif;font-size:.95rem;line-height:1.75;color:rgba(255,255,255,.82);margin-bottom:1rem}
+        .sp-teach p:first-child::first-letter{font-family:'Cinzel',serif;font-size:2.7rem;float:left;line-height:.8;padding:.35rem .5rem 0 0;color:var(--gold)}
+        .sp-apply{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-left:3px solid var(--gold);border-radius:0 14px 14px 0;padding:1.05rem 1.2rem;margin:1.4rem 0 1rem}
+        .sp-apply-l{display:block;font-family:'Inter',sans-serif;font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gold-light);margin-bottom:.55rem}
+        .sp-apply p{font-family:'Lora',serif;font-size:.92rem;line-height:1.65;color:rgba(255,255,255,.78);margin-bottom:.6rem}
+        .sp-apply p:last-child{margin-bottom:0}
+        .sp-prayer{background:linear-gradient(135deg,rgba(201,168,76,.07),transparent);border:1px solid rgba(201,168,76,.16);border-radius:16px;padding:1.05rem 1.2rem;margin-top:1rem}
+        .sp-prayer-l{display:block;font-family:'Inter',sans-serif;font-size:.72rem;font-weight:700;color:var(--gold-light);margin-bottom:.5rem}
+        .sp-prayer p{font-family:'Lora',serif;font-style:italic;font-size:.92rem;line-height:1.65;color:rgba(255,255,255,.8)}
 
         /* ════════ Pestaña Yo ════════ */
         .yo-section{padding:4.5rem 1.5rem 3rem;background:linear-gradient(135deg,#14142e 0%,var(--dark) 100%);min-height:80vh}
@@ -2615,7 +2629,8 @@
                 <button class="sb-panel-x" onclick="closeStudy()" aria-label="Cerrar">✕</button>
             </div>
             <div class="sb-panel-tabs" id="spTabs">
-                <button class="sp-tab active" data-tab="contexto" onclick="sbStudyTab(this)">📍 Contexto</button>
+                <button class="sp-tab active" data-tab="ensenanza" onclick="sbStudyTab(this)">📖 Enseñanza</button>
+                <button class="sp-tab" data-tab="contexto" onclick="sbStudyTab(this)">📍 Contexto</button>
                 <button class="sp-tab" data-tab="conexiones" onclick="sbStudyTab(this)">🔗 Conexiones</button>
                 <button class="sp-tab" data-tab="palabra" onclick="sbStudyTab(this)">🔤 Palabra original</button>
                 <button class="sp-tab" data-tab="versiones" onclick="sbStudyTab(this)">📚 Versiones</button>
@@ -2623,7 +2638,8 @@
             </div>
         </div>
         <div class="sb-panel-body">
-            <div class="sp-pane active" id="pane-contexto"></div>
+            <div class="sp-pane active" id="pane-ensenanza"></div>
+            <div class="sp-pane" id="pane-contexto"></div>
             <div class="sp-pane" id="pane-conexiones"></div>
             <div class="sp-pane" id="pane-palabra"></div>
             <div class="sp-pane" id="pane-versiones"></div>
@@ -8209,7 +8225,11 @@
     // Se irá ampliando con el tiempo. Para versículos sin curaduría se usa
     // el modo "próximamente" + versiones reales + reflexión.
     const CURATED = {
-        'juan 3:16':{tags:['promesa','amor','salvación'],author:'Juan el apóstol',date:'c. 85-90 d.C.',audience:'Cristianos de Éfeso',location:'Éfeso',occasion:'Jesús hablando con Nicodemo, un fariseo que vino de noche. Este versículo resume todo el evangelio en una sola frase.',background:'Nicodemo era un líder religioso que reconocía que Jesús venía de Dios pero no entendía el nuevo nacimiento. Jesús le explica la necesidad del nacimiento espiritual y la magnitud del amor de Dios.',geo:'Jerusalén, en una casa donde Jesús se reunía con Nicodemo en secreto.',connections:[{ref:'Juan 1:12',text:'Mas a todos los que le recibieron, a los que creen en su nombre, les dio potestad de ser hechos hijos de Dios.'},{ref:'Romanos 5:8',text:'Mas Dios muestra su amor para con nosotros, en que siendo aún pecadores, Cristo murió por nosotros.'},{ref:'1 Juan 4:9',text:'En esto se mostró el amor de Dios para con nosotros, en que Dios envió a su Hijo unigénito al mundo, para que vivamos por él.'},{ref:'Romanos 6:23',text:'Porque la paga del pecado es muerte, mas la dádiva de Dios es vida eterna en Cristo Jesús Señor nuestro.'}],words:[{es:'amó',or:'ἀγαπάω (agapaō)',meaning:'Amor incondicional, sacrificial, de elección. No es amor emocional sino de voluntad. Es el amor más profundo del griego.',strong:'G25'},{es:'mundo',or:'κόσμος (kosmos)',meaning:'No solo el planeta sino el sistema humano caído, la humanidad en su estado de rebelión. Dios amó incluso a los que le rechazaban.',strong:'G2889'},{es:'unigénito',or:'μονογενής (monogenēs)',meaning:'Único de su clase. Indica una relación especial y exclusiva. No significa "único nacido" sino "único en su género".',strong:'G3439'}],questions:['¿Qué significa para ti que Dios amó "al mundo" entero, incluyendo a personas que podrían considerarse indignas?','Si creer en Jesús es la condición para la vida eterna, ¿qué significa realmente "creer" en tu vida diaria?','Jesús dijo esto a alguien con conocimiento religioso pero al que le faltaba algo esencial. ¿Puede el conocimiento religioso ser un obstáculo para la fe verdadera?']},
+        'juan 3:16':{bigIdea:'El amor de Dios no es un sentimiento distante: se demostró en la entrega concreta de su Hijo, para que cualquiera que crea tenga vida que la muerte no puede tocar.',exposition:['Se ha llamado a este versículo "el evangelio en miniatura", y con razón: en una sola frase Jesús condensa el corazón entero de Dios. Lo dice de noche, a Nicodemo, un hombre religioso que sabía mucho de Dios pero no lo conocía. Y empieza por lo único que lo explica todo: "De tal manera amó Dios". No dice cuánto, dice de qué manera. El amor de Dios no se mide en cantidad, sino en la forma que tomó: la entrega de su propio Hijo.',
+        'Fíjate en el objeto de ese amor: "al mundo". No a los buenos, no a los que lo buscaban, sino al mundo entero en su rebeldía —el mismo mundo que lo rechazaría. Ahí está la ofensa gloriosa del evangelio: Dios amó primero, cuando nada en nosotros lo merecía. El amor humano busca lo amable; el amor de Dios crea valor donde no lo había.',
+        '"Que ha dado a su Hijo unigénito." El verbo es "dar", y apunta a la cruz. Pero recuerda: aquel Hijo entregado no quedó en la tumba. Al tercer día resucitó, y por eso esta promesa tiene poder hoy —no adoramos a un mártir, sino a un Salvador vivo. La vida eterna que ofrece no es una teoría: brota de un sepulcro vacío.',
+        'Y la puerta es sorprendentemente ancha: "todo aquel que en él cree". No dice el que lo merezca, el que sea digno o el que cumpla. Dice el que cree —el que deja de confiar en sí mismo y se apoya por completo en Cristo. Frente a esa fe, Dios pone dos destinos: "no se pierda, mas tenga vida eterna". No hay tercera opción, y no hay excepciones para quien cree.'],application:['Nicodemo tenía religión, pero le faltaba vida. Pregúntate con honestidad si tu fe es información sobre Dios o confianza en Dios. Creer, en el sentido de este versículo, es descansar el peso entero de tu vida sobre Cristo.',
+        'Cuando dudes de que Dios te ama, no mires tus sentimientos ni tus circunstancias: mira la cruz y la tumba vacía. Ahí quedó demostrado, de una vez para siempre, "de tal manera".'],prayer:'Padre, gracias porque me amaste cuando yo aún no te buscaba, y entregaste a tu Hijo para darme vida. Ayúdame a no solo saber de ti, sino a confiar en ti de verdad. En el nombre de Jesús resucitado, amén.',tags:['promesa','amor','salvación'],author:'Juan el apóstol',date:'c. 85-90 d.C.',audience:'Cristianos de Éfeso',location:'Éfeso',occasion:'Jesús hablando con Nicodemo, un fariseo que vino de noche. Este versículo resume todo el evangelio en una sola frase.',background:'Nicodemo era un líder religioso que reconocía que Jesús venía de Dios pero no entendía el nuevo nacimiento. Jesús le explica la necesidad del nacimiento espiritual y la magnitud del amor de Dios.',geo:'Jerusalén, en una casa donde Jesús se reunía con Nicodemo en secreto.',connections:[{ref:'Juan 1:12',text:'Mas a todos los que le recibieron, a los que creen en su nombre, les dio potestad de ser hechos hijos de Dios.'},{ref:'Romanos 5:8',text:'Mas Dios muestra su amor para con nosotros, en que siendo aún pecadores, Cristo murió por nosotros.'},{ref:'1 Juan 4:9',text:'En esto se mostró el amor de Dios para con nosotros, en que Dios envió a su Hijo unigénito al mundo, para que vivamos por él.'},{ref:'Romanos 6:23',text:'Porque la paga del pecado es muerte, mas la dádiva de Dios es vida eterna en Cristo Jesús Señor nuestro.'}],words:[{es:'amó',or:'ἀγαπάω (agapaō)',meaning:'Amor incondicional, sacrificial, de elección. No es amor emocional sino de voluntad. Es el amor más profundo del griego.',strong:'G25'},{es:'mundo',or:'κόσμος (kosmos)',meaning:'No solo el planeta sino el sistema humano caído, la humanidad en su estado de rebelión. Dios amó incluso a los que le rechazaban.',strong:'G2889'},{es:'unigénito',or:'μονογενής (monogenēs)',meaning:'Único de su clase. Indica una relación especial y exclusiva. No significa "único nacido" sino "único en su género".',strong:'G3439'}],questions:['¿Qué significa para ti que Dios amó "al mundo" entero, incluyendo a personas que podrían considerarse indignas?','Si creer en Jesús es la condición para la vida eterna, ¿qué significa realmente "creer" en tu vida diaria?','Jesús dijo esto a alguien con conocimiento religioso pero al que le faltaba algo esencial. ¿Puede el conocimiento religioso ser un obstáculo para la fe verdadera?']},
         'salmos 23:1':{tags:['promesa','consuelo','confianza'],author:'Rey David',date:'c. 1000 a.C.',audience:'Congregación de Israel / devoción personal',location:'Judea',occasion:'David reflexiona sobre su experiencia como pastor de ovejas y aplica esa relación a Dios. Probablemente escrito en sus últimos años, mirando atrás a toda una vida de provisión divina.',background:'David conocía íntimamente el oficio del pastor: guiar a las ovejas a pastos verdes, protegerlas de depredadores, buscar las perdidas. Usa esta metáfora poderosa para describir el cuidado total de Dios.',geo:'Los campos de Judea, donde David pastoreaba las ovejas de su padre Isaí.',connections:[{ref:'Juan 10:11',text:'Yo soy el buen pastor; el buen pastor su vida da por las ovejas.'},{ref:'Isaias 40:11',text:'Como pastor apacentará su rebaño; en su brazo llevará los corderos, y en su seno los llevará.'},{ref:'Salmos 34:10',text:'Los leoncillos necesitan, y tienen hambre; pero los que buscan a Jehová no tendrán falta de ningún bien.'},{ref:'Filipenses 4:19',text:'Mi Dios, pues, suplirá todo lo que os falta conforme a sus riquezas en gloria en Cristo Jesús.'}],words:[{es:'Jehová',or:'יהוה (YHWH)',meaning:'El nombre personal de Dios, el nombre del pacto. Significa "YO SOY EL QUE SOY". Es el Dios que se relaciona personalmente con su pueblo.',strong:'H3068'},{es:'pastor',or:'רֹעִי (roʿi)',meaning:'El que pastorea, cuida y guía. Implica provisión total: alimento, protección, dirección, corrección. Es una relación íntima y personal.',strong:'H7462'},{es:'faltará',or:'חָסֵר (chaser)',meaning:'Faltar, carecer, disminuir. La negación absoluta "nada me faltará" es una declaración radical de confianza total en la provisión de Dios.',strong:'H2637'}],questions:['David dice "mi" pastor, no "el" pastor. ¿Cómo cambia tu perspectiva pasar de conocer a Dios como "el Señor" a conocerlo como "mi Señor"?','¿Hay áreas en tu vida donde sientes que te "falta" algo? ¿Qué afirma este versículo sobre esas áreas?','David escribió esto desde su experiencia como pastor. ¿Qué "trabajo de pastor" reconoces que Dios ha hecho en tu vida?']},
         'isaias 41:10':{tags:['consuelo','temor','fuerza'],author:'Profeta Isaías',date:'c. 700 a.C.',audience:'Israel ante el exilio en Babilonia',location:'Jerusalén / Babilonia',occasion:'Dios habla a Israel que enfrenta el exilio babilónico. El pueblo está aterrorizado ante las naciones poderosas. Dios les recuerda que Él está con ellos y es más poderoso que cualquier imperio.',background:'Isaías profetiza antes del exilio, preparando al pueblo para la crisis que viene. Este versículo es parte de un discurso de consolación donde Dios repite "no temas" múltiples veces.',geo:'Desde Jerusalén, mirando hacia el futuro exilio en Babilonia (actual Irak).',connections:[{ref:'Deuteronomio 31:6',text:'Esforzaos y cobrad ánimo; no temáis, ni tengáis miedo de ellos, porque Jehová tu Dios es el que va contigo.'},{ref:'Josue 1:9',text:'Mira que te mando que te esfuerces y seas valiente; no temas ni desmayes, porque Jehová tu Dios estará contigo dondequiera que vayas.'},{ref:'Mateo 28:20',text:'Yo estoy con vosotros todos los días, hasta el fin del mundo.'},{ref:'Hebreos 13:5',text:'No te desampararé, ni te dejaré.'}],words:[{es:'temas',or:'יָרֵא (yare)',meaning:'Temer, estar aterrorizado. Aquí es miedo paralizante, no reverencia. Dios ordena dejar de estar aterrorizado.',strong:'H3372'},{es:'estoy contigo',or:'עִמָּךְ (ʿimmak)',meaning:'Literalmente "contigo". Es la presencia personal de Dios. No está lejos observando: está al lado, en la trinchera.',strong:'H5973'},{es:'diestra',or:'יָמִין (yamin)',meaning:'La mano derecha, símbolo de poder, honor y fidelidad. La "diestra de justicia" significa que su poder está respaldado por su carácter justo.',strong:'H3225'}],questions:['Dios dice "no temas" y luego da razones. ¿Cuál de esas razones resuena más con tu situación actual?','¿Qué diferencia hay entre "no sentir miedo" y "no temer"? ¿Es posible no temer y aun así sentir miedo?','La frase "siempre te ayudaré": ¿puedes identificar momentos pasados donde ahora reconoces que Dios te sostuvo?']},
         'romanos 8:28':{tags:['promesa','consuelo','fe'],author:'Apóstol Pablo',date:'c. 57 d.C.',audience:'Cristianos en Roma',location:'Corinto (escrito desde ahí)',occasion:'Pablo escribe a una iglesia con tensiones entre judíos y gentiles, y posible persecución. Este versículo es el clímax de una sección sobre el sufrimiento y la esperanza.',background:'Pablo no dice que "todas las cosas son buenas" sino que Dios obra EN todas las cosas para bien. Incluso el sufrimiento, la persecución y las dificultades son instrumentos en sus manos.',geo:'Escrito desde Corinto, enviado a Roma.',connections:[{ref:'Genesis 50:20',text:'Vosotros pensasteis mal contra mí, mas Dios lo encaminó a bien.'},{ref:'Jeremias 29:11',text:'Porque yo sé los pensamientos que tengo acerca de vosotros, dice Jehová, pensamientos de paz.'},{ref:'Filipenses 1:6',text:'El que comenzó en vosotros la buena obra, la perfeccionará hasta el día de Jesucristo.'},{ref:'2 Corintios 4:17',text:'Porque esta leve tribulación momentánea produce en nosotros un cada vez más excelente y eterno peso de gloria.'}],words:[{es:'sabemos',or:'οἴδαμεν (oidamen)',meaning:'No es "creemos" sino "sabemos". Es certeza, no esperanza. Pablo habla de una convicción firme basada en el carácter de Dios.',strong:'G1492'},{es:'todas las cosas',or:'πάντα (panta)',meaning:'Literalmente TODO. No solo lo bueno, también el dolor, la pérdida, la enfermedad. Nada queda fuera del alcance soberano de Dios.',strong:'G3956'},{es:'propósito',or:'πρόθεσις (prothesis)',meaning:'Plan determinado de antemano. No es improvisado sino un propósito eterno que Dios diseñó antes de la fundación del mundo.',strong:'G4286'}],questions:['¿Te cuesta creer que "todas las cosas" incluyen las experiencias dolorosas? ¿Qué te ayuda a confiar en eso?','Pablo dice "a los que aman a Dios". ¿Es una condición o una descripción?','¿Recuerdas una situación difícil que, mirando atrás, ves que Dios usó para bien?']},
@@ -8356,19 +8376,15 @@
     // ── Panel de Estudio Profundo (premium) ──
     function sbIsPremium(){ return !!(window.SDV_Auth && window.SDV_Auth.premium); }
     async function openStudy(book, chapter, verse, text){
-        if(!sbIsPremium()){
-            if(window.Focus && Focus.openTeaser) Focus.openTeaser();
-            else if(window.showToast) showToast('El Estudio Bíblico es una función premium ✨');
-            return;
-        }
+        // El Estudio Bíblico es GRATIS (sin muro premium): accesible para todos.
         sbStudyData={ book, chapter:+chapter, verse:+verse, text:text||'', ref:book+' '+chapter+':'+verse, versions:null };
         document.getElementById('spRef').textContent=sbStudyData.ref;
         document.getElementById('spTest').textContent=NT_BOOKS.has(book)?'Nuevo Testamento':'Antiguo Testamento';
         document.querySelectorAll('.sp-tab').forEach(t=>t.classList.remove('active'));
-        const first=document.querySelector('.sp-tab[data-tab="contexto"]'); if(first) first.classList.add('active');
-        ['contexto','conexiones','palabra','versiones','reflexion'].forEach(sbRenderStudy);
+        const first=document.querySelector('.sp-tab[data-tab="ensenanza"]'); if(first) first.classList.add('active');
+        ['ensenanza','contexto','conexiones','palabra','versiones','reflexion'].forEach(sbRenderStudy);
         document.querySelectorAll('.sp-pane').forEach(p=>p.classList.remove('active'));
-        document.getElementById('pane-contexto').classList.add('active');
+        document.getElementById('pane-ensenanza').classList.add('active');
         document.getElementById('studyOverlay').classList.add('open');
         document.getElementById('studyPanel').classList.add('open');
         document.body.style.overflow='hidden';
@@ -8394,7 +8410,28 @@
         const d=sbStudyData; if(!d) return;
         const cur=CURATED[_sAccents(d.ref).toLowerCase()];
         const pane=document.getElementById('pane-'+tab); if(!pane) return;
-        if(tab==='contexto'){
+        const _paras=(v)=>Array.isArray(v)?v:String(v||'').split(/\n\n+/);
+        if(tab==='ensenanza'){
+            let html='<div class="sp-verse">"'+sbEsc(d.text)+'"</div>'+
+                '<div class="sp-refline">'+sbEsc(d.ref)+' · Reina-Valera 1909</div>';
+            if(cur && cur.bigIdea){
+                html+='<div class="sp-bigidea"><span class="sp-bigidea-l">La idea central</span><p>'+sbEsc(cur.bigIdea)+'</p></div>';
+            }
+            if(cur && cur.exposition){
+                html+='<div class="sp-teach">'+_paras(cur.exposition).map(p=>'<p>'+sbEsc(p)+'</p>').join('')+'</div>';
+                if(cur.application){
+                    html+='<div class="sp-apply"><span class="sp-apply-l">✦ Para tu vida hoy</span>'+
+                        _paras(cur.application).map(p=>'<p>'+sbEsc(p)+'</p>').join('')+'</div>';
+                }
+                if(cur.prayer){
+                    html+='<div class="sp-prayer"><span class="sp-prayer-l">🙏 Oración</span><p>'+sbEsc(cur.prayer)+'</p></div>';
+                }
+            } else {
+                html+=sbSoon('Estamos escribiendo la enseñanza completa de este versículo. Mientras tanto, revisa <b>Contexto</b>, <b>Conexiones</b> y <b>Reflexión</b>.');
+            }
+            pane.innerHTML=html;
+        }
+        else if(tab==='contexto'){
             let tags;
             if(cur){ tags=cur.tags.map(t=>'<span class="sr-tag tag-'+_sAccents(t).toLowerCase()+'">'+t+'</span>').join(''); }
             else { tags='<span class="sr-tag '+(NT_BOOKS.has(d.book)?'tag-fe':'tag-promesa')+'">'+(NT_BOOKS.has(d.book)?'Nuevo Testamento':'Antiguo Testamento')+'</span>'; }
