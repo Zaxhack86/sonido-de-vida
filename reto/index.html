@@ -59,8 +59,8 @@
     .side-ticker-right { right:0; width:calc(50% - 320px); text-align:left; }
     .side-ticker-track { position:absolute; top:0; left:0; width:100%; animation:sideScroll 140s linear infinite; }
     .side-ticker-right .side-ticker-track { animation-direction:reverse; }
-    .side-ticker-item { padding:20px 22px; font-size:12px; line-height:1.55; color:rgba(201,168,76,0.32); font-style:italic; }
-    .side-ticker-item b { display:block; color:rgba(201,168,76,0.5); font-style:normal; font-weight:bold; font-size:11px; letter-spacing:.5px; margin-bottom:3px; }
+    .side-ticker-item { padding:20px 22px; font-size:13px; line-height:1.55; color:rgba(201,168,76,0.32); font-style:italic; }
+    .side-ticker-item b { display:block; color:rgba(201,168,76,0.5); font-style:normal; font-weight:bold; font-size:12px; letter-spacing:.5px; margin-bottom:3px; }
     @keyframes sideScroll { from{ transform:translateY(0); } to{ transform:translateY(-50%); } }
     @media (min-width:1000px){ .side-ticker{ display:block; } }
 
@@ -71,7 +71,7 @@
       border-bottom: 1px solid rgba(201,168,76,0.18);
       padding: 10px 16px;
     }
-    .topbar-row { display: flex; justify-content: space-between; align-items: center; font-size: 11px; color:#7a8ea8; letter-spacing:1px; text-transform:uppercase; margin-bottom:6px; }
+    .topbar-row { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color:#7a8ea8; letter-spacing:1px; text-transform:uppercase; margin-bottom:6px; }
     .topbar-row .brand { color:#c9a84c; font-weight:bold; letter-spacing:1.5px; }
     .topbar-row .day { color:#f0ead8; }
     .progress-track { height:3px; background:rgba(255,255,255,0.08); border-radius:2px; overflow:hidden; }
@@ -144,7 +144,7 @@
     input[type=email]::placeholder { color:#7a8ea8; }
 
     /* ---------- TYPOGRAPHY ---------- */
-    .lbl { font-size:11px; font-weight:bold; letter-spacing:1.2px; text-transform:uppercase; display:block; margin-bottom:8px; }
+    .lbl { font-size:12px; font-weight:bold; letter-spacing:1.2px; text-transform:uppercase; display:block; margin-bottom:8px; }
     .gold { color:#c9a84c; } .muted { color:#7a8ea8; } .cream { color:#f0ead8; }
     .v-ref { color:#c9a84c; font-size:14px; font-weight:bold; margin-bottom:3px; }
     .v-txt { color:#9aa8b8; font-size:14px; font-style:italic; line-height:1.55; margin-bottom:12px; }
@@ -152,11 +152,11 @@
     .v-text-col { flex:1; }
     .app-line { border-top:1px solid rgba(201,168,76,0.25); padding-top:12px; margin-top:12px; color:#e8d48b; font-size:14px; font-style:italic; }
     .s-card { background:rgba(255,255,255,0.05); border:1px solid rgba(201,168,76,0.2); border-radius:14px; padding:14px 16px; margin-bottom:14px; }
-    .s-belief { color:#9aa8b8; font-size:13px; margin-bottom:10px; line-height:1.45; }
-    .s-verse  { color:#7a8ea8; font-size:13px; font-style:italic; line-height:1.45; }
+    .s-belief { color:#9aa8b8; font-size:14px; margin-bottom:10px; line-height:1.45; }
+    .s-verse  { color:#7a8ea8; font-size:14px; font-style:italic; line-height:1.45; }
     .s-ref-box { background:rgba(255,255,255,0.04); border-left:3px solid rgba(255,255,255,0.15); border-radius:8px; padding:8px 12px; margin-bottom:10px; }
     .s-dec-box { background:rgba(201,168,76,0.12); border-left:3px solid #c9a84c; border-radius:8px; padding:10px 12px; margin-top:10px; }
-    .hint { color:#7a8ea8; font-size:12px; margin-top:5px; }
+    .hint { color:#7a8ea8; font-size:13px; margin-top:5px; }
     .center { text-align:center; }
     .info-list { color:#7a8ea8; font-size:14px; line-height:2.1; text-align:left; margin-top:14px; }
 
@@ -175,7 +175,7 @@
     }
     .audio-meta { flex:1; min-width:0; }
     .audio-title { color:#f0ead8; font-size:14px; font-weight:bold; margin-bottom:2px; }
-    .audio-sub { color:#7a8ea8; font-size:12px; }
+    .audio-sub { color:#7a8ea8; font-size:13px; }
     .audio-controls { display:flex; align-items:center; gap:12px; }
     .audio-play {
       width:42px; height:42px; border-radius:50%; flex-shrink:0;
@@ -189,15 +189,15 @@
     }
     .audio-bar { flex:1; height:4px; background:rgba(255,255,255,0.1); border-radius:2px; position:relative; overflow:hidden; }
     .audio-bar-fill { position:absolute; left:0; top:0; height:100%; width:0%; background:#c9a84c; border-radius:2px; transition:width .1s linear; }
-    .audio-time { color:#7a8ea8; font-size:11px; font-family:monospace; margin-left:8px; min-width:70px; text-align:right; }
-    .audio-status { color:#7a8ea8; font-size:11px; margin-top:10px; font-style:italic; }
+    .audio-time { color:#7a8ea8; font-size:12px; font-family:monospace; margin-left:8px; min-width:70px; text-align:right; }
+    .audio-status { color:#7a8ea8; font-size:12px; margin-top:10px; font-style:italic; }
     .audio-status.live { color:#e8d48b; }
 
     /* ---------- VERSE AUDIO CHIPS ---------- */
     .verse-chip {
       display:inline-flex; align-items:center; gap:6px;
       background:rgba(201,168,76,0.10); border:1px solid rgba(201,168,76,0.25);
-      color:#c9a84c; font-size:11px; padding:4px 10px; border-radius:20px;
+      color:#c9a84c; font-size:12px; padding:4px 10px; border-radius:20px;
       cursor:pointer; margin-left:8px; vertical-align:middle;
     }
     .verse-chip:hover { background:rgba(201,168,76,0.2); }
@@ -221,7 +221,7 @@
     .rec-play-row { display:flex; gap:8px; justify-content:center; margin-top:10px; }
     .rec-play-row button {
       background:rgba(201,168,76,0.15); border:1px solid rgba(201,168,76,0.3);
-      color:#c9a84c; padding:8px 14px; border-radius:20px; font-size:12px; cursor:pointer;
+      color:#c9a84c; padding:8px 14px; border-radius:20px; font-size:13px; cursor:pointer;
     }
     .rec-timer { color:#c9a84c; font-family:monospace; font-size:14px; margin-top:6px; }
 
@@ -229,7 +229,7 @@
     #toast {
       position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
       background:rgba(20,32,46,0.96); border:1px solid rgba(201,168,76,0.4);
-      color:#f0ead8; padding:12px 20px; border-radius:30px; font-size:13px;
+      color:#f0ead8; padding:12px 20px; border-radius:30px; font-size:14px;
       z-index:200; opacity:0; transition:opacity .3s, bottom .3s; pointer-events:none;
       max-width:90vw; text-align:center;
     }
@@ -239,7 +239,7 @@
     .day-badge {
       display:inline-block; background:rgba(201,168,76,0.15);
       border:1px solid rgba(201,168,76,0.3); color:#c9a84c;
-      font-size:11px; padding:3px 10px; border-radius:20px; letter-spacing:1px;
+      font-size:12px; padding:3px 10px; border-radius:20px; letter-spacing:1px;
       text-transform:uppercase; font-weight:bold; margin-bottom:8px;
     }
 
@@ -247,7 +247,7 @@
     .share-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px; }
     .share-btn {
       background:rgba(255,255,255,0.05); border:1px solid rgba(201,168,76,0.2);
-      border-radius:12px; padding:14px 10px; color:#f0ead8; font-size:13px;
+      border-radius:12px; padding:14px 10px; color:#f0ead8; font-size:14px;
       cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:6px;
     }
     .share-btn .ic { font-size:22px; }
@@ -641,9 +641,9 @@ function makeRecorder(areaId){
 
   return `<div class="recorder" id="${id}">
     <button class="rec-btn" title="Grabar mi declaración">🎤</button>
-    <div class="rec-timer muted" style="font-size:12px">Toca para grabar tu declaración en tu propia voz</div>
+    <div class="rec-timer muted" style="font-size:13px">Toca para grabar tu declaración en tu propia voz</div>
     <div class="rec-play-row"></div>
-    <div class="muted" style="font-size:11px;margin-top:10px;line-height:1.5">🔒 Se guarda solo en este dispositivo. Nunca sube a la nube ni se comparte.</div>
+    <div class="muted" style="font-size:12px;margin-top:10px;line-height:1.5">🔒 Se guarda solo en este dispositivo. Nunca sube a la nube ni se comparte.</div>
   </div>`;
 }
 
@@ -921,7 +921,7 @@ function rWelcome(){
 
 ${resume ? `<button class="btn-ghost" style="max-width:340px;margin-bottom:12px" data-a="resume">↩ Continuar (día ${S.done.length+1} de 11)</button>` : ''}
 <button class="btn-start" data-a="start">${resume?'Reiniciar recorrido':'Comenzar los 11 días'}</button>
-<p class="muted" style="font-size:11px;margin-top:14px;max-width:300px">Tu progreso se guarda automáticamente en este dispositivo.</p>
+<p class="muted" style="font-size:12px;margin-top:14px;max-width:300px">Tu progreso se guarda automáticamente en este dispositivo.</p>
 </div>`;
 }
 
@@ -932,9 +932,9 @@ function rAreas(){
     return `<button class="area-btn${done?' done':''}${locked?' locked':''}" data-a="area" data-idx="${idx}"${locked?' disabled':''}>
 <span style="font-size:24px">${done?'✅':ar.icon}</span>
 <div style="flex:1">
-  <div style="font-size:11px;color:#c9a84c;letter-spacing:1px;text-transform:uppercase">Día ${idx+1}</div>
+  <div style="font-size:12px;color:#c9a84c;letter-spacing:1px;text-transform:uppercase">Día ${idx+1}</div>
   <div style="font-size:15px;font-weight:bold;color:${done?'#70cc70':'#f0ead8'}">${esc(ar.title)}</div>
-  <div class="muted" style="font-size:13px;margin-top:2px">${done?'Completado':esc(ar.subtitle)}</div>
+  <div class="muted" style="font-size:14px;margin-top:2px">${done?'Completado':esc(ar.subtitle)}</div>
 </div>
 ${!done?'<span style="color:#c9a84c;font-size:22px;margin-left:auto">›</span>':''}
 </button>`;
@@ -944,7 +944,7 @@ ${!done?'<span style="color:#c9a84c;font-size:22px;margin-left:auto">›</span>'
 <div class="center" style="margin-bottom:20px">
   <span class="day-badge">Día ${Math.min(S.done.length+1,11)} de 11</span>
   <h2 class="gold" style="margin-bottom:4px">Elige tu Área</h2>
-  <p class="muted" style="font-size:13px">${S.done.length} de ${AREAS.length} áreas completadas</p>
+  <p class="muted" style="font-size:14px">${S.done.length} de ${AREAS.length} áreas completadas</p>
 </div>
 ${btns}
 ${S.done.length===AREAS.length?'<button class="btn-gold" style="margin-top:14px" data-a="summary">📄 Ver mi Plan de Renovación →</button>':''}
@@ -958,13 +958,13 @@ function rQuestion(){
   const opts = ar.options.map((o,i)=>`<button class="opt${S.option===o?' sel':''}" data-a="opt" data-i="${i}">${esc(o)}</button>`).join('');
   const refBlock = S.option ? `<div style="margin-bottom:20px">
 <span class="lbl gold">✍️ Mi Experiencia Personal</span>
-<p class="muted" style="font-size:13px;line-height:1.5;margin-bottom:8px">Describe con tus palabras cómo se manifiesta esto en tu vida. Cuándo aparece, en qué situaciones.</p>
+<p class="muted" style="font-size:14px;line-height:1.5;margin-bottom:8px">Describe con tus palabras cómo se manifiesta esto en tu vida. Cuándo aparece, en qué situaciones.</p>
 <textarea id="rta" rows="4" placeholder="Escribe aquí... (opcional)"></textarea>
 <p class="hint">Este espacio es solo tuyo. Se guarda en tu dispositivo y en tu PDF final.</p></div>` : '';
   return `<div class="screen">
 <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px">
 <button class="btn-back" data-a="back">←</button>
-<div><div style="font-size:11px;color:#c9a84c;letter-spacing:1px;text-transform:uppercase">Día ${S.areaIdx+1} de 11</div><div class="gold" style="font-size:17px">${ar.icon} ${esc(ar.title)}</div><div class="muted" style="font-size:12px">${esc(ar.subtitle)}</div></div>
+<div><div style="font-size:12px;color:#c9a84c;letter-spacing:1px;text-transform:uppercase">Día ${S.areaIdx+1} de 11</div><div class="gold" style="font-size:17px">${ar.icon} ${esc(ar.title)}</div><div class="muted" style="font-size:13px">${esc(ar.subtitle)}</div></div>
 </div>
 <div class="card" style="margin-bottom:18px"><p class="cream" style="font-size:17px;line-height:1.65">${esc(ar.question)}</p></div>
 <div style="margin-bottom:22px">${opts}</div>
@@ -989,7 +989,7 @@ function rResult(){
   return `<div class="screen">
 <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
 <button class="btn-back" data-a="back">←</button>
-<span class="muted" style="font-size:12px">Salir y terminar esta área después</span>
+<span class="muted" style="font-size:13px">Salir y terminar esta área después</span>
 </div>
 <div class="center" style="margin-bottom:16px">
   <span class="day-badge">Día ${S.areaIdx+1} de 11</span>
@@ -1022,12 +1022,12 @@ function rResult(){
 <div class="card">
   <span class="lbl gold">🙏 Oración Guiada</span>
   ${makeAudioPlayer('https://sonido-de-vida-audio.sonidodevida.workers.dev/reto11/oracion-'+ar.id+'.mp3','Oración · '+ar.title,'~1 min · Escucha y ora con nosotros')}
-  <p class="muted" style="font-size:13px;line-height:1.65;font-style:italic;margin-top:10px">${esc(ar.prayer)}</p>
+  <p class="muted" style="font-size:14px;line-height:1.65;font-style:italic;margin-top:10px">${esc(ar.prayer)}</p>
 </div>
 
 <div style="margin-bottom:24px">
   <span class="lbl gold">🙏 Mi Declaración Personal</span>
-  <p class="muted" style="font-size:13px;line-height:1.5;margin-bottom:8px">Basado en la verdad bíblica, escribe lo que quieres declarar.</p>
+  <p class="muted" style="font-size:14px;line-height:1.5;margin-bottom:8px">Basado en la verdad bíblica, escribe lo que quieres declarar.</p>
   <textarea id="dta" rows="5" placeholder='Ej: "Yo declaro que Dios está conmigo aunque esté lejos..."'></textarea>
   <p class="hint">Tu declaración se guardará en tu PDF final.</p>
 
@@ -1044,9 +1044,9 @@ function rResult(){
 function rSummary(){
   const cards = S.results.map(r=>{
     const short = r.area.belief.length>90 ? r.area.belief.slice(0,90)+'...' : r.area.belief;
-    const refH = r.ref ? `<div class="s-ref-box"><div class="lbl" style="color:#7a8ea8;margin-bottom:4px">Mi Experiencia</div><div style="color:#c0c8d8;font-size:13px;line-height:1.5">${esc(r.ref)}</div></div>` : '';
-    const decH = r.dec ? `<div class="s-dec-box"><div class="lbl gold" style="margin-bottom:4px">Mi Declaración</div><div class="cream" style="font-size:13px;line-height:1.6;font-style:italic">${esc(r.dec)}</div></div>` : '';
-    const voiceH = r.hasVoice ? `<div style="color:#c9a84c;font-size:12px;margin-top:6px">🎤 Declaración grabada en audio</div>` : '';
+    const refH = r.ref ? `<div class="s-ref-box"><div class="lbl" style="color:#7a8ea8;margin-bottom:4px">Mi Experiencia</div><div style="color:#c0c8d8;font-size:14px;line-height:1.5">${esc(r.ref)}</div></div>` : '';
+    const decH = r.dec ? `<div class="s-dec-box"><div class="lbl gold" style="margin-bottom:4px">Mi Declaración</div><div class="cream" style="font-size:14px;line-height:1.6;font-style:italic">${esc(r.dec)}</div></div>` : '';
+    const voiceH = r.hasVoice ? `<div style="color:#c9a84c;font-size:13px;margin-top:6px">🎤 Declaración grabada en audio</div>` : '';
     return `<div class="s-card"><div class="gold" style="font-size:15px;margin-bottom:8px">${r.area.icon} ${esc(r.area.title)}</div>${refH}<div class="s-belief">⚠️ ${esc(short)}</div><div class="s-verse">📖 ${esc(r.area.verses[0].ref)} — ${esc(r.area.verses[0].text)}</div>${decH}${voiceH}</div>`;
   }).join('');
 
@@ -1055,12 +1055,12 @@ function rSummary(){
   return `<div class="screen">
 ${!completed ? `<div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
 <button class="btn-back" data-a="toAreas">←</button>
-<span class="muted" style="font-size:13px">Volver a mis áreas (sin perder mi progreso)</span>
+<span class="muted" style="font-size:14px">Volver a mis áreas (sin perder mi progreso)</span>
 </div>` : ''}
 <div class="center" style="margin-bottom:20px">
   <span style="font-size:44px;display:block;margin-bottom:8px">${completed?'🙌':'📋'}</span>
   <h2 class="gold" style="margin-bottom:6px">${completed?'Tu Plan de Renovación':'Tu Plan Parcial'}</h2>
-  <p class="muted" style="font-size:13px">${S.done.length} de ${AREAS.length} áreas · ${completed?'Recorrido completo':'Continúa cuando quieras'}</p>
+  <p class="muted" style="font-size:14px">${S.done.length} de ${AREAS.length} áreas · ${completed?'Recorrido completo':'Continúa cuando quieras'}</p>
 </div>
 
 <div style="margin-bottom:16px">
@@ -1073,7 +1073,7 @@ ${cards}
 
 ${completed ? `<div class="card">
   <span class="lbl gold">Recibe un versículo diario por 11 días más</span>
-  <p class="muted" style="font-size:13px;line-height:1.5;margin-bottom:10px">Profundiza cada área con un versículo ancla cada mañana en tu correo.</p>
+  <p class="muted" style="font-size:14px;line-height:1.5;margin-bottom:10px">Profundiza cada área con un versículo ancla cada mañana en tu correo.</p>
   <input type="email" id="emailInp" placeholder="tu@correo.com">
   <button class="btn-gold" style="margin-top:10px" data-a="email">✉ Suscribirme</button>
 </div>` : ''}
@@ -1088,7 +1088,7 @@ ${completed ? `<div class="card">
 
 <div class="card center">
   <p class="gold" style="font-size:15px;margin-bottom:6px">🎧 Sigue escuchando</p>
-  <p class="muted" style="font-size:13px;line-height:1.6;margin-bottom:12px">Más devocionales, audios de la Biblia y series en sonidodevida.com</p>
+  <p class="muted" style="font-size:14px;line-height:1.6;margin-bottom:12px">Más devocionales, audios de la Biblia y series en sonidodevida.com</p>
   <a href="https://sonidodevida.com" class="btn-outline" target="_blank" rel="noopener">Visitar sonidodevida.com →</a>
 </div>
 
