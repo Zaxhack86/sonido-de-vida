@@ -1440,6 +1440,24 @@
             .shw-retos-days{display:none}
             .shw-retos-btn{justify-content:center;width:100%}
         }
+        /* ════ Tienda (Etsy · Frecuencia de Fe) — promo del Inicio ════ */
+        .shw-tienda{margin:0 auto;max-width:1100px;padding:0 1.5rem 2.5rem}
+        .shw-tienda-card{position:relative;display:flex;align-items:center;gap:2rem;background:linear-gradient(135deg,rgba(201,168,76,.16),rgba(13,27,62,.6));border:1px solid rgba(201,168,76,.34);border-radius:20px;padding:2rem;overflow:hidden}
+        .shw-tienda-card::before{content:'';position:absolute;bottom:-60%;left:-8%;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(201,168,76,.22),transparent 70%);pointer-events:none}
+        .shw-tienda-ico{flex:none;width:96px;height:96px;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:3rem;background:rgba(255,255,255,.05);border:1px solid rgba(201,168,76,.3);position:relative;z-index:1}
+        .shw-tienda-txt{flex:1;min-width:0;position:relative;z-index:1}
+        .shw-tienda-tag{display:inline-flex;align-items:center;gap:.4rem;background:rgba(201,168,76,.18);border:1px solid rgba(201,168,76,.35);color:var(--gold-light);font-size:.75rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:.3rem .8rem;border-radius:20px;margin-bottom:.9rem}
+        .shw-tienda-txt h2{font-family:'Cinzel',serif;font-size:1.6rem;color:#fff;margin:0 0 .5rem}
+        .shw-tienda-txt p{color:rgba(255,255,255,.75);font-size:.95rem;line-height:1.55;margin:0 0 1.2rem;max-width:540px}
+        .shw-tienda-btn{display:inline-flex;align-items:center;gap:.5rem;background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#0d0d1a;font-weight:700;padding:.8rem 1.5rem;border-radius:12px;text-decoration:none;font-size:.92rem}
+        @media (max-width:760px){
+            .shw-tienda{padding:0 1.1rem 1.8rem}
+            .shw-tienda-card{flex-direction:column;align-items:stretch;text-align:center;gap:1.1rem;padding:1.5rem}
+            .shw-tienda-ico{margin:0 auto;width:80px;height:80px;font-size:2.5rem}
+            .shw-tienda-txt h2{font-size:1.35rem}
+            .shw-tienda-txt p{margin-left:auto;margin-right:auto}
+            .shw-tienda-btn{justify-content:center;width:100%}
+        }
     </style>
 </head>
 <body data-tab-active="inicio">
@@ -1451,6 +1469,7 @@
             <li><a href="#" data-navtab="inicio" onclick="showTab('inicio');closeMenu();return false;">Inicio</a></li>
             <li><a href="/retos" onclick="closeMenu()">Retos <span class="badge-new">NUEVO</span></a></li>
             <li><a href="/devocionales" onclick="closeMenu()">Devocionales</a></li>
+            <li><a href="https://frecuenciadefe.etsy.com" target="_blank" rel="noopener" onclick="closeMenu()">Tienda <span class="badge-new">NUEVO</span></a></li>
             <li><a href="#" data-navtab="biblia" onclick="showTab('biblia');closeMenu();return false;">Biblia</a></li>
             <li><a href="#" data-navtab="buscar" onclick="showTab('buscar');closeMenu();return false;">Buscar</a></li>
             <li id="navCrearCuentaItem"><a href="#" onclick="showTab('yo');closeMenu();return false;">Crear cuenta</a></li>
@@ -1509,6 +1528,19 @@
                 <div class="shw-retos-day">01</div><div class="shw-retos-day">02</div><div class="shw-retos-day">03</div><div class="shw-retos-day">04</div>
                 <div class="shw-retos-day">05</div><div class="shw-retos-day">06</div><div class="shw-retos-day">07</div><div class="shw-retos-day">08</div>
                 <div class="shw-retos-day">09</div><div class="shw-retos-day">10</div><div class="shw-retos-day">11</div><div class="shw-retos-day">✝</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ════════ Tienda (Etsy · Frecuencia de Fe) — promo del nuevo canal ════════ -->
+    <section class="shw-tienda" data-tab="inicio">
+        <div class="shw-tienda-card">
+            <div class="shw-tienda-ico" aria-hidden="true">🛍️</div>
+            <div class="shw-tienda-txt">
+                <span class="shw-tienda-tag">🆕 Nueva tienda · Frecuencia de Fe</span>
+                <h2>Arte cristiano para tu hogar y tu espíritu</h2>
+                <p>Descargas premium con la Palabra: cuadros de versículos, arte de adoración y más, listos para imprimir. Diseño navy y oro, en español e inglés. Lleva el Sonido de Vida a tus paredes.</p>
+                <a href="https://frecuenciadefe.etsy.com" target="_blank" rel="noopener" class="shw-tienda-btn">🛒 Visitar la tienda</a>
             </div>
         </div>
     </section>
@@ -2799,6 +2831,7 @@
         <button class="bn-item active" data-bn="inicio" onclick="showTab('inicio')" role="tab" aria-label="Inicio"><span class="bn-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9.5 21v-6h5v6"/></svg></span><span class="bn-label">Inicio</span></button>
         <button class="bn-item" data-bn="retos" onclick="location.href='/retos'" role="tab" aria-label="Retos, nuevo contenido"><span class="bn-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4"/><path d="M5 4h13l-3 4 3 4H5"/></svg><span class="bn-dot"></span></span><span class="bn-label">Retos</span></button>
         <button class="bn-item" data-bn="devocionales" onclick="location.href='/devocionales'" role="tab" aria-label="Devocionales"><span class="bn-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5C4 4.7 4.7 4 5.5 4H18a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.5.5H6a2 2 0 0 1-2-2z"/><path d="M8 4v14"/><path d="M11.5 9.5h5"/><path d="M11.5 12.5h5"/></svg></span><span class="bn-label">Devocionales</span></button>
+        <button class="bn-item" data-bn="tienda" onclick="window.open('https://frecuenciadefe.etsy.com','_blank','noopener')" role="tab" aria-label="Tienda, nuevo"><span class="bn-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l1.5-4.5h15L21 9"/><path d="M3 9h18v2a3 3 0 0 1-6 0 3 3 0 0 1-6 0 3 3 0 0 1-6 0z"/><path d="M4.5 11.5V20h15v-8.5"/></svg><span class="bn-dot"></span></span><span class="bn-label">Tienda</span></button>
         <button class="bn-item" data-bn="biblia" onclick="showTab('biblia')" role="tab" aria-label="Biblia"><span class="bn-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.5C10.4 5 7.5 4.5 4 5v13c3.5-.5 6.4 0 8 1.5 1.6-1.5 4.5-2 8-1.5V5c-3.5-.5-6.4 0-8 1.5z"/><path d="M12 6.5V20"/></svg></span><span class="bn-label">Biblia</span></button>
         <button class="bn-item" data-bn="buscar" onclick="showTab('buscar')" role="tab" aria-label="Buscar"><span class="bn-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span><span class="bn-label">Buscar</span></button>
         <button class="bn-item" data-bn="yo" onclick="showTab('yo')" role="tab" aria-label="Mi perfil"><span class="bn-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6"/></svg></span><span class="bn-label">Mi perfil</span></button>
