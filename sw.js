@@ -1,4 +1,4 @@
-const CACHE_STATIC = 'sdv-static-v154';
+const CACHE_STATIC = 'sdv-static-v155';
 const CACHE_AUDIO  = 'sdv-audio-v2';
 
 // La app (PWA) vive en la raíz ('/'). Ya no hay landing ni '/app'; '/app' y
@@ -6,7 +6,14 @@ const CACHE_AUDIO  = 'sdv-audio-v2';
 // Lazy-load: bible.js / bible_sbll.js YA NO se precachean en install (eran ~7.6MB
 // impuestos a todos en la primera visita). Se cachean cacheFirst cuando el frontend
 // los pide bajo demanda (ver regla más abajo).
-const STATIC_ASSETS = ['/', '/manifest.json'];
+// Desde v155 el CSS/JS de la app vive en /css/ y /js/ (index.html quedó en ~117KB).
+// Se precachean aquí y se sirven cacheFirst: al subir la versión del SW se borra
+// el caché entero, así que SIEMPRE sube la versión si cambias /css/ o /js/.
+const STATIC_ASSETS = [
+    '/', '/manifest.json',
+    '/css/app.css', '/css/explorar.css', '/css/tema-oscuro.css', '/css/biblia.css',
+    '/js/app.js', '/js/cuenta.js', '/js/biblioteca-buscar.js',
+];
 
 self.addEventListener('install', e => {
     e.waitUntil(caches.open(CACHE_STATIC).then(c => c.addAll(STATIC_ASSETS)));
@@ -47,6 +54,14 @@ self.addEventListener('fetch', e => {
     // Datos bíblicos (lazy-load): inmutables, cacheFirst. Incluye SBLL, que antes
     // NO se cacheaba (solo bible.js) pese a ser la traducción por defecto.
     if (url.pathname === '/bible.js' || url.pathname === '/bible_sbll.js') {
+        e.respondWith(cacheFirst(e.request, CACHE_STATIC));
+        return;
+    }
+
+    // CSS/JS de la app (extraídos de index.html en v155): cacheFirst. Frescura
+    // garantizada porque cada subida de versión del SW borra este caché entero
+    // y el install los vuelve a precachear.
+    if (url.origin === location.origin && (url.pathname.startsWith('/css/') || url.pathname.startsWith('/js/'))) {
         e.respondWith(cacheFirst(e.request, CACHE_STATIC));
         return;
     }

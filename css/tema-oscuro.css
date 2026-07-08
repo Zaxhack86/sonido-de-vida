@@ -1,0 +1,208 @@
+/* ════════════════════════════════════════════════════════════════
+       CAPA PREMIUM — Tema oscuro unificado (mismo lenguaje que la landing)
+       Aditiva: no toca la lógica ni el resto del CSS. REVERSIBLE: para
+       volver al tema claro, quita el <link id="sdv-premium-dark"> de index.html.
+       Lleva las secciones claras de la Home + el feed Explorar al acabado
+       navy / oro / glass que el resto de la app ya usa.
+       ════════════════════════════════════════════════════════════════ */
+    :root{
+        --warm-white:#0a1226;   /* fondo base: era claro → navy profundo */
+        --cream:#0d1733;        /* superficie alterna: era clara → navy */
+        --text-dark:#f3eee2;    /* texto principal: era oscuro → crema  */
+        --text-light:#a6abba;   /* texto secundario → zinc claro        */
+    }
+    body{
+        background:
+            radial-gradient(1100px 620px at 50% -8%, rgba(201,168,76,.07), transparent 62%),
+            linear-gradient(180deg,#070e20 0%, #0a1226 60%, #0b1430 100%);
+        background-attachment:fixed;
+        color:var(--text-dark);
+    }
+    /* Encabezados de sección genéricos sobre fondo oscuro */
+    .section-header h2{color:#f4efe3}
+
+    /* ── Barra de estadísticas (era blanca) ── */
+    .stats-bar{background:linear-gradient(180deg,rgba(13,21,48,.55),rgba(10,18,38,.55));
+        box-shadow:none;border-top:1px solid rgba(201,168,76,.12);
+        border-bottom:1px solid rgba(255,255,255,.05);backdrop-filter:blur(10px)}
+    .stat-item h3{color:var(--gold-light)}
+
+    /* ── Características (tarjetas eran blancas) ── */
+    .features{background:transparent}
+    .feature-card{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07);
+        backdrop-filter:blur(14px)}
+    .feature-card:hover{box-shadow:0 24px 60px rgba(0,0,0,.45);border-color:rgba(201,168,76,.25)}
+    .feature-card h3{color:#f0ead9}
+
+    /* ── Versículo al azar (tarjeta era blanca) ── */
+    .random-section{background:transparent}
+    .random-verse-card{background:rgba(255,255,255,.035);border:1px solid rgba(201,168,76,.16);
+        backdrop-filter:blur(14px);box-shadow:0 18px 50px rgba(0,0,0,.35)}
+    .random-ref{color:var(--gold-light)}
+    .random-text::before{color:var(--gold)}
+    .random-action-btn.ra-copy{background:rgba(100,181,246,.12);color:#90caf9;border-color:rgba(100,181,246,.28)}
+    .random-action-btn.ra-copy:hover{background:rgba(100,181,246,.2)}
+
+    /* ── Devocionales (sección + tarjetas eran blancas) ── */
+    .devocionales-section{background:transparent}
+    .devocional-card{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07);
+        backdrop-filter:blur(14px)}
+    .devocional-card:hover{box-shadow:0 22px 55px rgba(0,0,0,.45)}
+    .devocional-card-ref{color:#f0ead9}
+    .devocional-card-tag{color:var(--gold-light)}
+
+    /* ── Feed Explorar: acentos dorados que estaban en tono oscuro ── */
+    .ex-seeall,.ex-th-premium{color:var(--gold-light)}
+    .ex-th-premium{border-color:rgba(201,168,76,.42);background:rgba(201,168,76,.14)}
+
+    /* ════════════════════════════════════════════════════════════════
+       RE-TEMATIZADO TIPO LANDING · Inicio de la app
+       Lleva el héroe, la nav y añade la sección Modo Enfoque al mismo
+       lenguaje visual del landing (navy #070E20, oro en gradiente, glass).
+       ════════════════════════════════════════════════════════════════ */
+    /* Héroe: navy profundo + glows dorados (antes degradado morado) */
+    .hero-bg{background:
+        radial-gradient(820px 600px at 50% -12%, rgba(201,168,76,.12), transparent 60%),
+        linear-gradient(180deg,#070e20 0%, #0b1430 55%, #0a1226 100%)}
+    .hero-bg::after{content:'';position:absolute;inset:0;background:
+        radial-gradient(440px 440px at 20% 72%, rgba(201,168,76,.08), transparent 62%),
+        radial-gradient(380px 380px at 82% 28%, rgba(201,168,76,.05), transparent 60%)}
+    .hero-badge{background:rgba(201,168,76,.08);border-color:rgba(201,168,76,.22);color:#E6CE80;
+        text-transform:uppercase;letter-spacing:.14em;font-size:.7rem;font-weight:600}
+    .hero h1{font-weight:800;letter-spacing:.005em;
+        background:linear-gradient(180deg,#FAF7F0 0%,#C9B8A0 100%);
+        -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+    .hero h1 span{background:linear-gradient(135deg,#E6CE80,#C9A84C,#A8863A);
+        -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+    .hero p{color:#aab0bf}
+    .btn-primary{box-shadow:0 12px 32px -10px rgba(201,168,76,.55)}
+
+    /* Visualizador de audio (barras) bajo los botones, como el landing */
+    .hero-eq{display:flex;align-items:flex-end;justify-content:center;gap:3px;height:42px;margin-top:2.4rem;
+        animation:fadeInUp 1s ease .8s both}
+    .hero-eq .eqb{width:3px;border-radius:3px;background:linear-gradient(to top,#A8863A,#E6CE80);
+        animation:eqBar var(--d,.8s) ease-in-out infinite;animation-delay:var(--dl,0s);height:8px}
+    @keyframes eqBar{0%,100%{height:8px}50%{height:var(--h,30px)}}
+
+    /* Logo: badge dorado tipo landing */
+    .nav-logo{color:#FAF7F0;font-size:1.18rem}
+    .nav-logo .logo-mark{display:inline-flex;align-items:center;justify-content:center;
+        width:2rem;height:2rem;font-size:1rem;border-radius:.55rem;
+        background:linear-gradient(135deg,#D8B85C,#A8863A);color:#070e20;
+        box-shadow:0 6px 18px -6px rgba(201,168,76,.6)}
+
+    /* Nav links centrados y en versalitas (escritorio) */
+    @media (min-width:701px){
+        .nav-links{position:absolute;left:50%;transform:translateX(-50%);gap:2.3rem}
+        .nav-links a{color:#cfd3dd;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;font-weight:500}
+        .nav-links a:hover,.nav-links a.active{color:#E6CE80}
+    }
+
+    /* ════════ Sección Modo Enfoque (premium) en el Inicio ════════ */
+    .home-focus{padding:4.5rem 1.5rem;position:relative}
+    .home-focus-wrap{max-width:1000px;margin:0 auto;display:grid;grid-template-columns:1.1fr .9fr;gap:2.5rem;align-items:center}
+    .home-focus-badge{display:inline-flex;align-items:center;gap:.5rem;padding:.4rem 1rem;border-radius:50px;
+        background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.22);
+        color:#E6CE80;font-size:.68rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;margin-bottom:1.1rem}
+    .home-focus h2{font-family:'Cinzel',serif;font-size:clamp(2rem,4.5vw,3.2rem);line-height:1.05;margin-bottom:1rem;
+        background:linear-gradient(135deg,#E6CE80,#C9A84C,#A8863A);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+    .home-focus .hf-lead{font-family:'Lora',serif;color:#aab0bf;font-size:1.02rem;line-height:1.7;margin-bottom:1.6rem;max-width:30rem}
+    .hf-list{list-style:none;margin:0 0 1.8rem;padding:0;display:flex;flex-direction:column;gap:.85rem}
+    .hf-list li{display:flex;align-items:center;gap:.75rem;color:#cfd3dd;font-size:.92rem}
+    .hf-list .hf-ic{width:2.1rem;height:2.1rem;border-radius:.6rem;background:rgba(201,168,76,.1);
+        display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+    .hf-cta-row{display:flex;align-items:center;gap:1.2rem;flex-wrap:wrap}
+    .hf-price{font-size:.78rem;color:#8b90a0;line-height:1.5}
+    .hf-price b{color:#f3eee2;font-size:.92rem}
+    .hf-price .hf-promo{color:rgba(201,168,76,.75)}
+    .hf-card{background:rgba(201,168,76,.05);border:1px solid rgba(201,168,76,.16);border-radius:1.4rem;
+        padding:2.2rem 1.8rem;text-align:center;backdrop-filter:blur(14px);position:relative;overflow:hidden}
+    .hf-emblem{width:5rem;height:5rem;border-radius:50%;margin:0 auto 1.1rem;
+        background:radial-gradient(circle at 50% 35%,rgba(230,206,128,.25),rgba(201,168,76,.06));
+        border:1px solid rgba(201,168,76,.25);display:flex;align-items:center;justify-content:center;font-size:2rem}
+    .hf-card .hf-title{font-family:'Cinzel',serif;color:#f3eee2;font-size:1.15rem;margin-bottom:.2rem}
+    .hf-card .hf-sub{color:#8b90a0;font-size:.78rem;margin-bottom:1.1rem}
+    .hf-modes{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin-top:1.3rem}
+    .hf-mode{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07);border-radius:.85rem;padding:.9rem .5rem}
+    .hf-mode .hf-emoji{font-size:1.5rem}
+    .hf-mode b{display:block;color:#f3eee2;font-size:.8rem;margin-top:.3rem}
+    .hf-mode small{color:#8b90a0;font-size:.66rem}
+    @media (max-width:760px){.home-focus-wrap{grid-template-columns:1fr;gap:1.8rem}.home-focus{padding:3rem 1.2rem}}
+
+    /* ════════════════════════════════════════════════════════════════
+       RE-TEMATIZADO TIPO LANDING · Explorar + Biblia
+       Mismo lenguaje del landing: títulos en oro degradado (Cinzel),
+       fondo navy con glows, tarjetas glass y acentos dorados.
+       ════════════════════════════════════════════════════════════════ */
+    /* ── Explorar: encabezado en oro degradado, jerarquía más nítida ── */
+    /* WEB: el navbar fijo NO se oculta en Explorar (en la PWA instalada sí, ver
+       regla display-mode:standalone). Con solo ~1.4rem de padding el título
+       quedaba DEBAJO de la barra superior. Le damos despeje como ya hace Biblia. */
+    @media (display-mode: browser){
+        .explore-section{padding-top:calc(env(safe-area-inset-top) + 5.6rem)}
+    }
+    /* Ambiente premium (glow navy/oro) para que el feed respire como Inicio/Biblia */
+    .explore-section{background:radial-gradient(760px 340px at 50% 0, rgba(201,168,76,.10), transparent 68%)}
+    .explore-section .section-header{text-align:left}
+    .explore-section .section-header h2{
+        background:linear-gradient(135deg,#E6CE80,#C9A84C,#A8863A);
+        -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+        font-size:clamp(1.75rem,5.5vw,2.3rem);line-height:1.08}
+    .explore-section .section-header p{color:#8b90a0;font-size:.92rem;margin-top:.15rem}
+    .ex-th-titles h3{color:#f3eee2}
+    .ex-th-sub{color:#8b90a0}
+    /* "Ver todo" como píldora dorada (antes era texto suelto en oro oscuro) */
+    .ex-seeall{font-weight:600;letter-spacing:.02em;color:var(--gold-light);
+        background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.22);
+        border-radius:50px;padding:.32rem .85rem;transition:all .2s}
+    .ex-seeall:hover{color:#070e20;background:linear-gradient(135deg,#E6CE80,#C9A84C);border-color:transparent}
+    /* Tarjetas: filo dorado sutil al pasar el cursor (acabado premium) */
+    .ex-card:hover .ex-card-cover{box-shadow:0 16px 36px rgba(0,0,0,.42),0 0 0 1px rgba(201,168,76,.35)}
+
+    /* ── Biblia (Escuchar la Biblia): navy + glows, glass dorado ── */
+    .listen-section{background:
+        radial-gradient(760px 500px at 50% -12%, rgba(201,168,76,.10), transparent 60%),
+        linear-gradient(180deg,#070e20 0%, #0b1430 55%, #0a1226 100%)}
+    .listen-section .section-header h2{
+        background:linear-gradient(135deg,#E6CE80,#C9A84C,#A8863A);
+        -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+    .listen-section .section-header p{color:#aab0bf}
+    .listen-box{background:rgba(201,168,76,.05);border:1px solid rgba(201,168,76,.16);
+        box-shadow:0 24px 60px rgba(0,0,0,.42);backdrop-filter:blur(16px)}
+    .translation-toggle{background:rgba(255,255,255,.04);border-color:rgba(201,168,76,.22)}
+    .tt-option.active{background:linear-gradient(135deg,#E6CE80,#C9A84C);color:#070e20;
+        box-shadow:0 2px 10px rgba(201,168,76,.4)}
+    .form-group select{background-color:rgba(255,255,255,.045);border-color:rgba(201,168,76,.18)}
+    .form-group select:focus{border-color:var(--gold)}
+    .form-group select option{background:#0b1430}
+    .listen-btn{box-shadow:0 12px 32px -10px rgba(201,168,76,.55)}
+    .chapter-card{background:rgba(255,255,255,.035);border:1px solid rgba(201,168,76,.18);
+        box-shadow:0 18px 50px rgba(0,0,0,.35);backdrop-filter:blur(14px)}
+
+    /* ════════════════════════════════════════════════════════════════
+       RE-TEMATIZADO TIPO LANDING · Modo Enfoque
+       Lleva la "cara premium" (modales de entrada/venta, títulos y el
+       escenario inmersivo) del navy-morado viejo (#1a1a3e/#2d1b69) al
+       navy profundo + oro degradado del landing.
+       ════════════════════════════════════════════════════════════════ */
+    /* Tarjetas de TODOS los modales: navy profundo del landing + halo dorado */
+    .modal-card{background:linear-gradient(160deg,#0b1430 0%,#070e20 100%);
+        border-color:rgba(201,168,76,.22);
+        box-shadow:0 28px 70px rgba(0,0,0,.6),0 0 0 1px rgba(201,168,76,.1),0 0 90px -34px rgba(201,168,76,.3)}
+    /* Títulos de modal en oro degradado (igual que el resto de la app) */
+    .modal-title{background:linear-gradient(135deg,#E6CE80,#C9A84C,#A8863A);
+        -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+    /* El badge "✨ Premium" vive dentro del título: restaurar su relleno */
+    .modal-title .focus-premium-badge{-webkit-text-fill-color:var(--gold-light);
+        background:rgba(201,168,76,.16);border:1px solid rgba(201,168,76,.3)}
+    /* Precio del teaser en oro degradado */
+    .teaser-price strong,.plan-toggle button.active strong{
+        background:linear-gradient(135deg,#E6CE80,#C9A84C);
+        -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+    /* Selector de submodo: realce dorado más nítido al pasar el cursor */
+    .focus-mode-opt:hover{box-shadow:0 14px 34px -16px rgba(201,168,76,.5)}
+    /* Escenario inmersivo por defecto (sin ambiente elegido): base navy del
+       landing y aura dorada en vez del tinte morado. Los ambientes con
+       data-bg/data-cat siguen poniendo su propio color (no se tocan). */
+    .focus-overlay{background:radial-gradient(120% 120% at 50% 0%,#0b1430 0%,#070e20 55%,#04060f 100%);--f-aura2:rgba(201,168,76,.12)}
+    .focus-overlay .focus-bg{background:radial-gradient(60% 50% at 50% 38%,rgba(201,168,76,.12),transparent 70%)}

@@ -15,8 +15,10 @@ Stack: HTML/CSS/JS puro (sin framework) + Cloudflare Workers + Cloudflare R2 + C
 
 | Archivo | Qué es |
 |---|---|
-| `index.html` (raíz) | **Toda la app** (PWA). SPA de ~7 000 líneas. Contiene HTML, CSS en `<style>` y JS en `<script>`. Se sirve en **`/`** (sonidodevida.com). **NO existe `/app` ni landing**: `/app` y `/app/*` redirigen 308 a `/` (ver `vercel.json`). NO reintroducir una landing separada ni mover la app a `/app`. |
-| `sw.js` | Service Worker. Versión actual: `sdv-static-v111`. Hay que subirla en cada cambio a `index.html`. Cachea solo `/` y `/manifest.json` (shell). |
+| `index.html` (raíz) | **El HTML de la app** (PWA, ~117 KB). Desde el SW v155 (2026-07-07) el CSS y el JS viven FUERA, en `/css/` y `/js/` (ver filas siguientes). Se sirve en **`/`** (sonidodevida.com). **NO existe `/app` ni landing**: `/app` y `/app/*` redirigen 308 a `/` (ver `vercel.json`). NO reintroducir una landing separada ni mover la app a `/app`. |
+| `css/` | Estilos extraídos de `index.html`, enlazados en el MISMO orden que los `<style>` originales (el orden importa para la cascada): `app.css` (base, ~164 KB), `explorar.css`, `tema-oscuro.css` (`<link id="sdv-premium-dark">` — quitar ese link revierte al tema claro), `biblia.css` (`<link id="bib-redesign">`). |
+| `js/` | Scripts extraídos de `index.html`, cargados en las MISMAS posiciones que los `<script>` inline originales (clásicos, sin defer — el orden de ejecución importa): `app.js` (toda la lógica, ~564 KB), `cuenta.js` (`window.SDV_Account`), `biblioteca-buscar.js` (metadatos de libros + buscador). El beacon de `/api/track` sigue inline en `index.html` (diminuto, corre temprano). |
+| `sw.js` | Service Worker (`sdv-static-vXX`). **Subir la versión en CADA cambio a `index.html`, `/css/` o `/js/`** (el caché estático se borra entero al activar la versión nueva y se re-precachea). Precachea `/`, `/manifest.json` y los archivos de `/css/` y `/js/`. |
 | `bible.js` | Datos de la Biblia RVA 1909 (`window.BIBLE`). **Lazy-load** (ver abajo). |
 | `bible_sbll.js` | Datos de la Biblia SBLL 2026 (`window.BIBLE_SBLL`). **Lazy-load** (ver abajo). |
 | `worker_updated.js` | Cloudflare Worker de audio (se despliega en `sonido-de-vida-audio.*`). |
@@ -163,7 +165,7 @@ npx wrangler@3 deploy -c wrangler-api.toml
 npx wrangler@3 d1 execute sonido-de-vida-db --remote --command "SQL;"
 ```
 
-**Regla**: tras cualquier cambio a `index.html`, siempre subir también la versión en `sw.js` y hacer `git push`. No preguntar, desplegar directamente.
+**Regla**: tras cualquier cambio a `index.html`, `/css/` o `/js/`, siempre subir también la versión en `sw.js` y hacer `git push`. No preguntar, desplegar directamente.
 
 ---
 

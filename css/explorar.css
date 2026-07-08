@@ -1,0 +1,92 @@
+/* Explorar — feed de descubrimiento por escalones (estilo Dwell, tema claro) */
+        .explore-section{max-width:1100px;margin:0 auto;padding:calc(env(safe-area-inset-top) + 1.4rem) 0 2.5rem}
+        .explore-section .section-header{padding:0 1.2rem;margin-bottom:.4rem}
+        /* Oculta el navbar superior flotante en Explorar (NO el nav inferior):
+           el feed es inmersivo y la marca "Sonido de Vida" estorba aquí.
+           SOLO en la PWA instalada: en la web el navbar es la única navegación. */
+        @media (display-mode: standalone){body[data-tab-active="explorar"] #navbar{display:none}}
+        .ex-tier{margin:1.7rem 0 0}
+        .ex-tier-head{display:flex;align-items:flex-end;justify-content:space-between;gap:.6rem;padding:0 1.2rem;margin:0 0 .85rem}
+        .ex-th-titles{min-width:0}
+        .ex-th-titles h3{font-family:'Cinzel',serif;color:var(--text-dark);font-size:1.22rem;margin:0;line-height:1.15}
+        .ex-th-sub{display:block;font-family:'Inter',sans-serif;font-size:.78rem;color:var(--text-light);margin-top:.16rem}
+        .ex-seeall{flex:none;background:none;border:none;color:var(--gold-dark);font-family:'Inter',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;padding:.2rem .1rem;white-space:nowrap}
+        /* Riel horizontal: deslizable + auto-scroll suave (JS). Misma tarjeta para todo. */
+        .ex-rail{display:flex;gap:.8rem;overflow-x:auto;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;padding:.15rem 1.2rem .5rem;scrollbar-width:none}
+        .ex-rail::-webkit-scrollbar{display:none}
+        .ex-card{flex:none;width:150px;scroll-snap-align:start;cursor:pointer;-webkit-tap-highlight-color:transparent}
+        .ex-card-cover{position:relative;width:150px;aspect-ratio:3/4;border-radius:15px;overflow:hidden;background-size:cover;background-position:center;background-color:#1a1430;box-shadow:0 9px 24px rgba(0,0,0,.28);transition:transform .2s ease,box-shadow .2s ease}
+        .ex-card:hover .ex-card-cover{transform:translateY(-3px);box-shadow:0 14px 32px rgba(0,0,0,.38)}
+        .ex-card:active .ex-card-cover{transform:scale(.97)}
+        .ex-card-cover::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 38%,rgba(8,5,14,.86));pointer-events:none}
+        .ex-card-dur{position:absolute;top:.5rem;right:.5rem;z-index:2;font-family:'Inter',sans-serif;font-size:.64rem;font-weight:600;color:#fff;background:rgba(0,0,0,.5);padding:.18rem .5rem;border-radius:999px;backdrop-filter:blur(4px)}
+        .ex-card-play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(.85);z-index:2;width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.94);color:#15102a;display:flex;align-items:center;justify-content:center;font-size:.95rem;opacity:0;transition:opacity .2s,transform .2s;box-shadow:0 4px 14px rgba(0,0,0,.4)}
+        .ex-card:hover .ex-card-play{opacity:1;transform:translate(-50%,-50%) scale(1)}
+        .ex-card-meta{position:absolute;left:0;right:0;bottom:0;z-index:1;padding:.6rem .68rem;text-align:left}
+        .ex-card-ref{font-family:'Inter',sans-serif;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-light);font-weight:700;margin:0 0 .15rem}
+        .ex-card-title{font-family:'Cinzel',serif;color:#fff;font-size:.86rem;line-height:1.2;margin:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;text-shadow:0 1px 6px rgba(0,0,0,.65)}
+        /* Banner de entrada (Devocionales / Modo Enfoque): una sola imagen, mismo lenguaje */
+        .ex-banner{position:relative;display:block;margin:0 1.2rem;border-radius:18px;overflow:hidden;aspect-ratio:16/9;background-size:cover;background-position:center;background-color:#1a1430;cursor:pointer;box-shadow:0 10px 28px rgba(0,0,0,.3);-webkit-tap-highlight-color:transparent;text-decoration:none;transition:transform .2s ease,box-shadow .2s ease}
+        .ex-banner:hover{transform:translateY(-3px);box-shadow:0 16px 36px rgba(0,0,0,.4)}
+        .ex-banner:active{transform:scale(.99)}
+        .ex-banner::after{content:"";position:absolute;inset:0;background:linear-gradient(105deg,rgba(8,5,14,.82) 0%,rgba(8,5,14,.32) 58%,transparent 88%);pointer-events:none}
+        .ex-banner-body{position:absolute;left:0;bottom:0;z-index:1;padding:1.05rem 1.2rem;max-width:80%}
+        .ex-banner-kicker{display:inline-block;font-family:'Inter',sans-serif;font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-light);font-weight:700;margin-bottom:.3rem}
+        .ex-banner-body h3{font-family:'Cinzel',serif;color:#fff;font-size:1.32rem;margin:0 0 .22rem;line-height:1.1;text-shadow:0 2px 10px rgba(0,0,0,.6)}
+        .ex-banner-body p{font-family:'Inter',sans-serif;color:rgba(255,255,255,.86);font-size:.8rem;margin:0;line-height:1.32}
+        .ex-banner-badge{position:absolute;top:.8rem;right:.8rem;z-index:2;font-family:'Inter',sans-serif;font-size:.6rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:.3rem .62rem;border-radius:999px;background:rgba(15,12,22,.82);color:var(--gold-light);border:1px solid rgba(232,182,90,.5);backdrop-filter:blur(4px)}
+        .ex-banner-go{position:absolute;right:1rem;bottom:1rem;z-index:2;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.94);color:#15102a;display:flex;align-items:center;justify-content:center;font-size:1.2rem;box-shadow:0 4px 14px rgba(0,0,0,.4)}
+        /* Chip "Premium" junto al título de una categoría (Podcast / Modo Enfoque). */
+        .ex-th-premium{display:inline-block;margin-left:.5rem;vertical-align:middle;font-family:'Inter',sans-serif;font-size:.58rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:.16rem .5rem;border-radius:999px;background:rgba(201,168,76,.16);color:var(--gold-dark);border:1px solid rgba(201,168,76,.42)}
+        /* Sello premium en la esquina de las tarjetas de podcast. */
+        .ex-card-lock{position:absolute;top:.5rem;left:.5rem;z-index:2;font-family:'Inter',sans-serif;font-size:.58rem;font-weight:700;color:var(--gold-light);background:rgba(15,12,22,.66);border:1px solid rgba(232,182,90,.45);padding:.14rem .44rem;border-radius:999px;backdrop-filter:blur(4px)}
+
+        /* ─── Tarjeta de devocional: portada al óleo limpia + título HTML (como Pasajes) ─── */
+        .ex-card-read{position:absolute;top:.5rem;right:.5rem;z-index:2;font-family:'Inter',sans-serif;font-size:.62rem;font-weight:700;color:#15102a;background:rgba(255,255,255,.92);padding:.2rem .56rem;border-radius:999px;opacity:0;transform:translateY(-4px);transition:opacity .2s,transform .2s}
+        .ex-card-devo:hover .ex-card-read{opacity:1;transform:translateY(0)}
+
+        /* ─── Modo Enfoque: diapositivas tipo "captura de pantalla" (carrusel) ─── */
+        .fx-rail{display:flex;gap:1rem;overflow-x:auto;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;padding:.3rem 1.2rem .6rem;scrollbar-width:none}
+        .fx-rail::-webkit-scrollbar{display:none}
+        .fx-phone{flex:none;width:184px;scroll-snap-align:center;cursor:pointer;-webkit-tap-highlight-color:transparent}
+        .fx-screen{position:relative;width:184px;aspect-ratio:9/19;border-radius:28px;overflow:hidden;background:#0a0613;border:5px solid #0c0a18;box-shadow:0 14px 34px rgba(0,0,0,.42);transition:transform .22s ease,box-shadow .22s ease}
+        .fx-phone:hover .fx-screen{transform:translateY(-4px);box-shadow:0 22px 46px rgba(0,0,0,.5)}
+        .fx-phone:active .fx-screen{transform:scale(.98)}
+        .fx-notch{position:absolute;top:.55rem;left:50%;transform:translateX(-50%);z-index:6;width:44px;height:5px;border-radius:99px;background:rgba(255,255,255,.2)}
+        .fx-bg{position:absolute;inset:0;background:radial-gradient(125% 78% at 50% 16%,var(--fx-glow,#3a2d6e) 0%,#160f2e 46%,#080510 100%)}
+        .fx-content{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2.2rem .9rem 1.2rem}
+        .fx-kicker{font-family:'Inter',sans-serif;font-size:.5rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-light);font-weight:700;margin-bottom:.9rem}
+        .fx-ring{position:relative;width:74px;height:74px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle,rgba(232,182,90,.22),transparent 70%);box-shadow:0 0 0 1px rgba(232,182,90,.3),0 0 28px rgba(232,182,90,.25)}
+        .fx-ring::before{content:"";position:absolute;inset:-7px;border-radius:50%;border:1px solid rgba(232,182,90,.28)}
+        .fx-ring-icon{font-size:1.9rem}
+        .fx-line{font-family:'Cinzel',serif;color:#fff;font-size:.92rem;line-height:1.25;margin:.95rem .2rem 0;text-shadow:0 1px 8px rgba(0,0,0,.5)}
+        .fx-line2{font-family:'Inter',sans-serif;color:rgba(255,255,255,.92);font-size:.8rem;font-weight:600;margin:.7rem 0 0}
+        .fx-wave{display:flex;align-items:flex-end;gap:3px;height:20px;margin-top:1rem}
+        .fx-wave i{width:3px;border-radius:2px;background:rgba(232,182,90,.8);animation:fxw 1.4s ease-in-out infinite}
+        .fx-wave i:nth-child(1){height:35%;animation-delay:0s}.fx-wave i:nth-child(2){height:75%;animation-delay:.15s}.fx-wave i:nth-child(3){height:50%;animation-delay:.3s}.fx-wave i:nth-child(4){height:95%;animation-delay:.45s}.fx-wave i:nth-child(5){height:55%;animation-delay:.6s}.fx-wave i:nth-child(6){height:80%;animation-delay:.75s}.fx-wave i:nth-child(7){height:40%;animation-delay:.9s}
+        @keyframes fxw{0%,100%{transform:scaleY(.5)}50%{transform:scaleY(1)}}
+        .fx-vcard{background:rgba(255,255,255,.06);border:1px solid rgba(232,182,90,.22);border-radius:16px;padding:1.1rem .95rem;backdrop-filter:blur(3px)}
+        .fx-verse{font-family:'Lora',serif;font-style:italic;color:#fff;font-size:.82rem;line-height:1.5;margin:0 0 .6rem}
+        .fx-vref{font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.08em;color:var(--gold-light)}
+        .fx-play{width:54px;height:54px;border-radius:50%;background:rgba(255,255,255,.95);color:#15102a;display:flex;align-items:center;justify-content:center;font-size:1.2rem;padding-left:3px;box-shadow:0 6px 18px rgba(0,0,0,.4)}
+        .fx-mixer{width:100%;margin-top:1.1rem;display:flex;flex-direction:column;gap:.55rem}
+        .fx-mrow{display:flex;align-items:center;gap:.5rem}
+        .fx-mrow span{font-family:'Inter',sans-serif;font-size:.56rem;color:rgba(255,255,255,.8);width:48px;text-align:left;white-space:nowrap}
+        .fx-bar{flex:1;height:4px;border-radius:99px;background:rgba(255,255,255,.16);overflow:hidden}
+        .fx-bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--gold-dark),var(--gold-light))}
+        .fx-moon{font-size:2.2rem;filter:drop-shadow(0 0 14px rgba(232,182,90,.4))}
+        .fx-styles{display:flex;flex-wrap:wrap;gap:.38rem;justify-content:center;margin:.2rem .05rem 0}
+        .fx-styles span{font-family:'Inter',sans-serif;font-size:.6rem;color:rgba(255,255,255,.9);padding:.3rem .54rem;border-radius:10px;background:rgba(255,255,255,.07);border:1px solid rgba(232,182,90,.22)}
+        .fx-styles span.on{background:rgba(232,182,90,.9);color:#15102a;border-color:transparent;font-weight:700}
+        .fx-chips{display:flex;flex-wrap:wrap;gap:.35rem;justify-content:center;margin-top:1.05rem}
+        .fx-chips span{font-family:'Inter',sans-serif;font-size:.6rem;color:rgba(255,255,255,.82);padding:.22rem .58rem;border-radius:999px;border:1px solid rgba(255,255,255,.22)}
+        .fx-chips span.on{background:rgba(232,182,90,.9);color:#15102a;border-color:transparent;font-weight:700}
+        .fx-caption{text-align:center;padding:.65rem .2rem 0}
+        .fx-caption h4{font-family:'Cinzel',serif;font-size:.9rem;color:var(--text-dark);margin:0 0 .12rem;line-height:1.2}
+        .fx-caption p{font-family:'Inter',sans-serif;font-size:.72rem;color:var(--text-light);margin:0}
+        .fx-cta{display:flex;justify-content:center;margin:.4rem 1.2rem 0}
+        .fx-cta button{font-family:'Inter',sans-serif;font-size:.85rem;font-weight:700;color:#15102a;background:linear-gradient(135deg,var(--gold),var(--gold-dark));border:none;border-radius:999px;padding:.7rem 1.7rem;cursor:pointer;box-shadow:0 8px 22px rgba(201,168,76,.32);-webkit-tap-highlight-color:transparent}
+        .fx-cta button:active{transform:scale(.97)}
+        @media(prefers-reduced-motion:reduce){.fx-wave i{animation:none}}
+        @media(min-width:620px){.ex-card,.ex-card-cover{width:172px}.ex-banner{aspect-ratio:21/9}}
+        @media(prefers-reduced-motion:reduce){.ex-card-cover,.ex-banner{transition:none}}
