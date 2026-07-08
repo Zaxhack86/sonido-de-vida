@@ -195,7 +195,7 @@ async function grantPremiumComp(env, uid) {
 // Body: { email } o { uid }. Concede premium permanente sin pago.
 async function handleAdminGrant(request, env) {
     const secret = request.headers.get('X-Admin-Secret') || '';
-    if (!env.ADMIN_SECRET || secret !== env.ADMIN_SECRET) throw { status: 403, msg: 'no autorizado' };
+    if (!env.ADMIN_SECRET || !timingSafeEqual(secret, env.ADMIN_SECRET)) throw { status: 403, msg: 'no autorizado' };
     const body = await request.json().catch(() => ({}));
     let uid = (body.uid || '').trim();
     const email = (body.email || '').trim().toLowerCase();
@@ -861,12 +861,29 @@ async function sendBrevoEmail(env, toEmail, link) {
     }
 }
 
+// Límite de tasa por IP para endpoints públicos que envían correo (protege la
+// cuota de Brevo del abuso). Contador en KV con TTL de una hora; sin IP (raro
+// fuera de Cloudflare) no bloquea. best-effort: KV es eventualmente consistente.
+async function rateLimitByIp(env, request, bucket, limit) {
+    if (!env.PREMIUM) return;
+    const ip = request.headers.get('CF-Connecting-IP') || '';
+    if (!ip) return;
+    const key = `iprate:${bucket}:${ip}`;
+    const n = parseInt((await env.PREMIUM.get(key)) || '0', 10);
+    if (n >= limit) throw { status: 429, msg: 'Demasiadas solicitudes desde esta conexión. Intenta de nuevo en una hora.' };
+    await env.PREMIUM.put(key, String(n + 1), { expirationTtl: 3600 });
+}
+
 async function handleMagicLink(request, env) {
     let body;
     try { body = await request.json(); } catch { throw { status: 400, msg: 'JSON inválido' }; }
 
     const email = String(body.email || '').trim().toLowerCase();
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) throw { status: 400, msg: 'Correo inválido' };
+
+    // Anti-abuso: máx. 10 enlaces por hora desde la misma IP (además del
+    // límite de 60s por correo de más abajo).
+    await rateLimitByIp(env, request, 'magic', 10);
 
     // El enlace solo puede volver a un origen propio (evita abuso / redirección abierta).
     let continueUrl = env.ALLOWED_ORIGIN || 'https://sonidodevida.com';
@@ -964,6 +981,10 @@ async function handleReto11Subscribe(request, env) {
     try { body = await request.json(); } catch { throw { status: 400, msg: 'JSON inválido' }; }
     const email = String(body.email || '').trim().toLowerCase();
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) throw { status: 400, msg: 'Correo inválido' };
+
+    // Anti-abuso: máx. 5 inscripciones por hora desde la misma IP (cada alta
+    // dispara un correo Brevo al instante).
+    await rateLimitByIp(env, request, 'reto11', 5);
 
     const existing = await env.DB.prepare('SELECT email, active FROM reto11_subscribers WHERE email = ?').bind(email).first();
     if (existing) {
@@ -1218,7 +1239,9 @@ export default {
         try {
             // Endpoint público (sin token): envío del enlace de acceso por Brevo.
             if (path === '/api/magic-link' && request.method === 'POST') {
-                return handleMagicLink(request, env);
+                // await: lanza { status } (429/400) y el try/catch solo atrapa
+                // promesas esperadas, no las simplemente retornadas.
+                return await handleMagicLink(request, env);
             }
             // Endpoint público (sin token Firebase): webhook de Stripe.
             // Se autentica por firma (Stripe-Signature), por eso va antes de requireUser.

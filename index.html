@@ -8627,7 +8627,14 @@
                 list.forEach(v => {
                     const row = document.createElement('div');
                     row.style.cssText = 'border-left:3px solid var(--gold,#c9a84c);padding:.5rem .7rem;background:rgba(255,255,255,.05);border-radius:8px';
-                    row.innerHTML = `<div style="font-size:.72rem;color:var(--gold-light,#e8d48b);font-weight:700">${v.libro} ${v.capitulo}:${v.versiculo}</div><div style="font-family:Lora,serif;font-size:.92rem;color:rgba(255,255,255,.9);line-height:1.5;margin-top:.15rem">${v.texto}</div>`;
+                    // textContent (no innerHTML): el texto viene de la API y no debe interpretarse como HTML.
+                    const ref = document.createElement('div');
+                    ref.style.cssText = 'font-size:.72rem;color:var(--gold-light,#e8d48b);font-weight:700';
+                    ref.textContent = `${v.libro} ${v.capitulo}:${v.versiculo}`;
+                    const txt = document.createElement('div');
+                    txt.style.cssText = 'font-family:Lora,serif;font-size:.92rem;color:rgba(255,255,255,.9);line-height:1.5;margin-top:.15rem';
+                    txt.textContent = v.texto;
+                    row.appendChild(ref); row.appendChild(txt);
                     const del = document.createElement('button');
                     del.textContent = 'Quitar';
                     del.style.cssText = 'background:none;border:none;color:#ff7b7b;cursor:pointer;font-size:.75rem;margin-top:.3rem';
