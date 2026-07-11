@@ -145,6 +145,10 @@
     SDV.checkout = (plan) => api('/api/checkout', { method: 'POST', body: JSON.stringify({ plan: plan === 'annual' ? 'annual' : 'monthly' }) });
     SDV.portal   = () => api('/api/portal', { method: 'POST', body: '{}' });
 
+    // Cupón de regalo (Modo Enfoque gratis, sin Stripe): canjea un código atado
+    // al uid. El servidor concede Premium temporal con `expira` y solo un uso.
+    SDV.redeemCoupon = (code) => api('/api/redeem-coupon', { method: 'POST', body: JSON.stringify({ code }) });
+
     // Re-lee /api/me y actualiza SDV.premium (tras volver de Stripe).
     SDV.refresh = async () => {
         if (!auth.currentUser) { SDV.premium = false; return false; }

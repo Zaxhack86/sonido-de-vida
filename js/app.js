@@ -1153,7 +1153,55 @@
             if (pending && logged()) { pending = false; checkout(); }
         }
 
-        return { selectPlan, checkout, manage, checkReturn, resumeIfPending };
+        // ── Cupón de regalo (Modo Enfoque gratis, sin Stripe) ────────────
+        // Muestra/oculta el campo del código dentro del teaser.
+        function toggleCoupon() {
+            const box = document.getElementById('focusCouponBox');
+            if (!box) return;
+            box.hidden = !box.hidden;
+            if (!box.hidden) { const i = document.getElementById('focusCouponInput'); if (i) i.focus(); }
+        }
+
+        // Canjea el código: exige cuenta (el cupón se ata al uid), concede el
+        // mes gratis en el servidor y abre el Modo Enfoque al terminar.
+        async function redeem() {
+            const input = document.getElementById('focusCouponInput');
+            const code = ((input && input.value) || '').trim();
+            if (!code) { if (window.showToast) showToast('Escribe tu código 🎁'); return; }
+            if (!logged()) {
+                if (window.showToast) showToast('Crea tu cuenta o entra para activar tu código 👤');
+                if (window.SDV_Account) SDV_Account.open();
+                return;
+            }
+            if (busy) return;
+            busy = true;
+            const btn = document.getElementById('focusCouponBtn');
+            if (btn) { btn.disabled = true; btn.textContent = 'Canjeando…'; }
+            try {
+                const r = await SDV_Auth.redeemCoupon(code);
+                if (r.ok && r.data && (r.data.premium || r.data.already_premium)) {
+                    if (window.SDV_Auth && SDV_Auth.refresh) await SDV_Auth.refresh();
+                    if (window.Focus) { Focus.closeTeaser(); if (Focus.refreshGate) Focus.refreshGate(); }
+                    if (input) input.value = '';
+                    if (r.data.already_premium) {
+                        if (window.showToast) showToast('💛 Ya tienes Premium activo');
+                    } else {
+                        if (window.showToast) showToast('🎉 ¡Código activado! Un mes de Modo Enfoque gratis.');
+                        if (window.Focus && Focus.enter) setTimeout(() => Focus.enter(), 500);
+                    }
+                } else {
+                    const msg = (r.data && (r.data.error || r.data.msg)) || 'Ese código no es válido';
+                    if (window.showToast) showToast('😕 ' + msg);
+                }
+            } catch (e) {
+                if (window.showToast) showToast('No se pudo canjear. Revisa tu conexión.');
+            } finally {
+                busy = false;
+                if (btn) { btn.disabled = false; btn.textContent = 'Canjear'; }
+            }
+        }
+
+        return { selectPlan, checkout, manage, checkReturn, resumeIfPending, toggleCoupon, redeem };
     })();
 
     // ════════════════════════════════════════════════════════════════

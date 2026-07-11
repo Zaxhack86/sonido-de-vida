@@ -1074,6 +1074,16 @@
         .teaser-price strong{display:block;font-size:1.7rem;color:var(--gold-light);font-weight:700;line-height:1.1}
         .teaser-price small{display:block;margin-top:.35rem;font-size:.82rem;color:rgba(255,255,255,.7)}
         .teaser-cta{width:100%;margin-top:.6rem}
+        /* Cupón de regalo (código PAZ30 y similares) dentro del muro Enfoque. */
+        .focus-coupon{margin-top:.85rem;text-align:center}
+        .focus-coupon-toggle{background:none;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-size:.85rem;color:var(--gold-light);opacity:.85;padding:.3rem;text-decoration:underline;text-underline-offset:3px}
+        .focus-coupon-toggle:hover{opacity:1}
+        .focus-coupon-box{display:flex;gap:.5rem;margin-top:.6rem}
+        .focus-coupon-box[hidden]{display:none}
+        .focus-coupon-box input{flex:1;min-width:0;padding:.7rem .8rem;border-radius:12px;border:1.5px solid rgba(255,255,255,.18);background:rgba(255,255,255,.05);color:#fff;font-family:'Inter',sans-serif;font-size:.95rem;letter-spacing:.06em;text-transform:uppercase}
+        .focus-coupon-box input::placeholder{color:rgba(255,255,255,.45);letter-spacing:normal;text-transform:none}
+        .focus-coupon-box input:focus{outline:none;border-color:var(--gold-light)}
+        .focus-coupon-box .share-btn{flex:none;width:auto;padding:.7rem 1.1rem;margin:0}
         /* Selector de plan mensual/anual en el muro premium. */
         .plan-toggle{display:flex;gap:.5rem;margin:.4rem 0 .2rem}
         .plan-toggle button{flex:1;display:flex;flex-direction:column;align-items:center;gap:.15rem;padding:.7rem .4rem;border-radius:12px;cursor:pointer;font-family:'Inter',sans-serif;background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.14);color:rgba(255,255,255,.82);transition:border-color .2s,background .2s;position:relative}

@@ -1172,6 +1172,13 @@
                 <small>Incluye 7 días de prueba gratis. Cancela cuando quieras.</small>
             </div>
             <button class="share-btn gold" id="focusTeaserCta" style="width:100%;font-size:1rem;padding:.9rem;margin-top:.4rem">✨ Empezar prueba gratis</button>
+            <div class="focus-coupon">
+                <button type="button" class="focus-coupon-toggle" onclick="Premium.toggleCoupon()">🎁 Tengo un código de regalo</button>
+                <div class="focus-coupon-box" id="focusCouponBox" hidden>
+                    <input type="text" id="focusCouponInput" placeholder="Escribe tu código" autocomplete="off" autocapitalize="characters" spellcheck="false" onkeydown="if(event.key==='Enter')Premium.redeem()">
+                    <button type="button" class="share-btn" id="focusCouponBtn" onclick="Premium.redeem()">Canjear</button>
+                </div>
+            </div>
         </div>
     </div>
 

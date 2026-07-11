@@ -205,6 +205,52 @@ async function handleAdminGrant(request, env) {
     return json(env, request, { ok: true, uid, email: email || null, record });
 }
 
+// ── Cupones de regalo (canje en la app, SIN Stripe) ──────────────────
+// Códigos que dan Premium temporal gratis, incluidos en productos de la
+// tienda Etsy ("Frecuencia de Fe"). El estado se refleja en KV PREMIUM con
+// campo `expira`, así que isPremium() lo revierte solo al vencer — el usuario
+// vuelve al modo normal sin que nadie toque nada. Un código = UN uso por uid.
+// Para añadir códigos nuevos, agrega una entrada aquí y redespliega el worker.
+const COUPONS = {
+    PAZ30: { days: 30, label: '7 Días de Paz' },
+};
+
+// POST /api/redeem-coupon { code }  (requiere sesión Firebase → user)
+// Concede Premium temporal (días del cupón) una sola vez por usuario.
+async function handleRedeemCoupon(request, env, user) {
+    const body = await request.json().catch(() => ({}));
+    const code = String(body.code || '').trim().toUpperCase();
+    if (!code) throw { status: 400, msg: 'Escribe tu código' };
+    const coupon = COUPONS[code];
+    if (!coupon) throw { status: 404, msg: 'Ese código no es válido' };
+
+    // Ya es Premium (pago, admin o cortesía vigente): no gastar el cupón.
+    if (await isPremium(env, user.uid)) {
+        return json(env, request, { ok: true, already_premium: true });
+    }
+
+    // Un uso por usuario y por código (evita reactivar el mismo mes gratis).
+    const redeemedKey = 'coupon:' + code + ':' + user.uid;
+    if (await env.PREMIUM.get(redeemedKey)) {
+        throw { status: 409, msg: 'Ya usaste este código antes' };
+    }
+
+    const now = Date.now();
+    const expira = new Date(now + coupon.days * 86400000).toISOString();
+    const record = {
+        premium: true,
+        status: 'coupon',
+        plan: 'coupon',
+        source: 'coupon:' + code,
+        coupon: code,
+        granted_at: new Date(now).toISOString(),
+        expira,
+    };
+    await env.PREMIUM.put(user.uid, JSON.stringify(record));
+    await env.PREMIUM.put(redeemedKey, new Date(now).toISOString());
+    return json(env, request, { ok: true, premium: true, expira, days: coupon.days, coupon: code });
+}
+
 // ── Stripe (suscripciones premium) ───────────────────────────────────
 // El estado premium se sincroniza DESDE Stripe hacia KV PREMIUM vía webhook;
 // la app nunca decide sola si alguien es premium tras pagar.
@@ -1291,6 +1337,10 @@ export default {
             }
             if (path === '/api/portal' && request.method === 'POST') {
                 return await handlePortal(request, env, user);
+            }
+            // Canje de cupón de regalo (Modo Enfoque gratis). `return await`: lanza { status }.
+            if (path === '/api/redeem-coupon' && request.method === 'POST') {
+                return await handleRedeemCoupon(request, env, user);
             }
 
             if (path === '/api/verses' && request.method === 'GET') {
