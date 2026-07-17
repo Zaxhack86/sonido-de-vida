@@ -3,9 +3,11 @@
 //   /{libro}/{capitulo}              → audio RVA 1909 TTS individual (mp3)
 //   /sbll/{libro}/{capitulo}         → audio SBLL 2026 TTS individual (mp3)
 //   /real/{libro}/{capitulo}         → audio RVA 1909 voz REAL/humana individual (mp3)
+//   /rvsdv/{libro}/{capitulo}        → audio RV-SDV (voz exclusiva premium) individual (mp3)
 //   /stream/{libro}/{capitulo}       → stream RVA 1909 TTS continuo desde ese punto
 //   /stream/sbll/{libro}/{capitulo}  → stream SBLL 2026 TTS continuo desde ese punto
 //   /stream/real/{libro}/{capitulo}  → stream RVA 1909 voz REAL continuo desde ese punto
+//   /stream/rvsdv/{libro}/{capitulo} → stream RV-SDV continuo desde ese punto
 //   ?modo=continuar (default) → resto del libro
 //   ?modo=full                → resto del libro + libros siguientes hasta Apocalipsis
 //
@@ -50,11 +52,12 @@ const CHAPTER_COUNTS = {
     "1-juan":5,"2-juan":1,"3-juan":1,"judas":1,"apocalipsis":22,
 };
 
-// Prefijo R2 por voz. Las tres voces son MP3.
-//   rva  → audio        (TTS RVA 1909)
-//   sbll → audio_sbll   (TTS SBLL 2026)
-//   real → audio_real   (narración humana RVA 1909)
-const VOICE_PREFIX = { rva: "audio", sbll: "audio_sbll", real: "audio_real" };
+// Prefijo R2 por voz. Todas las voces son MP3.
+//   rva   → audio        (TTS RVA 1909)
+//   sbll  → audio_sbll   (TTS SBLL 2026)
+//   real  → audio_real   (narración humana RVA 1909, de terceros)
+//   rvsdv → audio_rvsdv  (RV-SDV: voz exclusiva Sonido de Vida, premium, solo streaming)
+const VOICE_PREFIX = { rva: "audio", sbll: "audio_sbll", real: "audio_real", rvsdv: "audio_rvsdv" };
 
 // Devuelve las claves R2 a unir según punto inicial y modo
 function buildSegmentKeys(prefix, book, chapter, mode) {
@@ -196,7 +199,7 @@ const worker_default = {
         if (parts[0] === "stream") {
             let prefix = VOICE_PREFIX.rva;
             let book, chapter;
-            if ((parts[1] === "sbll" || parts[1] === "real") && parts.length >= 4) {
+            if ((parts[1] === "sbll" || parts[1] === "real" || parts[1] === "rvsdv") && parts.length >= 4) {
                 prefix = VOICE_PREFIX[parts[1]]; book = parts[2]; chapter = parseInt(parts[3], 10);
             } else if (parts.length >= 3) {
                 book = parts[1]; chapter = parseInt(parts[2], 10);
@@ -209,9 +212,9 @@ const worker_default = {
             return handleStream(env, prefix, book, chapter, mode);
         }
 
-        // Single chapter: /sbll/{libro}/{cap} · /real/{libro}/{cap} · /{libro}/{cap}
+        // Single chapter: /sbll/{libro}/{cap} · /real/{libro}/{cap} · /rvsdv/{libro}/{cap} · /{libro}/{cap}
         let prefix = VOICE_PREFIX.rva, bookPart, chapterPart;
-        if ((parts[0] === "sbll" || parts[0] === "real") && parts.length >= 3) {
+        if ((parts[0] === "sbll" || parts[0] === "real" || parts[0] === "rvsdv") && parts.length >= 3) {
             prefix = VOICE_PREFIX[parts[0]]; bookPart = parts[1]; chapterPart = parts[2];
         } else if (parts.length >= 2) {
             bookPart = parts[0]; chapterPart = parts[1];

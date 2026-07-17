@@ -5,26 +5,29 @@
     const AUDIO_BASE = 'https://sonido-de-vida-audio.sonidodevida.workers.dev';
 
     // ── Voz/traducción activa ──────────────────────────────────────────
-    //   'real' (RVA 1909, narración HUMANA · principal) | 'rva' (RVA 1909 TTS) | 'sbll' (SBLL 2026 TTS)
-    //   'real' y 'rva' comparten el MISMO texto (RVA 1909 → window.BIBLE); solo
-    //   cambia el audio. 'sbll' usa su propio texto (window.BIBLE_SBLL).
-    let translationMode = 'real';
+    //   'sbll' (SBLL 2026 TTS · PREDETERMINADA) | 'rva' (RVA 1909 TTS) |
+    //   'rvsdv' (RV-SDV, voz exclusiva Sonido de Vida — PRÓXIMAMENTE, sin audio aún)
+    //   'rva' y 'rvsdv' comparten el MISMO texto (RVA 1909 → window.BIBLE);
+    //   'sbll' usa su propio texto (window.BIBLE_SBLL).
+    //   La voz 'real' (humana 1909 de terceros) se retiró: sonaba mal y la
+    //   sustituye RV-SDV cuando su audio esté listo.
+    let translationMode = 'sbll';
 
     function getActiveBible() {
         return (translationMode === 'sbll' && window.BIBLE_SBLL) ? window.BIBLE_SBLL : window.BIBLE;
     }
     function getTranslationLabel() {
         if (translationMode === 'sbll') return 'SBLL 2026';
-        if (translationMode === 'real') return 'RVA 1909 · Voz Real';
+        if (translationMode === 'rvsdv') return 'RV-SDV · Reina-Valera Sonido de Vida (1909)';
         return 'RVA 1909';
     }
     // ── Carga diferida de los datos bíblicos (lazy-load) ──────────────
     // Cada traducción es un .js que define window.BIBLE (RVA) / window.BIBLE_SBLL
     // (SBLL). Se inyectan bajo demanda, una sola vez, y se reutiliza la promesa
     // en vuelo si llegan varias peticiones a la vez.
-    // 'real' reutiliza el texto RVA (mismo .js / mismo global que 'rva').
-    const BIBLE_SRC    = { rva: '/bible.js',  sbll: '/bible_sbll.js', real: '/bible.js' };
-    const BIBLE_GLOBAL = { rva: 'BIBLE',      sbll: 'BIBLE_SBLL',     real: 'BIBLE' };
+    // 'rvsdv' reutiliza el texto RVA (mismo .js / mismo global que 'rva').
+    const BIBLE_SRC    = { rva: '/bible.js',  sbll: '/bible_sbll.js', rvsdv: '/bible.js' };
+    const BIBLE_GLOBAL = { rva: 'BIBLE',      sbll: 'BIBLE_SBLL',     rvsdv: 'BIBLE' };
     const _bibleLoading = {};   // mode -> Promise en vuelo
     function bibleLoaded(mode) { return !!window[BIBLE_GLOBAL[mode]]; }
     function ensureBible(mode = translationMode) {
@@ -64,15 +67,18 @@
     }
 
     async function setTranslation(mode) {
+        // RV-SDV está PRÓXIMAMENTE: aún no hay audio, así que no se activa el modo.
+        // Se muestra el teaser "próximamente" y no se cambia nada.
+        if (mode === 'rvsdv') { openRvsdvPremium(); return; }
         if (translationMode === mode) return;
         // Asegurar que la traducción destino esté cargada antes de cambiar
         try { await ensureBible(mode); }
         catch (e) { showToast('⚠️ No se pudo cargar esa traducción'); return; }
         translationMode = mode;
         // Actualizar botones del toggle
-        document.getElementById('tt-real').classList.toggle('active', mode === 'real');
-        document.getElementById('tt-rva').classList.toggle('active', mode === 'rva');
-        document.getElementById('tt-sbll').classList.toggle('active', mode === 'sbll');
+        document.getElementById('tt-rva')?.classList.toggle('active', mode === 'rva');
+        document.getElementById('tt-sbll')?.classList.toggle('active', mode === 'sbll');
+        updateDownloadBtn();
         updateReadSpeedAvail();
         // Si hay capítulo cargado, recargarlo con la nueva traducción.
         // Si estaba sonando, retomar por donde iba (no reiniciar el capítulo):
@@ -87,6 +93,22 @@
         if (sub) sub.textContent = `${getTranslationLabel()} · Sonido de Vida`;
         showToast(`Traducción: ${getTranslationLabel()}`);
         if (window.Focus) Focus.syncBibleSelector(mode);
+    }
+
+    // ── Popup "RV-SDV — Próximamente" (voz exclusiva en producción) ──
+    // Aún NO hay audio: solo anuncia la voz que viene. Cuando el catálogo esté
+    // listo, este teaser pasará a ser el portón Premium real.
+    function openRvsdvPremium() {
+        const m = document.getElementById('rvsdvPremiumModal');
+        if (!m) { showToast('✨ RV-SDV — voz exclusiva, muy pronto'); return; }
+        m.classList.add('visible');
+        m.setAttribute('aria-hidden', 'false');
+    }
+    function closeRvsdvPremium() {
+        const m = document.getElementById('rvsdvPremiumModal');
+        if (!m) return;
+        m.classList.remove('visible');
+        m.setAttribute('aria-hidden', 'true');
     }
 
     // Mapeo: nombre del libro en BIBLE → clave normalizada en R2
@@ -537,8 +559,8 @@
 
     function audioUrl(book, chapter, single = false) {
         const key = BOOK_KEY[book] || book.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/\s+/g,'-');
-        // Prefijo de ruta del Worker por voz: real→/real, sbll→/sbll, rva→(raíz)
-        const prefix = translationMode === 'real' ? 'real/' : (translationMode === 'sbll' ? 'sbll/' : '');
+        // Prefijo de ruta del Worker por voz: sbll→/sbll, rvsdv→/rvsdv, rva→(raíz)
+        const prefix = translationMode === 'sbll' ? 'sbll/' : (translationMode === 'rvsdv' ? 'rvsdv/' : '');
         // Stream continuo del servidor: concatena todos los MP3 desde este capítulo
         // en una sola respuesta HTTP. Esto evita el evento 'ended' entre capítulos,
         // lo que es esencial para reproducción confiable con pantalla bloqueada en
@@ -1836,7 +1858,7 @@
             document.getElementById('playerFocusBtn')?.classList.add('active');
             applyVolumes();
             if (!currentAmbient) { shuffleAuto = true; updateShuffleBtn(); pickRandomAmbient(); }
-            syncBibleSelector(translationMode || 'real');
+            syncBibleSelector(translationMode || 'sbll');
             // Racha diaria: cuenta la sesión de hoy y celebra con un aviso suave.
             const st = FocusStreak.mark();
             if (!st.sameDay) {
@@ -2271,7 +2293,6 @@
         }
 
         function syncBibleSelector(mode) {
-            document.getElementById('fxBibleReal')?.classList.toggle('active', mode === 'real');
             document.getElementById('fxBibleRva')?.classList.toggle('active',  mode === 'rva');
             document.getElementById('fxBibleSbll')?.classList.toggle('active', mode === 'sbll');
         }
@@ -2466,6 +2487,8 @@
 
     async function downloadChapter() {
         if (!state.book || !state.chapter) return;
+        // RV-SDV es voz exclusiva de solo streaming: no se descarga, ni con Premium.
+        if (translationMode === 'rvsdv') { showToast('✨ RV-SDV es solo streaming, no se descarga'); return; }
         // Cuenta obligatoria para descargar (escuchar sigue siendo libre y sin registro)
         if (serverDL() && !window.SDV_Auth.user) {
             if (window.SDV_Account) SDV_Account.open();
@@ -2638,6 +2661,9 @@
     function updateDownloadBtn() {
         const btn = document.getElementById('downloadBtn');
         if (!btn || btn.disabled) return;
+        // RV-SDV es voz exclusiva de solo streaming: se oculta el botón de descargar.
+        if (translationMode === 'rvsdv') { btn.style.display = 'none'; return; }
+        btn.style.display = '';
         // Sin sesión: invitar a crear cuenta (escuchar sigue libre)
         if (serverDL() && !window.SDV_Auth.user) {
             btn.innerHTML = '🔒 Inicia sesión para descargar';

@@ -96,7 +96,7 @@
         <div class="hero-bg"></div>
         <div class="hero-particles" id="particles"></div>
         <div class="hero-content">
-            <div class="hero-badge"><span class="pulse-dot"></span> Audio Real · Toda la Biblia · En Español</div>
+            <div class="hero-badge"><span class="pulse-dot"></span> Biblia en Audio · Toda la Biblia · En Español</div>
             <h1>Escucha la <span>Palabra</span> de Dios en cualquier momento</h1>
             <p>La Biblia completa narrada en audio, capítulo por capítulo. Escucha mientras manejas, descansas o con la pantalla apagada.</p>
             <div class="hero-buttons">
@@ -120,7 +120,7 @@
             <div class="stat-item"><h3>66</h3><p>Libros</p></div>
             <div class="stat-item"><h3>1,189</h3><p>Capítulos en audio</p></div>
             <div class="stat-item"><h3>100%</h3><p>Gratis</p></div>
-            <div class="stat-item"><h3>3</h3><p>Versiones de audio</p></div>
+            <div class="stat-item"><h3>2</h3><p>Voces de audio</p></div>
         </div>
     </section>
 
@@ -272,7 +272,7 @@
                     <div class="fx-screen" style="--fx-glow:#46306e"><span class="fx-notch"></span><div class="fx-bg"></div>
                         <div class="fx-content"><span class="fx-kicker">Con voz</span>
                             <div class="fx-play">▶</div>
-                            <p class="fx-line2">Salmos 23 · Voz Real</p>
+                            <p class="fx-line2">Salmos 23 · Con voz</p>
                             <div class="fx-mixer">
                                 <div class="fx-mrow"><span>🎙️ Voz</span><div class="fx-bar"><i style="width:82%"></i></div></div>
                                 <div class="fx-mrow"><span>🎵 Música</span><div class="fx-bar"><i style="width:55%"></i></div></div>
@@ -318,11 +318,11 @@
           <div class="bib-block bibUp bu2">
             <p class="bib-step-label">Traducción</p>
             <div class="bib-trans-grid">
-              <div class="bib-trans active" id="tt-real" onclick="setTranslation('real')">
+              <div class="bib-trans active" id="tt-sbll" onclick="setTranslation('sbll')">
                 <span class="bib-trans-check">✓</span>
-                <div class="bib-trans-ico">🎙️</div>
-                <h4>Voz Real</h4>
-                <p>Narración humana, natural y expresiva (RVA 1909)</p>
+                <div class="bib-trans-ico">🎧</div>
+                <h4>SBLL 2026</h4>
+                <p>Voz por IA, clara y natural · ideal para cámara lenta</p>
               </div>
               <div class="bib-trans" id="tt-rva" onclick="setTranslation('rva')">
                 <span class="bib-trans-check">✓</span>
@@ -330,11 +330,11 @@
                 <h4>RVA 1909</h4>
                 <p>Reina-Valera Antigua · voz por IA (TTS)</p>
               </div>
-              <div class="bib-trans" id="tt-sbll" onclick="setTranslation('sbll')">
-                <span class="bib-trans-check">✓</span>
-                <div class="bib-trans-ico">🎧</div>
-                <h4>SBLL 2026</h4>
-                <p>Voz por IA, ideal para cámara lenta</p>
+              <div class="bib-trans bib-trans-premium bib-trans-soon" id="tt-rvsdv" onclick="setTranslation('rvsdv')">
+                <span class="bib-trans-pill">Próximamente</span>
+                <div class="bib-trans-ico">✨</div>
+                <h4>RV-SDV</h4>
+                <p>Reina-Valera Sonido de Vida (1909) · voz exclusiva, muy pronto</p>
               </div>
             </div>
           </div>
@@ -624,13 +624,12 @@
                         <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 12 15 18 9"/></svg>
                     </div>
                     <div class="faq-a"><div class="faq-a-inner">
-                        La app ofrece <strong>tres voces</strong> que puedes cambiar desde la pestaña Biblia:
+                        La app ofrece <strong>dos voces</strong> que puedes cambiar desde la pestaña Biblia:
                         <ul>
-                            <li><strong>Voz humana (RVA 1909)</strong> — narración real grabada en estudio. Es la voz principal y la más recomendada.</li>
-                            <li><strong>RVA (TTS)</strong> — lectura sintética del texto Reina-Valera 1909.</li>
-                            <li><strong>SBLL (TTS)</strong> — otra traducción en voz sintetizada.</li>
+                            <li><strong>SBLL 2026</strong> — voz por IA clara y natural. Es la voz principal, e ideal para escuchar en cámara lenta.</li>
+                            <li><strong>RVA 1909 (TTS)</strong> — lectura del texto Reina-Valera Antigua.</li>
                         </ul>
-                        <div class="faq-tip">💡 La voz humana cubre los 1,189 capítulos completos de la Biblia.</div>
+                        <div class="faq-tip">✨ Muy pronto: <strong>RV-SDV</strong>, nuestra propia narración exclusiva de toda la Biblia (Reina-Valera 1909), producida por Sonido de Vida.</div>
                     </div></div>
                 </div>
 
@@ -1048,7 +1047,7 @@
             </div>
             <div class="player-info">
                 <div class="player-ref-text" id="playerRef"></div>
-                <div class="player-sub" id="playerSub">RVA 1909 · Voz Real · Sonido de Vida</div>
+                <div class="player-sub" id="playerSub">SBLL 2026 · Sonido de Vida</div>
                 <div class="player-progress" id="playerProgress" onclick="seekAudio(event)">
                     <div class="player-progress-fill" id="playerProgressFill"></div>
                 </div>
@@ -1209,6 +1208,22 @@
             </div>
             <button class="share-btn gold" id="podPremCta" style="width:100%;font-size:1rem;padding:.9rem;margin-top:.2rem">✨ Empezar prueba gratis</button>
             <button class="share-btn ghost" id="podPremSecond" style="width:100%;margin-top:.6rem;display:none" onclick="Podcast.closePremium();if(window.SDV_Account)SDV_Account.open()">👤 Crear mi cuenta gratis</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="rvsdvPremiumModal" aria-hidden="true" style="z-index:4500" onclick="if(event.target===this)closeRvsdvPremium()">
+        <div class="modal-card" role="dialog" aria-labelledby="rvsdvPremTitle">
+            <button class="modal-close" onclick="closeRvsdvPremium()" aria-label="Cerrar">&times;</button>
+            <div class="modal-icon">✨</div>
+            <div class="modal-title" id="rvsdvPremTitle">RV-SDV <span class="focus-premium-badge">Próximamente</span></div>
+            <div class="modal-subtitle">Reina-Valera Sonido de Vida (1909) — una narración exclusiva de toda la Biblia, producida por nosotros. La estamos grabando ahora mismo.</div>
+            <ul class="teaser-list">
+                <li><span>🎙️</span> Voz exclusiva, producida por Sonido de Vida</li>
+                <li><span>📖</span> Toda la Biblia, Génesis a Apocalipsis</li>
+                <li><span>📻</span> Pensada para escuchar en streaming</li>
+                <li><span>⏳</span> En producción — te avisaremos cuando esté lista</li>
+            </ul>
+            <button class="share-btn gold" onclick="closeRvsdvPremium()" style="width:100%;font-size:1rem;padding:.9rem;margin-top:.4rem">Entendido ✨</button>
         </div>
     </div>
 
@@ -1464,9 +1479,8 @@
             <div class="fx-section voz-only">
                 <p class="fx-label">Versión de la Biblia</p>
                 <div class="fx-bible-switch" id="fxBibleSwitch">
-                    <button id="fxBibleReal" onclick="setTranslation('real')" class="active">🎙️ Humana RVA</button>
+                    <button id="fxBibleSbll" onclick="setTranslation('sbll')" class="active">📖 SBLL 2026</button>
                     <button id="fxBibleRva"  onclick="setTranslation('rva')">🔊 RVA 1909</button>
-                    <button id="fxBibleSbll" onclick="setTranslation('sbll')">📖 SBLL 2026</button>
                 </div>
             </div>
 
