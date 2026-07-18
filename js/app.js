@@ -705,8 +705,10 @@
                 preloadNextChapter();
                 if (window.Focus) {
                     Focus.onNarration(true);
-                    // Arrancar tracker de display si estamos en modo streaming + Enfoque
-                    if (focusNarration && audio.src && audio.src.includes('/stream/')) {
+                    // Arrancar tracker de display siempre que se reproduzca en streaming
+                    // (continuar/full), esté o no en Modo Enfoque. Así el texto en
+                    // pantalla avanza junto con el audio al cambiar de capítulo.
+                    if (audio.src && audio.src.includes('/stream/')) {
                         Focus.startStreamTrack();
                     }
                 }
@@ -739,8 +741,9 @@
                         handleChapterEnded();
                     }
                 }
-                // Tracker de capítulo en display para Modo Enfoque con streaming
-                if (focusNarration && window.Focus) Focus.tickStreamTrack(audio.currentTime);
+                // Tracker de capítulo en display durante streaming (Enfoque o no).
+                // tickStreamTrack es no-op salvo que startStreamTrack lo haya activado.
+                if (window.Focus) Focus.tickStreamTrack(audio.currentTime);
             });
             el.addEventListener('canplay', function() {
                 if (this !== audio) return;
