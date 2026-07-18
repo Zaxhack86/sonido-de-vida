@@ -330,11 +330,12 @@
                 <h4>RVA 1909</h4>
                 <p>Reina-Valera Antigua · voz por IA (TTS)</p>
               </div>
-              <div class="bib-trans bib-trans-premium bib-trans-soon" id="tt-rvsdv" onclick="setTranslation('rvsdv')">
-                <span class="bib-trans-pill">Próximamente</span>
+              <div class="bib-trans bib-trans-premium" id="tt-rvsdv" onclick="setTranslation('rvsdv')">
+                <span class="bib-trans-check">✓</span>
+                <span class="bib-trans-pill">Premium</span>
                 <div class="bib-trans-ico">✨</div>
                 <h4>RV-SDV</h4>
-                <p>Reina-Valera Sonido de Vida (1909) · voz exclusiva, muy pronto</p>
+                <p>Reina-Valera Sonido de Vida (1909) · voz exclusiva</p>
               </div>
             </div>
           </div>
@@ -624,12 +625,13 @@
                         <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 12 15 18 9"/></svg>
                     </div>
                     <div class="faq-a"><div class="faq-a-inner">
-                        La app ofrece <strong>dos voces</strong> que puedes cambiar desde la pestaña Biblia:
+                        La app ofrece varias voces que puedes cambiar desde la pestaña Biblia:
                         <ul>
                             <li><strong>SBLL 2026</strong> — voz por IA clara y natural. Es la voz predeterminada de la app.</li>
                             <li><strong>RVA 1909 (TTS)</strong> — lectura del texto Reina-Valera Antigua.</li>
+                            <li><strong>RV-SDV</strong> <em>(Premium)</em> — nuestra narración exclusiva de toda la Biblia (Reina-Valera 1909), producida por Sonido de Vida. Solo streaming.</li>
                         </ul>
-                        <div class="faq-tip">✨ Muy pronto: <strong>RV-SDV</strong>, nuestra propia narración exclusiva de toda la Biblia (Reina-Valera 1909), producida por Sonido de Vida.</div>
+                        <div class="faq-tip">✨ <strong>RV-SDV</strong> es una voz exclusiva para suscriptores Premium.</div>
                     </div></div>
                 </div>
 
@@ -1215,15 +1217,28 @@
         <div class="modal-card" role="dialog" aria-labelledby="rvsdvPremTitle">
             <button class="modal-close" onclick="closeRvsdvPremium()" aria-label="Cerrar">&times;</button>
             <div class="modal-icon">✨</div>
-            <div class="modal-title" id="rvsdvPremTitle">RV-SDV <span class="focus-premium-badge">Próximamente</span></div>
-            <div class="modal-subtitle">Reina-Valera Sonido de Vida (1909) — una narración exclusiva de toda la Biblia, producida por nosotros. La estamos grabando ahora mismo.</div>
+            <div class="modal-title" id="rvsdvPremTitle">RV-SDV <span class="focus-premium-badge">✨ Premium</span></div>
+            <div class="modal-subtitle">Reina-Valera Sonido de Vida (1909) — una narración exclusiva de toda la Biblia, producida por nosotros. Disponible solo para nuestra comunidad Premium.</div>
             <ul class="teaser-list">
                 <li><span>🎙️</span> Voz exclusiva, producida por Sonido de Vida</li>
                 <li><span>📖</span> Toda la Biblia, Génesis a Apocalipsis</li>
-                <li><span>📻</span> Pensada para escuchar en streaming</li>
-                <li><span>⏳</span> En producción — te avisaremos cuando esté lista</li>
+                <li><span>📻</span> Solo streaming — cuidamos la producción, no se descarga</li>
+                <li><span>✨</span> Incluida en tu suscripción Premium</li>
             </ul>
-            <button class="share-btn gold" onclick="closeRvsdvPremium()" style="width:100%;font-size:1rem;padding:.9rem;margin-top:.4rem">Entendido ✨</button>
+            <div class="teaser-price">
+                <span class="teaser-promo">✨ Premium · desbloquea todo</span>
+                <div class="plan-toggle" id="rvsdvPlanToggle">
+                    <button type="button" data-plan="annual" class="active" onclick="Premium.selectPlan('annual',this)">
+                        <span class="plan-name">Anual</span><strong>$24.99</strong><small>2 meses gratis</small>
+                    </button>
+                    <button type="button" data-plan="monthly" onclick="Premium.selectPlan('monthly',this)">
+                        <span class="plan-name">Mensual</span><strong>$2.99</strong><small>al mes</small>
+                    </button>
+                </div>
+                <small>Incluye 7 días de prueba gratis. Cancela cuando quieras.</small>
+            </div>
+            <button class="share-btn gold" id="rvsdvPremCta" style="width:100%;font-size:1rem;padding:.9rem;margin-top:.2rem">✨ Empezar prueba gratis</button>
+            <button class="share-btn ghost" id="rvsdvPremSecond" style="width:100%;margin-top:.6rem;display:none" onclick="closeRvsdvPremium();if(window.SDV_Account)SDV_Account.open()">👤 Crear mi cuenta gratis</button>
         </div>
     </div>
 

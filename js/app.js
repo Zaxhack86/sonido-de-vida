@@ -67,9 +67,9 @@
     }
 
     async function setTranslation(mode) {
-        // RV-SDV está PRÓXIMAMENTE: aún no hay audio, así que no se activa el modo.
-        // Se muestra el teaser "próximamente" y no se cambia nada.
-        if (mode === 'rvsdv') { openRvsdvPremium(); return; }
+        // RV-SDV es voz EXCLUSIVA Premium (solo streaming, sin descarga).
+        // Sin cuenta Premium se muestra el portón y no se cambia el modo.
+        if (mode === 'rvsdv' && !(window.SDV_Auth && SDV_Auth.premium)) { openRvsdvPremium(); return; }
         if (translationMode === mode) return;
         // Asegurar que la traducción destino esté cargada antes de cambiar
         try { await ensureBible(mode); }
@@ -78,6 +78,7 @@
         // Actualizar botones del toggle
         document.getElementById('tt-rva')?.classList.toggle('active', mode === 'rva');
         document.getElementById('tt-sbll')?.classList.toggle('active', mode === 'sbll');
+        document.getElementById('tt-rvsdv')?.classList.toggle('active', mode === 'rvsdv');
         updateDownloadBtn();
         updateReadSpeedAvail();
         // Si hay capítulo cargado, recargarlo con la nueva traducción.
@@ -95,12 +96,18 @@
         if (window.Focus) Focus.syncBibleSelector(mode);
     }
 
-    // ── Popup "RV-SDV — Próximamente" (voz exclusiva en producción) ──
-    // Aún NO hay audio: solo anuncia la voz que viene. Cuando el catálogo esté
-    // listo, este teaser pasará a ser el portón Premium real.
+    // ── Portón Premium "RV-SDV" (voz exclusiva, streaming, sin descarga) ──
     function openRvsdvPremium() {
         const m = document.getElementById('rvsdvPremiumModal');
-        if (!m) { showToast('✨ RV-SDV — voz exclusiva, muy pronto'); return; }
+        if (!m) { showToast('✨ RV-SDV es una voz exclusiva Premium'); return; }
+        const logged = !!(window.SDV_Auth && SDV_Auth.user);
+        const cta = document.getElementById('rvsdvPremCta');
+        const second = document.getElementById('rvsdvPremSecond');
+        if (cta) {
+            cta.textContent = logged ? '✨ Empezar prueba de 7 días gratis' : '👤 Crear cuenta y empezar gratis';
+            cta.onclick = () => { closeRvsdvPremium(); Premium.checkout(); };
+        }
+        if (second) second.style.display = logged ? 'none' : '';
         m.classList.add('visible');
         m.setAttribute('aria-hidden', 'false');
     }
