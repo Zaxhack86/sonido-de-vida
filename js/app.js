@@ -117,6 +117,17 @@
         m.classList.remove('visible');
         m.setAttribute('aria-hidden', 'true');
     }
+    // CTA de la promo del Inicio: Premium → abre Biblia y activa RV-SDV;
+    // gratis → muestra el portón Premium.
+    function goRvsdv() {
+        if (window.SDV_Auth && SDV_Auth.premium) {
+            showTab('biblia');
+            setTimeout(() => setTranslation('rvsdv'), 350);
+        } else {
+            openRvsdvPremium();
+        }
+    }
+    window.goRvsdv = goRvsdv;
 
     // Mapeo: nombre del libro en BIBLE → clave normalizada en R2
     const BOOK_KEY = {
