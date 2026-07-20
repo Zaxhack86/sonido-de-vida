@@ -134,22 +134,22 @@
         audio.currentTime = pct * audio.duration;
     }
     // Velocidad de lectura (0.9×–1.2×): aplica a ambos <audio> y persiste en swaps.
-    // Solo voz SBLL 2026: si el usuario baja de 1× se cambia automáticamente a esa voz.
+    // NUNCA cambia la voz. La cámara lenta (0.9×) funciona con SBLL 2026 y RV-SDV;
+    // con la RVA 1909 vieja se ignora (pierde calidad ralentizada).
     function setReadSpeed(rate, btn) {
         rate = Math.max(0.9, Math.min(1.2, rate));
-        // La cámara lenta (0.9×) solo existe para la voz SBLL 2026 (las demás
-        // pierden calidad al ralentizarse). El botón se oculta en otras voces.
-        if (rate < 1 && translationMode !== 'sbll') return;
+        if (rate < 1 && translationMode === 'rva') return;
         try { playbackSpeed = rate; audioA.playbackRate = rate; audioB.playbackRate = rate; } catch (e) {}
         document.querySelectorAll('#listen .bib-speed button').forEach(b => b.classList.remove('active'));
         if (btn) btn.classList.add('active');
     }
-    // El botón 0.9× del lector solo se muestra con la voz SBLL 2026.
+    // El botón 0.9× SIEMPRE se ve; solo se atenúa (.bib-speed-off) con RVA 1909.
     function updateReadSpeedAvail() {
         const slow = document.getElementById('bibSlowBtn');
         if (!slow) return;
-        const ok = (translationMode === 'sbll');
-        slow.style.display = ok ? '' : 'none';
+        const ok = (translationMode !== 'rva');   // sbll y rvsdv sí; rva no
+        slow.style.display = '';
+        slow.classList.toggle('bib-speed-off', !ok);
         // Si dejamos de poder ir lento, normalizar a 1× para no quedar atascado.
         if (!ok && playbackSpeed < 1) setReadSpeed(1, document.querySelector('#listen .bib-speed button:nth-child(2)'));
     }

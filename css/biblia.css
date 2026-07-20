@@ -83,6 +83,7 @@
     #listen .bib-speed button{background:none;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-size:.68rem;font-weight:700;color:#6b7080;padding:.3rem .45rem;border-radius:.45rem;transition:color .2s,background .2s}
     #listen .bib-speed button:hover{color:#cfd3dd}
     #listen .bib-speed button.active{color:var(--gold-light);background:rgba(201,168,76,.14)}
+    #listen .bib-speed button.bib-speed-off{opacity:.4}
     #listen .bib-transport{display:flex;align-items:center;gap:.7rem}
     #listen .bib-skip{width:2.2rem;height:2.2rem;border-radius:50%;border:none;background:none;color:#aab0bf;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s,color .2s}
     #listen .bib-skip svg{width:1.15rem;height:1.15rem}

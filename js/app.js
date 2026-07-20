@@ -87,6 +87,8 @@
         if (state.book && state.chapter) {
             const wasPlaying = !audio.paused && !!audio.src;
             const resumeAt = (wasPlaying && isFinite(audio.currentTime)) ? audio.currentTime : 0;
+            // En Modo Enfoque, mantener la música sonando durante la recarga de voz.
+            if (window.Focus && Focus.beginVoiceReload) Focus.beginVoiceReload();
             loadChapter({ book: state.book, chapter: state.chapter, autoplay: wasPlaying, silent: true, resumeAt });
         }
         // Actualizar subtítulo del player si está activo
@@ -1369,7 +1371,20 @@
             try { localStorage.setItem('sdv-focus-recent', JSON.stringify(recentAmbients)); } catch (e) {}
         }
         let _pauseTimer = null;   // debounce: ignora micro-pauses del stream entre libros
+        let _voiceReloading = false, _voiceReloadTimer = null;   // cambio de voz en caliente: no parar la música
         const blobCache = new Map();   // contentId -> objectURL
+
+        // Al cambiar de voz en Modo Enfoque el <audio> se recarga y dispara un
+        // 'pause' transitorio → la música se pausaría por el debounce. Esto lo
+        // ignora durante la ventana de recarga y mantiene la música sonando.
+        function beginVoiceReload() {
+            if (!overlay.classList.contains('open')) return;
+            _voiceReloading = true;
+            if (_pauseTimer) { clearTimeout(_pauseTimer); _pauseTimer = null; }
+            if (_voiceReloadTimer) clearTimeout(_voiceReloadTimer);
+            _voiceReloadTimer = setTimeout(() => { _voiceReloading = false; }, 5000);
+            if (currentAmbient && ambCur && ambCur.src && ambCur.paused) ambCur.play().catch(() => {});
+        }
         const CROSSFADE_MS = 1400;
 
         function premiumReady() {
@@ -1696,21 +1711,12 @@
         // pierde calidad al ralentizarla, así que con esa voz se ofrece cambiar.
         function setSpeed(rate, btn, opts) {
             opts = opts || {};
-            // Al aplicar una mezcla (opts.noSwitch) NUNCA cambiamos la voz a
-            // espaldas del usuario: la cámara lenta solo vale con SBLL 2026, así
-            // que con otra voz normalizamos a 1× sin tocar la voz activa.
-            if (rate < 1 && translationMode !== 'sbll' && opts.noSwitch) rate = 1;
-            // Cámara lenta: un solo clic basta. Si la voz no es SBLL 2026, cambiamos
-            // a ella automáticamente (la RVA 1909 pierde calidad ralentizada) y
-            // aplicamos la velocidad en el mismo gesto. playbackSpeed se fija antes
-            // de recargar para que el handler 'play' del audio nuevo lo reaplique.
-            if (rate < 1 && translationMode !== 'sbll' && !opts.noSwitch) {
-                playbackSpeed = Math.max(0.9, Math.min(1.2, rate));
-                if (window.setTranslation) setTranslation('sbll');   // async: recarga con la velocidad ya fijada
-                updateSpeedAvailability();
-                showToast('🎧 Voz SBLL 2026 + cámara lenta activadas');
-                document.querySelectorAll('#focusSpeedOpts button').forEach(b => b.classList.remove('active'));
-                if (btn) btn.classList.add('active');
+            // NUNCA cambiamos la voz al elegir velocidad. La cámara lenta (<1×)
+            // suena bien con SBLL 2026 y RV-SDV; la RVA 1909 vieja pierde calidad,
+            // así que con esa voz el 0.9× se ignora (sin tocar la voz) y se avisa.
+            if (rate < 1 && !slowOk()) {
+                const hint = document.getElementById('focusSpeedHint');
+                if (hint) { hint.classList.add('show'); hint.classList.remove('pulse'); void hint.offsetWidth; hint.classList.add('pulse'); }
                 return;
             }
             playbackSpeed = Math.max(0.9, Math.min(1.2, rate));
@@ -1718,12 +1724,13 @@
             document.querySelectorAll('#focusSpeedOpts button').forEach(b => b.classList.remove('active'));
             if (btn) btn.classList.add('active');
         }
-        // Oculta los botones de cámara lenta (0.9×) salvo con la voz SBLL 2026.
+        // La cámara lenta (0.9×) funciona con SBLL 2026 y RV-SDV, no con RVA 1909.
+        function slowOk() { return translationMode === 'sbll' || translationMode === 'rvsdv'; }
+        // El botón 0.9× SIEMPRE se ve; solo se atenúa (clase .locked) con RVA 1909.
         function updateSpeedAvailability() {
-            // La cámara lenta solo existe con la voz TTS SBLL 2026.
-            const noSlow = (translationMode !== 'sbll');
+            const noSlow = !slowOk();
             document.querySelectorAll('#focusSpeedOpts button').forEach(b => {
-                if (parseFloat(b.dataset.rate) < 1) b.style.display = noSlow ? 'none' : '';
+                if (parseFloat(b.dataset.rate) < 1) { b.style.display = ''; b.classList.toggle('locked', noSlow); }
             });
             const hint = document.getElementById('focusSpeedHint');
             if (hint) hint.classList.toggle('show', noSlow);
@@ -1732,9 +1739,9 @@
         }
         // Cambia a la voz SBLL 2026 desde el Modo Enfoque (para usar la cámara lenta).
         function useSbllVoice() {
-            if (window.setTranslation) setTranslation('sbll');
+            if (window.pickVoice) pickVoice('sbll'); else if (window.setTranslation) setTranslation('sbll');
             updateSpeedAvailability();
-            showToast('🎧 Voz SBLL 2026 activada · suena mejor en cámara lenta');
+            showToast('🎧 Voz SBLL 2026 activada · suena bien en cámara lenta');
         }
 
         // Cancela cualquier temporizador/fundido de sueño en curso y restaura el
@@ -1782,12 +1789,16 @@
             if (!overlay.classList.contains('open')) return;
             if (!currentAmbient || !ambCur.src) return;
             if (playing) {
+                _voiceReloading = false;
+                if (_voiceReloadTimer) { clearTimeout(_voiceReloadTimer); _voiceReloadTimer = null; }
                 if (_pauseTimer) { clearTimeout(_pauseTimer); _pauseTimer = null; }
                 ambCur.play().catch(() => {});
             } else {
                 // En meditación la música corre independiente de la narración.
                 // En modo voz: debounce 600ms para ignorar micro-pauses del stream.
                 if (focusSubMode !== 'voz') return;
+                // Cambio de voz en caliente: no parar la música mientras recarga.
+                if (_voiceReloading) return;
                 _pauseTimer = setTimeout(() => {
                     _pauseTimer = null;
                     try { ambientEl.pause(); ambientElB.pause(); } catch (e) {}
@@ -2382,7 +2393,7 @@
             document.getElementById('fxBibleRvsdv')?.classList.toggle('active', mode === 'rvsdv');
         }
 
-        return { enter, exit, enterVoz, enterMeditar, switchMode, toggleShuffleAuto, selectAmbient, toggleMusic, setVoz, setMusica, setSpeed, setTimer, setBg, onNarration, syncVerse, refreshGate, openTeaser, closeTeaser, closeSelector, useSbllVoice, startStreamTrack, tickStreamTrack, ambients, meditNext, meditPrev, meditShuffle, stopAudio, fadeOutAndStop, toggleBreath, syncBibleSelector };
+        return { enter, exit, enterVoz, enterMeditar, switchMode, toggleShuffleAuto, selectAmbient, toggleMusic, setVoz, setMusica, setSpeed, setTimer, setBg, onNarration, syncVerse, refreshGate, openTeaser, closeTeaser, closeSelector, useSbllVoice, startStreamTrack, tickStreamTrack, ambients, meditNext, meditPrev, meditShuffle, stopAudio, fadeOutAndStop, toggleBreath, syncBibleSelector, beginVoiceReload };
     })();
     window.Focus = Focus;
 
