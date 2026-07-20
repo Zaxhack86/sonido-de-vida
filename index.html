@@ -332,19 +332,19 @@
           <div class="bib-block bibUp bu2">
             <p class="bib-step-label">Traducción</p>
             <div class="bib-trans-grid">
-              <div class="bib-trans active" id="tt-sbll" onclick="setTranslation('sbll')">
+              <div class="bib-trans active" id="tt-sbll" onclick="pickVoice('sbll')">
                 <span class="bib-trans-check">✓</span>
                 <div class="bib-trans-ico">🎧</div>
                 <h4>SBLL 2026</h4>
                 <p>Voz por IA, clara y natural · predeterminada</p>
               </div>
-              <div class="bib-trans" id="tt-rva" onclick="setTranslation('rva')">
+              <div class="bib-trans" id="tt-rva" onclick="pickVoice('rva')">
                 <span class="bib-trans-check">✓</span>
                 <div class="bib-trans-ico">📖</div>
                 <h4>RVA 1909</h4>
                 <p>Reina-Valera Antigua · voz por IA (TTS)</p>
               </div>
-              <div class="bib-trans bib-trans-premium" id="tt-rvsdv" onclick="setTranslation('rvsdv')">
+              <div class="bib-trans bib-trans-premium" id="tt-rvsdv" onclick="pickVoice('rvsdv')">
                 <span class="bib-trans-check">✓</span>
                 <span class="bib-trans-pill">Premium</span>
                 <div class="bib-trans-ico">✨</div>
@@ -424,9 +424,17 @@
                 </div>
                 <div class="bib-transport">
                   <button class="bib-skip" type="button" onclick="goPrevChapter()" aria-label="Capítulo anterior"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="18 20 8 12 18 4 18 20"/><rect x="5" y="5" width="2" height="14" rx="1"/></svg></button>
+                  <button class="bib-skip bib-skip15" type="button" onclick="seekBy(-15)" aria-label="Retroceder 15 segundos" title="Retroceder 15 s">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4 A8 8 0 1 1 4 12"/><polyline points="4 4 4 8 8 8"/></svg>
+                    <span>15</span>
+                  </button>
                   <button class="bib-bigplay" id="bibPlayBtn" type="button" onclick="togglePlay()" aria-label="Reproducir o pausar">
                     <svg id="bibPlayIcon" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>
                     <svg id="bibPauseIcon" viewBox="0 0 24 24" fill="currentColor" style="display:none"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>
+                  </button>
+                  <button class="bib-skip bib-skip15" type="button" onclick="seekBy(15)" aria-label="Adelantar 15 segundos" title="Adelantar 15 s">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 4 A8 8 0 1 0 20 12"/><polyline points="20 4 20 8 16 8"/></svg>
+                    <span>15</span>
                   </button>
                   <button class="bib-skip" type="button" onclick="goNextChapter()" aria-label="Capítulo siguiente"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 16 12 6 20 6 4"/><rect x="17" y="5" width="2" height="14" rx="1"/></svg></button>
                 </div>
@@ -1508,8 +1516,9 @@
             <div class="fx-section voz-only">
                 <p class="fx-label">Versión de la Biblia</p>
                 <div class="fx-bible-switch" id="fxBibleSwitch">
-                    <button id="fxBibleSbll" onclick="setTranslation('sbll')" class="active">📖 SBLL 2026</button>
-                    <button id="fxBibleRva"  onclick="setTranslation('rva')">🔊 RVA 1909</button>
+                    <button id="fxBibleRvsdv" onclick="pickVoice('rvsdv')" class="fx-bible-prem">✨ RV-SDV</button>
+                    <button id="fxBibleSbll" onclick="pickVoice('sbll')">📖 SBLL 2026</button>
+                    <button id="fxBibleRva"  onclick="pickVoice('rva')">🔊 RVA 1909</button>
                 </div>
             </div>
 

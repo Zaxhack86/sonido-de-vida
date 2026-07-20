@@ -121,6 +121,7 @@
     // gratis → muestra el portón Premium.
     function goRvsdv() {
         if (window.SDV_Auth && SDV_Auth.premium) {
+            markVoicePicked();
             showTab('biblia');
             setTimeout(() => setTranslation('rvsdv'), 350);
         } else {
@@ -128,6 +129,39 @@
         }
     }
     window.goRvsdv = goRvsdv;
+
+    // ── Voz por defecto en Premium = RV-SDV (la nueva) ────────────────────
+    // Premium entra siempre con la voz nueva (por eso es el beneficio de pago),
+    // salvo que el usuario haya ELEGIDO explícitamente otra voz alguna vez.
+    const VOICE_PICKED_KEY = 'sdv-voice-userpicked';
+    function markVoicePicked() { try { localStorage.setItem(VOICE_PICKED_KEY, '1'); } catch (e) {} }
+    // Envoltorio para los botones de voz: recuerda que fue una elección manual.
+    function pickVoice(mode) { markVoicePicked(); setTranslation(mode); }
+    window.pickVoice = pickVoice;
+    // Refleja rvsdv en los toggles sin recargar (para el arranque perezoso).
+    function _reflectVoiceToggles(mode) {
+        document.getElementById('tt-rva')?.classList.toggle('active', mode === 'rva');
+        document.getElementById('tt-sbll')?.classList.toggle('active', mode === 'sbll');
+        document.getElementById('tt-rvsdv')?.classList.toggle('active', mode === 'rvsdv');
+        if (window.Focus && Focus.syncBibleSelector) Focus.syncBibleSelector(mode);
+    }
+    // Llamada al saberse el estado premium (desde cuenta.js). No fuerza la
+    // descarga de bible.js si aún no hay capítulo abierto: la voz se materializa
+    // al abrir la Biblia.
+    function applyPremiumDefaultVoice() {
+        if (!(window.SDV_Auth && SDV_Auth.premium)) return;
+        try { if (localStorage.getItem(VOICE_PICKED_KEY)) return; } catch (e) {}
+        if (translationMode === 'rvsdv') return;
+        if (state.book && state.chapter) {
+            setTranslation('rvsdv');           // recarga el capítulo con la voz nueva
+        } else {
+            translationMode = 'rvsdv';         // perezoso: se aplica al abrir la Biblia
+            _reflectVoiceToggles('rvsdv');
+            updateDownloadBtn();
+            updateReadSpeedAvail();
+        }
+    }
+    window.applyPremiumDefaultVoice = applyPremiumDefaultVoice;
 
     // Mapeo: nombre del libro en BIBLE → clave normalizada en R2
     const BOOK_KEY = {
@@ -964,6 +998,19 @@
         const r = document.getElementById('playerProgress').getBoundingClientRect();
         audio.currentTime = ((e.clientX - r.left) / r.width) * audio.duration;
     }
+    // Salto relativo de ±N segundos (botones ‹15 / 15› del reproductor de la
+    // Biblia). Respeta el mismo comportamiento que los controles del sistema
+    // (mediaSession): en streaming continuo la duración es infinita, así que
+    // solo acotamos el tope cuando la duración es finita.
+    function seekBy(sec) {
+        if (!audio || !audio.src) return;
+        const dur = (audio.duration && isFinite(audio.duration)) ? audio.duration : null;
+        let t = (audio.currentTime || 0) + sec;
+        if (t < 0) t = 0;
+        if (dur != null) t = Math.min(t, dur - 0.3);
+        try { audio.currentTime = t; } catch (e) {}
+    }
+    window.seekBy = seekBy;
 
     // ════════════════════════════════════════════════════════════════
     // Fondo del Modo Enfoque: DESACTIVADO el motor de "motas/luciérnagas".
@@ -1647,12 +1694,17 @@
         // ni "se escuche mal" por llevarla demasiado lejos.
         // La cámara lenta (<1×) solo se permite con la voz SBLL 2026: la RVA 1909
         // pierde calidad al ralentizarla, así que con esa voz se ofrece cambiar.
-        function setSpeed(rate, btn) {
+        function setSpeed(rate, btn, opts) {
+            opts = opts || {};
+            // Al aplicar una mezcla (opts.noSwitch) NUNCA cambiamos la voz a
+            // espaldas del usuario: la cámara lenta solo vale con SBLL 2026, así
+            // que con otra voz normalizamos a 1× sin tocar la voz activa.
+            if (rate < 1 && translationMode !== 'sbll' && opts.noSwitch) rate = 1;
             // Cámara lenta: un solo clic basta. Si la voz no es SBLL 2026, cambiamos
             // a ella automáticamente (la RVA 1909 pierde calidad ralentizada) y
             // aplicamos la velocidad en el mismo gesto. playbackSpeed se fija antes
             // de recargar para que el handler 'play' del audio nuevo lo reaplique.
-            if (rate < 1 && translationMode !== 'sbll') {
+            if (rate < 1 && translationMode !== 'sbll' && !opts.noSwitch) {
                 playbackSpeed = Math.max(0.9, Math.min(1.2, rate));
                 if (window.setTranslation) setTranslation('sbll');   // async: recarga con la velocidad ya fijada
                 updateSpeedAvailability();
@@ -1792,6 +1844,9 @@
                 velocidad: playbackSpeed,
                 fondo: overlay.dataset.bg || 'aurora',
                 timer: _activeTimerMin(),
+                // Solo las mezclas que TÚ guardas recuerdan la voz activa. Las de
+                // fábrica no la traen, así que nunca cambian la voz al aplicarlas.
+                traduccion: translationMode || 'sbll',
             };
             const list = loadPresets().filter(p => p.nombre !== preset.nombre);
             list.push(preset);
@@ -1811,7 +1866,15 @@
             if (p.ambiente) selectAmbient(p.ambiente);
             const vm = document.getElementById('volMusica'); if (vm) vm.value = p.musica; setMusica(p.musica);
             const vv = document.getElementById('volVoz');    if (vv) vv.value = p.voz;     setVoz(p.voz);
-            setSpeed(p.velocidad, document.querySelector(`#focusSpeedOpts button[data-rate="${p.velocidad}"]`));
+            // Voz: SOLO se cambia si la mezcla la trae guardada (mezclas propias).
+            // Las de fábrica no llevan `traduccion` → la voz activa se respeta.
+            if (p.traduccion && p.traduccion !== translationMode && window.setTranslation) {
+                setTranslation(p.traduccion);
+            }
+            // Velocidad sin cambiar la voz (noSwitch). La cámara lenta solo es
+            // válida con SBLL 2026; con otra voz se normaliza a 1× dentro de setSpeed.
+            const rate = p.velocidad || 1;
+            setSpeed(rate, document.querySelector(`#focusSpeedOpts button[data-rate="${rate}"]`), { noSwitch: true });
             setBg(p.fondo, null);
             setTimer(p.timer || 0, document.querySelector(`#focusTimerOpts button[data-min="${p.timer || 0}"]`));
             showToast(`⭐ Mezcla "${p.nombre}" aplicada`);
@@ -2316,6 +2379,7 @@
         function syncBibleSelector(mode) {
             document.getElementById('fxBibleRva')?.classList.toggle('active',  mode === 'rva');
             document.getElementById('fxBibleSbll')?.classList.toggle('active', mode === 'sbll');
+            document.getElementById('fxBibleRvsdv')?.classList.toggle('active', mode === 'rvsdv');
         }
 
         return { enter, exit, enterVoz, enterMeditar, switchMode, toggleShuffleAuto, selectAmbient, toggleMusic, setVoz, setMusica, setSpeed, setTimer, setBg, onNarration, syncVerse, refreshGate, openTeaser, closeTeaser, closeSelector, useSbllVoice, startStreamTrack, tickStreamTrack, ambients, meditNext, meditPrev, meditShuffle, stopAudio, fadeOutAndStop, toggleBreath, syncBibleSelector };

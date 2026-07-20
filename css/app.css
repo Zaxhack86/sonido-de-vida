@@ -918,6 +918,7 @@
         .fx-bible-switch button{flex:1;padding:.45rem .6rem;border-radius:50px;border:none;background:transparent;color:rgba(255,255,255,.5);font-family:'Inter',sans-serif;font-size:.78rem;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap}
         .fx-bible-switch button:hover{color:rgba(255,255,255,.85)}
         .fx-bible-switch button.active{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#0d0d1a;box-shadow:0 2px 10px rgba(201,168,76,.25)}
+        .fx-bible-switch button.fx-bible-prem{color:var(--gold-light,#e8d48b)}
         @media(prefers-reduced-motion:reduce){.fx-breath-ring{transform:scale(.82)!important}}
 
         /* ── Show / hide por modo ── */

@@ -148,6 +148,8 @@
             if (user && window.syncLibraryFromCloud) window.syncLibraryFromCloud();
             // Reflejar premium en la entrada del Modo Enfoque.
             if (window.Focus) Focus.refreshGate();
+            // Premium entra con la voz nueva RV-SDV por defecto (salvo elección previa).
+            if (window.applyPremiumDefaultVoice) window.applyPremiumDefaultVoice();
             // Cargar/limpiar likes y listas de reproducción (Fase 2).
             if (window.Listas) Listas.refresh();
             // Reevaluar anuncios: premium los quita.

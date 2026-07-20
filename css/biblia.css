@@ -87,6 +87,9 @@
     #listen .bib-skip{width:2.2rem;height:2.2rem;border-radius:50%;border:none;background:none;color:#aab0bf;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s,color .2s}
     #listen .bib-skip svg{width:1.15rem;height:1.15rem}
     #listen .bib-skip:hover{background:rgba(255,255,255,.07);color:#f3eee2}
+    #listen .bib-skip15{position:relative}
+    #listen .bib-skip15 svg{width:1.5rem;height:1.5rem}
+    #listen .bib-skip15 span{position:absolute;top:53%;left:50%;transform:translate(-50%,-50%);font-size:.5rem;font-weight:700;font-family:'Inter',sans-serif;pointer-events:none}
     #listen .bib-bigplay{width:3.2rem;height:3.2rem;border-radius:50%;border:none;cursor:pointer;background:linear-gradient(135deg,#E6CE80,#C9A84C);color:#070e20;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 22px -6px rgba(201,168,76,.7);transition:transform .15s}
     #listen .bib-bigplay:hover{transform:scale(1.05)}
     #listen .bib-bigplay svg{width:1.4rem;height:1.4rem}
