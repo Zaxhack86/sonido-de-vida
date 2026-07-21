@@ -764,11 +764,31 @@
             el.addEventListener('timeupdate', function() {
                 if (this !== audio) return;
                 if (!audio.duration) return;
-                document.getElementById('playerProgressFill').style.width = (audio.currentTime / audio.duration * 100) + '%';
-                document.getElementById('playerTime').textContent = formatTime(audio.currentTime);
-                const _bf = document.getElementById('bibProgFill'); if (_bf) _bf.style.width = (audio.currentTime / audio.duration * 100) + '%';
-                const _bc = document.getElementById('bibCur'); if (_bc) _bc.textContent = formatTime(audio.currentTime);
-                const _bt = document.getElementById('bibTot'); if (_bt) _bt.textContent = isFinite(audio.duration) ? formatTime(audio.duration) : 'EN VIVO';
+                // En streaming (continuar/full/Enfoque) audio.duration es Infinity y
+                // audio.currentTime es acumulado de TODO el stream. Usamos la ventana
+                // del capítulo actual (del tracker) para que la barra muestre el
+                // progreso del capítulo y se reinicie a 0:00 al cambiar de capítulo.
+                let pct, curTxt, totTxt;
+                const streaming = audio.src && audio.src.includes('/stream/');
+                const sp = (streaming && window.Focus) ? Focus.getStreamPos() : null;
+                if (streaming && sp && sp.dur) {
+                    const rel = Math.max(0, Math.min(sp.dur, audio.currentTime - sp.start));
+                    pct = (rel / sp.dur * 100);
+                    curTxt = formatTime(rel);
+                    totTxt = formatTime(sp.dur);
+                } else if (isFinite(audio.duration)) {
+                    pct = (audio.currentTime / audio.duration * 100);
+                    curTxt = formatTime(audio.currentTime);
+                    totTxt = formatTime(audio.duration);
+                } else {
+                    // Streaming pero aún sin duración de capítulo: no mostrar tiempo acumulado.
+                    pct = 0; curTxt = formatTime(audio.currentTime); totTxt = 'EN VIVO';
+                }
+                document.getElementById('playerProgressFill').style.width = pct + '%';
+                document.getElementById('playerTime').textContent = curTxt;
+                const _bf = document.getElementById('bibProgFill'); if (_bf) _bf.style.width = pct + '%';
+                const _bc = document.getElementById('bibCur'); if (_bc) _bc.textContent = curTxt;
+                const _bt = document.getElementById('bibTot'); if (_bt) _bt.textContent = totTxt;
                 // Transición preventiva 0.4s antes del final (solo para capítulos individuales)
                 if (!chapterTransitioning && effectiveMode() !== 'single' && !audio.src?.includes('/stream/')) {
                     const remaining = audio.duration - audio.currentTime;
@@ -1006,9 +1026,30 @@
     // solo acotamos el tope cuando la duración es finita.
     function seekBy(sec) {
         if (!audio || !audio.src) return;
-        const dur = (audio.duration && isFinite(audio.duration)) ? audio.duration : null;
         let t = (audio.currentTime || 0) + sec;
         if (t < 0) t = 0;
+        // Streaming continuo (continuar/full/Enfoque): audio.duration es Infinity y
+        // solo se puede saltar dentro del rango que el navegador tiene como buscable.
+        // Fuera de ese rango, fijar currentTime reiniciaría todo el stream desde el
+        // capítulo inicial; en ese caso no hacemos nada (evitamos el "reinicio").
+        if (audio.src.includes('/stream/') && (!isFinite(audio.duration) || audio.duration === Infinity)) {
+            const sk = audio.seekable;
+            let inRange = false, maxEnd = 0;
+            if (sk && sk.length) {
+                for (let i = 0; i < sk.length; i++) {
+                    maxEnd = Math.max(maxEnd, sk.end(i));
+                    if (t >= sk.start(i) - 0.25 && t <= sk.end(i) + 0.25) { inRange = true; break; }
+                }
+            }
+            if (!inRange) {
+                // Adelantar más allá de lo buscado: acotar al máximo buscable en vez de reiniciar.
+                if (sec > 0 && maxEnd > 0) { try { audio.currentTime = Math.max(0, maxEnd - 0.3); } catch (e) {} }
+                return;
+            }
+            try { audio.currentTime = t; } catch (e) {}
+            return;
+        }
+        const dur = (audio.duration && isFinite(audio.duration)) ? audio.duration : null;
         if (dur != null) t = Math.min(t, dur - 0.3);
         try { audio.currentTime = t; } catch (e) {}
     }
@@ -2357,6 +2398,14 @@
             stBusy = false;
         }
 
+        // Posición del capítulo actual DENTRO del stream continuo (para que la
+        // barra de progreso muestre el tiempo del capítulo y se reinicie a 0:00
+        // en cada cambio, en vez del tiempo acumulado de todo el stream).
+        function getStreamPos() {
+            if (stCStart == null || stCDur == null) return null;
+            return { start: stCStart, dur: stCDur };
+        }
+
         // Para el FocusTimer: detiene narración + ambiente sin cerrar el overlay.
         function stopAudio() {
             try { audio.pause(); } catch(e) {}
@@ -2393,7 +2442,7 @@
             document.getElementById('fxBibleRvsdv')?.classList.toggle('active', mode === 'rvsdv');
         }
 
-        return { enter, exit, enterVoz, enterMeditar, switchMode, toggleShuffleAuto, selectAmbient, toggleMusic, setVoz, setMusica, setSpeed, setTimer, setBg, onNarration, syncVerse, refreshGate, openTeaser, closeTeaser, closeSelector, useSbllVoice, startStreamTrack, tickStreamTrack, ambients, meditNext, meditPrev, meditShuffle, stopAudio, fadeOutAndStop, toggleBreath, syncBibleSelector, beginVoiceReload };
+        return { enter, exit, enterVoz, enterMeditar, switchMode, toggleShuffleAuto, selectAmbient, toggleMusic, setVoz, setMusica, setSpeed, setTimer, setBg, onNarration, syncVerse, refreshGate, openTeaser, closeTeaser, closeSelector, useSbllVoice, startStreamTrack, tickStreamTrack, getStreamPos, ambients, meditNext, meditPrev, meditShuffle, stopAudio, fadeOutAndStop, toggleBreath, syncBibleSelector, beginVoiceReload };
     })();
     window.Focus = Focus;
 
