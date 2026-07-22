@@ -209,6 +209,16 @@
     let focusNarration = false;
     let playbackSpeed = 1;       // velocidad de la voz (Modo Enfoque); cambiar src la resetea, se reaplica al reproducir
     let preloadedFor = null;     // {book, chapter} ya cargado en audioPreload
+    // ── Auto-recuperación del stream continuo ───────────────────────────────
+    // El /stream/ concatenado NO es reanudable (sin Range): si se corta antes de
+    // tiempo (bache de red, pantalla bloqueada, límite del worker) la voz muere y
+    // no vuelve sola. Estas variables permiten re-pedir el stream desde el
+    // capítulo que sonaba y seguir. SOLO actúan cuando el stream se rompe; el
+    // camino normal no se toca (por eso no puede romper la pantalla bloqueada).
+    let streamRecovering = false;   // hay una recuperación en curso
+    let streamRecoverTries = 0;     // intentos seguidos sin progreso (tope anti-bucle)
+    let lastAudioProgress = 0;      // timestamp del último avance real (watchdog de stall)
+    let stallWatchdog = null;       // intervalo que vigila stalls silenciosos
 
     // Modo de reproducción efectivo.
     // En Modo Enfoque siempre usamos 'full': el stream cubre todos los libros
@@ -724,6 +734,73 @@
         preloadedFor = null;
     }
 
+    // ════════════════════════════════════════════════════════════════
+    // Auto-recuperación del stream continuo (no toca el camino normal)
+    // ════════════════════════════════════════════════════════════════
+    function isStreamSrc() {
+        return !!(audio.src && audio.src.includes('/stream/'));
+    }
+
+    // ¿El capítulo que suena AHORA es el final real del recorrido? Evita
+    // "recuperar" cuando el stream terminó de verdad (Apocalipsis / fin del libro).
+    function atTrueStreamEnd() {
+        const cur = (window.Focus && Focus.getStreamChapter) ? Focus.getStreamChapter() : null;
+        const book = (cur && cur.book) || state.book;
+        const chapter = (cur && cur.chapter) || state.chapter;
+        const bible = getActiveBible();
+        const total = (bible[book] && bible[book].length) || 0;
+        if (chapter < total) return false;                // quedan capítulos en el libro
+        if (effectiveMode() === 'full') {
+            const ordered = BIBLE_ORDER.filter(b => Object.keys(bible).includes(b));
+            const idx = ordered.indexOf(book);
+            return !(idx >= 0 && idx < ordered.length - 1); // final solo si es el último libro
+        }
+        return true;                                      // 'continue' → fin del libro
+    }
+
+    // Re-pide el stream desde el capítulo que sonaba y sigue reproduciendo.
+    function recoverStream(reason) {
+        if (streamRecovering || !isStreamSrc()) return;
+        if (audio.paused && reason !== 'ended') return;   // el usuario pausó a propósito
+        if (atTrueStreamEnd()) return;                    // terminó de verdad → no recuperar
+        if (streamRecoverTries >= 6) {                    // tope anti-bucle
+            showToast('⚠️ La narración se detuvo. Toca ▶ para reanudar.');
+            return;
+        }
+        streamRecovering = true;
+        streamRecoverTries++;
+        const cur = (window.Focus && Focus.getStreamChapter) ? Focus.getStreamChapter() : null;
+        const book = (cur && cur.book) || state.book;
+        const chapter = (cur && cur.chapter) || state.chapter;
+        const delay = Math.min(4000, 400 * streamRecoverTries);  // backoff corto
+        setTimeout(() => {
+            try {
+                // Sincronizar estado/UI con el capítulo desde el que retomamos.
+                loadChapter({ book: book, chapter: chapter, skipAudio: true, silent: true });
+                audio.src = audioUrl(book, chapter);      // /stream/.../{cap}?modo=...
+                const p = audio.play();
+                if (p) p.catch(() => {});
+            } catch (e) {}
+            lastAudioProgress = Date.now();
+            streamRecovering = false;
+        }, delay);
+    }
+
+    // Watchdog: si "reproduce" un stream pero no avanza en 25s, recupera. Es el
+    // respaldo para stalls silenciosos (los cortes con 'error'/'ended' se manejan
+    // en sus propios handlers, que sí disparan con la pantalla bloqueada).
+    function startStallWatchdog() {
+        stopStallWatchdog();
+        lastAudioProgress = Date.now();
+        stallWatchdog = setInterval(() => {
+            if (audio.paused || !isStreamSrc()) return;
+            if (Date.now() - lastAudioProgress > 25000) recoverStream('stall');
+        }, 5000);
+    }
+    function stopStallWatchdog() {
+        if (stallWatchdog) { clearInterval(stallWatchdog); stallWatchdog = null; }
+    }
+
     function initAudioEvents() {
         // Bindear handlers a AMBOS elementos. Cada handler ignora eventos
         // que no provengan del elemento activo (`this !== audio`).
@@ -739,6 +816,8 @@
                 if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing';
                 // Iniciar pre-carga del próximo capítulo en cuanto este arranca
                 preloadNextChapter();
+                // Vigilar stalls solo cuando reproducimos un stream continuo.
+                if (isStreamSrc()) startStallWatchdog(); else stopStallWatchdog();
                 if (window.Focus) {
                     Focus.onNarration(true);
                     // Arrancar tracker de display siempre que se reproduzca en streaming
@@ -752,6 +831,7 @@
             el.addEventListener('pause', function() {
                 if (this !== audio) return;
                 updatePlayUI(false);
+                stopStallWatchdog();
                 if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused';
                 if (window.Focus) Focus.onNarration(false);
             });
@@ -763,6 +843,12 @@
             });
             el.addEventListener('timeupdate', function() {
                 if (this !== audio) return;
+                // Progreso real de un stream → resetear watchdog y contador de
+                // recuperación (tras 8s reproduciendo, la recuperación tuvo éxito).
+                if (isStreamSrc()) {
+                    lastAudioProgress = Date.now();
+                    if (streamRecoverTries && audio.currentTime > 8) streamRecoverTries = 0;
+                }
                 if (!audio.duration) return;
                 // En streaming (continuar/full/Enfoque) audio.duration es Infinity y
                 // audio.currentTime es acumulado de TODO el stream. Usamos la ventana
@@ -808,6 +894,9 @@
             el.addEventListener('error', function() {
                 if (this !== audio) return;
                 if (chapterTransitioning) return;
+                // Si se cortó un stream continuo, retomar desde el capítulo actual
+                // en vez de abandonar (esto es lo que mata la voz con pantalla off).
+                if (isStreamSrc()) { recoverStream('error'); return; }
                 showToast('⚠️ No se pudo cargar el audio de este capítulo');
                 hidePlayerBar(); updatePlayUI(false);
                 const pb = document.getElementById('playBtn'); if(pb){pb.disabled=false;pb.innerHTML='🔊 Escuchar';}
@@ -829,6 +918,10 @@
         // toda la Biblia en modo 'full') terminó — no avanzar capítulos: el stream
         // ya los incluyó todos. En Modo Enfoque la música ambiente sigue sonando.
         if (audio.src && audio.src.includes('/stream/')) {
+            // 'ended' en un stream puede ser el final REAL (Apocalipsis/fin del
+            // libro) o un corte prematuro. Si NO es el final real, retomar.
+            if (!atTrueStreamEnd()) { recoverStream('ended'); return; }
+            stopStallWatchdog();
             if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'none';
             const msg = mode === 'full' ? '🎉 ¡Has terminado toda la Biblia!' : '🎉 ¡Has terminado el libro completo!';
             showToast(msg);
@@ -2406,6 +2499,14 @@
             return { start: stCStart, dur: stCDur };
         }
 
+        // Capítulo que suena AHORA dentro del stream continuo. Lo usa la
+        // auto-recuperación para re-pedir el stream desde el punto correcto si
+        // se corta antes de tiempo.
+        function getStreamChapter() {
+            if (stBook == null) return null;
+            return { book: stBook, chapter: stChapter };
+        }
+
         // Para el FocusTimer: detiene narración + ambiente sin cerrar el overlay.
         function stopAudio() {
             try { audio.pause(); } catch(e) {}
@@ -2442,7 +2543,7 @@
             document.getElementById('fxBibleRvsdv')?.classList.toggle('active', mode === 'rvsdv');
         }
 
-        return { enter, exit, enterVoz, enterMeditar, switchMode, toggleShuffleAuto, selectAmbient, toggleMusic, setVoz, setMusica, setSpeed, setTimer, setBg, onNarration, syncVerse, refreshGate, openTeaser, closeTeaser, closeSelector, useSbllVoice, startStreamTrack, tickStreamTrack, getStreamPos, ambients, meditNext, meditPrev, meditShuffle, stopAudio, fadeOutAndStop, toggleBreath, syncBibleSelector, beginVoiceReload };
+        return { enter, exit, enterVoz, enterMeditar, switchMode, toggleShuffleAuto, selectAmbient, toggleMusic, setVoz, setMusica, setSpeed, setTimer, setBg, onNarration, syncVerse, refreshGate, openTeaser, closeTeaser, closeSelector, useSbllVoice, startStreamTrack, tickStreamTrack, getStreamPos, getStreamChapter, ambients, meditNext, meditPrev, meditShuffle, stopAudio, fadeOutAndStop, toggleBreath, syncBibleSelector, beginVoiceReload };
     })();
     window.Focus = Focus;
 
