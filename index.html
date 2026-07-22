@@ -1125,12 +1125,42 @@
             <div class="modal-title">Instala la app en tu iPhone</div>
             <div class="modal-subtitle">Sin tiendas, en 3 pasos. Tendrás Sonido de Vida en tu pantalla de inicio como una app.</div>
             <div class="ios-steps">
-                <div class="ios-step"><span class="ios-step-num">1</span><span>Toca el botón <strong>Compartir</strong> <span class="ios-share-ico">⬆</span> en la barra de tu navegador.</span></div>
-                <div class="ios-step"><span class="ios-step-num">2</span><span>Desliza y toca <strong>"Añadir a pantalla de inicio"</strong>.</span></div>
-                <div class="ios-step"><span class="ios-step-num">3</span><span>Toca <strong>"Añadir"</strong>. ¡Listo, ya la tienes!</span></div>
+                <div class="ios-step"><span class="ios-step-num">1</span><span>Toca el botón <strong>Compartir</strong> <svg class="ios-share-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l4 4-1.4 1.4L13 6.8V15h-2V6.8L9.4 8.4 8 7l4-4z"/><path d="M6 10h2v9h8v-9h2v9a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2v-9z"/></svg> abajo (Safari) o arriba en la barra.</span></div>
+                <div class="ios-step"><span class="ios-step-num">2</span><div class="ios-step-body"><span>Desliza hacia abajo y toca <strong>"Añadir a pantalla de inicio"</strong>.</span>
+                    <span class="ios-a2hs-row"><span class="ios-a2hs-txt">Añadir a pantalla de inicio</span><span class="ios-a2hs-plus">＋</span></span>
+                </div></div>
+                <div class="ios-step"><span class="ios-step-num">3</span><span>Toca <strong>"Añadir"</strong> arriba a la derecha. ¡Listo!</span></div>
             </div>
+            <p class="ios-final-hint">Luego sal del navegador y busca este ícono <span class="ios-app-chip">✝</span> en tu pantalla de inicio.</p>
             <div class="share-btns"><button class="share-btn gold" onclick="closeIosInstall()">Entendido</button></div>
             <p class="ios-note" id="iosSafariNote"></p>
+        </div>
+    </div>
+
+    <!-- Modal: ¡Instalada! (pantalla de éxito, Android) -->
+    <div class="modal-overlay" id="installDoneModal" onclick="if(event.target===this)closeInstallDone()">
+        <div class="modal-card">
+            <div class="install-done-check">✓</div>
+            <div class="modal-title">¡App instalada!</div>
+            <div class="modal-subtitle">Ya la tienes en tu teléfono. Ahora <strong>cierra el navegador</strong> y ábrela desde tu pantalla de inicio buscando este ícono:</div>
+            <div class="install-done-icon"><span class="ios-app-chip big">✝</span><span class="install-done-name">Sonido de Vida</span></div>
+            <p class="ios-final-hint">Desde ahí se abre a pantalla completa, sin barras del navegador — se ve y funciona mucho mejor.</p>
+            <div class="share-btns"><button class="share-btn gold" onclick="closeInstallDone()">¡Perfecto!</button></div>
+        </div>
+    </div>
+
+    <!-- Modal: abre en el navegador (dentro de Instagram/Facebook/TikTok) -->
+    <div class="modal-overlay" id="inAppBrowserModal" onclick="if(event.target===this)closeInBrowserGuide()">
+        <div class="modal-card">
+            <div class="modal-icon">🌐</div>
+            <div class="modal-title">Ábrela en tu navegador</div>
+            <div class="modal-subtitle">Estás dentro de <strong id="inAppName">esta app</strong>, y aquí no se puede instalar. Es muy fácil, sigue estos pasos:</div>
+            <div class="ios-steps" id="inAppSteps"></div>
+            <div class="share-btns">
+                <button class="share-btn gold" onclick="copyAppLink()">🔗 Copiar enlace</button>
+                <button class="share-btn ghost" onclick="closeInBrowserGuide()">Cerrar</button>
+            </div>
+            <p class="ios-note">Consejo: también puedes pegar el enlace en Chrome o Safari.</p>
         </div>
     </div>
 

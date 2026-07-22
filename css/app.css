@@ -445,6 +445,18 @@
         .ios-step-num{width:28px;height:28px;flex-shrink:0;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:var(--dark);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.9rem}
         .ios-share-ico{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border:1.5px solid var(--gold-light);border-radius:5px;color:var(--gold-light);vertical-align:middle;font-size:.85rem;line-height:1}
         .ios-note{font-size:.8rem;color:rgba(255,255,255,.55);text-align:center;font-family:'Inter',sans-serif;margin-top:.2rem}
+        .ios-share-svg{width:20px;height:20px;fill:var(--gold-light);vertical-align:middle;display:inline-block}
+        .ios-step-body{flex:1;display:flex;flex-direction:column}
+        .ios-a2hs-row{display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin-top:.55rem;background:rgba(255,255,255,.07);border:1px solid rgba(201,168,76,.35);border-radius:10px;padding:.55rem .7rem;width:100%}
+        .ios-a2hs-txt{font-size:.9rem;color:#fff;font-family:'Inter',sans-serif}
+        .ios-a2hs-plus{width:24px;height:24px;flex-shrink:0;border:1.5px solid var(--gold-light);border-radius:6px;color:var(--gold-light);display:flex;align-items:center;justify-content:center;font-size:1.1rem;line-height:1}
+        .ios-final-hint{font-size:.85rem;color:rgba(255,255,255,.78);text-align:center;font-family:'Inter',sans-serif;line-height:1.5;margin:.2rem 0 1rem}
+        .ios-app-chip{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:var(--dark);font-size:1rem;vertical-align:middle;box-shadow:0 3px 10px rgba(201,168,76,.35)}
+        .ios-app-chip.big{width:64px;height:64px;border-radius:16px;font-size:2.2rem}
+        .install-done-check{width:70px;height:70px;margin:0 auto 1.1rem;border-radius:50%;background:linear-gradient(135deg,#34c77b,#1e9e5c);color:#fff;display:flex;align-items:center;justify-content:center;font-size:2.4rem;font-weight:700;box-shadow:0 6px 22px rgba(52,199,123,.4);animation:installPop .45s cubic-bezier(.2,1.4,.4,1)}
+        @keyframes installPop{0%{transform:scale(.4);opacity:0}100%{transform:scale(1);opacity:1}}
+        .install-done-icon{display:flex;flex-direction:column;align-items:center;gap:.55rem;margin:.4rem 0 1.1rem}
+        .install-done-name{font-family:'Inter',sans-serif;font-size:.85rem;color:rgba(255,255,255,.9);font-weight:600}
         .ios-arrow{position:fixed;left:50%;bottom:1.4rem;transform:translateX(-50%);z-index:3100;color:var(--gold-light);font-size:2.6rem;animation:iosArrowBounce 1.2s infinite;pointer-events:none;display:none;filter:drop-shadow(0 4px 12px rgba(0,0,0,.6))}
         .ios-arrow.visible{display:block}
         @keyframes iosArrowBounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(12px)}}

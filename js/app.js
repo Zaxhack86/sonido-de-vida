@@ -2992,6 +2992,20 @@
     function isStandalone() { return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true; }
     function isIOS() { return /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); }
     function isIOSSafari() { return isIOS() && /Safari/.test(navigator.userAgent) && !/CriOS|FxiOS|EdgiOS|OPiOS/.test(navigator.userAgent); }
+    // Navegador DENTRO de una app (Instagram/Facebook/TikTok…): NO permite instalar
+    // la PWA. Hay que mandar al usuario a abrir el enlace en Chrome/Safari.
+    function isInAppBrowser() {
+        const ua = navigator.userAgent || '';
+        return /FBAN|FBAV|FB_IAB|Instagram|Line\/|Twitter|TikTok|musical_ly|Snapchat|Pinterest|MicroMessenger|WhatsApp|Messenger/i.test(ua);
+    }
+    function inAppName() {
+        const ua = navigator.userAgent || '';
+        if (/Instagram/i.test(ua)) return 'Instagram';
+        if (/FBAN|FBAV|FB_IAB|Messenger/i.test(ua)) return 'Facebook';
+        if (/TikTok|musical_ly/i.test(ua)) return 'TikTok';
+        if (/WhatsApp/i.test(ua)) return 'WhatsApp';
+        return 'esta app';
+    }
 
     const INSTALL_DONE_KEY = 'sdv-installed';
     const INSTALL_DISMISS_KEY = 'sdv-install-dismissed';
@@ -3023,13 +3037,19 @@
         if (alreadyInstalled()) return; // ya instalada: nunca molestar
         // Android / Chrome / Edge (incluido escritorio): el navegador avisa que SÍ se puede instalar.
         window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferredPrompt = e; maybeShowWelcome(); });
-        // Al instalar: recordar para no volver a pedirlo en este navegador.
+        // Al instalar: recordar, cerrar la ventana y mostrar la pantalla de éxito
+        // (dónde quedó la app y cómo abrirla) — clave para gente no técnica.
         window.addEventListener('appinstalled', () => {
             try { localStorage.setItem(INSTALL_DONE_KEY, '1'); } catch {}
-            closeWelcomeInstall(); deferredPrompt = null;
+            deferredPrompt = null;
+            closeWelcomeInstall();
+            openInstallDone();
         });
         // iOS Safari no dispara beforeinstallprompt: ahí sí ofrecemos manualmente.
         if (isIOSSafari()) setTimeout(maybeShowWelcome, 1800);
+        // Dentro de Instagram/Facebook/TikTok tampoco se dispara: ofrecer igual
+        // (el botón Instalar los manda a abrir en Chrome/Safari).
+        else if (isInAppBrowser()) setTimeout(maybeShowWelcome, 2200);
         // En navegadores que NO soportan instalación (ej. Firefox de escritorio) no se
         // dispara beforeinstallprompt ni es iOS → no aparece nada (no se puede instalar).
     }
@@ -3040,6 +3060,9 @@
     }
     // CTA principal: instalar (adaptado a la plataforma)
     function triggerInstall() {
+        // Dentro de Instagram/Facebook/TikTok NO se puede instalar: guiar a abrir
+        // en el navegador real (causa #1 de "no puedo instalar la app").
+        if (isInAppBrowser()) { closeWelcomeInstall(); openInBrowserGuide(); return; }
         if (deferredPrompt) { // Android / navegadores compatibles: prompt nativo
             deferredPrompt.prompt();
             deferredPrompt.userChoice.then(() => { deferredPrompt = null; closeWelcomeInstall(); });
@@ -3047,6 +3070,34 @@
         }
         if (isIOS()) { closeWelcomeInstall(); openIosInstall(); return; }
         showToast('Abre el menú de tu navegador y elige "Instalar app"');
+    }
+
+    // Pantalla de éxito tras instalar: dónde quedó el ícono y cómo abrirla.
+    function openInstallDone() { document.getElementById('installDoneModal').classList.add('visible'); }
+    function closeInstallDone() { document.getElementById('installDoneModal').classList.remove('visible'); }
+
+    // Guía "ábrela en tu navegador" cuando se abrió dentro de una app.
+    function openInBrowserGuide() {
+        const modal = document.getElementById('inAppBrowserModal');
+        document.getElementById('inAppName').textContent = inAppName();
+        const stepsEl = document.getElementById('inAppSteps');
+        if (isIOS()) {
+            stepsEl.innerHTML =
+                '<div class="ios-step"><span class="ios-step-num">1</span><span>Toca los <strong>tres puntos ⋯</strong> arriba a la derecha.</span></div>' +
+                '<div class="ios-step"><span class="ios-step-num">2</span><span>Elige <strong>"Abrir en el navegador"</strong> (Safari).</span></div>' +
+                '<div class="ios-step"><span class="ios-step-num">3</span><span>Ya en Safari, vuelve a tocar <strong>📲 Instalar app</strong>.</span></div>';
+        } else {
+            stepsEl.innerHTML =
+                '<div class="ios-step"><span class="ios-step-num">1</span><span>Toca los <strong>tres puntos ⋮</strong> arriba a la derecha.</span></div>' +
+                '<div class="ios-step"><span class="ios-step-num">2</span><span>Elige <strong>"Abrir en Chrome"</strong> (o tu navegador).</span></div>' +
+                '<div class="ios-step"><span class="ios-step-num">3</span><span>Ya en Chrome, vuelve a tocar <strong>📲 Instalar app</strong>.</span></div>';
+        }
+        modal.classList.add('visible');
+    }
+    function closeInBrowserGuide() { document.getElementById('inAppBrowserModal').classList.remove('visible'); }
+    async function copyAppLink() {
+        try { await navigator.clipboard.writeText('https://sonidodevida.com'); showToast('✅ Enlace copiado — pégalo en Chrome o Safari'); }
+        catch { showToast('Copia esta dirección: sonidodevida.com'); }
     }
 
     // Punto de entrada del menú "Instalar app"
