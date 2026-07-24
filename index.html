@@ -877,12 +877,14 @@
                 <button class="sb-panel-x" onclick="closeStudy()" aria-label="Cerrar">✕</button>
             </div>
             <div class="sb-panel-tabs" id="spTabs">
-                <button class="sp-tab active" data-tab="ensenanza" onclick="sbStudyTab(this)">📖 Enseñanza</button>
-                <button class="sp-tab" data-tab="contexto" onclick="sbStudyTab(this)">📍 Contexto</button>
-                <button class="sp-tab" data-tab="conexiones" onclick="sbStudyTab(this)">🔗 Conexiones</button>
-                <button class="sp-tab" data-tab="palabra" onclick="sbStudyTab(this)">🔤 Palabra original</button>
-                <button class="sp-tab" data-tab="versiones" onclick="sbStudyTab(this)">📚 Versiones</button>
-                <button class="sp-tab" data-tab="reflexion" onclick="sbStudyTab(this)">💭 Reflexión</button>
+                <button class="sp-tab active" data-sp="ensenanza" onclick="sbStudyTab(this)">📖 Enseñanza</button>
+                <button class="sp-tab" data-sp="contexto" onclick="sbStudyTab(this)">📍 Contexto</button>
+                <button class="sp-tab" data-sp="conexiones" onclick="sbStudyTab(this)">🔗 Conexiones</button>
+                <button class="sp-tab" data-sp="palabra" onclick="sbStudyTab(this)">🔤 Palabra original</button>
+                <button class="sp-tab" data-sp="cristo" onclick="sbStudyTab(this)">✝️ Cristo en el texto</button>
+                <button class="sp-tab" data-sp="voces" onclick="sbStudyTab(this)">🏛️ Voces de la historia</button>
+                <button class="sp-tab" data-sp="versiones" onclick="sbStudyTab(this)">📚 Versiones</button>
+                <button class="sp-tab" data-sp="reflexion" onclick="sbStudyTab(this)">💭 Reflexión</button>
             </div>
         </div>
         <div class="sb-panel-body">
@@ -890,6 +892,8 @@
             <div class="sp-pane" id="pane-contexto"></div>
             <div class="sp-pane" id="pane-conexiones"></div>
             <div class="sp-pane" id="pane-palabra"></div>
+            <div class="sp-pane" id="pane-cristo"></div>
+            <div class="sp-pane" id="pane-voces"></div>
             <div class="sp-pane" id="pane-versiones"></div>
             <div class="sp-pane" id="pane-reflexion"></div>
         </div>

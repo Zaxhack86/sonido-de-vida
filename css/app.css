@@ -667,6 +667,27 @@
         .sp-word-es{display:block;font-family:'Inter',sans-serif;font-weight:700;color:#fff;font-size:.92rem}
         .sp-word-or{display:block;font-family:'Lora',serif;color:var(--gold-light);font-size:.82rem;margin-top:.15rem}
         .sp-word-st{flex-shrink:0;font-family:'Inter',sans-serif;font-size:.58rem;font-weight:700;letter-spacing:.06em;background:rgba(255,255,255,.06);color:rgba(255,255,255,.5);padding:.18rem .5rem;border-radius:999px}
+        /* Palabra original — enriquecida (piloto) */
+        .sp-word-head{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+        .sp-word-lang{font-family:'Inter',sans-serif;font-size:.54rem;font-weight:800;letter-spacing:.09em;text-transform:uppercase;padding:.16rem .5rem;border-radius:999px;border:1px solid rgba(201,168,76,.35);color:var(--gold-light);background:rgba(201,168,76,.08)}
+        .sp-word-lang.lang-hebreo{color:#7fc4ff;border-color:rgba(127,196,255,.4);background:rgba(127,196,255,.08)}
+        .sp-word-lang.lang-arameo{color:#c9a0ff;border-color:rgba(201,160,255,.4);background:rgba(201,160,255,.08)}
+        .sp-word-or2{font-family:'Lora',serif;color:var(--gold-light);font-size:1.02rem;line-height:1.4;margin:.1rem 0 .1rem;display:flex;align-items:baseline;gap:.5rem;flex-wrap:wrap}
+        .sp-word-pron{font-family:'Inter',sans-serif;font-size:.72rem;color:rgba(255,255,255,.45);font-style:normal}
+        .sp-word-tlrow{margin-bottom:.5rem}
+        .sp-word-tl{font-family:'Inter',sans-serif;font-size:.74rem;font-style:italic;color:rgba(255,255,255,.55)}
+        .sp-word-metas{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.6rem}
+        .sp-word-meta{font-family:'Inter',sans-serif;font-size:.7rem;color:rgba(255,255,255,.72);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:.32rem .6rem}
+        .sp-word-meta span{display:block;font-size:.54rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:.15rem}
+        .sp-word-why{margin-top:.7rem;padding:.6rem .8rem;border-left:2px solid rgba(201,168,76,.4);border-radius:0 8px 8px 0;background:rgba(201,168,76,.04)}
+        .sp-word-why-l{display:block;font-family:'Inter',sans-serif;font-size:.58rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-light);margin-bottom:.3rem}
+        .sp-word-why{font-family:'Lora',serif;font-size:.84rem;line-height:1.55;color:rgba(255,255,255,.75)}
+        /* Voces de la historia (piloto) */
+        .sp-voice{border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:1rem 1.1rem;margin-bottom:.7rem;background:rgba(255,255,255,.02)}
+        .sp-voice-q{font-family:'Lora',serif;font-style:italic;font-size:.94rem;line-height:1.6;color:rgba(255,255,255,.85)}
+        .sp-voice-by{display:flex;align-items:baseline;gap:.6rem;flex-wrap:wrap;margin-top:.7rem;padding-top:.6rem;border-top:1px solid rgba(255,255,255,.06)}
+        .sp-voice-a{font-family:'Cinzel',serif;font-size:.82rem;font-weight:600;color:var(--gold-light)}
+        .sp-voice-e{font-family:'Inter',sans-serif;font-size:.66rem;color:rgba(255,255,255,.45)}
         .sp-ver{border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:.85rem 1rem;margin-bottom:.55rem}
         .sp-ver-l{display:block;font-family:'Inter',sans-serif;font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.42);margin-bottom:.4rem}
         .sp-ver-t{font-family:'Lora',serif;font-style:italic;font-size:.9rem;line-height:1.55;color:rgba(255,255,255,.78)}
