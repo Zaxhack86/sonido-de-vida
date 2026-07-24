@@ -2,7 +2,7 @@
         :root{--gold:#c9a84c;--gold-light:#e8d48b;--gold-dark:#a07c2a;--deep-blue:#1a1a3e;--dark:#0d0d1a;--cream:#f5f0e8;--warm-white:#faf8f4;--text-dark:#2c2c3e;--text-light:#6b6b80;--purple:#2d1b69}
         html{scroll-behavior:smooth}
         body{font-family:'Inter',sans-serif;background:var(--warm-white);color:var(--text-dark);overflow-x:hidden}
-        nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:1rem 2rem;display:flex;justify-content:space-between;align-items:center;transition:all .4s ease;background:transparent}
+        nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:calc(1rem + env(safe-area-inset-top)) 2rem 1rem;display:flex;justify-content:space-between;align-items:center;transition:all .4s ease;background:transparent}
         nav.scrolled{background:rgba(13,13,26,.95);backdrop-filter:blur(20px);padding:.7rem 2rem;box-shadow:0 4px 30px rgba(0,0,0,.3)}
         .nav-logo{font-family:'Cinzel',serif;font-size:1.5rem;font-weight:700;color:var(--gold-light);text-decoration:none;display:flex;align-items:center;gap:.5rem}
         .nav-logo .logo-mark{font-size:1.8rem;line-height:1}
