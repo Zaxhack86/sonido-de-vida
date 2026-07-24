@@ -5402,6 +5402,8 @@
         document.getElementById('studyOverlay').classList.add('open');
         document.getElementById('studyPanel').classList.add('open');
         document.body.style.overflow='hidden';
+        try{ document.getElementById('spTabs').scrollLeft=0; }catch(e){}
+        setTimeout(sbUpdateTabArrows,60);
         sbLoadVersions();
     }
     function closeStudy(){
@@ -5414,7 +5416,32 @@
         el.classList.add('active');
         document.querySelectorAll('.sp-pane').forEach(p=>p.classList.remove('active'));
         document.getElementById('pane-'+el.dataset.sp).classList.add('active');
+        // Asegura que la pestaña activa quede visible dentro de la fila desplazable.
+        try{ el.scrollIntoView({inline:'center',block:'nearest'}); }catch(e){ el.scrollIntoView(); }
+        sbUpdateTabArrows();
     }
+    // Fila de pestañas del estudio: flechas de desplazamiento en escritorio.
+    function sbUpdateTabArrows(){
+        const wrap=document.querySelector('.sb-tabs-wrap'); const sc=document.getElementById('spTabs');
+        if(!wrap||!sc) return;
+        const max=sc.scrollWidth-sc.clientWidth;
+        wrap.classList.toggle('has-left', sc.scrollLeft>4);
+        wrap.classList.toggle('has-right', sc.scrollLeft<max-4);
+    }
+    function sbScrollTabs(dir){
+        const sc=document.getElementById('spTabs'); if(!sc) return;
+        sc.scrollBy({left:dir*Math.max(160,sc.clientWidth*0.6), behavior:'smooth'});
+        setTimeout(sbUpdateTabArrows,350);
+    }
+    (function(){
+        const sc=document.getElementById('spTabs'); if(!sc) return;
+        sc.addEventListener('scroll',sbUpdateTabArrows,{passive:true});
+        // Rueda vertical del ratón → desplazamiento horizontal de las pestañas.
+        sc.addEventListener('wheel',function(e){
+            if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){ sc.scrollLeft+=e.deltaY; e.preventDefault(); }
+        },{passive:false});
+        window.addEventListener('resize',sbUpdateTabArrows);
+    })();
     function sbEsc(s){ return String(s==null?'':s).replace(/</g,'&lt;'); }
     function sbSoon(title){
         return '<div class="sp-soon"><span class="sp-soon-ic">✦</span><p>'+title+'</p>'+

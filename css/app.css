@@ -640,8 +640,18 @@
         .sb-panel-test{display:block;font-family:'Inter',sans-serif;font-size:.66rem;color:rgba(255,255,255,.45);margin-top:.1rem}
         .sb-panel-x{width:38px;height:38px;border-radius:11px;border:1px solid rgba(255,255,255,.12);background:transparent;color:rgba(255,255,255,.6);font-size:1.1rem;cursor:pointer;transition:color .2s,border-color .2s}
         .sb-panel-x:hover{color:#fff;border-color:rgba(255,255,255,.25)}
-        .sb-panel-tabs{display:flex;gap:.1rem;padding:0 1rem;overflow-x:auto;scrollbar-width:none}
+        .sb-tabs-wrap{position:relative;display:flex;align-items:stretch}
+        .sb-panel-tabs{display:flex;gap:.1rem;padding:0 1rem;overflow-x:auto;scrollbar-width:none;scroll-behavior:smooth;flex:1;min-width:0}
         .sb-panel-tabs::-webkit-scrollbar{display:none}
+        /* Flechas para desplazar las pestañas en escritorio (aparecen solo si hay overflow) */
+        .sb-tabs-arrow{position:absolute;top:0;bottom:0;width:34px;border:none;cursor:pointer;z-index:3;
+            display:none;align-items:center;justify-content:center;font-size:1.35rem;line-height:1;
+            color:var(--gold-light);background:none;padding:0;transition:opacity .2s}
+        .sb-tabs-arrow.left{left:0;background:linear-gradient(90deg,#10102a 45%,transparent)}
+        .sb-tabs-arrow.right{right:0;background:linear-gradient(270deg,#10102a 45%,transparent)}
+        .sb-tabs-arrow:hover{color:var(--gold,#c9a84c)}
+        .sb-tabs-wrap.has-left  .sb-tabs-arrow.left{display:flex}
+        .sb-tabs-wrap.has-right .sb-tabs-arrow.right{display:flex}
         .sp-tab{flex-shrink:0;background:none;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-size:.72rem;font-weight:600;color:rgba(255,255,255,.5);padding:.75rem .8rem;border-bottom:2px solid transparent;white-space:nowrap;transition:color .2s,border-color .2s}
         .sp-tab:hover{color:var(--gold-light)}
         .sp-tab.active{color:var(--gold);border-bottom-color:var(--gold)}

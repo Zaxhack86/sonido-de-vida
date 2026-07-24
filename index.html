@@ -876,15 +876,19 @@
                 </div>
                 <button class="sb-panel-x" onclick="closeStudy()" aria-label="Cerrar">✕</button>
             </div>
-            <div class="sb-panel-tabs" id="spTabs">
-                <button class="sp-tab active" data-sp="ensenanza" onclick="sbStudyTab(this)">📖 Enseñanza</button>
-                <button class="sp-tab" data-sp="contexto" onclick="sbStudyTab(this)">📍 Contexto</button>
-                <button class="sp-tab" data-sp="conexiones" onclick="sbStudyTab(this)">🔗 Conexiones</button>
-                <button class="sp-tab" data-sp="palabra" onclick="sbStudyTab(this)">🔤 Palabra original</button>
-                <button class="sp-tab" data-sp="cristo" onclick="sbStudyTab(this)">✝️ Cristo en el texto</button>
-                <button class="sp-tab" data-sp="voces" onclick="sbStudyTab(this)">🏛️ Voces de la historia</button>
-                <button class="sp-tab" data-sp="versiones" onclick="sbStudyTab(this)">📚 Versiones</button>
-                <button class="sp-tab" data-sp="reflexion" onclick="sbStudyTab(this)">💭 Reflexión</button>
+            <div class="sb-tabs-wrap">
+                <button class="sb-tabs-arrow left" id="spTabsLeft" onclick="sbScrollTabs(-1)" aria-label="Ver pestañas anteriores" tabindex="-1">‹</button>
+                <div class="sb-panel-tabs" id="spTabs">
+                    <button class="sp-tab active" data-sp="ensenanza" onclick="sbStudyTab(this)">📖 Enseñanza</button>
+                    <button class="sp-tab" data-sp="contexto" onclick="sbStudyTab(this)">📍 Contexto</button>
+                    <button class="sp-tab" data-sp="conexiones" onclick="sbStudyTab(this)">🔗 Conexiones</button>
+                    <button class="sp-tab" data-sp="palabra" onclick="sbStudyTab(this)">🔤 Palabra original</button>
+                    <button class="sp-tab" data-sp="cristo" onclick="sbStudyTab(this)">✝️ Cristo en el texto</button>
+                    <button class="sp-tab" data-sp="voces" onclick="sbStudyTab(this)">🏛️ Voces de la historia</button>
+                    <button class="sp-tab" data-sp="versiones" onclick="sbStudyTab(this)">📚 Versiones</button>
+                    <button class="sp-tab" data-sp="reflexion" onclick="sbStudyTab(this)">💭 Reflexión</button>
+                </div>
+                <button class="sb-tabs-arrow right" id="spTabsRight" onclick="sbScrollTabs(1)" aria-label="Ver más pestañas" tabindex="-1">›</button>
             </div>
         </div>
         <div class="sb-panel-body">
