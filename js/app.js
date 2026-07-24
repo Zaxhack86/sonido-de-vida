@@ -4919,6 +4919,43 @@
     // Quita tildes/acentos para comparación insensible: “fiate” == “fíate”, “jehova” == “Jehová”
     function _sAccents(s) { return s.normalize('NFD').replace(/[̀-ͯ]/g, ''); }
 
+    // ── Búsqueda por referencia ("Juan 3:16", "1 Corintios 13:4", "Salmo 23") ──
+    let _bookRefMap = null;
+    function sbBookRefMap() {
+        if (_bookRefMap) return _bookRefMap;
+        const m = {}, norm = s => _sAccents(s).toLowerCase().replace(/\s+/g, ' ').trim();
+        Object.keys(BOOK_KEY).forEach(k => { m[norm(k)] = k; });
+        const alias = {
+            'gen':'Genesis','gn':'Genesis','ex':'Exodo','exo':'Exodo','lev':'Levitico','lv':'Levitico',
+            'num':'Numeros','nm':'Numeros','deut':'Deuteronomio','dt':'Deuteronomio','jos':'Josue',
+            'jue':'Jueces','1 sam':'1 Samuel','2 sam':'2 Samuel','1 re':'1 Reyes','2 re':'2 Reyes',
+            'salmo':'Salmos','sal':'Salmos','prov':'Proverbios','pr':'Proverbios','ecl':'Eclesiastes',
+            'cant':'Cantares','isa':'Isaias','is':'Isaias','jer':'Jeremias','eze':'Ezequiel','ez':'Ezequiel',
+            'dan':'Daniel','dn':'Daniel','abd':'Abdias','jon':'Jonas','miq':'Miqueas','nah':'Nahum',
+            'hab':'Habacuc','sof':'Sofonias','zac':'Zacarias','mal':'Malaquias',
+            'mt':'Mateo','mat':'Mateo','mr':'Marcos','mc':'Marcos','mar':'Marcos','lc':'Lucas','luc':'Lucas',
+            'jn':'Juan','hch':'Hechos','hech':'Hechos','ro':'Romanos','rom':'Romanos',
+            '1 co':'1 Corintios','1 cor':'1 Corintios','2 co':'2 Corintios','2 cor':'2 Corintios',
+            'gal':'Galatas','ga':'Galatas','ef':'Efesios','efe':'Efesios','fil':'Filipenses','flp':'Filipenses',
+            'col':'Colosenses','1 ts':'1 Tesalonicenses','2 ts':'2 Tesalonicenses','1 tim':'1 Timoteo',
+            '2 tim':'2 Timoteo','tit':'Tito','flm':'Filemon','heb':'Hebreos','stg':'Santiago','sant':'Santiago',
+            '1 pe':'1 Pedro','2 pe':'2 Pedro','1 jn':'1 Juan','2 jn':'2 Juan','3 jn':'3 Juan','jud':'Judas',
+            'ap':'Apocalipsis','apoc':'Apocalipsis',
+        };
+        Object.keys(alias).forEach(a => { m[a] = alias[a]; });
+        _bookRefMap = m; return m;
+    }
+    function sbParseReference(q) {
+        if (!q) return null;
+        const s = _sAccents(q).toLowerCase().replace(/\s+/g, ' ').trim();
+        const m = s.match(/^([1-3]\s+)?([a-zñ]+)\s+(\d{1,3})(?:\s*[:.\s]\s*(\d{1,3}))?$/);
+        if (!m) return null;
+        const bookName = ((m[1] || '') + m[2]).replace(/\s+/g, ' ').trim();
+        const book = sbBookRefMap()[bookName];
+        if (!book) return null;
+        return { book, chapter: parseInt(m[3], 10), verse: m[4] ? parseInt(m[4], 10) : null };
+    }
+
     async function runSearch() {
         const input = document.getElementById('searchInput');
         const box   = document.getElementById('searchResults');
@@ -4976,6 +5013,21 @@
         let results = [];
         const MAX = 60;
         let truncated = false;
+        // Referencia directa: "Juan 3:16" abre ese versículo (y su estudio) sin buscar texto.
+        const _ref = sbParseReference(q);
+        if (_ref && bible[_ref.book]) {
+            const _ch = bible[_ref.book][_ref.chapter - 1];
+            if (_ch) {
+                if (_ref.verse) {
+                    const _t = _ch[_ref.verse - 1];
+                    if (_t) results.push({ book: _ref.book, chapter: _ref.chapter, verse: _ref.verse, text: _t });
+                } else {
+                    for (let v = 0; v < _ch.length && results.length < MAX; v++)
+                        if (_ch[v]) results.push({ book: _ref.book, chapter: _ref.chapter, verse: v + 1, text: _ch[v] });
+                }
+            }
+        }
+        if (!results.length)
         outer:
         for (const book of Object.keys(bible)) {
             const chapters = bible[book];
