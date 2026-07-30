@@ -934,6 +934,9 @@ async function brevoSend(env, toEmail, { subject, html, text }) {
         headers: { 'api-key': env.BREVO_API_KEY, 'Content-Type': 'application/json', 'accept': 'application/json' },
         body: JSON.stringify({
             sender: { name: 'Sonido de Vida', email: env.SENDER_EMAIL || 'noreply@sonidodevida.com' },
+            // El remitente es un buzón automático; sin replyTo, quien conteste
+            // escribe al vacío y se pierde un cliente. Va al buzón real.
+            replyTo: { name: 'Sonido de Vida', email: env.REPLY_TO_EMAIL || 'contacto@sonidodevida.com' },
             to: [{ email: toEmail }],
             subject,
             htmlContent: html,

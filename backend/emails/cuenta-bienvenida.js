@@ -94,7 +94,8 @@ export function accountWelcomeEmail(opts = {}) {
 
         ${versiculo('Lámpara es a mis pies tu palabra, y astro a mi camino.', 'Salmo 119:105 · Reina-Valera 1909')}
 
-        <p style="margin:28px 0 0;font:400 15px/1.7 Arial,Helvetica,sans-serif;color:${CREAM}">Si tienes una duda o quieres pedir algo para la app, respóndeme a este correo: lo leo yo.</p>
+        <p style="margin:28px 0 0;font:400 15px/1.7 Arial,Helvetica,sans-serif;color:${CREAM}">Si tienes una duda o quieres pedir algo para la app, escríbenos desde <a href="${SITE}/contacto" style="color:${GOLD_SOFT};font-weight:bold">sonidodevida.com/contacto</a>. Lo leemos todo.</p>
+        <p style="margin:8px 0 0;font:400 13px/1.6 Arial,Helvetica,sans-serif;color:${MUTED}">Este correo sale de un buzón automático. Si respondes, tu mensaje llega igualmente a contacto@sonidodevida.com.</p>
         <p style="margin:14px 0 0;font:400 15px/1.7 Arial,Helvetica,sans-serif;color:${MUTED}">Con cariño,<br><b style="color:${CREAM}">El equipo de Sonido de Vida</b></p>`;
 
     const pie = `
@@ -129,7 +130,8 @@ export function accountWelcomeEmail(opts = {}) {
         '',
         '«Lámpara es a mis pies tu palabra, y astro a mi camino.» — Salmo 119:105 (Reina-Valera 1909)',
         '',
-        'Si tienes una duda o quieres pedir algo para la app, responde a este correo.',
+        `Si tienes una duda o quieres pedir algo para la app, escríbenos desde ${SITE}/contacto. Lo leemos todo.`,
+        'Este correo sale de un buzón automático. Si respondes, tu mensaje llega igualmente a contacto@sonidodevida.com.',
         '',
         'El equipo de Sonido de Vida',
         `${SITE} · ${SITE}/contacto`,
