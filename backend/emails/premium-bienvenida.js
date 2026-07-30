@@ -7,18 +7,9 @@
 // Vive fuera de `api-worker.js` a propósito: así el mismo HTML se puede
 // renderizar a archivo con `node backend/tools/render-welcome.mjs` para
 // previsualizarlo o pegarlo como campaña en Brevo, sin duplicar el texto.
-//
-// Reglas de correo: todo el estilo va en línea (Gmail borra <style>), ancho
-// máximo 600 px, maquetado con tablas y una versión de texto plano.
+// La forma (paleta, tablas, envoltorio) está en `base.js`.
 
-const SITE = 'https://sonidodevida.com';
-const GOLD = '#c9a84c';
-const GOLD_SOFT = '#e0c67e';
-const NAVY = '#0b1226';
-const NAVY_CARD = '#131c36';
-const CREAM = '#ece7dc';
-const MUTED = '#a6a294';
-const LINE = '#26304d';
+import { SITE, GOLD_SOFT, CREAM, MUTED, LINE, bloqueFeature, bloqueExtra, boton, versiculo, envoltorio, sinHtml } from './base.js';
 
 // Una novedad = un bloque. `como` es el "cómo acceder": lo que de verdad
 // hace la diferencia entre un suscriptor que usa la app y uno que se va.
@@ -57,49 +48,6 @@ const EXTRAS = [
     ['🔖', 'Tus versículos', 'Guarda los que te hablen y vuelve a ellos desde la pestaña <b>Yo</b>.'],
 ];
 
-function bloqueFeature(f) {
-    return `
-      <tr><td style="padding:0 0 12px">
-        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${NAVY_CARD};border:1px solid ${LINE};border-radius:14px">
-          <tr><td style="padding:22px 24px">
-            <p style="margin:0 0 8px;font:700 12px/1 Arial,Helvetica,sans-serif;letter-spacing:2px;color:${GOLD}">${f.n}</p>
-            <h3 style="margin:0 0 10px;font:700 19px/1.3 Georgia,'Times New Roman',serif;color:${GOLD_SOFT}">${f.titulo}</h3>
-            <p style="margin:0 0 14px;font:400 15px/1.65 Arial,Helvetica,sans-serif;color:${CREAM}">${f.texto}</p>
-            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-              <tr>
-                <td width="3" style="background:${GOLD};border-radius:2px"></td>
-                <td style="padding:2px 0 2px 14px">
-                  <p style="margin:0;font:400 14px/1.6 Arial,Helvetica,sans-serif;color:${MUTED}"><b style="color:${GOLD_SOFT}">Cómo llegar:</b> ${f.como}</p>
-                </td>
-              </tr>
-            </table>
-          </td></tr>
-        </table>
-      </td></tr>`;
-}
-
-function bloqueExtra([icono, titulo, texto]) {
-    return `
-      <tr><td style="padding:0 0 14px">
-        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-          <tr>
-            <td width="34" valign="top" style="font-size:20px;line-height:1.4">${icono}</td>
-            <td style="font:400 14px/1.6 Arial,Helvetica,sans-serif;color:${MUTED}">
-              <b style="color:${CREAM}">${titulo}.</b> ${texto}
-            </td>
-          </tr>
-        </table>
-      </td></tr>`;
-}
-
-function boton(href, texto) {
-    return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin:0 auto">
-      <tr><td style="background:${GOLD};border-radius:12px">
-        <a href="${href}" style="display:inline-block;padding:15px 34px;font:700 16px/1 Arial,Helvetica,sans-serif;color:#1a1610;text-decoration:none">${texto}</a>
-      </td></tr>
-    </table>`;
-}
-
 /**
  * Devuelve { subject, html, text } del correo de bienvenida Premium.
  * @param {{ nombre?: string }} [opts] nombre de pila, si se conoce.
@@ -108,27 +56,8 @@ export function premiumWelcomeEmail(opts = {}) {
     const nombre = (opts.nombre || '').trim();
     const saludo = nombre ? `Hola, ${nombre}:` : 'Hola:';
 
-    const html = `<!doctype html>
-<html lang="es"><head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="color-scheme" content="dark light">
-<title>Bienvenido a Sonido de Vida Premium</title>
-</head>
-<body style="margin:0;padding:0;background:#070c18">
-<div style="display:none;max-height:0;overflow:hidden;opacity:0">Tu voz nueva RV-SDV, el Modo Enfoque y todo lo que acaba de abrirse en tu cuenta.&#8203;&#847;&#8203;&#847;&#8203;&#847;&#8203;&#847;</div>
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#070c18">
-  <tr><td align="center" style="padding:28px 14px 40px">
-    <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px">
-
-      <!-- Cabecera -->
-      <tr><td align="center" style="padding:14px 0 26px">
-        <p style="margin:0;font:700 13px/1 Arial,Helvetica,sans-serif;letter-spacing:4px;color:${GOLD};text-transform:uppercase">Sonido de Vida</p>
-      </td></tr>
-
-      <tr><td style="background:${NAVY};border:1px solid ${LINE};border-radius:20px;padding:38px 30px 34px">
-
-        <p style="margin:0 0 10px;font:700 12px/1 Arial,Helvetica,sans-serif;letter-spacing:3px;color:${GOLD};text-transform:uppercase">✨ Ya eres Premium</p>
+    const cuerpo = `
+        <p style="margin:0 0 10px;font:700 12px/1 Arial,Helvetica,sans-serif;letter-spacing:3px;color:#c9a84c;text-transform:uppercase">✨ Ya eres Premium</p>
         <h1 style="margin:0 0 18px;font:400 30px/1.25 Georgia,'Times New Roman',serif;color:${CREAM}">Bienvenido a la comunidad Premium</h1>
 
         <p style="margin:0 0 16px;font:400 16px/1.7 Arial,Helvetica,sans-serif;color:${CREAM}">${saludo}</p>
@@ -139,7 +68,6 @@ export function premiumWelcomeEmail(opts = {}) {
           ${FEATURES.map(bloqueFeature).join('')}
         </table>
 
-        <!-- CTA -->
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
           <tr><td align="center" style="padding:22px 0 8px">
             ${boton(SITE, 'Abrir Sonido de Vida')}
@@ -149,7 +77,6 @@ export function premiumWelcomeEmail(opts = {}) {
           </td></tr>
         </table>
 
-        <!-- Extras -->
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-top:1px solid ${LINE}">
           <tr><td style="padding:24px 0 6px">
             <h2 style="margin:0 0 16px;font:400 20px/1.3 Georgia,'Times New Roman',serif;color:${GOLD_SOFT}">Y de paso, no te pierdas esto</h2>
@@ -157,41 +84,25 @@ export function premiumWelcomeEmail(opts = {}) {
           ${EXTRAS.map(bloqueExtra).join('')}
         </table>
 
-        <!-- Versículo -->
-        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:14px">
-          <tr>
-            <td width="3" style="background:${GOLD};border-radius:2px"></td>
-            <td style="padding:6px 0 6px 18px">
-              <p style="margin:0 0 6px;font:italic 400 17px/1.6 Georgia,'Times New Roman',serif;color:${CREAM}">&laquo;Voz de Jehová con potencia; voz de Jehová con gloria.&raquo;</p>
-              <p style="margin:0;font:400 13px/1.5 Arial,Helvetica,sans-serif;color:${GOLD}">Salmo 29:4 · Reina-Valera 1909</p>
-            </td>
-          </tr>
-        </table>
+        ${versiculo('Voz de Jehová con potencia; voz de Jehová con gloria.', 'Salmo 29:4 · Reina-Valera 1909')}
 
         <p style="margin:28px 0 0;font:400 15px/1.7 Arial,Helvetica,sans-serif;color:${CREAM}">Si algo no te funciona o quieres pedir una función, respóndeme a este correo: lo leo yo.</p>
-        <p style="margin:14px 0 0;font:400 15px/1.7 Arial,Helvetica,sans-serif;color:${MUTED}">Con cariño,<br><b style="color:${CREAM}">El equipo de Sonido de Vida</b></p>
+        <p style="margin:14px 0 0;font:400 15px/1.7 Arial,Helvetica,sans-serif;color:${MUTED}">Con cariño,<br><b style="color:${CREAM}">El equipo de Sonido de Vida</b></p>`;
 
-      </td></tr>
-
-      <!-- Pie -->
-      <tr><td style="padding:24px 8px 0">
+    const pie = `
         <p style="margin:0 0 10px;font:400 12px/1.7 Arial,Helvetica,sans-serif;color:#6f6b60">
           Gestiona o cancela tu suscripción cuando quieras desde la pestaña <b>Yo</b> &rarr; <b>Gestionar mi suscripción</b>. Sin llamadas ni trámites.
         </p>
-        <p style="margin:0 0 10px;font:400 12px/1.7 Arial,Helvetica,sans-serif;color:#6f6b60">
-          <a href="${SITE}" style="color:#8ea6d6;text-decoration:none">sonidodevida.com</a> &nbsp;·&nbsp;
-          <a href="${SITE}/contacto" style="color:#8ea6d6;text-decoration:none">Contacto</a> &nbsp;·&nbsp;
-          <a href="${SITE}/privacidad" style="color:#8ea6d6;text-decoration:none">Privacidad</a>
-        </p>
-        <p style="margin:0;font:400 11px/1.6 Arial,Helvetica,sans-serif;color:#4f4b43">
+        <p style="margin:0 0 10px;font:400 11px/1.6 Arial,Helvetica,sans-serif;color:#4f4b43">
           Recibes este correo porque acabas de activar Premium en Sonido de Vida. Es un aviso único de tu cuenta, no una campaña publicitaria.
-        </p>
-      </td></tr>
+        </p>`;
 
-    </table>
-  </td></tr>
-</table>
-</body></html>`;
+    const html = envoltorio({
+        titulo: 'Bienvenido a Sonido de Vida Premium',
+        preheader: 'Tu voz nueva RV-SDV, el Modo Enfoque y todo lo que acaba de abrirse en tu cuenta.',
+        cuerpo,
+        pie,
+    });
 
     const text = [
         'SONIDO DE VIDA — Ya eres Premium',
@@ -202,14 +113,11 @@ export function premiumWelcomeEmail(opts = {}) {
         '',
         'ESTO ES LO QUE ACABA DE ABRIRSE EN TU CUENTA:',
         '',
-        ...FEATURES.map(f => {
-            const limpio = s => s.replace(/<[^>]+>/g, '');
-            return `${f.n}. ${f.titulo}\n${limpio(f.texto)}\nCómo llegar: ${limpio(f.como)}\n`;
-        }),
+        ...FEATURES.map(f => `${f.n}. ${f.titulo}\n${sinHtml(f.texto)}\nCómo llegar: ${sinHtml(f.como)}\n`),
         `Abrir la app: ${SITE} (entra con el mismo correo al que llegó este mensaje).`,
         '',
         'Y DE PASO:',
-        ...EXTRAS.map(([, t, d]) => `- ${t}: ${d.replace(/<[^>]+>/g, '')}`),
+        ...EXTRAS.map(([, t, d]) => `- ${t}: ${sinHtml(d)}`),
         '',
         '«Voz de Jehová con potencia; voz de Jehová con gloria.» — Salmo 29:4 (Reina-Valera 1909)',
         '',

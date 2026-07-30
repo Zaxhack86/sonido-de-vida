@@ -18,6 +18,7 @@
 // Usar `coleccion` (organizar por temas) y superar el límite requiere premium.
 
 import { premiumWelcomeEmail } from './emails/premium-bienvenida.js';
+import { accountWelcomeEmail } from './emails/cuenta-bienvenida.js';
 
 const FREE_VERSE_LIMIT = 25;
 
@@ -950,16 +951,26 @@ async function sendBrevoEmail(env, toEmail, link) {
     await brevoSend(env, toEmail, { subject: 'Tu enlace para entrar a Sonido de Vida', html, text });
 }
 
-// ── Bienvenida Premium ───────────────────────────────────────────────
-// Se envía UNA sola vez por uid, la primera vez que la cuenta pasa a Premium
-// (pago en Stripe, cupón de regalo o cortesía de admin). La marca vive en KV y
-// no caduca: renovar, reactivar o volver a pagar no repite el correo.
-// Best-effort: si Brevo falla, el premium ya quedó concedido igual.
-async function sendPremiumWelcome(env, uid, email, opts = {}) {
-    if (!uid || !email || !env.BREVO_API_KEY) return false;
-    const key = 'welcome:' + uid;
+// ── Correos de bienvenida ────────────────────────────────────────────
+// Dos correos, uno por tipo de cuenta, cada uno una sola vez por uid:
+//   'premium' -> al activarse Premium (Stripe, cupón o cortesía de admin).
+//   'cuenta'  -> la primera vez que entra un usuario que NO es Premium:
+//                qué tiene gratis + invitación a probar Premium 7 días.
+// La marca vive en KV y no caduca, así que renovar, reactivar o volver a abrir
+// la app no repite el correo. Un usuario puede recibir los dos, en ese orden.
+const WELCOME_TIPOS = {
+    premium: { plantilla: premiumWelcomeEmail, marca: 'welcome:' },
+    cuenta:  { plantilla: accountWelcomeEmail, marca: 'hello:' },
+};
+
+// Best-effort: si Brevo falla, lo que disparó el correo (premium concedido,
+// sesión iniciada) ya ocurrió igual.
+async function sendWelcome(env, uid, email, tipo = 'premium', opts = {}) {
+    const conf = WELCOME_TIPOS[tipo];
+    if (!conf || !uid || !email || !env.BREVO_API_KEY) return false;
+    const key = conf.marca + uid;
     if (!opts.force && env.PREMIUM && await env.PREMIUM.get(key)) return false;
-    const msg = premiumWelcomeEmail({ nombre: opts.nombre });
+    const msg = conf.plantilla({ nombre: opts.nombre });
     // `asunto` solo se usa al reenviar a mano: con el asunto original, Gmail
     // agrupa la copia nueva bajo la vieja y parece que no cambió nada.
     if (opts.asunto) msg.subject = opts.asunto;
@@ -968,26 +979,29 @@ async function sendPremiumWelcome(env, uid, email, opts = {}) {
     return true;
 }
 
+const sendPremiumWelcome = (env, uid, email, opts) => sendWelcome(env, uid, email, 'premium', opts);
+
 // POST /api/admin/send-welcome  (X-Admin-Secret).
-// Body: { email, uid?, force?, asunto?, preview? }
+// Body: { email, uid?, tipo?: 'premium'|'cuenta', force?, asunto?, preview? }
 // Envío manual del correo de bienvenida — para los Premium que ya existían
 // antes de que este correo se automatizara, o para reenviarlo con force:true.
 async function handleAdminSendWelcome(request, env) {
     const secret = request.headers.get('X-Admin-Secret') || '';
     if (!env.ADMIN_SECRET || !timingSafeEqual(secret, env.ADMIN_SECRET)) throw { status: 403, msg: 'no autorizado' };
     const body = await request.json().catch(() => ({}));
+    const tipo = body.tipo === 'cuenta' ? 'cuenta' : 'premium';
     // { preview: true } devuelve el HTML tal cual saldría de ESTE worker, sin
     // enviar nada: así se comprueba qué versión está viva en producción.
     if (body.preview) {
-        const { html } = premiumWelcomeEmail({ nombre: body.nombre });
+        const { html } = WELCOME_TIPOS[tipo].plantilla({ nombre: body.nombre });
         return new Response(html, { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
     }
     const email = String(body.email || '').trim().toLowerCase();
     if (!email) throw { status: 400, msg: 'falta email' };
     let uid = (body.uid || '').trim() || await lookupUidByEmail(env, email);
     if (!uid) throw { status: 404, msg: 'esa cuenta aún no existe (debe iniciar sesión una vez)' };
-    const sent = await sendPremiumWelcome(env, uid, email, { force: !!body.force, nombre: body.nombre, asunto: body.asunto });
-    return json(env, request, { ok: true, uid, email, sent, skipped: !sent ? 'ya se le envió antes (usa force:true)' : null });
+    const sent = await sendWelcome(env, uid, email, tipo, { force: !!body.force, nombre: body.nombre, asunto: body.asunto });
+    return json(env, request, { ok: true, uid, email, tipo, sent, skipped: !sent ? 'ya se le envió antes (usa force:true)' : null });
 }
 
 // POST /api/admin/welcome-backfill  (X-Admin-Secret).
@@ -1455,7 +1469,16 @@ export default {
                 // Embudo: la primera vez que vemos este uid queda como 'registro'
                 // (idempotente vía índice único). No bloquea la respuesta.
                 if (ctx && ctx.waitUntil) ctx.waitUntil(logEvent(env, 'registro', user.uid));
-                return json(env, request, { uid: user.uid, email: user.email, premium: await isPremium(env, user.uid), admin: isAdmin(env, user.uid) });
+                const premium = await isPremium(env, user.uid);
+                // Bienvenida de cuenta gratis: este endpoint se llama en cada
+                // arranque de la app, así que el guard KV de sendWelcome ('hello:')
+                // es lo que la convierte en un envío único. Nunca a un Premium:
+                // ese ya recibió (o va a recibir) el suyo.
+                if (!premium && ctx && ctx.waitUntil) {
+                    ctx.waitUntil(sendWelcome(env, user.uid, user.email, 'cuenta')
+                        .catch((e) => console.warn('bienvenida cuenta:', e.message)));
+                }
+                return json(env, request, { uid: user.uid, email: user.email, premium, admin: isAdmin(env, user.uid) });
             }
             // Dashboard de métricas (solo admin). `return await`: lanza { status }.
             if (path === '/api/metrics' && request.method === 'GET') {
