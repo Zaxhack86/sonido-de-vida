@@ -1007,54 +1007,86 @@ async function handleAdminSendWelcome(request, env) {
     return json(env, request, { ok: true, uid, email, tipo, sent, skipped: !sent ? 'ya se le envió antes (usa force:true)' : null });
 }
 
+// Todos los usuarios de Firebase Auth (uid + email), paginando. Solo se usa
+// para el backfill de cuentas gratis: los Premium salen del KV, que es más barato.
+async function listAllFirebaseUsers(env, tope = 5000) {
+    const accessToken = await getGoogleAccessToken(env);
+    const out = [];
+    let pageToken = '';
+    do {
+        const url = `https://identitytoolkit.googleapis.com/v1/projects/${env.FIREBASE_PROJECT_ID}/accounts:batchGet?maxResults=1000` + (pageToken ? '&nextPageToken=' + encodeURIComponent(pageToken) : '');
+        const res = await fetch(url, { headers: { 'Authorization': 'Bearer ' + accessToken, 'X-Goog-User-Project': env.FIREBASE_PROJECT_ID } });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw { status: 502, msg: 'Firebase batchGet: ' + ((data.error && data.error.message) || res.status) };
+        for (const u of data.users || []) if (u.email) out.push({ uid: u.localId, email: u.email });
+        pageToken = data.nextPageToken || '';
+    } while (pageToken && out.length < tope);
+    return out;
+}
+
 // POST /api/admin/welcome-backfill  (X-Admin-Secret).
-// Body: { dry_run?: true, limite?: 200, asunto? }
-// Manda la bienvenida a los Premium que YA existían antes de que este correo se
-// automatizara. Recorre el KV PREMIUM, se queda con los uids con premium vigente
-// (isPremium respeta `expira`), resuelve su correo en Firebase y envía a los que
-// no tengan aún la marca `welcome:<uid>` — así es repetible sin duplicar envíos.
-// Con dry_run:true no envía nada: solo devuelve a quién le tocaría.
+// Body: { tipo?: 'premium'|'cuenta', dry_run?: true, limite?: 200, asunto? }
+// Manda la bienvenida a los usuarios que YA existían antes de que estos correos
+// se automatizaran:
+//   'premium' -> recorre el KV PREMIUM y filtra por premium vigente (respeta `expira`).
+//   'cuenta'  -> recorre Firebase Auth y se queda con los que NO son premium.
+// En ambos casos salta a quien ya tenga su marca en KV, así que es repetible sin
+// duplicar envíos. Con dry_run:true no envía nada: solo dice a quién le tocaría.
 async function handleAdminWelcomeBackfill(request, env) {
     const secret = request.headers.get('X-Admin-Secret') || '';
     if (!env.ADMIN_SECRET || !timingSafeEqual(secret, env.ADMIN_SECRET)) throw { status: 403, msg: 'no autorizado' };
     const body = await request.json().catch(() => ({}));
+    const tipo = body.tipo === 'cuenta' ? 'cuenta' : 'premium';
     const dryRun = body.dry_run !== false;                       // por defecto NO envía
     const limite = Math.min(parseInt(body.limite, 10) || 200, 250); // cuota diaria de Brevo
+    const marca = WELCOME_TIPOS[tipo].marca;
 
-    // Las claves con ':' son auxiliares (stripe:, coupon:, welcome:, mlrate:…);
-    // las demás son el uid del usuario.
-    const uids = [];
-    let cursor;
-    do {
-        const page = await env.PREMIUM.list({ cursor, limit: 1000 });
-        for (const k of page.keys) if (!k.name.includes(':')) uids.push(k.name);
-        cursor = page.list_complete ? null : page.cursor;
-    } while (cursor);
+    let candidatos = [];   // [{ uid, email }]
+    let total = 0;         // cuántos entran en el criterio, antes de filtrar marcas
 
-    const vigentes = [];
-    for (const uid of uids) {
-        if (isAdmin(env, uid)) continue;                 // el dueño, no es cliente
-        if (await isPremium(env, uid)) vigentes.push(uid);
+    if (tipo === 'cuenta') {
+        for (const u of await listAllFirebaseUsers(env)) {
+            if (isAdmin(env, u.uid)) continue;           // el dueño, no es cliente
+            if (await isPremium(env, u.uid)) continue;   // los Premium tienen el suyo
+            total++;
+            candidatos.push(u);
+        }
+    } else {
+        // Las claves con ':' son auxiliares (stripe:, coupon:, welcome:, mlrate:…);
+        // las demás son el uid del usuario.
+        const uids = [];
+        let cursor;
+        do {
+            const page = await env.PREMIUM.list({ cursor, limit: 1000 });
+            for (const k of page.keys) if (!k.name.includes(':')) uids.push(k.name);
+            cursor = page.list_complete ? null : page.cursor;
+        } while (cursor);
+
+        const vigentes = [];
+        for (const uid of uids) {
+            if (isAdmin(env, uid)) continue;
+            if (await isPremium(env, uid)) vigentes.push(uid);
+        }
+        total = vigentes.length;
+        const emails = vigentes.length ? await lookupEmailsByUids(env, vigentes) : new Map();
+        candidatos = vigentes.filter((uid) => emails.get(uid)).map((uid) => ({ uid, email: emails.get(uid) }));
     }
 
-    const emails = vigentes.length ? await lookupEmailsByUids(env, vigentes) : new Map();
     const pendientes = [];
-    for (const uid of vigentes) {
-        const email = emails.get(uid);
-        if (!email) continue;                            // cuenta borrada o sin correo
-        if (await env.PREMIUM.get('welcome:' + uid)) continue;   // ya lo recibió
-        pendientes.push({ uid, email });
+    for (const c of candidatos) {
+        if (await env.PREMIUM.get(marca + c.uid)) continue;   // ya lo recibió
+        pendientes.push(c);
     }
 
     const objetivo = pendientes.slice(0, limite);
-    const resultado = { premium_vigentes: vigentes.length, sin_correo: vigentes.length - emails.size, pendientes: pendientes.length, dry_run: dryRun, enviados: 0, fallidos: [] };
+    const resultado = { tipo, en_criterio: total, sin_correo: total - candidatos.length, pendientes: pendientes.length, dry_run: dryRun, enviados: 0, fallidos: [] };
     if (dryRun) {
         resultado.destinatarios = objetivo.map((p) => p.email);
         return json(env, request, resultado);
     }
     for (const p of objetivo) {
         try {
-            if (await sendPremiumWelcome(env, p.uid, p.email, { asunto: body.asunto })) resultado.enviados++;
+            if (await sendWelcome(env, p.uid, p.email, tipo, { asunto: body.asunto })) resultado.enviados++;
         } catch (e) {
             resultado.fallidos.push({ email: p.email, error: e.message || String(e) });
         }
