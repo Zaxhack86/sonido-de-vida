@@ -24,6 +24,7 @@ Stack: HTML/CSS/JS puro (sin framework) + Cloudflare Workers + Cloudflare R2 + C
 | `worker_updated.js` | Cloudflare Worker de audio (se despliega en `sonido-de-vida-audio.*`). |
 | `backend/api-worker.js` | Cloudflare Worker de API (auth, contenido premium, suscripciones). |
 | `backend/wrangler-api.toml` | Config del worker de API (D1, KV, R2 premium). |
+| `backend/emails/premium-bienvenida.js` | Plantilla del correo de bienvenida Premium (HTML + texto). Se envía **una sola vez por uid** al activarse Premium (Stripe, cupón o cortesía de admin); la marca es la clave KV `welcome:<uid>`. Previsualizar con `node backend/tools/render-welcome.mjs`; reenviar a mano con `POST /api/admin/send-welcome` (header `X-Admin-Secret`, body `{email, force?}`). Todo el correo del worker sale por `brevoSend()`. |
 | `wrangler.toml` | Config del worker de audio (R2 de audio público). |
 | `vercel.json` | Config de Vercel. `cleanUrls` + redirects `/app`→`/` y `/app/*`→`/` + fallback SPA (`/(.*)`→`/`). **No usar reescrituras `dest` a rutas `.html`** (rompen con `cleanUrls` → 404). |
 
