@@ -936,23 +936,34 @@ async function sendPremiumWelcome(env, uid, email, opts = {}) {
     if (!uid || !email || !env.BREVO_API_KEY) return false;
     const key = 'welcome:' + uid;
     if (!opts.force && env.PREMIUM && await env.PREMIUM.get(key)) return false;
-    await brevoSend(env, email, premiumWelcomeEmail({ nombre: opts.nombre }));
+    const msg = premiumWelcomeEmail({ nombre: opts.nombre });
+    // `asunto` solo se usa al reenviar a mano: con el asunto original, Gmail
+    // agrupa la copia nueva bajo la vieja y parece que no cambió nada.
+    if (opts.asunto) msg.subject = opts.asunto;
+    await brevoSend(env, email, msg);
     if (env.PREMIUM) await env.PREMIUM.put(key, new Date().toISOString());
     return true;
 }
 
-// POST /api/admin/send-welcome  (X-Admin-Secret). Body: { email, uid?, force? }
+// POST /api/admin/send-welcome  (X-Admin-Secret).
+// Body: { email, uid?, force?, asunto?, preview? }
 // Envío manual del correo de bienvenida — para los Premium que ya existían
 // antes de que este correo se automatizara, o para reenviarlo con force:true.
 async function handleAdminSendWelcome(request, env) {
     const secret = request.headers.get('X-Admin-Secret') || '';
     if (!env.ADMIN_SECRET || !timingSafeEqual(secret, env.ADMIN_SECRET)) throw { status: 403, msg: 'no autorizado' };
     const body = await request.json().catch(() => ({}));
+    // { preview: true } devuelve el HTML tal cual saldría de ESTE worker, sin
+    // enviar nada: así se comprueba qué versión está viva en producción.
+    if (body.preview) {
+        const { html } = premiumWelcomeEmail({ nombre: body.nombre });
+        return new Response(html, { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+    }
     const email = String(body.email || '').trim().toLowerCase();
     if (!email) throw { status: 400, msg: 'falta email' };
     let uid = (body.uid || '').trim() || await lookupUidByEmail(env, email);
     if (!uid) throw { status: 404, msg: 'esa cuenta aún no existe (debe iniciar sesión una vez)' };
-    const sent = await sendPremiumWelcome(env, uid, email, { force: !!body.force, nombre: body.nombre });
+    const sent = await sendPremiumWelcome(env, uid, email, { force: !!body.force, nombre: body.nombre, asunto: body.asunto });
     return json(env, request, { ok: true, uid, email, sent, skipped: !sent ? 'ya se le envió antes (usa force:true)' : null });
 }
 
