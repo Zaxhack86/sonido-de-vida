@@ -177,6 +177,29 @@ async function lookupUidByEmail(env, email) {
     return u ? u.localId : null;
 }
 
+// El camino inverso: emails a partir de uids (hasta 100 por llamada, límite de
+// Identity Toolkit). Devuelve un Map uid -> email; los uids sin cuenta o sin
+// correo simplemente no aparecen.
+async function lookupEmailsByUids(env, uids) {
+    const out = new Map();
+    const accessToken = await getGoogleAccessToken(env);
+    for (let i = 0; i < uids.length; i += 100) {
+        const res = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:lookup', {
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer ' + accessToken,
+                'Content-Type': 'application/json',
+                'X-Goog-User-Project': env.FIREBASE_PROJECT_ID,
+            },
+            body: JSON.stringify({ localId: uids.slice(i, i + 100) }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw { status: 502, msg: 'Firebase lookup: ' + ((data.error && data.error.message) || res.status) };
+        for (const u of data.users || []) if (u.email) out.set(u.localId, u.email);
+    }
+    return out;
+}
+
 // Marca premium PERMANENTE (cortesía, sin pago) en KV. Sin campo `expira` => no
 // caduca nunca. Vive fuera del flujo de Stripe: como el usuario no paga, ningún
 // webhook lo sobrescribe.
@@ -967,6 +990,61 @@ async function handleAdminSendWelcome(request, env) {
     return json(env, request, { ok: true, uid, email, sent, skipped: !sent ? 'ya se le envió antes (usa force:true)' : null });
 }
 
+// POST /api/admin/welcome-backfill  (X-Admin-Secret).
+// Body: { dry_run?: true, limite?: 200, asunto? }
+// Manda la bienvenida a los Premium que YA existían antes de que este correo se
+// automatizara. Recorre el KV PREMIUM, se queda con los uids con premium vigente
+// (isPremium respeta `expira`), resuelve su correo en Firebase y envía a los que
+// no tengan aún la marca `welcome:<uid>` — así es repetible sin duplicar envíos.
+// Con dry_run:true no envía nada: solo devuelve a quién le tocaría.
+async function handleAdminWelcomeBackfill(request, env) {
+    const secret = request.headers.get('X-Admin-Secret') || '';
+    if (!env.ADMIN_SECRET || !timingSafeEqual(secret, env.ADMIN_SECRET)) throw { status: 403, msg: 'no autorizado' };
+    const body = await request.json().catch(() => ({}));
+    const dryRun = body.dry_run !== false;                       // por defecto NO envía
+    const limite = Math.min(parseInt(body.limite, 10) || 200, 250); // cuota diaria de Brevo
+
+    // Las claves con ':' son auxiliares (stripe:, coupon:, welcome:, mlrate:…);
+    // las demás son el uid del usuario.
+    const uids = [];
+    let cursor;
+    do {
+        const page = await env.PREMIUM.list({ cursor, limit: 1000 });
+        for (const k of page.keys) if (!k.name.includes(':')) uids.push(k.name);
+        cursor = page.list_complete ? null : page.cursor;
+    } while (cursor);
+
+    const vigentes = [];
+    for (const uid of uids) {
+        if (isAdmin(env, uid)) continue;                 // el dueño, no es cliente
+        if (await isPremium(env, uid)) vigentes.push(uid);
+    }
+
+    const emails = vigentes.length ? await lookupEmailsByUids(env, vigentes) : new Map();
+    const pendientes = [];
+    for (const uid of vigentes) {
+        const email = emails.get(uid);
+        if (!email) continue;                            // cuenta borrada o sin correo
+        if (await env.PREMIUM.get('welcome:' + uid)) continue;   // ya lo recibió
+        pendientes.push({ uid, email });
+    }
+
+    const objetivo = pendientes.slice(0, limite);
+    const resultado = { premium_vigentes: vigentes.length, sin_correo: vigentes.length - emails.size, pendientes: pendientes.length, dry_run: dryRun, enviados: 0, fallidos: [] };
+    if (dryRun) {
+        resultado.destinatarios = objetivo.map((p) => p.email);
+        return json(env, request, resultado);
+    }
+    for (const p of objetivo) {
+        try {
+            if (await sendPremiumWelcome(env, p.uid, p.email, { asunto: body.asunto })) resultado.enviados++;
+        } catch (e) {
+            resultado.fallidos.push({ email: p.email, error: e.message || String(e) });
+        }
+    }
+    return json(env, request, resultado);
+}
+
 // Límite de tasa por IP para endpoints públicos que envían correo (protege la
 // cuota de Brevo del abuso). Contador en KV con TTL de una hora; sin IP (raro
 // fuera de Cloudflare) no bloquea. best-effort: KV es eventualmente consistente.
@@ -1358,6 +1436,10 @@ export default {
             // Endpoint admin: reenviar/mandar a mano la bienvenida Premium.
             if (path === '/api/admin/send-welcome' && request.method === 'POST') {
                 return await handleAdminSendWelcome(request, env);
+            }
+            // Endpoint admin: bienvenida a los Premium anteriores (dry_run por defecto).
+            if (path === '/api/admin/welcome-backfill' && request.method === 'POST') {
+                return await handleAdminWelcomeBackfill(request, env);
             }
             // Endpoint público (sin token): ver una lista compartida (solo si es pública).
             const pub = path.match(/^\/api\/public\/playlist\/([A-Za-z0-9]+)$/);
