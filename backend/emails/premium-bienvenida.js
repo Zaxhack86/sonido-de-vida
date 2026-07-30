@@ -87,7 +87,6 @@ export function premiumWelcomeEmail(opts = {}) {
         ${versiculo('Voz de Jehová con potencia; voz de Jehová con gloria.', 'Salmo 29:4 · Reina-Valera 1909')}
 
         <p style="margin:28px 0 0;font:400 15px/1.7 Arial,Helvetica,sans-serif;color:${CREAM}">Si algo no te funciona o quieres pedir una función, escríbenos desde <a href="${SITE}/contacto" style="color:${GOLD_SOFT};font-weight:bold">sonidodevida.com/contacto</a>. Lo leemos todo.</p>
-        <p style="margin:8px 0 0;font:400 13px/1.6 Arial,Helvetica,sans-serif;color:${MUTED}">Este correo sale de un buzón automático. Si respondes, tu mensaje llega igualmente a contacto@sonidodevida.com.</p>
         <p style="margin:14px 0 0;font:400 15px/1.7 Arial,Helvetica,sans-serif;color:${MUTED}">Con cariño,<br><b style="color:${CREAM}">El equipo de Sonido de Vida</b></p>`;
 
     const pie = `
@@ -123,7 +122,6 @@ export function premiumWelcomeEmail(opts = {}) {
         '«Voz de Jehová con potencia; voz de Jehová con gloria.» — Salmo 29:4 (Reina-Valera 1909)',
         '',
         `Si algo no te funciona o quieres pedir una función, escríbenos desde ${SITE}/contacto. Lo leemos todo.`,
-        'Este correo sale de un buzón automático. Si respondes, tu mensaje llega igualmente a contacto@sonidodevida.com.',
         '',
         'El equipo de Sonido de Vida',
         `${SITE} · ${SITE}/contacto`,
