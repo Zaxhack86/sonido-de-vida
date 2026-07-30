@@ -4,3 +4,4 @@ node_modules/
 *.log
 .wrangler/
 .claude/settings.local.json
+backend/emails/_preview/

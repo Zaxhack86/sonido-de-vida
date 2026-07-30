@@ -17,6 +17,8 @@
 // Capa gratis vs premium: guardar es gratis hasta FREE_VERSE_LIMIT.
 // Usar `coleccion` (organizar por temas) y superar el límite requiere premium.
 
+import { premiumWelcomeEmail } from './emails/premium-bienvenida.js';
+
 const FREE_VERSE_LIMIT = 25;
 
 // Límite de descargas diario (anti-abuso, atado al uid en D1).
@@ -202,7 +204,12 @@ async function handleAdminGrant(request, env) {
     if (!uid && email) uid = await lookupUidByEmail(env, email);
     if (!uid) throw { status: 404, msg: email ? 'esa cuenta aún no existe (debe iniciar sesión una vez)' : 'falta uid o email' };
     const record = await grantPremiumComp(env, uid);
-    return json(env, request, { ok: true, uid, email: email || null, record });
+    let welcomed = false;
+    if (email && body.welcome !== false) {
+        try { welcomed = await sendPremiumWelcome(env, uid, email); }
+        catch (e) { console.warn('bienvenida premium (admin):', e.message); }
+    }
+    return json(env, request, { ok: true, uid, email: email || null, welcomed, record });
 }
 
 // ── Cupones de regalo (canje en la app, SIN Stripe) ──────────────────
@@ -248,6 +255,8 @@ async function handleRedeemCoupon(request, env, user) {
     };
     await env.PREMIUM.put(user.uid, JSON.stringify(record));
     await env.PREMIUM.put(redeemedKey, new Date(now).toISOString());
+    try { await sendPremiumWelcome(env, user.uid, user.email); }
+    catch (e) { console.warn('bienvenida premium (cupón):', e.message); }
     return json(env, request, { ok: true, premium: true, expira, days: coupon.days, coupon: code });
 }
 
@@ -416,6 +425,11 @@ async function handleStripeWebhook(request, env) {
                 const sub = await stripeCall(env, 'GET', 'subscriptions/' + obj.subscription, null);
                 await syncSubscription(env, sub);
             }
+            // Bienvenida (una vez por uid). Después del sync: si Brevo falla, el
+            // premium ya quedó grabado y el correo se puede reenviar a mano.
+            const buyer = (obj.customer_details && obj.customer_details.email) || obj.customer_email || '';
+            try { await sendPremiumWelcome(env, uid, buyer.trim().toLowerCase()); }
+            catch (e) { console.warn('bienvenida premium:', e.message); }
         } else if (event.type === 'customer.subscription.created' ||
                    event.type === 'customer.subscription.updated' ||
                    event.type === 'customer.subscription.deleted') {
@@ -887,16 +901,17 @@ function magicLinkEmail(link) {
     return { html, text };
 }
 
-async function sendBrevoEmail(env, toEmail, link) {
+// Envío transaccional por Brevo. Único punto de salida de correo del worker:
+// magic link, drip del Reto y bienvenida Premium pasan por aquí.
+async function brevoSend(env, toEmail, { subject, html, text }) {
     if (!env.BREVO_API_KEY) throw new Error('falta BREVO_API_KEY');
-    const { html, text } = magicLinkEmail(link);
     const res = await fetch('https://api.brevo.com/v3/smtp/email', {
         method: 'POST',
         headers: { 'api-key': env.BREVO_API_KEY, 'Content-Type': 'application/json', 'accept': 'application/json' },
         body: JSON.stringify({
             sender: { name: 'Sonido de Vida', email: env.SENDER_EMAIL || 'noreply@sonidodevida.com' },
             to: [{ email: toEmail }],
-            subject: 'Tu enlace para entrar a Sonido de Vida',
+            subject,
             htmlContent: html,
             textContent: text,
         }),
@@ -905,6 +920,40 @@ async function sendBrevoEmail(env, toEmail, link) {
         const t = await res.text().catch(() => '');
         throw new Error('Brevo: ' + res.status + ' ' + t.slice(0, 200));
     }
+}
+
+async function sendBrevoEmail(env, toEmail, link) {
+    const { html, text } = magicLinkEmail(link);
+    await brevoSend(env, toEmail, { subject: 'Tu enlace para entrar a Sonido de Vida', html, text });
+}
+
+// ── Bienvenida Premium ───────────────────────────────────────────────
+// Se envía UNA sola vez por uid, la primera vez que la cuenta pasa a Premium
+// (pago en Stripe, cupón de regalo o cortesía de admin). La marca vive en KV y
+// no caduca: renovar, reactivar o volver a pagar no repite el correo.
+// Best-effort: si Brevo falla, el premium ya quedó concedido igual.
+async function sendPremiumWelcome(env, uid, email, opts = {}) {
+    if (!uid || !email || !env.BREVO_API_KEY) return false;
+    const key = 'welcome:' + uid;
+    if (!opts.force && env.PREMIUM && await env.PREMIUM.get(key)) return false;
+    await brevoSend(env, email, premiumWelcomeEmail({ nombre: opts.nombre }));
+    if (env.PREMIUM) await env.PREMIUM.put(key, new Date().toISOString());
+    return true;
+}
+
+// POST /api/admin/send-welcome  (X-Admin-Secret). Body: { email, uid?, force? }
+// Envío manual del correo de bienvenida — para los Premium que ya existían
+// antes de que este correo se automatizara, o para reenviarlo con force:true.
+async function handleAdminSendWelcome(request, env) {
+    const secret = request.headers.get('X-Admin-Secret') || '';
+    if (!env.ADMIN_SECRET || !timingSafeEqual(secret, env.ADMIN_SECRET)) throw { status: 403, msg: 'no autorizado' };
+    const body = await request.json().catch(() => ({}));
+    const email = String(body.email || '').trim().toLowerCase();
+    if (!email) throw { status: 400, msg: 'falta email' };
+    let uid = (body.uid || '').trim() || await lookupUidByEmail(env, email);
+    if (!uid) throw { status: 404, msg: 'esa cuenta aún no existe (debe iniciar sesión una vez)' };
+    const sent = await sendPremiumWelcome(env, uid, email, { force: !!body.force, nombre: body.nombre });
+    return json(env, request, { ok: true, uid, email, sent, skipped: !sent ? 'ya se le envió antes (usa force:true)' : null });
 }
 
 // Límite de tasa por IP para endpoints públicos que envían correo (protege la
@@ -1003,23 +1052,7 @@ function reto11Email(day, unsubToken) {
 }
 
 async function sendReto11Email(env, toEmail, day, unsubToken) {
-    if (!env.BREVO_API_KEY) throw new Error('falta BREVO_API_KEY');
-    const { html, text, subject } = reto11Email(day, unsubToken);
-    const res = await fetch('https://api.brevo.com/v3/smtp/email', {
-        method: 'POST',
-        headers: { 'api-key': env.BREVO_API_KEY, 'Content-Type': 'application/json', 'accept': 'application/json' },
-        body: JSON.stringify({
-            sender: { name: 'Sonido de Vida', email: env.SENDER_EMAIL || 'noreply@sonidodevida.com' },
-            to: [{ email: toEmail }],
-            subject,
-            htmlContent: html,
-            textContent: text,
-        }),
-    });
-    if (!res.ok) {
-        const t = await res.text().catch(() => '');
-        throw new Error('Brevo: ' + res.status + ' ' + t.slice(0, 200));
-    }
+    await brevoSend(env, toEmail, reto11Email(day, unsubToken));
 }
 
 async function handleReto11Subscribe(request, env) {
@@ -1310,6 +1343,10 @@ export default {
             // conceder premium permanente sin pago. `return await`: lanza { status }.
             if (path === '/api/admin/grant-premium' && request.method === 'POST') {
                 return await handleAdminGrant(request, env);
+            }
+            // Endpoint admin: reenviar/mandar a mano la bienvenida Premium.
+            if (path === '/api/admin/send-welcome' && request.method === 'POST') {
+                return await handleAdminSendWelcome(request, env);
             }
             // Endpoint público (sin token): ver una lista compartida (solo si es pública).
             const pub = path.match(/^\/api\/public\/playlist\/([A-Za-z0-9]+)$/);
