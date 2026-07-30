@@ -37,18 +37,12 @@ const FEATURES = [
     },
     {
         n: '03',
-        titulo: 'Sin anuncios, nunca más',
-        texto: 'Toda la publicidad desaparece de tu cuenta. Nada interrumpe la lectura ni la escucha.',
-        como: 'Automático. Si aún vieras un anuncio, cierra y vuelve a abrir la app para que refresque tu sesión.',
-    },
-    {
-        n: '04',
         titulo: 'El texto sigue al audio, y tú mandas en la velocidad',
         texto: 'Mientras suena la narración, el versículo que se está leyendo se resalta solo. Y puedes bajar o subir la velocidad sin que la voz se distorsione — incluso cámara lenta (0,9×) para meditar frase por frase.',
         como: 'Abre cualquier capítulo en <b>Biblia</b> y dale a reproducir. Los controles de velocidad están en el reproductor y dentro del Modo Enfoque.',
     },
     {
-        n: '05',
+        n: '04',
         titulo: 'Instálala en tu teléfono y escucha con la pantalla apagada',
         texto: 'Instalada como app, la Biblia sigue sonando con el celular bloqueado o en otra aplicación, y se ve a pantalla completa, sin barras del navegador.',
         como: 'En Android: menú del navegador → <b>Instalar aplicación</b>. En iPhone: Safari → <b>Compartir</b> → <b>Añadir a pantalla de inicio</b>. La app te guía paso a paso si le das al aviso de instalación.',
@@ -138,7 +132,7 @@ export function premiumWelcomeEmail(opts = {}) {
         <h1 style="margin:0 0 18px;font:400 30px/1.25 Georgia,'Times New Roman',serif;color:${CREAM}">Bienvenido a la comunidad Premium</h1>
 
         <p style="margin:0 0 16px;font:400 16px/1.7 Arial,Helvetica,sans-serif;color:${CREAM}">${saludo}</p>
-        <p style="margin:0 0 16px;font:400 16px/1.7 Arial,Helvetica,sans-serif;color:${CREAM}">Gracias por sostener este proyecto. Con tu suscripción no solo quitas los anuncios: haces posible que la Palabra siga sonando —en buena voz y gratis para miles de personas que no pueden pagarla.</p>
+        <p style="margin:0 0 16px;font:400 16px/1.7 Arial,Helvetica,sans-serif;color:${CREAM}">Gracias por sostener este proyecto. Tu suscripción no solo te abre lo mejor de la app: hace posible que la Palabra siga sonando —en buena voz y gratis— para miles de personas que no pueden pagarla.</p>
         <p style="margin:0 0 26px;font:400 16px/1.7 Arial,Helvetica,sans-serif;color:${CREAM}">Esto es <b style="color:${GOLD_SOFT}">todo lo que acaba de abrirse en tu cuenta</b>, y dónde encontrarlo:</p>
 
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
@@ -204,7 +198,7 @@ export function premiumWelcomeEmail(opts = {}) {
         '',
         saludo,
         '',
-        'Gracias por sostener este proyecto. Con tu suscripción no solo quitas los anuncios: haces posible que la Palabra siga sonando, gratis, para miles de personas.',
+        'Gracias por sostener este proyecto. Tu suscripción no solo te abre lo mejor de la app: hace posible que la Palabra siga sonando, gratis, para miles de personas.',
         '',
         'ESTO ES LO QUE ACABA DE ABRIRSE EN TU CUENTA:',
         '',
