@@ -333,6 +333,9 @@
         .footer-social a:hover{color:var(--navy,#0D1B3E);background:var(--gold-light,#C9A84C);border-color:var(--gold-light,#C9A84C);transform:translateY(-2px)}
         .footer-divider{height:1px;background:rgba(255,255,255,.08);margin-bottom:1.5rem}
         .footer-bottom{font-size:.8rem}
+        .footer-credit{font-size:.78rem;margin-top:.55rem;color:rgba(255,255,255,.45);letter-spacing:.03em}
+        .footer-credit a{color:rgba(255,255,255,.6);text-decoration:none;font-weight:600;transition:color .3s,text-shadow .3s}
+        .footer-credit a:hover,.footer-credit a:focus-visible{color:var(--gold-light,#C9A84C);text-shadow:0 0 12px rgba(201,168,76,.55)}
         .loading-spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(0,0,0,.2);border-top-color:var(--dark);border-radius:50%;animation:spin .6s linear infinite}
         @keyframes spin{to{transform:rotate(360deg)}}
         .reveal{opacity:0;transform:translateY(30px);transition:all .8s ease}
