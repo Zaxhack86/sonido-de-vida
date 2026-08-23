@@ -116,14 +116,22 @@ span.mx-palabra{display:inline;white-space:nowrap}
 /* La puntuación no cae: no es letra. */
 .mx--seco{opacity:.75}
 
-/* El trozo del titular pintado con `background-clip:text` no tiene color
-   propio: la letra que cae saldría INVISIBLE. Se le devuelve el relleno
-   mientras dura la lluvia, y al acabar vuelve su degradado. */
-.hero h1 span .mx__g,
-.hero h1 span .mx__g--sale{-webkit-text-fill-color:var(--gold-light);color:var(--gold-light)}
-.hero h1 span .mx--cabeza .mx__g{-webkit-text-fill-color:var(--mx-cabeza);color:var(--mx-cabeza)}
+/* ── 6. El ratón por encima de una tarjeta ────────────────────────────────
+   Las tarjetas que ya traían su `:hover` de app.css lo recuperan solas: al
+   terminar la entrada, js/animaciones.js le quita el `data-anim` a la pieza y
+   con él se va el `transform:none` que lo estaba pisando. Aquí sólo se le da
+   ese mismo gesto —leve, el de un botón— a las dos que no lo tenían. */
+@media (hover: hover) and (pointer: fine){
+  .shw-featured{transition:transform .35s var(--anim-curva),box-shadow .35s var(--anim-curva)}
+  .shw-featured:hover{transform:translateY(-3px);box-shadow:0 18px 48px -14px rgba(201,168,76,.18)}
+  .faq-card{transition:border-color .25s,box-shadow .25s,transform .3s var(--anim-curva)}
+  .faq-card:hover{transform:translateY(-2px);border-color:rgba(201,168,76,.34)}
+  /* La tarjeta abierta se queda quieta: si sube al pasar el ratón, la
+     respuesta que se está leyendo se mueve bajo los ojos. */
+  .faq-card.open:hover{transform:none}
+}
 
-/* ── 6. Quien pide quietud, quietud tiene ────────────────────────────────── */
+/* ── 7. Quien pide quietud, quietud tiene ────────────────────────────────── */
 @media (prefers-reduced-motion: reduce){
   [data-anim]{opacity:1!important;transform:none!important;filter:none!important;transition:none}
   .anim-trazo::after{transform:translateX(-50%) scaleX(1);transition:none}

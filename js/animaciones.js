@@ -7,8 +7,10 @@
         entran tarjeta a tarjeta (escalonado). Nada depende del ratón: en el
         móvil, que es donde vive esta app, no hay ratón.
      2. Los números de la barra de arriba SUBEN hasta su cifra al llegar.
-     3. El sello de la casa (js/matrix-sdv.js): el logo de arriba y el de
-        abajo, el titular y el título de cada sección se DESCIFRAN.
+     3. El sello de la casa (js/matrix-sdv.js): SÓLO el logo de arriba y el
+        del pie se DESCIFRAN. Ni el titular, ni los títulos, ni al pasar el
+        ratón —se probó con todo y él lo cortó el mismo día: una firma que
+        aparece en cada rótulo deja de ser una firma.
 
    El marcado es automático —se recorre el Inicio y se decide qué es cabecera,
    qué es rejilla y qué es bloque suelto—, así una sección nueva se anima sola
@@ -42,13 +44,23 @@
   function encender(el) {
     el.classList.add('moviendo', 'en');
     const espera = parseInt(el.style.getPropertyValue('--anim-espera')) || 0;
-    setTimeout(() => el.classList.remove('moviendo'), 900 + espera);
 
-    if (el.dataset.mx && MX) {
-      /* Después de que la pieza haya terminado de subir: descifrar un texto
-         que además se está moviendo no se lee. */
-      setTimeout(() => MX.descifrar(el, MX.duraDe(el, 520, 1150), MX.ENTRADA), 260 + espera);
-    }
+    /* El trazo de oro se enciende él mismo y no por su padre: en cuanto la
+       entrada termina, el padre se queda sin `data-anim` (ver abajo). */
+    if (el.classList.contains('anim-trazo')) el.classList.add('en');
+    el.querySelectorAll('.anim-trazo').forEach(t => t.classList.add('en'));
+
+    /* Y al terminar, la pieza se queda LIMPIA. Mientras lleve `data-anim`, el
+       `transform:none` del estado final gana por orden de archivo al
+       `:hover{transform:translateY(-3px)}` que la tarjeta ya traía de
+       app.css, y las tarjetas dejarían de responder al ratón para siempre.
+       La clase `en` se queda: sin `data-anim` sólo la usa el trazo. */
+    setTimeout(() => {
+      el.classList.remove('moviendo');
+      delete el.dataset.anim;
+      el.style.removeProperty('--anim-espera');
+    }, 900 + espera);
+
     /* Las cifras viven en un hijo del bloque que acaba de entrar. */
     if (el.dataset.cuenta) contar(el);
     el.querySelectorAll('[data-cuenta]').forEach(contar);
@@ -119,20 +131,21 @@
     montarTitulo(cab.querySelector('h2'));
   }
 
-  /* Cada título de sección lleva el sello, y el trazo de oro sólo si está
-     centrado: en una promo con el texto a la izquierda, una rayita en medio
-     del renglón no es un remate, es un despiste. */
+  /* El título de sección lleva su trazo de oro, y sólo si está centrado: en una
+     promo con el texto a la izquierda, una rayita en medio del renglón no es un
+     remate, es un despiste.
+
+     Aquí NO se descifra nada. El sello es de los dos logos y de nadie más
+     —«el resto no, se ve fatal así», 2026-08-23—: revolver todos los títulos
+     de la página convierte una firma en un tic. */
   function montarTitulo(h2) {
-    if (!h2 || !MX || QUIETO) return;
+    if (!h2 || QUIETO) return;
     if (getComputedStyle(h2).textAlign === 'center') h2.classList.add('anim-trazo');
-    if (h2.dataset.anim) h2.dataset.mx = '1';   // se descifra al encenderse él
-    else vigiaTitulo(h2);                       // va dentro de otra pieza: vigía propio
   }
 
-  /* Un texto que no es la pieza animada necesita su propio vigía, porque el
-     descifrado se dispara al ENTRAR, no al terminar la entrada de otro. */
-  function vigiaTitulo(el) {
-    if (!HAY_OBS) return;
+  /* El vigía del sello: el logo del pie se descifra cuando asoma, una vez. */
+  function vigiaSello(el) {
+    if (!HAY_OBS || !MX) return;
     const o = new IntersectionObserver((filas) => {
       filas.forEach((f) => {
         if (!f.isIntersecting) return;
@@ -213,13 +226,8 @@
       const logo = document.querySelector('.nav-logo .logo-text');
       if (logo) setTimeout(() => MX.descifrar(logo, MX.duraDe(logo, 620, 900), MX.ENTRADA), 240);
 
-      const h1 = document.querySelector('.hero h1');
-      /* Después de su `fadeInUp` (0,2 s de espera + 1 s): descifrar un titular
-         que todavía se está moviendo no se lee. */
-      if (h1) setTimeout(() => MX.descifrar(h1, MX.duraDe(h1, 900, 1400), MX.ENTRADA), 1150);
-
       const pie = document.querySelector('.footer-logo');
-      if (pie) vigiaTitulo(pie);
+      if (pie) vigiaSello(pie);
     };
 
     /* Con la fuente aún sin cargar, las letras se medirían con la de repuesto
@@ -230,27 +238,6 @@
     } else arranca();
   }
 
-  /* El roce: sólo con ratón de verdad, sólo en lo pequeño y en negrita, y con
-     110 ms de espera —sin ellos, cruzar una rejilla camino del pie enciende
-     ocho títulos a su paso y parece una máquina tragamonedas. */
-  const ROCES = [
-    '.shw-book h4', '.shw-feat h4', '.shw-vbook',
-    '.footer-col h4', '.shw-rvsdv-tag', '.shw-kicker',
-  ].join(', ');
-
-  function montarRoces() {
-    if (!MX || QUIETO || !MX.HAY_RATON) return;
-    let reloj = 0, ultimo = null;
-    document.addEventListener('mouseover', (e) => {
-      const donde = e.target instanceof Element ? e.target.closest(ROCES) : null;
-      if (donde === ultimo) return;
-      ultimo = donde;
-      clearTimeout(reloj);
-      if (!donde) return;
-      reloj = setTimeout(() => MX.descifrar(donde, MX.duraDe(donde, 420, 700), MX.ROCE), 110);
-    });
-  }
-
   /* ── Arranque ──────────────────────────────────────────────────────────── */
   function montar() {
     if (HAY_OBS && !QUIETO) {
@@ -259,7 +246,6 @@
     }
     montarPortada();
     montarSello();
-    montarRoces();
   }
 
   if (document.readyState === 'loading') addEventListener('DOMContentLoaded', montar);
