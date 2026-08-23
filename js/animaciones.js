@@ -115,7 +115,9 @@
         Array.from(bloque.children).forEach((hijo, i) =>
           marcar(hijo, 'escala', Math.min(i, PASO_TOPE) * PASO));
       } else {
-        marcar(bloque, 'sube', 0);
+        /* Una tarjeta grande entra como tarjeta —asentándose—, no como una
+           franja de texto que sólo sube. */
+        marcar(bloque, bloque.matches('[class*="card"]') ? 'escala' : 'sube', 0);
         montarTitulo(bloque.matches('h2') ? bloque : bloque.querySelector('h2'));
       }
     });

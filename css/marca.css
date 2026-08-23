@@ -1,0 +1,36 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   LA MARCA — una sola, en todas las páginas
+   ──────────────────────────────────────────────────────────────────────────
+   Las 61 páginas de devocionales nacieron con su propio logo («♪ Sonido de
+   Vida», sin la placa) mientras la app de la raíz llevaba el ✝ sobre el cuadro
+   dorado. Dos logos distintos en la misma web no es un detalle: es otra marca.
+   Este archivo pone el de la app en todas ellas sin tocar sus hojas de estilo
+   —se enlaza DESPUÉS de su `<style>`, así que gana por orden—.
+
+   Aquí NO va el sello «matrix»: eso es la entrada del Inicio y de ningún otro
+   sitio (js/matrix-sdv.js sólo se carga en la raíz).
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.nav-logo{
+  font-family:'Cinzel',serif;font-weight:700;font-size:1.18rem;
+  color:#FAF7F0;text-decoration:none;
+  /* En las páginas legales la marca vive dentro de un `.brand` en versalitas
+     espaciadas: sin esto heredaría su `text-transform` y su `letter-spacing`
+     y volvería a ser otro logo distinto. */
+  text-transform:none;letter-spacing:normal;line-height:1;
+  display:inline-flex;align-items:center;gap:.5rem;
+}
+.nav-logo .logo-mark{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:2rem;height:2rem;font-size:1rem;border-radius:.55rem;flex:none;
+  background:linear-gradient(135deg,#D8B85C,#A8863A);color:#070e20;
+  box-shadow:0 6px 18px -6px rgba(201,168,76,.6);
+}
+.nav-logo .logo-text{white-space:nowrap}
+
+/* El mismo gesto que en la app: la placa se enciende al pasar el ratón. */
+@media (hover: hover) and (pointer: fine){
+  .nav-logo .logo-mark{transition:transform .3s cubic-bezier(.22,.85,.28,1),box-shadow .3s ease}
+  .nav-logo:hover .logo-mark{transform:translateY(-1px) scale(1.06);
+    box-shadow:0 10px 24px -6px rgba(201,168,76,.8)}
+}

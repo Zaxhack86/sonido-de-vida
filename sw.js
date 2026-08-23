@@ -1,4 +1,4 @@
-const CACHE_STATIC = 'sdv-static-v181';
+const CACHE_STATIC = 'sdv-static-v182';
 const CACHE_AUDIO  = 'sdv-audio-v2';
 
 // La app (PWA) vive en la raíz ('/'). Ya no hay landing ni '/app'; '/app' y
@@ -11,7 +11,7 @@ const CACHE_AUDIO  = 'sdv-audio-v2';
 // el caché entero, así que SIEMPRE sube la versión si cambias /css/ o /js/.
 const STATIC_ASSETS = [
     '/', '/manifest.json',
-    '/css/app.css', '/css/animaciones.css', '/css/explorar.css', '/css/tema-oscuro.css', '/css/biblia.css',
+    '/css/app.css', '/css/animaciones.css', '/css/marca.css', '/css/explorar.css', '/css/tema-oscuro.css', '/css/biblia.css',
     '/js/app.js', '/js/cuenta.js', '/js/biblioteca-buscar.js',
     '/js/matrix-sdv.js', '/js/animaciones.js',
 ];

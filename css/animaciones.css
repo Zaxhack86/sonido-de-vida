@@ -131,9 +131,112 @@ span.mx-palabra{display:inline;white-space:nowrap}
   .faq-card.open:hover{transform:none}
 }
 
-/* ── 7. Quien pide quietud, quietud tiene ────────────────────────────────── */
+/* ══════════════════════════════════════════════════════════════════════════
+   8. LAS TRES PROMOS DEL INICIO — que no se vean planas
+   Añadido 2026-08-23: «esto está plano… anima las tarjetas un poco, que cuando
+   le pase el mouse también, el botón debe parpadear o hacer algo». Todo vive
+   aquí, sin tocar app.css: son capas encima de las tarjetas que ya existían.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* El halo de cada tarjeta respira. Muy despacio y sin mover el contenido: es
+   luz de fondo, y si se nota el ciclo ya es demasiado. */
+.shw-rvsdv-glow,
+.shw-retos-card::before,
+.shw-tienda-card::before{animation:promo-respira 9s ease-in-out infinite}
+@keyframes promo-respira{
+  0%,100%{opacity:.7;transform:scale(1)}
+  50%    {opacity:1;transform:scale(1.09)}
+}
+
+/* Y el icono late, apenas. Un cuadro dorado completamente quieto en medio de
+   una tarjeta grande es parte de lo que la hacía parecer una foto. */
+.shw-rvsdv-ico,.shw-tienda-ico{animation:promo-late 5.5s ease-in-out infinite}
+@keyframes promo-late{
+  0%,100%{transform:translateY(0) scale(1)}
+  50%    {transform:translateY(-3px) scale(1.02)}
+}
+
+.shw-rvsdv-card,.shw-retos-card,.shw-tienda-card{
+  transition:transform .4s var(--anim-curva),box-shadow .4s var(--anim-curva),border-color .4s ease;
+}
+.shw-rvsdv-ico,.shw-tienda-ico,.shw-retos-day{transition:transform .35s var(--anim-curva),
+  border-color .35s ease,background .35s ease,color .35s ease,box-shadow .35s ease}
+
+@media (hover: hover) and (pointer: fine){
+  /* La tarjeta entera se levanta y se le enciende el borde. */
+  .shw-rvsdv-card:hover,.shw-retos-card:hover,.shw-tienda-card:hover{
+    transform:translateY(-4px);
+    border-color:rgba(201,168,76,.62);
+    box-shadow:0 28px 66px -22px rgba(201,168,76,.42);
+  }
+  /* El icono deja de latir y se planta un poco más grande: si sigue su ciclo
+     mientras el ratón está encima, el gesto de respuesta no se lee. */
+  .shw-rvsdv-card:hover .shw-rvsdv-ico,
+  .shw-tienda-card:hover .shw-tienda-ico{
+    animation:none;transform:scale(1.07) rotate(-3deg);
+    box-shadow:0 14px 34px -8px rgba(201,168,76,.65);
+  }
+  .shw-rvsdv-card:hover .shw-rvsdv-glow,
+  .shw-retos-card:hover::before,
+  .shw-tienda-card:hover::before{animation-duration:4.5s}
+
+  /* Los once días se encienden en cascada, como si el reto arrancara. */
+  .shw-retos-card:hover .shw-retos-day{
+    background:rgba(201,168,76,.2);border-color:rgba(201,168,76,.55);color:#fff;
+  }
+  .shw-retos-card:hover .shw-retos-day:nth-child(1){transition-delay:0.00s}
+  .shw-retos-card:hover .shw-retos-day:nth-child(2){transition-delay:0.04s}
+  .shw-retos-card:hover .shw-retos-day:nth-child(3){transition-delay:0.07s}
+  .shw-retos-card:hover .shw-retos-day:nth-child(4){transition-delay:0.11s}
+  .shw-retos-card:hover .shw-retos-day:nth-child(5){transition-delay:0.14s}
+  .shw-retos-card:hover .shw-retos-day:nth-child(6){transition-delay:0.18s}
+  .shw-retos-card:hover .shw-retos-day:nth-child(7){transition-delay:0.21s}
+  .shw-retos-card:hover .shw-retos-day:nth-child(8){transition-delay:0.25s}
+  .shw-retos-card:hover .shw-retos-day:nth-child(9){transition-delay:0.28s}
+  .shw-retos-card:hover .shw-retos-day:nth-child(10){transition-delay:0.32s}
+  .shw-retos-card:hover .shw-retos-day:nth-child(11){transition-delay:0.35s}
+  .shw-retos-card:hover .shw-retos-day:nth-child(12){transition-delay:0.39s}
+}
+
+/* ── El botón que llama ────────────────────────────────────────────────────
+   Dos cosas a la vez y ninguna estridente: un halo que late, y un destello que
+   cruza cada cinco segundos y medio. El destello está parado fuera del botón
+   casi todo el ciclo —barre sólo en el último tramo—; un brillo continuo sería
+   un anuncio de casino, no una invitación. */
+.shw-rvsdv-btn,.shw-retos-btn,.shw-tienda-btn{
+  position:relative;overflow:hidden;isolation:isolate;
+  animation:btn-halo 3.8s ease-in-out infinite;
+}
+.shw-rvsdv-btn::after,.shw-retos-btn::after,.shw-tienda-btn::after{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(105deg,transparent 38%,rgba(255,255,255,.5) 50%,transparent 62%);
+  transform:translateX(-130%);
+  animation:btn-destello 5.5s cubic-bezier(.35,0,.2,1) infinite;
+}
+@keyframes btn-halo{
+  0%,100%{box-shadow:0 6px 18px -8px rgba(201,168,76,.45)}
+  50%    {box-shadow:0 12px 32px -6px rgba(201,168,76,.8)}
+}
+@keyframes btn-destello{
+  0%,74%  {transform:translateX(-130%)}
+  94%,100%{transform:translateX(130%)}
+}
+/* Con el ratón encima manda la respuesta al ratón, no el reclamo: se para el
+   latido y el botón sube. */
+.shw-rvsdv-btn:hover,.shw-retos-btn:hover,.shw-tienda-btn:hover{
+  animation:none;transform:translateY(-2px);
+  box-shadow:0 14px 34px -8px rgba(201,168,76,.7);
+}
+.shw-retos-btn,.shw-tienda-btn{transition:transform .25s var(--anim-curva),box-shadow .25s ease}
+
+/* ── 9. Quien pide quietud, quietud tiene ────────────────────────────────── */
+
 @media (prefers-reduced-motion: reduce){
   [data-anim]{opacity:1!important;transform:none!important;filter:none!important;transition:none}
+  .shw-rvsdv-glow,.shw-retos-card::before,.shw-tienda-card::before,
+  .shw-rvsdv-ico,.shw-tienda-ico,
+  .shw-rvsdv-btn,.shw-retos-btn,.shw-tienda-btn,
+  .shw-rvsdv-btn::after,.shw-retos-btn::after,.shw-tienda-btn::after{animation:none}
   .anim-trazo::after{transform:translateX(-50%) scaleX(1);transition:none}
   .mx__g,.mx__g--sale,.mx--fijo{animation:none}
   .hero-content{transform:none}
