@@ -212,8 +212,8 @@
         .btn-download{background:rgba(76,175,80,.15);color:#81c784;border:1px solid rgba(76,175,80,.3)}
         .btn-download:hover{background:rgba(76,175,80,.25)}
         .btn-download:disabled{opacity:.6;cursor:not-allowed}
-        .btn-copy-text{background:rgba(100,181,246,.15);color:#90caf9;border:1px solid rgba(100,181,246,.3)}
-        .btn-copy-text:hover{background:rgba(100,181,246,.25)}
+        .btn-copy-text{background:rgba(201,168,76,.15);color:#E6CE80;border:1px solid rgba(201,168,76,.32)}
+        .btn-copy-text:hover{background:rgba(201,168,76,.24)}
         .chapter-verses{max-height:380px;overflow-y:auto;padding-right:.5rem}
         .chapter-verses::-webkit-scrollbar{width:4px}
         .chapter-verses::-webkit-scrollbar-thumb{background:rgba(201,168,76,.3);border-radius:4px}
@@ -254,8 +254,8 @@
         .random-text::before{content:'\201C';font-size:3rem;color:var(--purple);line-height:0;vertical-align:-.8rem;margin-right:.2rem;opacity:.4}
         .random-actions{display:flex;gap:.8rem;flex-wrap:wrap}
         .random-action-btn{display:inline-flex;align-items:center;gap:.5rem;padding:.65rem 1.3rem;border-radius:10px;font-size:.85rem;font-weight:500;cursor:pointer;transition:all .3s;border:1px solid;font-family:'Inter',sans-serif}
-        .ra-copy{background:rgba(100,181,246,.08);color:#1565c0;border-color:rgba(100,181,246,.2)}
-        .ra-copy:hover{background:rgba(100,181,246,.15)}
+        .ra-copy{background:rgba(201,168,76,.1);color:var(--gold-dark);border-color:rgba(201,168,76,.3)}
+        .ra-copy:hover{background:rgba(201,168,76,.18);border-color:rgba(201,168,76,.5)}
         .devocionales-section{padding:6rem 2rem;background:white}
         .devocionales-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:2rem;max-width:1100px;margin:0 auto}
         .devocional-card{background:var(--warm-white);border-radius:20px;padding:2rem;border:1px solid rgba(0,0,0,.06);transition:all .4s ease;text-decoration:none;display:flex;flex-direction:column;position:relative;overflow:hidden;color:inherit}
