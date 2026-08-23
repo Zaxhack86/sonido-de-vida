@@ -1,4 +1,4 @@
-const CACHE_STATIC = 'sdv-static-v182';
+const CACHE_STATIC = 'sdv-static-v183';
 const CACHE_AUDIO  = 'sdv-audio-v2';
 
 // La app (PWA) vive en la raíz ('/'). Ya no hay landing ni '/app'; '/app' y

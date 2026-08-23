@@ -199,33 +199,41 @@ span.mx-palabra{display:inline;white-space:nowrap}
 }
 
 /* ── El botón que llama ────────────────────────────────────────────────────
-   Dos cosas a la vez y ninguna estridente: un halo que late, y un destello que
-   cruza cada cinco segundos y medio. El destello está parado fuera del botón
-   casi todo el ciclo —barre sólo en el último tramo—; un brillo continuo sería
-   un anuncio de casino, no una invitación. */
-.shw-rvsdv-btn,.shw-retos-btn,.shw-tienda-btn{
+   Vale para los tres botones de las promos Y para el CTA dorado de la casa
+   (`.btn-primary`: «Probar 7 días gratis», «Escuchar la Biblia»…), que es
+   donde él pidió que se notara más.
+
+   Tres cosas a la vez y ninguna estridente: el botón late —halo Y un punto de
+   tamaño, que es lo que de verdad se ve—, y un destello lo cruza cada 4,6 s.
+   El destello está parado fuera del botón casi todo el ciclo y barre sólo en
+   el último tramo: un brillo continuo sería un anuncio de casino, no una
+   invitación. */
+.shw-rvsdv-btn,.shw-retos-btn,.shw-tienda-btn,.btn-primary{
   position:relative;overflow:hidden;isolation:isolate;
-  animation:btn-halo 3.8s ease-in-out infinite;
+  animation:btn-halo 3.4s ease-in-out infinite;
 }
-.shw-rvsdv-btn::after,.shw-retos-btn::after,.shw-tienda-btn::after{
+.shw-rvsdv-btn::after,.shw-retos-btn::after,.shw-tienda-btn::after,.btn-primary::after{
   content:'';position:absolute;inset:0;pointer-events:none;
-  background:linear-gradient(105deg,transparent 38%,rgba(255,255,255,.5) 50%,transparent 62%);
+  background:linear-gradient(105deg,
+    transparent 30%,rgba(255,255,255,.3) 41%,rgba(255,255,255,.88) 50%,
+    rgba(255,255,255,.3) 59%,transparent 70%);
   transform:translateX(-130%);
-  animation:btn-destello 5.5s cubic-bezier(.35,0,.2,1) infinite;
+  animation:btn-destello 4.6s cubic-bezier(.4,0,.25,1) infinite;
 }
 @keyframes btn-halo{
-  0%,100%{box-shadow:0 6px 18px -8px rgba(201,168,76,.45)}
-  50%    {box-shadow:0 12px 32px -6px rgba(201,168,76,.8)}
+  0%,100%{box-shadow:0 6px 18px -8px rgba(201,168,76,.45);transform:scale(1)}
+  50%    {box-shadow:0 14px 40px -6px rgba(201,168,76,.95),
+                     0 0 0 1px rgba(232,212,139,.35);transform:scale(1.022)}
 }
 @keyframes btn-destello{
-  0%,74%  {transform:translateX(-130%)}
-  94%,100%{transform:translateX(130%)}
+  0%,70%  {transform:translateX(-130%)}
+  90%,100%{transform:translateX(130%)}
 }
 /* Con el ratón encima manda la respuesta al ratón, no el reclamo: se para el
    latido y el botón sube. */
-.shw-rvsdv-btn:hover,.shw-retos-btn:hover,.shw-tienda-btn:hover{
-  animation:none;transform:translateY(-2px);
-  box-shadow:0 14px 34px -8px rgba(201,168,76,.7);
+.shw-rvsdv-btn:hover,.shw-retos-btn:hover,.shw-tienda-btn:hover,.btn-primary:hover{
+  animation:none;transform:translateY(-3px);
+  box-shadow:0 16px 38px -8px rgba(201,168,76,.75);
 }
 .shw-retos-btn,.shw-tienda-btn{transition:transform .25s var(--anim-curva),box-shadow .25s ease}
 
@@ -235,8 +243,9 @@ span.mx-palabra{display:inline;white-space:nowrap}
   [data-anim]{opacity:1!important;transform:none!important;filter:none!important;transition:none}
   .shw-rvsdv-glow,.shw-retos-card::before,.shw-tienda-card::before,
   .shw-rvsdv-ico,.shw-tienda-ico,
-  .shw-rvsdv-btn,.shw-retos-btn,.shw-tienda-btn,
-  .shw-rvsdv-btn::after,.shw-retos-btn::after,.shw-tienda-btn::after{animation:none}
+  .shw-rvsdv-btn,.shw-retos-btn,.shw-tienda-btn,.btn-primary,
+  .shw-rvsdv-btn::after,.shw-retos-btn::after,.shw-tienda-btn::after,
+  .btn-primary::after{animation:none}
   .anim-trazo::after{transform:translateX(-50%) scaleX(1);transition:none}
   .mx__g,.mx__g--sale,.mx--fijo{animation:none}
   .hero-content{transform:none}
