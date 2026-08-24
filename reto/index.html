@@ -251,6 +251,104 @@
       cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:6px;
     }
     .share-btn .ic { font-size:22px; }
+
+    /* ---------- CAMINO DE 11 DIAS (pantalla de areas) ---------- */
+    .jornada-head { margin-bottom:24px; }
+    .jornada-eyebrow {
+      font-size:11px; letter-spacing:2.4px; text-transform:uppercase;
+      color:rgba(201,168,76,.78); font-weight:bold; display:block;
+    }
+    .jornada-head h2 { font-size:28px; font-weight:normal; color:#f0ead8; margin:10px 0 16px; letter-spacing:.3px; }
+    .medidor { display:flex; gap:5px; margin-bottom:10px; }
+    .medidor i { flex:1; height:4px; border-radius:2px; background:rgba(255,255,255,.08); }
+    .medidor i.on { background:linear-gradient(90deg,#c9a84c,#e8c870); box-shadow:0 0 10px rgba(201,168,76,.45); }
+    .medidor i.now { background:rgba(201,168,76,.5); animation:latido 2.4s ease-in-out infinite; }
+    @keyframes latido { 0%,100%{opacity:.4} 50%{opacity:1} }
+    .jornada-nota { color:#7a8ea8; font-size:13px; }
+
+    .jornada { position:relative; }
+    .paso::before {
+      content:''; position:absolute; left:23px; top:0; height:100%; width:2px;
+      background:rgba(201,168,76,.13);
+    }
+    .paso:first-child::before { top:calc(50% - 6px); height:calc(50% + 6px); }
+    .paso:last-child::before  { height:calc(50% - 6px); }
+    .paso.hecho::before { background:#c9a84c; }
+    .paso.actual::before {
+      background:linear-gradient(180deg,#c9a84c 0, #c9a84c calc(50% - 6px), rgba(201,168,76,.13) calc(50% - 6px));
+    }
+    .paso.meta.actual::before { background:#c9a84c; }
+
+    .paso {
+      position:relative; display:flex; align-items:center; gap:14px; width:100%;
+      background:none; border:none; padding:0 0 12px; text-align:left;
+      color:inherit; font-family:Georgia,serif;
+    }
+    .nodo {
+      position:relative; flex-shrink:0; width:48px; height:48px; border-radius:50%;
+      display:flex; align-items:center; justify-content:center; z-index:1;
+      background:#0c1529; border:1px solid rgba(201,168,76,.22); color:rgba(201,168,76,.55);
+    }
+    .nodo svg { width:22px; height:22px; }
+    .paso-card {
+      flex:1; min-width:0; display:flex; align-items:center; gap:12px;
+      border-radius:16px; padding:13px 16px;
+      background:rgba(255,255,255,.035); border:1px solid rgba(255,255,255,.07);
+      transition:border-color .25s, background .25s, transform .25s;
+    }
+    .paso-txt { flex:1; min-width:0; }
+    .paso-dia { font-size:10px; letter-spacing:1.8px; text-transform:uppercase; color:rgba(201,168,76,.7); font-weight:bold; display:block; margin-bottom:3px; }
+    .paso-tit { font-size:16px; color:#f0ead8; display:block; line-height:1.25; }
+    .paso-sub { font-size:13px; color:#7a8ea8; display:block; margin-top:3px; }
+    .paso-cta { flex-shrink:0; color:#c9a84c; font-size:13px; letter-spacing:.6px; opacity:.55; display:flex; align-items:center; gap:5px; }
+    .paso-cta svg { width:16px; height:16px; }
+    @media (max-width:430px){ .cta-txt { display:none; } }
+
+    .paso.hecho { cursor:default; }
+    .paso.hecho .nodo { background:linear-gradient(rgba(201,168,76,.13),rgba(201,168,76,.13)),#0c1529; border-color:rgba(201,168,76,.45); color:#c9a84c; }
+    .paso.hecho .paso-card { background:rgba(255,255,255,.02); border-color:rgba(255,255,255,.05); }
+    .paso.hecho .paso-tit { color:rgba(240,234,216,.6); }
+    .paso.hecho .paso-sub { color:rgba(201,168,76,.6); }
+
+    .paso.actual .nodo {
+      background:linear-gradient(135deg,#e8c870,#c9a84c); border-color:#e8c870; color:#14203a;
+      box-shadow:0 0 0 5px rgba(201,168,76,.10), 0 6px 20px rgba(201,168,76,.3);
+    }
+    .paso.actual .nodo::after {
+      content:''; position:absolute; inset:-1px; border-radius:50%;
+      border:1px solid rgba(201,168,76,.55); animation:halo 2.8s ease-out infinite;
+    }
+    @keyframes halo { 0%{transform:scale(1);opacity:.65} 100%{transform:scale(1.55);opacity:0} }
+    .paso.actual .paso-card {
+      background:linear-gradient(135deg,rgba(201,168,76,.16),rgba(201,168,76,.04));
+      border-color:rgba(201,168,76,.45); box-shadow:0 14px 34px rgba(0,0,0,.35);
+    }
+    .paso.actual .paso-tit { font-size:18px; }
+    .paso.actual .paso-cta { opacity:1; }
+
+    .paso.bloq { cursor:not-allowed; }
+    .paso.bloq .nodo { border-style:dashed; border-color:rgba(201,168,76,.16); color:rgba(201,168,76,.34); }
+    .paso.bloq .paso-card { background:rgba(255,255,255,.016); border-color:rgba(255,255,255,.045); }
+    .paso.bloq .paso-tit { color:rgba(240,234,216,.4); }
+    .paso.bloq .paso-sub { color:rgba(122,142,168,.5); }
+    .paso.bloq .paso-cta { opacity:.28; }
+
+    .paso:not(.bloq):not(.hecho):hover .paso-card { border-color:rgba(201,168,76,.45); transform:translateX(3px); }
+    .paso.meta { padding-bottom:0; }
+    .paso.meta .nodo { border-style:dashed; }
+    .paso.meta.actual .nodo { border-style:solid; }
+
+    .ic-halo {
+      width:64px; height:64px; border-radius:50%; display:flex;
+      align-items:center; justify-content:center; margin:2px auto 8px; color:#c9a84c;
+      background:radial-gradient(circle at 50% 38%, rgba(201,168,76,.24), rgba(201,168,76,.04));
+      border:1px solid rgba(201,168,76,.3);
+    }
+    .ic-halo svg { width:30px; height:30px; }
+    .ic-inline svg { width:18px; height:18px; vertical-align:-3px; margin-right:7px; }
+
+    /* en escritorio la tarjeta termina donde termina el contenido */
+    @media (min-width:700px){ #app .screen { min-height:auto; padding-bottom:40px; } }
   </style>
 </head>
 <body>
@@ -264,6 +362,29 @@
    Los audios apuntan a rutas que aún no existen; el player
    degrada con elegancia mostrando "Audio en preparación".
    ============================================================ */
+
+/* ---------- ICONOS PROPIOS (line-art, sin emojis del sistema) ---------- */
+const ICONS = {
+  tierra:'<circle cx="12" cy="12" r="8.4"/><path d="M3.6 12h16.8"/><path d="M12 3.6c2.5 2.4 2.5 14.4 0 16.8-2.5-2.4-2.5-14.4 0-16.8z"/>',
+  familia:'<circle cx="7.4" cy="8" r="2.5"/><path d="M3.4 18.4v-1.2a4 4 0 0 1 4-4"/><circle cx="16.6" cy="8" r="2.5"/><path d="M20.6 18.4v-1.2a4 4 0 0 0-4-4"/><path d="M10.1 15.2h3.8" stroke-dasharray="1.3 1.9"/>',
+  finanzas:'<ellipse cx="12" cy="6.6" rx="6.6" ry="2.8"/><path d="M5.4 6.6v5c0 1.55 2.96 2.8 6.6 2.8s6.6-1.25 6.6-2.8v-5"/><path d="M5.4 11.6v5c0 1.55 2.96 2.8 6.6 2.8s6.6-1.25 6.6-2.8v-5"/>',
+  ansiedad:'<path d="M2.4 7.6q2.4-2.4 4.8 0t4.8 0 4.8 0 4.8 0"/><path d="M2.4 12.4q2.4-2.4 4.8 0t4.8 0 4.8 0 4.8 0"/><path d="M2.4 17.2q2.4-2.4 4.8 0t4.8 0 4.8 0 4.8 0"/>',
+  acceso:'<path d="M6.6 20.4V4.9c0-.72.52-1.34 1.23-1.46l7-1.18c.9-.15 1.72.54 1.72 1.46v16.68"/><path d="M3.4 20.4h17.2"/><circle cx="13.7" cy="12.1" r=".95" fill="currentColor" stroke="none"/>',
+  identidad:'<ellipse cx="12" cy="9" rx="5.6" ry="6.6"/><ellipse cx="12" cy="9" rx="3.4" ry="4.4"/><path d="M12 15.6v4.2"/><path d="M9.4 20h5.2"/>',
+  pasado:'<path d="M10.6 8.4H7.4a3.6 3.6 0 0 0 0 7.2h3.2"/><path d="M13.4 8.4h3.2a3.6 3.6 0 0 1 0 7.2h-3.2"/><path d="M12 4.6v1.8M12 17.6v1.8"/>',
+  relaciones:'<path d="M12 20.3s-6.9-4.2-6.9-9.1a3.9 3.9 0 0 1 6.9-2.5 3.9 3.9 0 0 1 6.9 2.5c0 4.9-6.9 9.1-6.9 9.1z"/><path d="M12 8.7l-1.9 3.5 3 1.5-1.6 3.2"/>',
+  proposito:'<path d="M12 20.4v-7.1"/><path d="M11.8 13.3c0-3.3-2.4-5.7-5.8-5.7 0 3.3 2.4 5.7 5.8 5.7z"/><path d="M12.4 13.3c0-3.6 2.6-6.2 6.1-6.2 0 3.6-2.6 6.2-6.1 6.2z"/><path d="M9.5 20.4h5"/>',
+  perdon:'<path d="M4.4 20.2C8.4 16.8 13.2 11.6 18.4 5.6"/><path d="M0 0q2.8-1.6 4.3 0-1.6 1.6-4.3 0z" transform="translate(9.0 15.5) rotate(9)"/><path d="M0 0q2.8-1.6 4.3 0-1.6 1.6-4.3 0z" transform="translate(11.4 12.9) rotate(-101)"/><path d="M0 0q2.8-1.6 4.3 0-1.6 1.6-4.3 0z" transform="translate(13.8 10.4) rotate(9)"/><path d="M0 0q2.8-1.6 4.3 0-1.6 1.6-4.3 0z" transform="translate(16.3 7.9) rotate(-101)"/><path d="M0 0q2.2-1.6 3.4 0-1.6 1.6-3.4 0z" transform="translate(18.4 5.6) rotate(-46)"/>',
+  esperanza:'<path d="M2.6 19.4h18.8"/><path d="M6.6 19.4a5.4 5.4 0 0 1 10.8 0"/><path d="M12 4.4v2.6M5.1 7.3l1.9 1.9M18.9 7.3l-1.9 1.9M2.6 14.2H5M19 14.2h2.4"/>',
+  check:'<path d="M4.6 12.6 9.7 17.6 19.5 6.7"/>',
+  lock:'<rect x="5.2" y="10.4" width="13.6" height="9.4" rx="2.2"/><path d="M8.4 10.4V7.7a3.6 3.6 0 0 1 7.2 0v2.7"/>',
+  plan:'<path d="M6.4 3.4h7.2l4.6 4.6v12.6H6.4z"/><path d="M13.4 3.5v4.6h4.6"/><path d="M9.4 12.6h5.2M9.4 16.2h5.2"/>'
+};
+function svgIcon(id){
+  const d = ICONS[id];
+  if(!d) return '';
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+d+'</svg>';
+}
 
 const AREAS=[
   {id:'tierra',icon:'🌍',title:'Tierra Extranjera',subtitle:'Vivir lejos de casa',
@@ -926,29 +1047,61 @@ ${resume ? `<button class="btn-ghost" style="max-width:340px;margin-bottom:12px"
 }
 
 function rAreas(){
-  const btns = AREAS.map((ar,idx)=>{
-    const done = S.done.includes(ar.id);
+  const total   = AREAS.length;
+  const hechas  = S.done.length;
+  const actual  = AREAS.findIndex(a=>!S.done.includes(a.id));
+
+  const medidor = AREAS.map((a,i)=>
+    `<i class="${S.done.includes(a.id)?'on':(i===actual?'now':'')}"></i>`).join('');
+
+  const pasos = AREAS.map((ar,idx)=>{
+    const done   = S.done.includes(ar.id);
     const locked = !done && idx>0 && !S.done.includes(AREAS[idx-1].id);
-    return `<button class="area-btn${done?' done':''}${locked?' locked':''}" data-a="area" data-idx="${idx}"${locked?' disabled':''}>
-<span style="font-size:24px">${done?'✅':ar.icon}</span>
-<div style="flex:1">
-  <div style="font-size:12px;color:#c9a84c;letter-spacing:1px;text-transform:uppercase">Día ${idx+1}</div>
-  <div style="font-size:15px;font-weight:bold;color:${done?'#70cc70':'#f0ead8'}">${esc(ar.title)}</div>
-  <div class="muted" style="font-size:14px;margin-top:2px">${done?'Completado':esc(ar.subtitle)}</div>
-</div>
-${!done?'<span style="color:#c9a84c;font-size:22px;margin-left:auto">›</span>':''}
+    const cls    = done ? 'hecho' : (idx===actual ? 'actual' : (locked ? 'bloq' : ''));
+    const cta    = done   ? ''
+                 : locked ? `<span class="paso-cta">${svgIcon('lock')}</span>`
+                 : `<span class="paso-cta">${idx===actual?'<span class="cta-txt">Comenzar</span>':''} <b>&rarr;</b></span>`;
+    return `<button class="paso ${cls}" data-a="area" data-idx="${idx}"${(done||locked)?' disabled':''}>
+  <span class="nodo">${done?svgIcon('check'):svgIcon(ar.id)}</span>
+  <span class="paso-card">
+    <span class="paso-txt">
+      <span class="paso-dia">Día ${idx+1}</span>
+      <span class="paso-tit">${esc(ar.title)}</span>
+      <span class="paso-sub">${done?'Completado':esc(ar.subtitle)}</span>
+    </span>
+    ${cta}
+  </span>
 </button>`;
   }).join('');
 
+  const fin  = hechas===total;
+  const abre = hechas>0;
+  const metaSub = fin  ? 'Tu recorrido completo, listo para descargar'
+                : abre ? `PDF parcial · ${hechas} de ${total} áreas`
+                       : 'Se abre al terminar tu primer día';
+  const meta = `<button class="paso meta ${fin?'actual':(abre?'':'bloq')}"${abre?' data-a="summary"':' disabled'}>
+  <span class="nodo">${svgIcon('plan')}</span>
+  <span class="paso-card">
+    <span class="paso-txt">
+      <span class="paso-dia">Meta</span>
+      <span class="paso-tit">Tu Plan de Renovación</span>
+      <span class="paso-sub">${metaSub}</span>
+    </span>
+    ${abre?`<span class="paso-cta"><span class="cta-txt">${fin?'Ver':'Descargar'}</span> <b>&rarr;</b></span>`:`<span class="paso-cta">${svgIcon('lock')}</span>`}
+  </span>
+</button>`;
+
   return `<div class="screen">
-<div class="center" style="margin-bottom:20px">
-  <span class="day-badge">Día ${Math.min(S.done.length+1,11)} de 11</span>
-  <h2 class="gold" style="margin-bottom:4px">Elige tu Área</h2>
-  <p class="muted" style="font-size:14px">${S.done.length} de ${AREAS.length} áreas completadas</p>
+<div class="jornada-head">
+  <span class="jornada-eyebrow">Tu recorrido · Día ${Math.min(hechas+1,total)} de ${total}</span>
+  <h2>Elige tu <span class="gold">área</span></h2>
+  <div class="medidor">${medidor}</div>
+  <p class="jornada-nota">${hechas} de ${total} completadas${hechas<total?` · ${total-hechas} por delante`:''}</p>
 </div>
-${btns}
-${S.done.length===AREAS.length?'<button class="btn-gold" style="margin-top:14px" data-a="summary">📄 Ver mi Plan de Renovación →</button>':''}
-${S.done.length>0 && S.done.length<AREAS.length?`<button class="btn-ghost" style="margin-top:14px" data-a="summary">📄 Descargar PDF parcial (${S.done.length} áreas)</button>`:''}
+<div class="jornada">
+  ${pasos}
+  ${meta}
+</div>
 </div>`;
 }
 
@@ -964,7 +1117,7 @@ function rQuestion(){
   return `<div class="screen">
 <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px">
 <button class="btn-back" data-a="back">←</button>
-<div><div style="font-size:12px;color:#c9a84c;letter-spacing:1px;text-transform:uppercase">Día ${S.areaIdx+1} de 11</div><div class="gold" style="font-size:17px">${ar.icon} ${esc(ar.title)}</div><div class="muted" style="font-size:13px">${esc(ar.subtitle)}</div></div>
+<div><div style="font-size:12px;color:#c9a84c;letter-spacing:1px;text-transform:uppercase">Día ${S.areaIdx+1} de 11</div><div class="gold ic-inline" style="font-size:17px">${svgIcon(ar.id)}${esc(ar.title)}</div><div class="muted" style="font-size:13px">${esc(ar.subtitle)}</div></div>
 </div>
 <div class="card" style="margin-bottom:18px"><p class="cream" style="font-size:17px;line-height:1.65">${esc(ar.question)}</p></div>
 <div style="margin-bottom:22px">${opts}</div>
@@ -993,7 +1146,7 @@ function rResult(){
 </div>
 <div class="center" style="margin-bottom:16px">
   <span class="day-badge">Día ${S.areaIdx+1} de 11</span>
-  <span style="font-size:40px;display:block;margin-bottom:6px">${ar.icon}</span>
+  <span class="ic-halo">${svgIcon(ar.id)}</span>
   <div class="gold" style="font-size:19px">${esc(ar.title)}</div>
 </div>
 
